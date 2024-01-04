@@ -1,8 +1,19 @@
 <script>
-	import { LINK_DISCORD, ROUTE_PRIVACY } from '$lib/utils/constants';
+	import { LINK_DISCORD, ROUTE_DASHBOARD, ROUTE_PRIVACY } from '$lib/utils/constants';
 	import { signInWithGithub, signInWithGoogle } from '$lib/firebase/auth';
 	import GitHub from '~icons/mdi/github';
 	import Google from '~icons/devicon/google';
+	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import { userStore } from '$lib/utils/store';
+
+	onMount(() => {
+		userStore.subscribe((user) => {
+			if (user) {
+				goto(ROUTE_DASHBOARD);
+			}
+		});
+	});
 </script>
 
 <div

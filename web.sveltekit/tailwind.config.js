@@ -24,7 +24,11 @@ export default {
 					warning: '#e6a23c',
 					'warning-content': '#ffffff',
 					error: '#f56c6c',
-					'error-content': '#ffffff'
+					'error-content': '#ffffff',
+					'base-100': '#ffffff',
+					'base-200': '#f9fafb',
+					'base-300': '#dfe4e8',
+					'base-content': '#1f2937'
 				}
 			}
 		]
