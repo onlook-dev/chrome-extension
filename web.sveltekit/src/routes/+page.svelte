@@ -1,13 +1,11 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { ROUTE_DASHBOARD, ROUTE_SIGNIN } from '$lib/utils/constants';
-	import { authUserStore } from '$lib/utils/store';
+	import { auth } from '$lib/firebase/firebase';
+	import { ROUTE_SIGNIN } from '$lib/utils/constants';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		if (authUserStore) {
-			goto(ROUTE_DASHBOARD);
-		} else {
+		if (!auth.currentUser) {
 			goto(ROUTE_SIGNIN);
 		}
 	});

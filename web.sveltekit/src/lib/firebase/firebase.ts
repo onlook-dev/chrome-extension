@@ -1,12 +1,8 @@
-import { initializeApp, type FirebaseApp } from 'firebase/app';
+import { initializeApp, type FirebaseApp, getApps } from 'firebase/app';
 import { isDevelopment } from '../utils/env';
 import { getAuth, type Auth } from 'firebase/auth';
-import { browser } from '$app/environment';
 
 // https://firebase.google.com/docs/web/setup#available-libraries
-
-export let app: FirebaseApp;
-export let auth: Auth;
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyAtnwE7i1Azb_ahlORjf2hJ_9bcjbeADfI',
@@ -26,12 +22,7 @@ const devConfig = {
 	appId: '1:635742834024:web:97047e475ce1ec5f1adadd'
 };
 
-export function setupFirebase() {
-	if (!browser) {
-		throw new Error("Can't use the Firebase client on the server.");
-	}
-	if (!app) {
-		app = initializeApp(isDevelopment ? devConfig : firebaseConfig);
-		auth = getAuth(app);
-	}
-}
+// Initialize Firebase only if it hasn't been initialized yet
+export const app: FirebaseApp =
+	getApps().length === 0 ? initializeApp(isDevelopment ? devConfig : firebaseConfig) : getApps()[0];
+export const auth: Auth = getAuth(app);

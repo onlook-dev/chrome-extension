@@ -8,7 +8,7 @@ import { get } from 'svelte/store';
 export async function getUserFromFirebase(userId: string): Promise<UserImpl | undefined> {
 	console.log('Fetching firebase user');
 	const userData = await getObjectFromCollection(FIREBASE_COLLECTION_USERS, userId);
-	if (!userData) return userData;
+	if (!userData) return undefined;
 	return new UserImpl(userData as UserImpl);
 }
 
@@ -17,6 +17,7 @@ export async function setStoreUser(authUser: User) {
 	if (!get(userStore)) {
 		getUserFromFirebase(authUser.uid).then((user) => {
 			if (!user) {
+				console.log('Creating new user');
 				// If user doesn't exist, create new user
 				user = new UserImpl({
 					id: authUser.uid,

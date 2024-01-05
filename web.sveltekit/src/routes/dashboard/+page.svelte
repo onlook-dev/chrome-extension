@@ -1,17 +1,38 @@
 <script lang="ts">
 	import type { UserImpl } from '$lib/models/user';
-	import { userStore } from '$lib/utils/store';
+	import { projectsMapStore, userStore } from '$lib/utils/store';
 	import { onMount } from 'svelte';
 	import SideBarLine from '~icons/ri/side-bar-line';
 	import AvatarDropdown from './AvatarDropdown.svelte';
 	import ProjectsView from './ProjectsView.svelte';
+	import { getProjectFromFirebase } from '$lib/storage/project';
+	import { auth } from '$lib/firebase/firebase';
+	import { ROUTE_SIGNIN } from '$lib/utils/constants';
+	import { goto } from '$app/navigation';
 
 	let user: UserImpl | null;
 	const dashboardDrawerId = 'dashboard-drawer';
 
 	onMount(() => {
+		auth.onAuthStateChanged((user) => {
+			if (!user) {
+				goto(ROUTE_SIGNIN);
+			}
+		});
+
 		userStore.subscribe((storeUser) => {
+			if (!storeUser) return;
+			console.log('User updated');
 			user = storeUser;
+			user?.projectIds?.forEach((projectId) => {
+				// Populate projects
+				if (!$projectsMapStore.has(projectId)) {
+					getProjectFromFirebase(projectId).then((project) => {
+						$projectsMapStore.set(projectId, project);
+						projectsMapStore.set($projectsMapStore);
+					});
+				}
+			});
 		});
 	});
 </script>
@@ -19,7 +40,7 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="drawer-content px-4 py-6">
+	<div class="drawer-content px-4 py-6 overflow-auto">
 		<!-- Page content here -->
 		<label for={dashboardDrawerId} class="btn drawer-button lg:hidden"><SideBarLine /></label>
 

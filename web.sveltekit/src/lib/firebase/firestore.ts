@@ -1,11 +1,12 @@
 import { collection, addDoc, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
+import { app } from './firebase';
 
 export async function postObjectToCollection(
 	collectionId: string,
 	object: unknown,
 	objectId?: string
 ) {
-	const firestore = getFirestore();
+	const firestore = getFirestore(app);
 	try {
 		const jsonObj = JSON.parse(JSON.stringify(object));
 		if (objectId) {
@@ -23,7 +24,7 @@ export async function postObjectToCollection(
 }
 
 export async function getObjectFromCollection(collectionId: string, objectId: string) {
-	const firestore = getFirestore();
+	const firestore = getFirestore(app);
 	const docRef = doc(firestore, collectionId, objectId);
 	const docSnap = await getDoc(docRef);
 
