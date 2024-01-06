@@ -8,7 +8,8 @@ export default {
 	daisyui: {
 		themes: [
 			{
-				chalk: {
+				light: {
+					...require('daisyui/src/theming/themes')['light'],
 					primary: '#111827',
 					'primary-content': '#ffffff',
 					neutral: '#ebeef5',

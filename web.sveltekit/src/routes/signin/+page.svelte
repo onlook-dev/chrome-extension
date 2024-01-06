@@ -29,11 +29,11 @@
 			<h2 class="card-title justify-center">Sign in</h2>
 
 			<div class="form-control space-y-4">
-				<button class="btn btn-outline btn-primary" on:click={signInWithGoogle}>
+				<button class="btn btn-outline" on:click={signInWithGoogle}>
 					<Google class="w-4 h-4" />
 					Continue with Google</button
 				>
-				<button class="btn btn-outline btn-primary" on:click={signInWithGithub}>
+				<button class="btn btn-outline" on:click={signInWithGithub}>
 					<GitHub class="w-5 h-5" />
 					Continue with GitHub</button
 				>

@@ -1,11 +1,17 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+
 	import type { ProjectImpl } from '$lib/models/project';
 	import { getProjectFromFirebase } from '$lib/storage/project';
 	import { ROUTE_DASHBOARD } from '$lib/utils/constants';
 	import { projectsMapStore } from '$lib/utils/store';
-	import { onMount } from 'svelte';
+
+	import Comments from './Comments.svelte';
+	import Activities from './Activities.svelte';
+	import ShareModal from './ShareModal.svelte';
+	import PublishModal from './PublishModal.svelte';
 
 	let project: ProjectImpl | undefined;
 
@@ -27,7 +33,6 @@
 	});
 </script>
 
-<!-- Header -->
 <div class="flex h-screen w-screen flex-col">
 	<!-- Header -->
 	<div class="navbar bg-base-100">
@@ -38,18 +43,34 @@
 		</div>
 
 		<div class="navbar-end space-x-2">
-			<a class="btn btn-outline">Share</a>
-			<a class="btn btn-primary">Publish</a>
+			<ShareModal />
+			<PublishModal />
 		</div>
 	</div>
 	<!-- Main content -->
-	<div class="flex flex-col sm:flex-row bg-gray-200 flex-grow overflow-auto">
+	<div class="flex flex-col sm:flex-row flex-grow overflow-auto">
 		<!-- Screenshot -->
-		<div class="sm:w-full flex flex-grow h-full bg-red-100">Screenshot</div>
+		<div class="sm:w-full flex flex-grow h-full border items-center justify-center">
+			{#if project?.previewImage}
+				<img
+					src={project?.previewImage}
+					alt="Screenshot"
+					class="w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
+				/>
+			{:else}
+				<div
+					class="w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
+				></div>
+			{/if}
+		</div>
 		<!-- Sidebar/ comments + activities -->
-		<div class="flex flex-col w-full sm:max-w-96 h-full bg-gray-100">
-			<div class="h-1/2 w-full bg-green-100">Comments</div>
-			<div class="h-1/2 w-full bg-green-200">Activities</div>
+		<div class="flex flex-col w-full sm:max-w-96 h-full text-sm">
+			<div class="border h-1/2 w-full">
+				<Activities changeSets={project?.changeSets} />
+			</div>
+			<div class="border h-1/2 w-full">
+				<Comments comments={project?.comments} />
+			</div>
 		</div>
 	</div>
 </div>
