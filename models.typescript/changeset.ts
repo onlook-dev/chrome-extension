@@ -9,7 +9,7 @@ export interface ChangeSet {
     eventData: EventMetadata[];
     visible: boolean;
 
-    // TODO: How to handle content changes + structure changes
+    // TODO: Handle content changes + structure changes
     styleChanges: StyleChange[];
 }
 
