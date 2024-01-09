@@ -1,0 +1,39 @@
+import {
+	PUBLIC_TEST_API_KEY,
+	PUBLIC_TEST_AUTH_DOMAIN,
+	PUBLIC_TEST_PROJECT_ID,
+	PUBLIC_TEST_STORAGE_BUCKET,
+	PUBLIC_TEST_MESSAGE_SENDER_ID,
+	PUBLIC_TEST_APP_ID,
+	PUBLIC_TEST_MEASUREMENT_ID,
+	PUBLIC_PROD_API_KEY,
+	PUBLIC_PROD_AUTH_DOMAIN,
+	PUBLIC_PROD_PROJECT_ID,
+	PUBLIC_PROD_STORAGE_BUCKET,
+	PUBLIC_PROD_MESSAGE_SENDER_ID,
+	PUBLIC_PROD_APP_ID,
+	PUBLIC_PROD_MEASUREMENT_ID
+} from '$env/static/public';
+
+const testFirebaseConfig = {
+	apiKey: PUBLIC_TEST_API_KEY,
+	authDomain: PUBLIC_TEST_AUTH_DOMAIN,
+	projectId: PUBLIC_TEST_PROJECT_ID,
+	storageBucket: PUBLIC_TEST_STORAGE_BUCKET,
+	messagingSenderId: PUBLIC_TEST_MESSAGE_SENDER_ID,
+	appId: PUBLIC_TEST_APP_ID,
+	measurementId: PUBLIC_TEST_MEASUREMENT_ID
+};
+
+const prodFirebaseConfig = {
+	apiKey: PUBLIC_PROD_API_KEY,
+	authDomain: PUBLIC_PROD_AUTH_DOMAIN,
+	projectId: PUBLIC_PROD_PROJECT_ID,
+	storageBucket: PUBLIC_PROD_STORAGE_BUCKET,
+	messagingSenderId: PUBLIC_PROD_MESSAGE_SENDER_ID,
+	appId: PUBLIC_PROD_APP_ID,
+	measurementId: PUBLIC_PROD_MEASUREMENT_ID
+};
+
+export const isDevelopment = process.env.NODE_ENV === 'development';
+export const firebaseConfig = isDevelopment ? testFirebaseConfig : prodFirebaseConfig;
