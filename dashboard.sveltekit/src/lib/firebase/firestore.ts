@@ -23,7 +23,7 @@ export async function postObjectToCollection(
 }
 
 export async function getObjectFromCollection(collectionId: string, objectId: string) {
-	const docRef = doc(store, collectionId, objectId);
+	const docRef = await doc(store, collectionId, objectId);
 	const docSnap = await getDoc(docRef);
 
 	if (docSnap.exists()) {

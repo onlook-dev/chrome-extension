@@ -9,6 +9,7 @@ export async function getUserFromFirebase(userId: string): Promise<UserImpl | un
 	console.log('Fetching firebase user');
 	const userData = await getObjectFromCollection(FIREBASE_COLLECTION_USERS, userId);
 	if (!userData) return undefined;
+	console.log('Got firebase user');
 	return new UserImpl(userData as UserImpl);
 }
 

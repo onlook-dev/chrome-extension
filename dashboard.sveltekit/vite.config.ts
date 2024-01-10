@@ -8,5 +8,10 @@ export default defineConfig({
 		Icons({
 			compiler: 'svelte'
 		})
-	]
+	],
+	resolve: {
+		alias: {
+			$models: '../models.typescript'
+		}
+	}
 });
