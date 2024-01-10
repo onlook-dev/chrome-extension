@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { sveltekit } from '@sveltejs/kit/vite';
+import path from 'path';
 import Icons from 'unplugin-icons/vite';
 
 export default defineConfig({
@@ -11,9 +12,7 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
-			$lib: '/src/lib',
-			$utils: '/src/lib/utils',
-			$models: '/../models'
+			$models: path.resolve(__dirname, '../models') // Go up one level and then into models
 		}
 	}
 });

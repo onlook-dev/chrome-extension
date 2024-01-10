@@ -31,7 +31,7 @@ export default defineConfig({
 		alias: {
 			$lib: '/src/lib',
 			$utils: '/src/lib/utils',
-			$models: '/../models.typescript'
+			$models: '/../models'
 		}
 	}
 })

@@ -1,8 +1,8 @@
 export enum Tier {
-    FREE = "FREE",
-    PRO = "PRO",
-    ORG = "ORG",
-    ENTERPRISE = "ENTERPRISE",
+    BASIC = "Basic",
+    PRO = "Pro",
+    ORG = "Organization",
+    ENTERPRISE = "Enterprise",
 }
 
 export interface Pricing {

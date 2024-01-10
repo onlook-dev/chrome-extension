@@ -7,11 +7,6 @@ const config = {
 	// for more information about preprocessors
 	preprocess: [vitePreprocess()],
 	kit: {
-		alias: {
-			$lib: '/src/lib',
-			$utils: '/src/lib/utils',
-			$models: '/../models'
-		},
 		adapter: adapter()
 	}
 };
