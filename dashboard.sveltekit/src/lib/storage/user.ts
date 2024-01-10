@@ -1,4 +1,4 @@
-import { getObjectFromCollection } from '$lib/firebase/firestore';
+import { getObjectFromCollection, postObjectToCollection } from '$lib/firebase/firestore';
 import { UserImpl } from '$lib/models/user';
 import { FIREBASE_COLLECTION_USERS } from '$lib/utils/constants';
 import { userStore } from '$lib/utils/store';
@@ -10,6 +10,13 @@ export async function getUserFromFirebase(userId: string): Promise<UserImpl | un
 	const userData = await getObjectFromCollection(FIREBASE_COLLECTION_USERS, userId);
 	if (!userData) return undefined;
 	return new UserImpl(userData as UserImpl);
+}
+
+export async function postUserToFirebase(user: UserImpl) {
+	console.log('Posting firebase user');
+	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_USERS, user, user.id);
+	console.log('Posted firebase user with ID', objectId);
+	return;
 }
 
 export async function setStoreUser(authUser: User) {
@@ -29,6 +36,7 @@ export async function setStoreUser(authUser: User) {
 					sharedProjectPreviews: [],
 					version: 0
 				});
+				postUserToFirebase(user);
 			}
 			userStore.set(user);
 		});
