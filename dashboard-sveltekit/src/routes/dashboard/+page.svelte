@@ -10,8 +10,14 @@
 	import { ROUTE_SIGNIN } from '$lib/utils/constants';
 	import { goto } from '$app/navigation';
 
+	let activeItem = '';
+
 	let user: UserImpl | null;
 	const dashboardDrawerId = 'dashboard-drawer';
+
+	function setActive(item: string) {
+		activeItem = item;
+	}
 
 	onMount(() => {
 		auth.onAuthStateChanged((user) => {
@@ -62,10 +68,22 @@
 			<ul class="menu p-2 space-y-2">
 				<!-- TODO: Make responsive -->
 				<li>
-					<a class="active font-semibold">My Projects</a>
+					<button
+						class="font-semibold {activeItem === 'My Teams' ? 'active' : ''}"
+						on:click={() => setActive('My Teams')}>My Teams</button
+					>
 				</li>
 				<li>
-					<a class="">Shared with me</a>
+					<button
+						class="font-semibold {activeItem === 'My Projects' ? 'active' : ''}"
+						on:click={() => setActive('My Projects')}>My Projects</button
+					>
+				</li>
+				<li>
+					<button
+						class="font-semibold{activeItem === 'Shared with me' ? 'active' : ''}"
+						on:click={() => setActive('Shared with me')}>Shared with me</button
+					>
 				</li>
 			</ul>
 		</ul>

@@ -3,6 +3,7 @@
 	import { signOut } from '$lib/firebase/auth';
 	import { getInitials } from '$lib/models/comment';
 	import ChevronDownIcon from '~icons/mdi/chevron-down';
+	import PlanModal from './PlanModal.svelte';
 
 	export let user: UserImpl | null;
 </script>
@@ -27,13 +28,16 @@
 		</div>
 		<ChevronDownIcon class="w-4 h-4" />
 	</div>
-	<ul tabindex="0" class="dropdown-content z-[1] menu shadow bg-base-100 rounded-box w-52">
-		<li><a>Profile</a></li>
+	<ul class="dropdown-content z-[1] menu shadow bg-base-100 rounded-box w-52">
+		<li><button>Profile</button></li>
 		<li>
-			<a>Settings</a>
+			<button>Settings</button>
+		</li>
+		<li>
+			<PlanModal />
 		</li>
 		<li class="text-red-600">
-			<a on:click={signOut}>Sign out</a>
+			<button on:click={signOut}>Sign out</button>
 		</li>
 	</ul>
 </div>

@@ -59,3 +59,10 @@
 		<button>close</button>
 	</form>
 </dialog>
+
+<style>
+	#share-modal {
+		transition: none !important;
+		animation: none !important;
+	}
+</style>
