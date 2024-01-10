@@ -9,7 +9,6 @@
 	import { auth } from '$lib/firebase/firebase';
 	import { ROUTE_SIGNIN } from '$lib/utils/constants';
 	import { goto } from '$app/navigation';
-	import PlanModal from './PlanModal.svelte';
 
 	let activeItem = '';
 
@@ -82,12 +81,9 @@
 				</li>
 				<li>
 					<button
-						class={activeItem === 'Shared with me' ? 'active' : ''}
+						class="font-semibold{activeItem === 'Shared with me' ? 'active' : ''}"
 						on:click={() => setActive('Shared with me')}>Shared with me</button
 					>
-				</li>
-				<li>
-					<PlanModal />
 				</li>
 			</ul>
 		</ul>

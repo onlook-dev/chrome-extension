@@ -3,6 +3,7 @@
 	import { signOut } from '$lib/firebase/auth';
 	import { getInitials } from '$lib/models/comment';
 	import ChevronDownIcon from '~icons/mdi/chevron-down';
+	import PlanModal from './PlanModal.svelte';
 
 	export let user: UserImpl | null;
 </script>
@@ -31,6 +32,9 @@
 		<li><button>Profile</button></li>
 		<li>
 			<button>Settings</button>
+		</li>
+		<li>
+			<PlanModal />
 		</li>
 		<li class="text-red-600">
 			<button on:click={signOut}>Sign out</button>

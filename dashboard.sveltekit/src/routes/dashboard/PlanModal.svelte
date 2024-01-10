@@ -1,7 +1,7 @@
 <script lang="ts">
 	const modalId = 'plan-modal';
 	const teamName = 'Team name';
-	import { Tier } from '../../../../models.typescript/pricing';
+	import { Tier } from '../../../../models/pricing';
 
 	let plan = Tier.BASIC;
 
@@ -33,8 +33,8 @@
 	}
 </script>
 
-<button class="font-semibold" on:click={showModal}>
-	Plan: {plan}
+<button on:click={showModal}>
+	Plan ({plan})
 </button>
 
 <dialog id={modalId} class="modal fixed inset-0 flex items-center justify-center">
@@ -63,3 +63,10 @@
 		<button>close</button>
 	</form>
 </dialog>
+
+<style>
+	#plan-modal {
+		transition: none !important;
+		animation: none !important;
+	}
+</style>
