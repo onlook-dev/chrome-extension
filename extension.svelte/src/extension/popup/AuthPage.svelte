@@ -1,24 +1,41 @@
 <script>
-	import { sendAuthRequest } from '$lib/onlook/messaging'
+	import { sendAuthRequest } from '$lib/utils/messaging'
+	import { onMount } from 'svelte'
 	let loggingIn = false
+
+	onMount(() => {
+		signInWithDashboard()
+	})
+
+	function signInWithDashboard() {
+		loggingIn = true
+		sendAuthRequest()
+	}
 </script>
 
-<main class="flex flex-col h-screen py-2">
-	<div class="justify-center items-center h-96 flex flex-col text-center space-y-1">
-		<div class="bg-black rounded-full w-8 h-8" />
-		<h1 class="text-sm font-semibold">Get started with Onlook</h1>
+<main class="flex flex-col h-screen p-2 space-y-4">
+	<div class="flex flex-row items-start">
+		<div class="bg-black rounded-full h-4 w-4"></div>
+		<p class="ml-2">Onlook</p>
 	</div>
+	<div class="card-body text-center justify-center items-center space-y-4">
+		<!-- Black round -->
+		<h2 class="card-title justify-center">Welcome to onlook.dev</h2>
 
-	<button
-		class="btn btn-outline"
-		on:click={() => {
-			loggingIn = true
-			sendAuthRequest()
-		}}
-	>
-		{#if loggingIn}
-			<span class="loading loading-spinner"></span>
-		{/if}
-		Sign in
-	</button>
+		<div class="form-control space-y-4">
+			<button
+				class="btn btn-md btn-outline w-52"
+				on:click={() => {
+					signInWithDashboard()
+				}}
+			>
+				{#if loggingIn}
+					<span class="loading loading-spinner"></span>
+					Signing in
+				{:else}
+					Sign in
+				{/if}
+			</button>
+		</div>
+	</div>
 </main>

@@ -1,6 +1,6 @@
 <!-- Router.svelte -->
 <script>
-	import { userStore, routeStore } from '$lib/onlook/popup/store'
+	import { userStore, routeStore } from '$lib/popup/store'
 	import AuthPage from './AuthPage.svelte'
 	import ProjectsPage from './ProjectsPage.svelte'
 </script>

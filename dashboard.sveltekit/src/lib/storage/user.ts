@@ -1,6 +1,6 @@
 import { getObjectFromCollection, postObjectToCollection } from '$lib/firebase/firestore';
 import { UserImpl } from '$lib/models/user';
-import { FIREBASE_COLLECTION_USERS } from '$lib/utils/constants';
+import { DASHBOARD_AUTH, FIREBASE_COLLECTION_USERS } from '$lib/utils/constants';
 import { userStore } from '$lib/utils/store';
 import type { User } from 'firebase/auth';
 import { get } from 'svelte/store';
@@ -20,6 +20,15 @@ export async function postUserToFirebase(user: UserImpl) {
 }
 
 export async function setStoreUser(authUser: User) {
+	// Send authUser to extension
+	window.postMessage(
+		{
+			type: DASHBOARD_AUTH,
+			user: JSON.stringify(authUser.toJSON())
+		},
+		window.location.origin
+	);
+
 	// Fetch from remote if no user in store
 	if (!get(userStore)) {
 		getUserFromFirebase(authUser.uid).then((user) => {
@@ -38,6 +47,7 @@ export async function setStoreUser(authUser: User) {
 				});
 				postUserToFirebase(user);
 			}
+
 			userStore.set(user);
 		});
 	}

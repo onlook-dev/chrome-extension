@@ -6,7 +6,7 @@ export const ROUTE_DASHBOARD = '/dashboard';
 export const ROUTE_PROJECTS = `${ROUTE_DASHBOARD}/projects`;
 
 // Messaging
-export const AUTHENTICATED_WITH_CONSOLE = 'AUTHENTICATED_WITH_CONSOLE';
+export const DASHBOARD_AUTH = 'DASHBOARD_AUTH'; // DO NOT CHANGE UNLESS CORRESPONDING EXTENSION CODE IS CHANGED
 
 // Links
 export const LINK_DISCORD = 'https://discord.gg/vrEkdkj7';
