@@ -1,21 +1,20 @@
-import { collection, addDoc, doc, getDoc, getFirestore, setDoc } from 'firebase/firestore';
-import { app } from './firebase';
+import { collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
+import { store } from './firebase';
 
 export async function postObjectToCollection(
 	collectionId: string,
 	object: unknown,
 	objectId?: string
 ) {
-	const firestore = getFirestore(app);
 	try {
 		const jsonObj = JSON.parse(JSON.stringify(object));
 		if (objectId) {
 			// Preset ID
-			await setDoc(doc(firestore, collectionId, objectId), jsonObj, { merge: true });
+			await setDoc(doc(store, collectionId, objectId), jsonObj, { merge: true });
 			return objectId;
 		} else {
 			// Auto-generate ID
-			const docRef = await addDoc(collection(firestore, collectionId), jsonObj);
+			const docRef = await addDoc(collection(store, collectionId), jsonObj);
 			return docRef.id;
 		}
 	} catch (e) {
@@ -24,8 +23,7 @@ export async function postObjectToCollection(
 }
 
 export async function getObjectFromCollection(collectionId: string, objectId: string) {
-	const firestore = getFirestore(app);
-	const docRef = doc(firestore, collectionId, objectId);
+	const docRef = doc(store, collectionId, objectId);
 	const docSnap = await getDoc(docRef);
 
 	if (docSnap.exists()) {
