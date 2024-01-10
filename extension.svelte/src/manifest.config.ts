@@ -31,7 +31,8 @@ export default defineManifest(async env => ({
 	],
 	background: {
 		service_worker: 'src/extension/background/index.ts',
-		persistent: true
+		persistent: true,
+		type: "module"
 	},
 	action: {
 		default_popup: 'src/extension/popup/popup.html',
@@ -42,14 +43,23 @@ export default defineManifest(async env => ({
 			'128': 'src/assets/icons/icon-active-128.png'
 		}
 	},
-	oauth2: {
-		client_id: '734955546377-att7ia8ufhmr80l0hgonsjd3tdd50sbn.apps.googleusercontent.com',
-		scopes: [
-			'https://www.googleapis.com/auth/userinfo.email',
-			'https://www.googleapis.com/auth/userinfo.profile'
-		]
+	web_accessible_resources: [
+		{
+			resources: ['src/lib/visbug/tuts/*.gif', 'src/lib/visbug/toolbar/*'],
+			matches: ['<all_urls>']
+		}
+	],
+	commands: {
+		_execute_browser_action: {
+			suggested_key: {
+				windows: 'Alt+Shift+D',
+				mac: 'Alt+Shift+D',
+				chromeos: 'Alt+Shift+D',
+				linux: 'Alt+Shift+D'
+			}
+		}
 	},
 	key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv18eK1MhBgVx6W0HGq+OtRHZQl9AiiAcddgTqfXUSFw8XSVCCvfvlbUk4zccEmk/FIXHYiE4Zq31RqMwzJXSdM49jAvQgqRftAvSfSZ25qrmfAicQmotN48fKu7C50zLMNytyYZtVVpdZJTfmONVTtbQ+N3g3XregUlbrjb9ywH/UsP4wdw5iWqyYigpJM3BjU2u304c3tkxJjb5pdbtCdT1O6oYLfuTNLzcnRVVQOdb2/LwGLac6ZgNof5xkNrmdldAU/a5Q+2pfgv4f5VaR9Qny/cJIgj+f3nzn2OqtRVWp3ujBDfxZWFCtdKio66ADRgJ3m/UushMo1LThtnRcQIDAQAB',
 	host_permissions: ['<all_urls>'],
-	permissions: ['storage', 'system.display'] as chrome.runtime.ManifestPermissions[]
+	permissions: ['storage', 'activeTab', 'contextMenus', 'scripting'] as chrome.runtime.ManifestPermissions[]
 }))
