@@ -30,7 +30,8 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			$lib: '/src/lib',
-			$utils: '/src/lib/utils'
+			$utils: '/src/lib/utils',
+			$models: '/../models.typescript'
 		}
 	}
 })

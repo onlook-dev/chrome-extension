@@ -47,3 +47,8 @@ export const [sendToggleVigbug, toggleVisbugStream] = getExtendedMessages<void>(
 	'TOGGLE_VISBUG',
 	MessageReceiver.BACKGROUND
 )
+
+export const [sendAuthRequest, authRequestStream] = getExtendedMessages<void>(
+	'REQUEST_AUTH',
+	MessageReceiver.BACKGROUND
+)
