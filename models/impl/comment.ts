@@ -1,43 +1,27 @@
-import type { EventMetadataImpl } from './metadata';
-import type { UserImpl } from './user';
-
-interface Comment {
-	id: string;
-	text?: string;
-	media: CommentMediaImpl[];
-	author: UserImpl;
-	metadata: EventMetadataImpl[];
-	timestamp: Date;
-}
-
-interface CommentMedia {
-	type: CommentMediaType;
-	localUrl?: string;
-	remoteUrl?: string;
-	blob?: Blob;
-}
-
-export enum CommentMediaType {
-	IMAGE = 'image',
-	VIDEO = 'video',
-	FILE = 'file'
-}
+import type { Comment, CommentMedia, CommentMediaType } from '$models/comment';
+import type { EventMetadata } from '$models/eventData';
 
 export class CommentImpl implements Comment {
 	id: string;
+	userId: string;
+	projectId: string;
 	text?: string;
-	media: CommentMediaImpl[];
-	author: UserImpl;
-	metadata: EventMetadataImpl[];
+	media: CommentMedia[];
+	metadata: EventMetadata[];
 	timestamp: Date;
+	open: boolean;
+	thread: Comment[];
 
-	constructor({ id, text, media, author, metadata, timestamp }: Comment) {
+	constructor({ id, userId, projectId, text, metadata, media, timestamp, open, thread }: Comment) {
 		this.id = id;
+		this.userId = userId;
+		this.projectId = projectId;
 		this.text = text;
-		this.media = media;
-		this.author = author;
 		this.metadata = metadata;
+		this.media = media;
 		this.timestamp = timestamp;
+		this.open = open;
+		this.thread = thread;
 	}
 }
 

@@ -1,8 +1,8 @@
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, type User } from 'firebase/auth'
 import { auth } from './firebase'
 import { UserImpl as FirebaseUserImpl } from '@firebase/auth/internal'
-import { userStore } from '../popup/store'
-import { setStoreUser } from '../storage/user'
+import { setBucketUser } from '../storage/user'
+import { userBucket } from '$lib/utils/localstorage'
 
 // Use firebase user from dashboard
 export function signInUser(userJson: string) {
@@ -14,16 +14,16 @@ export function signInUser(userJson: string) {
 			alert(`Sign in failed: ${JSON.stringify(err)}`)
 		})
 		.finally(() => {
-			setStoreUser(user)
+			setBucketUser(user)
 		})
 }
 
 export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged(user => {
 		if (user) {
-			setStoreUser(user)
+			setBucketUser(user)
 		} else {
-			userStore.set(undefined)
+			userBucket.clear()
 		}
 	})
 }

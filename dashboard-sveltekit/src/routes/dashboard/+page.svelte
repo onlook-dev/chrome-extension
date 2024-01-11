@@ -1,17 +1,18 @@
 <script lang="ts">
-	import type { UserImpl } from '$lib/models/user';
-	import { projectsMapStore, userStore } from '$lib/utils/store';
 	import { onMount } from 'svelte';
-	import SideBarLine from '~icons/ri/side-bar-line';
-	import AvatarDropdown from './AvatarDropdown.svelte';
-	import ProjectsView from './ProjectsView.svelte';
-	import { getProjectFromFirebase } from '$lib/storage/project';
-	import { auth } from '$lib/firebase/firebase';
-	import { ROUTE_SIGNIN } from '$lib/utils/constants';
 	import { goto } from '$app/navigation';
 
-	let activeItem = '';
+	import { auth } from '$lib/firebase/firebase';
+	import type { UserImpl } from '$models/impl/user';
+	import { projectsMapStore, userStore } from '$lib/utils/store';
+	import { getProjectFromFirebase } from '$lib/storage/project';
+	import { ROUTE_SIGNIN } from '$lib/utils/constants';
 
+	import AvatarDropdown from './AvatarDropdown.svelte';
+	import ProjectsView from './ProjectsView.svelte';
+	import SideBarLine from '~icons/ri/side-bar-line';
+
+	let activeItem = 'My Teams';
 	let user: UserImpl | null;
 	const dashboardDrawerId = 'dashboard-drawer';
 
@@ -28,6 +29,7 @@
 
 		userStore.subscribe((storeUser) => {
 			if (!storeUser) return;
+			// TODO: Move over to teams
 			console.log('User updated');
 			user = storeUser;
 			user?.projectIds?.forEach((projectId) => {
@@ -69,19 +71,19 @@
 				<!-- TODO: Make responsive -->
 				<li>
 					<button
-						class="font-semibold {activeItem === 'My Teams' ? 'active' : ''}"
+						class={activeItem === 'My Teams' ? 'active font-semibold ' : ''}
 						on:click={() => setActive('My Teams')}>My Teams</button
 					>
 				</li>
 				<li>
 					<button
-						class="font-semibold {activeItem === 'My Projects' ? 'active' : ''}"
+						class={activeItem === 'My Projects' ? 'active font-semibold ' : ''}
 						on:click={() => setActive('My Projects')}>My Projects</button
 					>
 				</li>
 				<li>
 					<button
-						class="font-semibold{activeItem === 'Shared with me' ? 'active' : ''}"
+						class=" {activeItem === 'Shared with me' ? 'active font-semibold' : ''}"
 						on:click={() => setActive('Shared with me')}>Shared with me</button
 					>
 				</li>

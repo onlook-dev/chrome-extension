@@ -1,12 +1,12 @@
 <script>
-	import { userBucket } from '$lib/utils/localstorage'
+	import { authUserBucket } from '$lib/utils/localstorage'
 	import { sendAuthRequest } from '$lib/utils/messaging'
 	import { onMount } from 'svelte'
 	let loggingIn = false
 
 	onMount(() => {
 		loggingIn = true
-		userBucket.get().then(user => {
+		authUserBucket.get().then(user => {
 			if (!user) {
 				sendAuthRequest()
 			}

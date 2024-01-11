@@ -1,57 +1,40 @@
-import { UserImpl } from './user';
 import { CommentImpl } from './comment';
 import { ChangeSetImpl } from './changeset';
-
-// A project is a set of feedback, comments, and style changes
-interface ProjectPreview {
-	id: string;
-	name: string;
-	owner: string;
-}
+import type { Project, ProjectPreview } from '$models/project';
+import type { HostData } from '$models/hostData';
+import type { ChangeSet } from '$models/changeset';
+import type { Comment } from '$models/comment';
 
 export class ProjectPreviewImpl implements ProjectPreview {
 	id: string;
 	name: string;
-	owner: string;
+	teamId: string;
 
-	constructor({ id, name, owner }: ProjectPreview) {
+	constructor({ id, name, teamId }: ProjectPreview) {
 		this.id = id;
 		this.name = name;
-		this.owner = owner;
+		this.teamId = teamId;
 	}
 }
 
-interface Project {
+export class ProjectImpl implements Project {
 	id: string;
 	name: string;
-	author: UserImpl;
-	host: string;
-	changeSets: ChangeSetImpl[];
-	comments: CommentImpl[];
+	teamId: string;
+	hostUrl: string;
+	changeSets: ChangeSet[];
+	comments: Comment[];
+	hostData: HostData;
 	version: number;
-	previewImage: string | undefined;
-}
 
-// TODO: Changeset should be edited if selector already exists.
-
-export class ProjectImpl implements Project {
-	readonly id: string;
-	name: string;
-	readonly author: UserImpl;
-
-	host: string;
-	changeSets: ChangeSetImpl[];
-	comments: CommentImpl[];
-	version: number;
-	previewImage: string | undefined;
-
-	constructor({ id, name, author, host, changeSets, comments, version }: Project) {
+	constructor({ id, name, teamId, hostUrl, changeSets, comments, hostData, version }: Project) {
 		this.id = id;
 		this.name = name;
-		this.author = author;
-		this.host = host;
-		this.changeSets = changeSets?.map((changeSet) => new ChangeSetImpl(changeSet));
-		this.comments = comments?.map((comment) => new CommentImpl(comment));
+		this.teamId = teamId;
+		this.hostUrl = hostUrl;
+		this.changeSets = changeSets;
+		this.comments = comments;
+		this.hostData = hostData;
 		this.version = version;
 	}
 
@@ -104,7 +87,7 @@ export class ProjectImpl implements Project {
 		return new ProjectPreviewImpl({
 			id: this.id,
 			name: this.name,
-			owner: this.author.name
+			teamId: this.teamId
 		});
 	}
 }

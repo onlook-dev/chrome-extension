@@ -1,7 +1,6 @@
-import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { UserImpl } from '$lib/models/user'
 import { userStore } from '$lib/popup/store'
-import { userBucket } from '$lib/utils/localstorage'
+import { authUserBucket, userBucket } from '$lib/utils/localstorage'
 import Popup from './Popup.svelte'
 import '/src/app.css'
 
@@ -22,21 +21,8 @@ function render() {
 	}
 }
 
-function setupListeners() {
-	// Listen for auth changes
-	subscribeToFirebaseAuthChanges()
-
-	// Listen for user changes
-	userBucket.valueStream.subscribe(({ user, authUser }) => {
-		// If user state exists, use it instead
-		if (user) {
-			userStore.set(new UserImpl(user))
-		}
-		if (authUser) {
-			signInUser(authUser)
-		}
-	})
-}
+// We shouldn't authenticate to Firebase on the popup, should go through background script
+function setupListeners() {}
 
 try {
 	setupListeners()
