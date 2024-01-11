@@ -14,3 +14,4 @@ export const LINK_DISCORD = 'https://discord.gg/vrEkdkj7';
 // Firestore collections
 export const FIREBASE_COLLECTION_PROJECTS = 'projects';
 export const FIREBASE_COLLECTION_USERS = 'users';
+export const FIREBASE_COLLECTION_TEAMS = 'teams';
