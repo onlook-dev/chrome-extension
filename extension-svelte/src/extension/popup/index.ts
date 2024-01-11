@@ -18,7 +18,11 @@ function render() {
 	}
 }
 
+// We shouldn't authenticate to Firebase on the popup, should go through background script
+function setupListeners() {}
+
 try {
+	setupListeners()
 	document.addEventListener('DOMContentLoaded', render)
 } catch (error) {
 	console.error(error)

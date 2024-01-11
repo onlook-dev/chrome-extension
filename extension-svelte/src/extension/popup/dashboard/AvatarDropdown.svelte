@@ -1,11 +1,10 @@
 <script lang="ts">
-	import type { User } from '$models/user';
-	import { signOut } from '$lib/firebase/auth';
-	import { getInitials } from '$models/comment';
-	import ChevronDownIcon from '~icons/mdi/chevron-down';
-	import PlanModal from './PlanModal.svelte';
+	import type { User } from '$models/user'
+	import { signOut } from '$lib/firebase/auth'
+	import { getInitials } from '$models/comment'
+	import ChevronDownIcon from '~icons/mdi/chevron-down'
 
-	export let user: User | null;
+	export let user: User | undefined
 </script>
 
 <div class="dropdown dropdown-bottom">
@@ -32,9 +31,6 @@
 		<li><button>Profile</button></li>
 		<li>
 			<button>Settings</button>
-		</li>
-		<li>
-			<PlanModal />
 		</li>
 		<li class="text-red-600">
 			<button on:click={signOut}>Sign out</button>

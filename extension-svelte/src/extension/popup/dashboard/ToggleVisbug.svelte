@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { sendToggleVigbug } from '$lib/onlook/messaging'
+	import { sendToggleVigbug } from '$lib/utils/messaging'
 
 	function toggleVigbug(event: MouseEvent) {
 		sendToggleVigbug()

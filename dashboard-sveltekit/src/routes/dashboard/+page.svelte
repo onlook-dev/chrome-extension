@@ -1,25 +1,22 @@
 <script lang="ts">
-	import type { UserImpl } from '$lib/models/user';
-	import { projectsMapStore, userStore } from '$lib/utils/store';
 	import { onMount } from 'svelte';
-	import SideBarLine from '~icons/ri/side-bar-line';
-	import AvatarDropdown from './AvatarDropdown.svelte';
-	import ProjectsView from './ProjectsView.svelte';
-	import { getProjectFromFirebase } from '$lib/storage/project';
-	import { auth } from '$lib/firebase/firebase';
-	import { ROUTE_SIGNIN } from '$lib/utils/constants';
 	import { goto } from '$app/navigation';
 
-	let activeItem = '';
+	import { auth } from '$lib/firebase/firebase';
+	import { ROUTE_SIGNIN } from '$lib/utils/constants';
+	import { teamsMapStore, userStore } from '$lib/utils/store';
+	import { getTeamFromFirebase } from '$lib/storage/team';
+	import type { User } from '$models/user';
 
-	let user: UserImpl | null;
+	import AvatarDropdown from './AvatarDropdown.svelte';
+	import ProjectsView from './ProjectsView.svelte';
+	import SideBarLine from '~icons/ri/side-bar-line';
+
+	let user: User | null;
+	let activeTeamId = '';
 	const dashboardDrawerId = 'dashboard-drawer';
 
-	function setActive(item: string) {
-		activeItem = item;
-	}
-
-	onMount(() => {
+	onMount(async () => {
 		auth.onAuthStateChanged((user) => {
 			if (!user) {
 				goto(ROUTE_SIGNIN);
@@ -28,14 +25,12 @@
 
 		userStore.subscribe((storeUser) => {
 			if (!storeUser) return;
-			console.log('User updated');
 			user = storeUser;
-			user?.projectIds?.forEach((projectId) => {
-				// Populate projects
-				if (!$projectsMapStore.has(projectId)) {
-					getProjectFromFirebase(projectId).then((project) => {
-						$projectsMapStore.set(projectId, project);
-						projectsMapStore.set($projectsMapStore);
+			activeTeamId = user?.teams[0] ?? '';
+			user?.teams.forEach((team) => {
+				if (!$teamsMapStore.has(team)) {
+					getTeamFromFirebase(team).then((firebaseTeam) => {
+						teamsMapStore.update((map) => map.set(team, firebaseTeam));
 					});
 				}
 			});
@@ -52,7 +47,7 @@
 
 		<!-- TODO: Change based on folder -->
 		<h1 class="text-2xl font-bold mb-4">My Projects</h1>
-		<ProjectsView />
+		<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
 	</div>
 
 	<!-- Drawer Sidebar -->
@@ -66,25 +61,18 @@
 
 			<!-- Project folder navigation -->
 			<ul class="menu p-2 space-y-2">
-				<!-- TODO: Make responsive -->
-				<li>
-					<button
-						class="font-semibold {activeItem === 'My Teams' ? 'active' : ''}"
-						on:click={() => setActive('My Teams')}>My Teams</button
-					>
-				</li>
-				<li>
-					<button
-						class="font-semibold {activeItem === 'My Projects' ? 'active' : ''}"
-						on:click={() => setActive('My Projects')}>My Projects</button
-					>
-				</li>
-				<li>
-					<button
-						class="font-semibold{activeItem === 'Shared with me' ? 'active' : ''}"
-						on:click={() => setActive('Shared with me')}>Shared with me</button
-					>
-				</li>
+				<!-- TODO: Make responsive with teamsMapStore-->
+				{#if user?.teams}
+					{#each user?.teams as team}
+						<li>
+							<button
+								class={activeTeamId === team ? 'active font-semibold ' : ''}
+								on:click={() => (activeTeamId = team)}
+								>{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}</button
+							>
+						</li>
+					{/each}
+				{/if}
 			</ul>
 		</ul>
 	</div>
