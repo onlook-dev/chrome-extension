@@ -1,15 +1,11 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { ROUTE_PROJECTS } from '$lib/utils/constants';
-	import { projectsMapStore } from '$lib/utils/store';
+	import type { ProjectImpl } from '$lib/models/project'
+	const projectsMap: Map<string, ProjectImpl> = new Map()
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
-	{#each $projectsMapStore.values() as project}
-		<a
-			on:click={() => goto(`${ROUTE_PROJECTS}/${project.id}`)}
-			class="rounded space-y-4 p-4 hover:shadow block"
-		>
+	{#each projectsMap.values() as project}
+		<a class="rounded space-y-4 p-4 hover:shadow block">
 			<figure class="">
 				<!-- TODO: Add preview image -->
 				{#if project.previewImage}
@@ -32,7 +28,7 @@
 		</a>
 	{/each}
 
-	{#if $projectsMapStore.size === 0}
+	{#if projectsMap.size === 0}
 		<!-- TODO: Add call to action -->
 		<div class="col-span-full mt-10">
 			<p class="text-center">No projects yet</p>

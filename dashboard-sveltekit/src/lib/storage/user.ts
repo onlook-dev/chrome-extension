@@ -1,26 +1,26 @@
 import { getObjectFromCollection, postObjectToCollection } from '$lib/firebase/firestore';
-import { UserImpl } from '$lib/models/user';
+import type { User } from '$models/user';
 import { DASHBOARD_AUTH, FIREBASE_COLLECTION_USERS } from '$lib/utils/constants';
 import { userStore } from '$lib/utils/store';
-import type { User } from 'firebase/auth';
+import type { User as FirebaseUser } from 'firebase/auth';
 import { get } from 'svelte/store';
 
-export async function getUserFromFirebase(userId: string): Promise<UserImpl | undefined> {
+export async function getUserFromFirebase(userId: string): Promise<User | undefined> {
 	console.log('Fetching firebase user');
 	const userData = await getObjectFromCollection(FIREBASE_COLLECTION_USERS, userId);
 	if (!userData) return undefined;
 	console.log('Got firebase user');
-	return new UserImpl(userData as UserImpl);
+	return userData as User;
 }
 
-export async function postUserToFirebase(user: UserImpl) {
+export async function postUserToFirebase(user: User) {
 	console.log('Posting firebase user');
 	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_USERS, user, user.id);
 	console.log('Posted firebase user with ID', objectId);
 	return;
 }
 
-export async function setStoreUser(authUser: User) {
+export async function setStoreUser(authUser: FirebaseUser) {
 	// Send authUser to extension
 	window.postMessage(
 		{
@@ -36,16 +36,13 @@ export async function setStoreUser(authUser: User) {
 			if (!user) {
 				console.log('Creating new user');
 				// If user doesn't exist, create new user
-				user = new UserImpl({
+				user = {
 					id: authUser.uid,
 					name: authUser.displayName ?? authUser.providerData[0].displayName ?? '',
 					email: authUser.email ?? '',
 					profileImage: authUser.photoURL ?? '',
-					projectIds: [],
-					projectPreviews: [],
-					sharedProjectPreviews: [],
-					version: 0
-				});
+					teams: []
+				} as User;
 				postUserToFirebase(user);
 			}
 

@@ -1,24 +1,24 @@
 <!-- Router.svelte -->
 <script>
-	import { userStore } from '$lib/popup/store'
 	import { onMount } from 'svelte'
-	import AuthPage from './AuthPage.svelte'
-	import ProjectsPage from './ProjectsPage.svelte'
+	import AuthPage from './auth/AuthPage.svelte'
+	import { authUserBucket } from '$lib/utils/localstorage'
+	import DashboardPage from './dashboard/DashboardPage.svelte'
 
+	let authenticated = false
 	onMount(() => {
 		// Get user from local storage
-		const user = localStorage.getItem('user')
-		if (user) {
-			userStore.set(JSON.parse(user))
-		}
+		authUserBucket.get().then(user => {
+			authenticated = user ? true : false
+		})
 	})
 </script>
 
 <div class="h-58">
-	{#if $userStore}
-		<ProjectsPage />
-	{:else}
+	{#if !authenticated}
 		<!-- Navigate to auth if user is not set -->
 		<AuthPage />
+	{:else}
+		<DashboardPage />
 	{/if}
 </div>
