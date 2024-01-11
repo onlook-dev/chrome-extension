@@ -8,7 +8,6 @@ import { setStoreUser } from '../storage/user'
 export function signInUser(userJson: string) {
 	const userData = JSON.parse(userJson)
 	const user: User = FirebaseUserImpl._fromJSON(auth as any, userData)
-
 	auth
 		.updateCurrentUser(user)
 		.catch(err => {
@@ -24,7 +23,7 @@ export function subscribeToFirebaseAuthChanges() {
 		if (user) {
 			setStoreUser(user)
 		} else {
-			userStore.set(null)
+			userStore.set(undefined)
 		}
 	})
 }

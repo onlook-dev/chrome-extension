@@ -5,8 +5,6 @@ import { getFirestore, type Firestore } from 'firebase/firestore'
 
 // Initialize Firebase only if it hasn't been initialized yet.
 // Don't export this to enforce initalization.
-
 const app: FirebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
-
 export const auth: Auth = getAuth(app)
 export const store: Firestore = getFirestore(app)

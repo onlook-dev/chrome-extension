@@ -9,7 +9,8 @@
 		"checkJs": true,
 		"isolatedModules": true,
 		"paths": {
-			"$*": ["./src/*"]
+			"$*": ["./src/*"],
+			"$models/*": ["../models/*"]
 		},
 		"strict": true
 	},
