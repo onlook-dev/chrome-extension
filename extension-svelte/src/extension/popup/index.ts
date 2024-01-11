@@ -1,6 +1,3 @@
-import { UserImpl } from '$lib/models/user'
-import { userStore } from '$lib/popup/store'
-import { authUserBucket, userBucket } from '$lib/utils/localstorage'
 import Popup from './Popup.svelte'
 import '/src/app.css'
 

@@ -2,13 +2,13 @@
 <script>
 	import { onMount } from 'svelte'
 	import AuthPage from './auth/AuthPage.svelte'
-	import { authUserBucket } from '$lib/utils/localstorage'
+	import { userBucket } from '$lib/utils/localstorage'
 	import DashboardPage from './dashboard/DashboardPage.svelte'
 
 	let authenticated = false
 	onMount(() => {
 		// Get user from local storage
-		authUserBucket.get().then(user => {
+		userBucket.valueStream.subscribe(({ user }) => {
 			authenticated = user ? true : false
 		})
 	})

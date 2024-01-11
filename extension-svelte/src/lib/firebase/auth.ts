@@ -2,7 +2,7 @@ import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, type User } fr
 import { auth } from './firebase'
 import { UserImpl as FirebaseUserImpl } from '@firebase/auth/internal'
 import { setBucketUser } from '../storage/user'
-import { userBucket } from '$lib/utils/localstorage'
+import { authUserBucket, userBucket } from '$lib/utils/localstorage'
 
 // Use firebase user from dashboard
 export function signInUser(userJson: string) {
@@ -51,8 +51,14 @@ export function signInWithGithub() {
 }
 
 export function signOut() {
-	auth.signOut().catch(error => {
-		// An error happened.
-		console.error(error)
-	})
+	auth
+		.signOut()
+		.catch(error => {
+			// An error happened.
+			console.error(error)
+		})
+		.finally(() => {
+			authUserBucket.clear()
+			userBucket.clear()
+		})
 }

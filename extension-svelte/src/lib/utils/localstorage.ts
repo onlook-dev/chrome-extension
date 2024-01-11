@@ -1,5 +1,5 @@
 import { getBucket } from '@extend-chrome/storage'
-import type { UserImpl } from '$lib/models/user'
+import type { User } from '$models/user'
 
 interface ExtensionState {
 	visbugActive: boolean
@@ -10,7 +10,7 @@ interface AuthUserState {
 }
 
 interface UserState {
-	user: UserImpl
+	user: User
 }
 
 export const stateBucket = getBucket<ExtensionState>('EXTENSION_STATE')
