@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { type EventMetadata } from "./eventData";
+=======
+import type { EventMetadata } from "./eventData";
+>>>>>>> new_models
 
 // All the changes that happen to an element when switched to another element
 export interface ChangeSet {

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 
-	import { UserImpl } from '$lib/models/user'
+	import type { User } from '$models/user'
 	import ProjectsView from './ProjectsView.svelte'
 	import AvatarDropdown from './AvatarDropdown.svelte'
 	import SideBarLine from '~icons/ri/side-bar-line'
 	import { userBucket } from '$lib/utils/localstorage'
 
-	let stateUser: UserImpl | undefined
+	let stateUser: User | undefined
 	let activeItem = 'My Teams'
 	const dashboardDrawerId = 'dashboard-drawer'
 
@@ -18,7 +18,7 @@
 	onMount(() => {
 		userBucket.valueStream.subscribe(({ user }) => {
 			if (user) {
-				stateUser = new UserImpl(user)
+				stateUser = user
 			}
 		})
 	})

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { UserImpl } from '$lib/models/user';
+	import type { User } from '$models/user';
 	import { signOut } from '$lib/firebase/auth';
-	import { getInitials } from '$lib/models/comment';
+	import { getInitials } from '$models/comment';
 	import ChevronDownIcon from '~icons/mdi/chevron-down';
 	import PlanModal from './PlanModal.svelte';
 
-	export let user: UserImpl | null;
+	export let user: User | null;
 </script>
 
 <div class="dropdown dropdown-bottom">
