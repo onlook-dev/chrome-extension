@@ -3,14 +3,14 @@
 	import { goto } from '$app/navigation';
 
 	import { auth } from '$lib/firebase/firebase';
-	import type { User } from '$models/user';
-	import { teamsMapStore, userStore } from '$lib/utils/store';
 	import { ROUTE_SIGNIN } from '$lib/utils/constants';
+	import { teamsMapStore, userStore } from '$lib/utils/store';
+	import { getTeamFromFirebase } from '$lib/storage/team';
+	import type { User } from '$models/user';
 
 	import AvatarDropdown from './AvatarDropdown.svelte';
 	import ProjectsView from './ProjectsView.svelte';
 	import SideBarLine from '~icons/ri/side-bar-line';
-	import { getTeamFromFirebase } from '$lib/storage/team';
 
 	let user: User | null;
 	let activeTeamId = '';
