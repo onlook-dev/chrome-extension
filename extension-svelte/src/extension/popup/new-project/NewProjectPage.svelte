@@ -9,20 +9,22 @@
 
 	let projectName = ''
 	let projectUrl = ''
+	let nameError = false
+	let urlError = false
 
 	function returnToDashboard() {
 		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
 	}
 
 	function createProject() {
-		if (!projectName) {
-			alert('Please enter a project name >:(')
+		nameError = !projectName
+		// TODO: validate url
+		urlError = !projectUrl
+
+		if (nameError || urlError) {
 			return
 		}
-		if (!projectUrl) {
-			alert('Please enter a project URL  >:(')
-			return
-		}
+
 		popupStateBucket.get().then(({ activeTeamId }) => {
 			const newProject = {
 				id: nanoid(),
@@ -58,8 +60,12 @@
 				bind:value={projectName}
 				type="text"
 				placeholder="My project"
-				class="input input-bordered w-full"
+				class="input input-bordered w-full {nameError && 'input-error'}"
 			/>
+
+			{#if nameError}
+				<p class="text-xs text-error">Project name is required</p>
+			{/if}
 		</div>
 
 		<div class="space-y-2">
@@ -68,8 +74,11 @@
 				bind:value={projectUrl}
 				type="url"
 				placeholder="https://onlook.dev"
-				class="input input-bordered w-full"
+				class="input input-bordered w-full {urlError && 'input-error'}"
 			/>
+			{#if urlError}
+				<p class="text-xs text-error">Please add a valid URL</p>
+			{/if}
 		</div>
 
 		<div class="modal-action space-x-4">

@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte'
 	import type { Project } from '$models/project'
 	import { projectsMapBucket, popupStateBucket, teamsMapBucket } from '$lib/utils/localstorage'
+	import { PopupRoutes } from '$lib/utils/constants'
 
 	let projectsMap: Map<string, Project> = new Map()
 
@@ -22,7 +23,12 @@
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
 	{#each projectsMap.values() as project}
-		<button class="rounded space-y-4 p-4 hover:shadow block">
+		<button
+			class="rounded space-y-4 p-4 hover:shadow block"
+			on:click={() => {
+				popupStateBucket.set({ activeRoute: PopupRoutes.PROJECT, activeProjectId: project.id })
+			}}
+		>
 			<figure class="">
 				<!-- TODO: Add preview image -->
 				{#if project.hostData?.previewImage}
@@ -36,14 +42,18 @@
 				{/if}
 			</figure>
 			<div class="flex items-center space-x-2">
-				<div class="avatar">
-					<div class="w-6 mask mask-circle">
-						<!-- <img src={project.author.profileImage} alt="Avatar of {project.author.name}" /> -->
+				<div class="avatar placeholder">
+					<div class="w-8 mask mask-circle">
+						{#if project.hostData?.favicon}
+							<img src={project.hostData.favicon} alt="Favicon of {project.hostUrl}" />
+						{:else}
+							<div class="bg-gray-100 rounded-full w-full h-full" />
+						{/if}
 					</div>
 				</div>
 				<div>
 					<p class="text-sm font-semibold">{project.name}</p>
-					<p class="text-xs opacity-70">{project.hostData}</p>
+					<p class="text-xs opacity-70">{project.hostUrl}</p>
 				</div>
 			</div>
 		</button>
