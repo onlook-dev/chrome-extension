@@ -1,0 +1,105 @@
+<script lang="ts">
+	import { Tier } from '$models/pricing';
+	import { teamsMapStore, userStore } from '$lib/utils/store';
+	import { Role, type Team } from '$models/team';
+	import { nanoid } from 'nanoid';
+	import { postUserToFirebase } from '$lib/storage/user';
+	import { postTeamToFirebase } from '$lib/storage/team';
+
+	let plan = Tier.BASIC;
+	const modalId = 'new-team-modal';
+	let teamName = '';
+
+	function createTeam() {
+		if (!$userStore) return;
+		const newTeam: Team = {
+			id: nanoid(),
+			name: teamName,
+			projectIds: [],
+			users: { [$userStore.id]: Role.ADMIN }
+		};
+
+		teamsMapStore.update((map) => map.set(newTeam.id, newTeam));
+		userStore.update((user) => {
+			if (!user) return user;
+			user.teams.push(newTeam.id);
+			return user;
+		});
+
+		// Save to firebase
+		postTeamToFirebase(newTeam);
+		postUserToFirebase($userStore);
+	}
+
+	function showModal() {
+		const modal = document.getElementById(modalId) as HTMLDialogElement;
+		if (modal) {
+			modal.showModal();
+			modal.addEventListener(
+				'click',
+				(event) => {
+					if (event.target === modal) {
+						closeModal();
+					}
+				},
+				{ once: true }
+			);
+		}
+	}
+
+	function closeModal() {
+		const modal = document.getElementById(modalId) as HTMLDialogElement;
+		if (modal) {
+			modal.close();
+		}
+	}
+</script>
+
+<button on:click={showModal}> + Create new team </button>
+
+<dialog id={modalId} class="modal fixed inset-0 flex items-center justify-center">
+	<div class="modal-box space-y-2">
+		<h3 class="font-bold text-lg mb-4">Create a new team</h3>
+
+		<div class="flex flex-col space-y-4">
+			<div class="space-y-2">
+				<span class="label-text">Team name</span>
+				<input
+					bind:value={teamName}
+					type="text"
+					placeholder="Team name"
+					class="input input-bordered w-full"
+				/>
+			</div>
+
+			<!-- TODO: Add plan -->
+			<div class="space-y-2">
+				<span class="label-text">Select a plan</span>
+				<select bind:value={plan} class="input input-bordered w-full">
+					<option value={Tier.BASIC}>{Tier.BASIC}</option>
+					<option value={Tier.PRO}>{Tier.PRO}</option>
+					<option value={Tier.ORG}>{Tier.ORG}</option>
+					<option value={Tier.ENTERPRISE}>{Tier.ENTERPRISE}</option>
+				</select>
+			</div>
+
+			<div class="modal-action">
+				<form method="dialog">
+					<!-- if there is a button in form, it will close the modal -->
+					<button class="btn" on:click={closeModal}>Cancel</button>
+					<button class="btn btn-primary" on:click={createTeam}>Create</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<form method="dialog" class="modal-backdrop">
+		<button>close</button>
+	</form>
+</dialog>
+
+<style>
+	#new-team-modal {
+		transition: none !important;
+		animation: none !important;
+	}
+</style>

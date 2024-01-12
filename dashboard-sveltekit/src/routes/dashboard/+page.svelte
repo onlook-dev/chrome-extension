@@ -11,6 +11,7 @@
 	import AvatarDropdown from './AvatarDropdown.svelte';
 	import ProjectsView from './ProjectsView.svelte';
 	import SideBarLine from '~icons/ri/side-bar-line';
+	import NewTeamModal from './NewTeamModal.svelte';
 
 	let user: User | null;
 	let activeTeamId = '';
@@ -46,7 +47,9 @@
 		<label for={dashboardDrawerId} class="btn drawer-button lg:hidden"><SideBarLine /></label>
 
 		<!-- TODO: Change based on folder -->
-		<h1 class="text-2xl font-bold mb-4">My Projects</h1>
+		<h1 class="text-2xl font-bold mb-4">
+			{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
+		</h1>
 		<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
 	</div>
 
@@ -68,11 +71,14 @@
 							<button
 								class={activeTeamId === team ? 'active font-semibold ' : ''}
 								on:click={() => (activeTeamId = team)}
-								>{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}</button
+								>{$teamsMapStore.get(team)?.name ?? 'Unknown team'}</button
 							>
 						</li>
 					{/each}
 				{/if}
+				<li>
+					<NewTeamModal />
+				</li>
 			</ul>
 		</ul>
 	</div>
