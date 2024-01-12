@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-
 	import type { User } from '$models/user'
+	import type { Team } from '$models/team'
+
+	import { userBucket, teamsMapBucket } from '$lib/utils/localstorage'
 	import ProjectsView from './ProjectsView.svelte'
 	import AvatarDropdown from './AvatarDropdown.svelte'
 	import SideBarLine from '~icons/ri/side-bar-line'
-	import { userBucket } from '$lib/utils/localstorage'
 
-	let stateUser: User | undefined
-	let activeItem = 'My Teams'
 	const dashboardDrawerId = 'dashboard-drawer'
+	let stateUser: User | undefined
+	let activeTeamId = ''
+	let teamsMap = new Map<string, Team>()
 
 	function setActive(item: string) {
 		activeItem = item
@@ -19,7 +21,12 @@
 		userBucket.valueStream.subscribe(({ user }) => {
 			if (user) {
 				stateUser = user
+				activeTeamId = stateUser?.teams[0] ?? ''
 			}
+		})
+
+		teamsMapBucket.valueStream.subscribe(map => {
+			teamsMap = map
 		})
 	})
 </script>
@@ -34,7 +41,7 @@
 		>
 
 		<!-- TODO: Change based on folder -->
-		<h1 class="text-2xl font-bold mb-4">My Projects</h1>
+		<h1 class="text-2xl font-bold mb-4">{teamsMap[activeTeamId]?.name ?? 'Unknown team'}</h1>
 		<ProjectsView />
 	</div>
 
@@ -49,25 +56,17 @@
 
 			<!-- Project folder navigation -->
 			<ul class="menu p-2 space-y-2">
-				<!-- TODO: Make responsive -->
-				<li>
-					<button
-						class={activeItem === 'My Teams' ? 'active font-semibold ' : ''}
-						on:click={() => setActive('My Teams')}>My Teams</button
-					>
-				</li>
-				<li>
-					<button
-						class={activeItem === 'My Projects' ? 'active font-semibold ' : ''}
-						on:click={() => setActive('My Projects')}>My Projects</button
-					>
-				</li>
-				<li>
-					<button
-						class=" {activeItem === 'Shared with me' ? 'active font-semibold' : ''}"
-						on:click={() => setActive('Shared with me')}>Shared with me</button
-					>
-				</li>
+				{#if stateUser?.teams}
+					{#each stateUser?.teams as teamId}
+						<li>
+							<button
+								class={activeTeamId === teamId ? 'active font-semibold ' : ''}
+								on:click={() => (activeTeamId = teamId)}
+								>{teamsMap[teamId]?.name ?? 'Unknown team'}</button
+							>
+						</li>
+					{/each}
+				{/if}
 			</ul>
 		</ul>
 	</div>

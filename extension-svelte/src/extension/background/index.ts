@@ -1,8 +1,9 @@
 import { DASHBOARD_AUTH_ROUTE, DASHBOARD_URL } from '../../lib/utils/constants'
 import { authRequestStream, toggleVisbugStream } from '$lib/utils/messaging'
 import { toggleIn } from '$lib/visbug/visbug'
-import { authUserBucket } from '$lib/utils/localstorage'
+import { authUserBucket, teamsMapBucket, userBucket } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
+import { getTeamFromFirebase } from '$lib/storage/team'
 
 // When triggered, open tab or use existin project tab and toggle visbug in
 
@@ -22,6 +23,21 @@ const setListeners = () => {
 	authUserBucket.valueStream.subscribe(({ authUser }) => {
 		if (authUser) {
 			signInUser(authUser)
+		}
+	})
+
+	userBucket.valueStream.subscribe(({ user }) => {
+		if (user) {
+			// Get teams and add to map if not already there
+			teamsMapBucket.getKeys().then(mappedTeamIds => {
+				const teamsNotInMap = user.teams.filter(teamId => !mappedTeamIds.includes(teamId))
+				teamsNotInMap.forEach(teamId => {
+					getTeamFromFirebase(teamId).then(team => {
+						if (!team) return
+						teamsMapBucket.set({ [team.id]: team })
+					})
+				})
+			})
 		}
 	})
 }

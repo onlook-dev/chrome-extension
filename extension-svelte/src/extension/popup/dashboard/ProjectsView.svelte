@@ -1,11 +1,12 @@
 <script lang="ts">
+	import ToggleVisbug from './ToggleVisbug.svelte'
 	import type { ProjectImpl } from '$lib/models/project'
 	const projectsMap: Map<string, ProjectImpl> = new Map()
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
 	{#each projectsMap.values() as project}
-		<a class="rounded space-y-4 p-4 hover:shadow block">
+		<button class="rounded space-y-4 p-4 hover:shadow block">
 			<figure class="">
 				<!-- TODO: Add preview image -->
 				{#if project.previewImage}
@@ -25,12 +26,12 @@
 					<p class="text-xs opacity-70">{project.host}</p>
 				</div>
 			</div>
-		</a>
+		</button>
 	{/each}
 
 	{#if projectsMap.size === 0}
 		<!-- TODO: Add call to action -->
-		<div class="col-span-full mt-10">
+		<div class="flex flex-col col-span-full mt-10 align-middle">
 			<p class="text-center">No projects yet</p>
 		</div>
 	{/if}
