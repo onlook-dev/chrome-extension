@@ -11,10 +11,11 @@
 	import AvatarDropdown from './AvatarDropdown.svelte';
 	import ProjectsView from './ProjectsView.svelte';
 	import SideBarLine from '~icons/ri/side-bar-line';
+	import NewTeamModal from './NewTeamModal.svelte';
 
+	const dashboardDrawerId = 'dashboard-drawer';
 	let user: User | null;
 	let activeTeamId = '';
-	const dashboardDrawerId = 'dashboard-drawer';
 
 	onMount(async () => {
 		auth.onAuthStateChanged((user) => {
@@ -46,7 +47,9 @@
 		<label for={dashboardDrawerId} class="btn drawer-button lg:hidden"><SideBarLine /></label>
 
 		<!-- TODO: Change based on folder -->
-		<h1 class="text-2xl font-bold mb-4">My Projects</h1>
+		<h1 class="text-2xl font-bold mb-4">
+			{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
+		</h1>
 		<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
 	</div>
 
@@ -63,16 +66,19 @@
 			<ul class="menu p-2 space-y-2">
 				<!-- TODO: Make responsive with teamsMapStore-->
 				{#if user?.teams}
-					{#each user?.teams as team}
+					{#each user?.teams as teamId}
 						<li>
 							<button
-								class={activeTeamId === team ? 'active font-semibold ' : ''}
-								on:click={() => (activeTeamId = team)}
-								>{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}</button
+								class={activeTeamId === teamId ? 'active font-semibold ' : ''}
+								on:click={() => (activeTeamId = teamId)}
+								>{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}</button
 							>
 						</li>
 					{/each}
 				{/if}
+				<li>
+					<NewTeamModal />
+				</li>
 			</ul>
 		</ul>
 	</div>

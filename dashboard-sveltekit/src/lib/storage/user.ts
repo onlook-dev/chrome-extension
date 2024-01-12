@@ -45,7 +45,7 @@ export async function setStoreUser(authUser: FirebaseUser) {
 					name: 'My Team',
 					projectIds: [],
 					users: { [authUser.uid]: Role.ADMIN }
-				};
+				} as Team;
 
 				// If user doesn't exist, create new user
 				user = {

@@ -1,40 +1,67 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-
 	import type { User } from '$models/user'
+	import type { Team } from '$models/team'
+
+	import { PopupRoutes } from '$lib/utils/constants'
+	import { userBucket, teamsMapBucket, popupStateBucket } from '$lib/utils/localstorage'
+
 	import ProjectsView from './ProjectsView.svelte'
 	import AvatarDropdown from './AvatarDropdown.svelte'
 	import SideBarLine from '~icons/ri/side-bar-line'
-	import { userBucket } from '$lib/utils/localstorage'
 
-	let stateUser: User | undefined
-	let activeItem = 'My Teams'
 	const dashboardDrawerId = 'dashboard-drawer'
-
-	function setActive(item: string) {
-		activeItem = item
-	}
+	let user: User | undefined
+	let activeTeamId = ''
+	let teamsMap = new Map<string, Team>()
 
 	onMount(() => {
-		userBucket.valueStream.subscribe(({ user }) => {
-			if (user) {
-				stateUser = user
+		userBucket.valueStream.subscribe(({ user: bucketUser }) => {
+			if (bucketUser) {
+				user = bucketUser
+				// Set active team to first team if not set
+				popupStateBucket.get().then(({ activeTeamId: bucketActiveTeamId }) => {
+					setActiveTeam(bucketActiveTeamId ?? bucketUser.teams[0] ?? '')
+				})
 			}
 		})
+
+		teamsMapBucket.valueStream.subscribe(map => {
+			teamsMap = new Map(Object.entries(map))
+		})
 	})
+
+	function setActiveTeam(teamId: string) {
+		activeTeamId = teamId
+		popupStateBucket.set({ activeTeamId: teamId })
+	}
 </script>
 
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="drawer-content px-4 py-2 overflow-auto">
+	<div class="drawer-content px-2 overflow-auto">
 		<!-- Page content here -->
-		<label for={dashboardDrawerId} class="btn btn-sm p-2 drawer-button lg:hidden"
-			><SideBarLine /></label
-		>
 
-		<!-- TODO: Change based on folder -->
-		<h1 class="text-2xl font-bold mb-4">My Projects</h1>
+		<div class="navbar p-none">
+			<div class="flex-none">
+				<label for={dashboardDrawerId} class="btn btn-square btn-ghost">
+					<SideBarLine />
+				</label>
+			</div>
+			<div class="flex-1">
+				<p class="font-semibold text-sm">{teamsMap.get(activeTeamId)?.name ?? 'Unknown team'}</p>
+			</div>
+
+			<div class="flex-none">
+				<button
+					on:click={() => {
+						popupStateBucket.set({ activeRoute: PopupRoutes.NEW_PROJECT })
+					}}
+					class="btn btn-sm btn-outline">+ New Project</button
+				>
+			</div>
+		</div>
 		<ProjectsView />
 	</div>
 
@@ -44,30 +71,22 @@
 		<ul class="w-64 min-h-full bg-base-100 space-y-2 p-2">
 			<!-- Sidebar content -->
 			<li>
-				<AvatarDropdown user={stateUser} />
+				<AvatarDropdown {user} />
 			</li>
 
 			<!-- Project folder navigation -->
 			<ul class="menu p-2 space-y-2">
-				<!-- TODO: Make responsive -->
-				<li>
-					<button
-						class={activeItem === 'My Teams' ? 'active font-semibold ' : ''}
-						on:click={() => setActive('My Teams')}>My Teams</button
-					>
-				</li>
-				<li>
-					<button
-						class={activeItem === 'My Projects' ? 'active font-semibold ' : ''}
-						on:click={() => setActive('My Projects')}>My Projects</button
-					>
-				</li>
-				<li>
-					<button
-						class=" {activeItem === 'Shared with me' ? 'active font-semibold' : ''}"
-						on:click={() => setActive('Shared with me')}>Shared with me</button
-					>
-				</li>
+				{#if user?.teams}
+					{#each user?.teams as teamId}
+						<li>
+							<button
+								class={activeTeamId === teamId ? 'active font-semibold ' : ''}
+								on:click={() => setActiveTeam(teamId)}
+								>{teamsMap.get(teamId)?.name ?? 'Unknown team'}</button
+							>
+						</li>
+					{/each}
+				{/if}
 			</ul>
 		</ul>
 	</div>
