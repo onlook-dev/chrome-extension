@@ -1,6 +1,10 @@
 import { getBucket } from '@extend-chrome/storage'
 import type { User } from '$models/user'
 import type { Team } from '$models/team'
+import type { Project } from '$models/project'
+
+// Maps that get shared across the whole extension using local storage
+// https://github.com/extend-chrome/storage
 
 interface ExtensionState {
 	visbugActive: boolean
@@ -14,7 +18,11 @@ interface UserState {
 	user: User
 }
 
+// Objects
 export const stateBucket = getBucket<ExtensionState>('EXTENSION_STATE')
 export const authUserBucket = getBucket<AuthUserState>('AUTH_USER_STATE')
 export const userBucket = getBucket<UserState>('USER_STATE')
-export const teamsMapBucket = getBucket('TEAMS_MAP')
+
+// Maps
+export const teamsMapBucket = getBucket<Map<string, Team>>('TEAMS_MAP')
+export const projectsMapBucket = getBucket<Map<string, Project>>('PROJECTS_MAP')

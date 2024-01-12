@@ -34,14 +34,23 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="drawer-content px-4 py-2 overflow-auto">
+	<div class="drawer-content p-2 overflow-auto">
 		<!-- Page content here -->
-		<label for={dashboardDrawerId} class="btn btn-sm p-2 drawer-button lg:hidden"
-			><SideBarLine /></label
-		>
 
-		<!-- TODO: Change based on folder -->
-		<h1 class="text-2xl font-bold mb-4">{teamsMap[activeTeamId]?.name ?? 'Unknown team'}</h1>
+		<div class="navbar p-none">
+			<div class="flex-none">
+				<label for={dashboardDrawerId} class="btn btn-square btn-ghost">
+					<SideBarLine />
+				</label>
+			</div>
+			<div class="flex-1">
+				<p class="font-semibold text-sm">{teamsMap[activeTeamId]?.name ?? 'Unknown team'}</p>
+			</div>
+
+			<div class="flex-none">
+				<button class="btn btn-sm btn-outline">+ New Project</button>
+			</div>
+		</div>
 		<ProjectsView />
 	</div>
 

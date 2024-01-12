@@ -7,9 +7,9 @@ export async function getTeamFromFirebase(teamId: string): Promise<Team> {
 	return teamData as Team
 }
 
-export async function postTeamToFirebase(team: Team) {
+export async function postTeamToFirebase(team: Team): Promise<string | undefined> {
 	console.log('Posting firebase team')
 	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_TEAMS, team, team.id)
 	console.log('Posted firebase team with ID', objectId)
-	return
+	return objectId
 }
