@@ -1,5 +1,9 @@
 import { DASHBOARD_AUTH_ROUTE, DASHBOARD_URL } from '../../lib/utils/constants'
-import { authRequestStream, toggleVisbugStream } from '$lib/utils/messaging'
+import {
+	authRequestStream,
+	editProjectRequestStream,
+	toggleVisbugStream
+} from '$lib/utils/messaging'
 import { toggleIn } from '$lib/visbug/visbug'
 import {
 	authUserBucket,
@@ -24,6 +28,32 @@ const setListeners = () => {
 	authRequestStream.subscribe(() => {
 		const authUrl = `${DASHBOARD_URL}/${DASHBOARD_AUTH_ROUTE}`
 		chrome.tabs.create({ url: authUrl })
+		return
+	})
+
+	editProjectRequestStream.subscribe(([project]) => {
+		// Get tab if same host using pattern matching
+		const searchUrl = new URL(project.hostUrl).origin + '/*'
+
+		chrome.tabs.query({ url: searchUrl }, tabs => {
+			// Check if tab with same url exists
+			if (tabs?.length) {
+				// Make sure tab is active
+				chrome.tabs.update(tabs[0].id as number, { active: true })
+				toggleIn({ id: tabs[0].id })
+				return
+			} else {
+				chrome.tabs
+					.create({
+						url: project.hostUrl
+					})
+					.then(tab => {
+						toggleIn({ id: tab.id })
+					})
+				return
+			}
+		})
+
 		return
 	})
 

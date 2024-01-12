@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import ArrowLeft from '~icons/formkit/arrowleft'
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { popupStateBucket, projectsMapBucket } from '$lib/utils/localstorage'
@@ -6,11 +7,22 @@
 	import type { HostData } from '$models/hostData'
 
 	import { nanoid } from 'nanoid'
+	import validUrl from 'valid-url'
 
 	let projectName = ''
 	let projectUrl = ''
 	let nameError = false
 	let urlError = false
+
+	onMount(() => {
+		chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+			const tab = tabs[0]
+			if (tab) {
+				projectUrl = tab.url ?? ''
+				projectName = tab.title ?? ''
+			}
+		})
+	})
 
 	function returnToDashboard() {
 		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
@@ -18,8 +30,7 @@
 
 	function createProject() {
 		nameError = !projectName
-		// TODO: validate url
-		urlError = !projectUrl
+		urlError = validUrl.isWebUri(projectUrl) === undefined
 
 		if (nameError || urlError) {
 			return
@@ -72,6 +83,7 @@
 			<span class="label-text">URL</span>
 			<input
 				bind:value={projectUrl}
+				on:input={() => (urlError = validUrl.isWebUri(projectUrl) === undefined)}
 				type="url"
 				placeholder="https://onlook.dev"
 				class="input input-bordered w-full {urlError && 'input-error'}"

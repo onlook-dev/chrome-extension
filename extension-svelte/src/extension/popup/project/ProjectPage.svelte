@@ -5,6 +5,7 @@
 	import { PopupRoutes } from '$lib/utils/constants'
 	import ArrowLeft from '~icons/formkit/arrowleft'
 	import Pencil from '~icons/mdi/pencil'
+	import { sendEditProjectRequest } from '$lib/utils/messaging'
 
 	let project: Project | undefined
 	const tabsName = 'project-tabs-id'
@@ -18,6 +19,15 @@
 		const projectsMap = new Map(Object.entries(await projectsMapBucket.get()))
 		project = projectsMap.get(activeProjectId)
 	})
+
+	function deleteProject() {
+		projectsMapBucket.remove(project?.id ?? '')
+		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD, activeProjectId: '' })
+	}
+
+	function startEditing() {
+		project && sendEditProjectRequest(project)
+	}
 </script>
 
 <div class="navbar p-none border">
@@ -27,7 +37,7 @@
 		>
 	</div>
 	<div class="flex-none">
-		<button class="btn btn-sm btn-outline">
+		<button class="btn btn-sm btn-outline" on:click={startEditing}>
 			<Pencil />
 			{#if project?.changeSets.length}
 				Edit
@@ -60,7 +70,9 @@
 		<div role="tabpanel" class="tab-content">Tab content 3</div>
 
 		<input type="radio" name={tabsName} role="tab" class="tab" aria-label="Settings" />
-		<div role="tabpanel" class="tab-content">Tab content 3</div>
+		<div role="tabpanel" class="tab-content">
+			<button on:click={deleteProject} class="btn btn-outline btn-error"> Delete project </button>
+		</div>
 	</div>
 {:else}
 	<div class="flex flex-col gap-4 w-52">
