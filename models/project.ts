@@ -11,5 +11,4 @@ export interface Project {
 	changeSets: ChangeSet[];
 	comments: Comment[];
 	hostData: HostData;
-	version: number;
 }

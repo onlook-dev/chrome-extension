@@ -1,15 +1,17 @@
 <!-- Router.svelte -->
 <script>
 	import { onMount } from 'svelte'
+	import { slide } from 'svelte/transition'
 	import { userBucket, popupStateBucket } from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 
 	import DashboardPage from './dashboard/DashboardPage.svelte'
 	import AuthPage from './auth/AuthPage.svelte'
 	import NewProjectPage from './new-project/NewProjectPage.svelte'
+	import ProjectPage from './project/ProjectPage.svelte'
 
 	let authenticated = false
-	let route = PopupRoutes.AUTH
+	let route = PopupRoutes.DASHBOARD
 
 	onMount(() => {
 		// Get user from local storage
@@ -17,12 +19,12 @@
 			authenticated = user ? true : false
 		})
 
-		popupStateBucket.valueStream.subscribe(({ route: stateRoute }) => {
-			if (!stateRoute) {
+		popupStateBucket.valueStream.subscribe(({ activeRoute }) => {
+			if (!activeRoute) {
 				route = PopupRoutes.DASHBOARD
 				return
 			}
-			route = stateRoute
+			route = activeRoute
 		})
 	})
 </script>
@@ -33,8 +35,16 @@
 		<AuthPage />
 	{:else if route === PopupRoutes.NEW_PROJECT}
 		<!-- Navigate to dashboard if user is set -->
-		<NewProjectPage />
+		<div out:slide>
+			<NewProjectPage />
+		</div>
+	{:else if route === PopupRoutes.PROJECT}
+		<div out:slide>
+			<ProjectPage />
+		</div>
 	{:else}
-		<DashboardPage />
+		<div out:slide>
+			<DashboardPage />
+		</div>
 	{/if}
 </div>

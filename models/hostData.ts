@@ -1,8 +1,7 @@
 export interface HostData {
-	url: string;
-	favicon: string;
-	metadata: HostMetadata;
-	previewImage: string;
+	favicon?: string;
+	metadata?: HostMetadata;
+	previewImage?: string;
 }
 
 export interface HostMetadata {

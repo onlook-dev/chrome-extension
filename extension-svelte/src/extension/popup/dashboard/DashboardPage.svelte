@@ -15,28 +15,32 @@
 	let activeTeamId = ''
 	let teamsMap = new Map<string, Team>()
 
-	function setActive(item: string) {
-		activeItem = item
-	}
-
 	onMount(() => {
 		userBucket.valueStream.subscribe(({ user: bucketUser }) => {
 			if (bucketUser) {
 				user = bucketUser
-				activeTeamId = bucketUser.teams[0] ?? ''
+				// Set active team to first team if not set
+				popupStateBucket.get().then(({ activeTeamId: bucketActiveTeamId }) => {
+					setActiveTeam(bucketActiveTeamId ?? bucketUser.teams[0] ?? '')
+				})
 			}
 		})
 
 		teamsMapBucket.valueStream.subscribe(map => {
-			teamsMap = map
+			teamsMap = new Map(Object.entries(map))
 		})
 	})
+
+	function setActiveTeam(teamId: string) {
+		activeTeamId = teamId
+		popupStateBucket.set({ activeTeamId: teamId })
+	}
 </script>
 
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="drawer-content p-2 overflow-auto">
+	<div class="drawer-content px-2 overflow-auto">
 		<!-- Page content here -->
 
 		<div class="navbar p-none">
@@ -46,13 +50,13 @@
 				</label>
 			</div>
 			<div class="flex-1">
-				<p class="font-semibold text-sm">{teamsMap[activeTeamId]?.name ?? 'Unknown team'}</p>
+				<p class="font-semibold text-sm">{teamsMap.get(activeTeamId)?.name ?? 'Unknown team'}</p>
 			</div>
 
 			<div class="flex-none">
 				<button
 					on:click={() => {
-						popupStateBucket.set({ route: PopupRoutes.NEW_PROJECT })
+						popupStateBucket.set({ activeRoute: PopupRoutes.NEW_PROJECT })
 					}}
 					class="btn btn-sm btn-outline">+ New Project</button
 				>
@@ -77,8 +81,8 @@
 						<li>
 							<button
 								class={activeTeamId === teamId ? 'active font-semibold ' : ''}
-								on:click={() => (activeTeamId = teamId)}
-								>{teamsMap[teamId]?.name ?? 'Unknown team'}</button
+								on:click={() => setActiveTeam(teamId)}
+								>{teamsMap.get(teamId)?.name ?? 'Unknown team'}</button
 							>
 						</li>
 					{/each}
