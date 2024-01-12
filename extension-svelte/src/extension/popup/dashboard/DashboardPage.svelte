@@ -3,13 +3,15 @@
 	import type { User } from '$models/user'
 	import type { Team } from '$models/team'
 
-	import { userBucket, teamsMapBucket } from '$lib/utils/localstorage'
+	import { PopupRoutes } from '$lib/utils/constants'
+	import { userBucket, teamsMapBucket, popupStateBucket } from '$lib/utils/localstorage'
+
 	import ProjectsView from './ProjectsView.svelte'
 	import AvatarDropdown from './AvatarDropdown.svelte'
 	import SideBarLine from '~icons/ri/side-bar-line'
 
 	const dashboardDrawerId = 'dashboard-drawer'
-	let stateUser: User | undefined
+	let user: User | undefined
 	let activeTeamId = ''
 	let teamsMap = new Map<string, Team>()
 
@@ -18,10 +20,10 @@
 	}
 
 	onMount(() => {
-		userBucket.valueStream.subscribe(({ user }) => {
-			if (user) {
-				stateUser = user
-				activeTeamId = stateUser?.teams[0] ?? ''
+		userBucket.valueStream.subscribe(({ user: bucketUser }) => {
+			if (bucketUser) {
+				user = bucketUser
+				activeTeamId = bucketUser.teams[0] ?? ''
 			}
 		})
 
@@ -48,7 +50,12 @@
 			</div>
 
 			<div class="flex-none">
-				<button class="btn btn-sm btn-outline">+ New Project</button>
+				<button
+					on:click={() => {
+						popupStateBucket.set({ route: PopupRoutes.NEW_PROJECT })
+					}}
+					class="btn btn-sm btn-outline">+ New Project</button
+				>
 			</div>
 		</div>
 		<ProjectsView />
@@ -60,13 +67,13 @@
 		<ul class="w-64 min-h-full bg-base-100 space-y-2 p-2">
 			<!-- Sidebar content -->
 			<li>
-				<AvatarDropdown user={stateUser} />
+				<AvatarDropdown {user} />
 			</li>
 
 			<!-- Project folder navigation -->
 			<ul class="menu p-2 space-y-2">
-				{#if stateUser?.teams}
-					{#each stateUser?.teams as teamId}
+				{#if user?.teams}
+					{#each user?.teams as teamId}
 						<li>
 							<button
 								class={activeTeamId === teamId ? 'active font-semibold ' : ''}

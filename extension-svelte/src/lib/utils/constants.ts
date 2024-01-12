@@ -14,3 +14,10 @@ export const IMPORT_PROJECT = 'IMPORT_PROJECT'
 export const FIREBASE_COLLECTION_PROJECTS = 'projects'
 export const FIREBASE_COLLECTION_USERS = 'users'
 export const FIREBASE_COLLECTION_TEAMS = 'teams'
+
+// Popup routes
+export enum PopupRoutes {
+	DASHBOARD = 'dashboard',
+	PROJECT = 'project',
+	NEW_PROJECT = 'new-project'
+}

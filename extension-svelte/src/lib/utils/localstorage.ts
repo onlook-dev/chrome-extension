@@ -18,10 +18,17 @@ interface UserState {
 	user: User
 }
 
+interface PopupState {
+	activeTeamId: string
+	activeProjectId: string
+	activeRoute: string
+}
+
 // Objects
 export const stateBucket = getBucket<ExtensionState>('EXTENSION_STATE')
 export const authUserBucket = getBucket<AuthUserState>('AUTH_USER_STATE')
 export const userBucket = getBucket<UserState>('USER_STATE')
+export const popupStateBucket = getBucket<PopupState>('POPUP_STATE')
 
 // Maps
 export const teamsMapBucket = getBucket<Map<string, Team>>('TEAMS_MAP')
