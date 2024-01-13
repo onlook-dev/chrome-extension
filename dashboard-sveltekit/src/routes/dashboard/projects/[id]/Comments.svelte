@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { CommentMediaType, type CommentImpl } from '$lib/models/comment';
+	import { CommentMediaType, type Comment } from '$models/comment';
 	import ItemHeader from './ItemHeader.svelte';
 
-	export let comments: CommentImpl[] = [];
+	export let comments: Comment[] = [];
 </script>
 
 {#if comments.length === 0}
@@ -13,9 +13,10 @@
 {#each comments as comment}
 	<div class="p-4 flex flex-col pb-6">
 		<!-- Item header -->
+		<!-- TODO, get user from map -->
 		<ItemHeader
-			profileImageUrl={comment.author.profileImage}
-			userName={comment.author.name}
+			profileImageUrl={comment.userId.profileImage}
+			userName={comment.userId.name}
 			creationTime={new Date(comment.timestamp)}
 		/>
 

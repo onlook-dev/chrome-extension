@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import type { ProjectImpl } from '$lib/models/project';
+	import type { Project } from '$models/project';
 	import { getProjectFromFirebase } from '$lib/storage/project';
 	import { ROUTE_DASHBOARD } from '$lib/utils/constants';
 	import { projectsMapStore } from '$lib/utils/store';
@@ -13,7 +13,7 @@
 	import ShareModal from './ShareModal.svelte';
 	import PublishModal from './PublishModal.svelte';
 
-	let project: ProjectImpl | undefined;
+	let project: Project | undefined;
 
 	onMount(() => {
 		// Get project
@@ -51,9 +51,9 @@
 	<div class="flex flex-col sm:flex-row flex-grow overflow-auto">
 		<!-- Screenshot -->
 		<div class="sm:w-full flex flex-grow h-full border items-center justify-center">
-			{#if project?.previewImage}
+			{#if project?.hostData?.previewImage}
 				<img
-					src={project?.previewImage}
+					src={project?.hostData?.previewImage}
 					alt="Screenshot"
 					class="w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
 				/>
@@ -66,7 +66,7 @@
 		<!-- Sidebar/ comments + activities -->
 		<div class="flex flex-col w-full sm:max-w-96 h-full text-sm">
 			<div class="border h-1/2 w-full">
-				<Activities changeSets={project?.changeSets} />
+				<Activities activities={project?.activities} />
 			</div>
 			<div class="border h-1/2 w-full">
 				<Comments comments={project?.comments} />

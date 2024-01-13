@@ -24,9 +24,9 @@
 				class="rounded space-y-4 p-4 hover:shadow block"
 			>
 				<figure class="">
-					{#if project?.previewImage}
+					{#if project?.hostData.previewImage}
 						<img
-							src={project.previewImage}
+							src={project.hostData.previewImage}
 							alt={project.name}
 							class="aspect-video rounded w-full"
 						/>

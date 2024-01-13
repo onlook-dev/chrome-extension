@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { timeSince } from '$lib/models/comment';
+	import { timeSince } from '$models/comment';
 
 	export let profileImageUrl = '';
 	export let userName = '';

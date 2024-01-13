@@ -42,7 +42,7 @@
 				name: projectName,
 				teamId: activeTeamId,
 				hostUrl: projectUrl,
-				changeSets: [],
+				activities: [],
 				comments: [],
 				hostData: {} as HostData
 			} as Project
@@ -55,9 +55,9 @@
 
 <div class="navbar p-none">
 	<div class="flex-none">
-		<button on:click={returnToDashboard} class="btn btn-sm btn-ghost">
-			<ArrowLeft /> Dashboard</button
-		>
+		<button on:click={returnToDashboard} class="btn btn-square btn-ghost">
+			<ArrowLeft />
+		</button>
 	</div>
 </div>
 
