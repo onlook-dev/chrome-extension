@@ -6,4 +6,4 @@
 	export let project: Project
 </script>
 
-Changeset length: {project.changeSets.length}
+Acitivites length: {project.activities.length}

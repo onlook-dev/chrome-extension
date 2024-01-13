@@ -17,7 +17,7 @@
 		<ItemHeader
 			profileImageUrl={comment.userId.profileImage}
 			userName={comment.userId.name}
-			creationTime={new Date(comment.timestamp)}
+			creationTime={comment.creationTime}
 		/>
 
 		<!-- Item body -->
@@ -28,7 +28,9 @@
 						{#if media.type === CommentMediaType.IMAGE}
 							<img class="rounded" src={media.localUrl ?? media.remoteUrl} alt="Screenshot" />
 						{:else if media.type === CommentMediaType.VIDEO}
-							<video class="rounded" src={media.localUrl ?? media.remoteUrl ?? ''} controls />
+							<video class="rounded" src={media.localUrl ?? media.remoteUrl ?? ''} controls>
+								<track kind="captions" />
+							</video>
 						{/if}
 					</div>
 				{/each}

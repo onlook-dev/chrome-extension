@@ -8,7 +8,7 @@ export interface Activity {
   projectId: string;
   eventData: EventMetadata[];
   visible: boolean;
-
+  creationTime: Date;
   // TODO: Handle content changes + structure changes
   styleChanges: StyleChange[];
 }

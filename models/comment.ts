@@ -7,7 +7,7 @@ export interface Comment {
   text?: string;
   media: CommentMedia[];
   metadata: EventMetadata[];
-  timestamp: Date;
+  creationTime: Date;
   open: boolean;
   thread: Comment[];
 }

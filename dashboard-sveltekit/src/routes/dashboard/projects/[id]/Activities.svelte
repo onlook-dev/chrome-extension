@@ -1,13 +1,13 @@
 <script lang="ts">
 	import type { Activity } from '$models/activity';
 	import { timeSince } from '$models/comment';
-	import { EventMetadataType } from '$models/eventData';
+	import { EventMetadataType, getEventDataByType } from '$models/eventData';
 	import ItemHeader from './ItemHeader.svelte';
 
 	export let activities: Activity[] = [];
-	let hoverChangeSet: (changeSet: Activity) => void;
-	let leaveChangeSet: (changeSet: Activity) => void;
-	let clickChangeSet: (changeSet: Activity) => void;
+	let hoverActivity: (activity: Activity) => void;
+	let leaveActivity: (activity: Activity) => void;
+	let clickActivity: (activity: Activity) => void;
 </script>
 
 {#if activities.length === 0}
@@ -17,23 +17,22 @@
 {/if}
 {#each activities as activity}
 	<!-- TODO: Add helper -->
-	{#if !activity.isStyleEmpty()}
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
+	{#if activity.styleChanges.length > 0}
 		<button
 			class="w-full p-4 flex flex-col pb-6 hover:bg-gray-50 transition duration-200 ease-in-out {!activity.visible
 				? 'opacity-60'
 				: ''}
 					"
-			on:mouseenter={() => hoverChangeSet(activity)}
-			on:mouseleave={() => leaveChangeSet(activity)}
-			on:click={() => clickChangeSet(activity)}
+			on:mouseenter={() => hoverActivity(activity)}
+			on:mouseleave={() => leaveActivity(activity)}
+			on:click={() => clickActivity(activity)}
 		>
 			<!-- Item header -->
 			<!-- TODO: Get user from map -->
 			<ItemHeader
 				profileImageUrl={activity.userId}
 				userName={activity.userId}
-				creationTime={new Date(activity.metadata[0]?.value)}
+				creationTime={activity.creationTime}
 			/>
 
 			<!-- Item body -->
@@ -42,18 +41,18 @@
 				<span class="text-orange-600 bg-gray-100 p-0.5 rounded border">{activity.selector}</span>
 			</div>
 
-			{#if activity.getMetadataByType(EventMetadataType.SOURCE_MAP_ID)?.value}
+			{#if getEventDataByType(activity.eventData, EventMetadataType.SOURCE_MAP_ID)}
 				<div class="mb-2 w-full text-start">
 					Source:
-					<a
+					<button
 						on:click={() => {}}
-						class="text-orange-600 bg-gray-100 p-0.5 rounded border hover:underline"
-						>{activity.getMetadataByType(EventMetadataType.SOURCE_MAP_ID)?.value}</a
+						class="btn btn-link text-orange-600 bg-gray-100 p-0.5 rounded border hover:underline"
+						>{getEventDataByType(activity.eventData, EventMetadataType.SOURCE_MAP_ID)}</button
 					>
 				</div>
 			{/if}
 			<div class="bg-gray-50 rounded p-4 border w-full text-start">
-				{#each Object.entries(activity.stylesObj) as [key, value]}
+				{#each Object.entries(activity.styleChanges) as [key, value]}
 					<div class="">{key}: {value};</div>
 				{/each}
 			</div>

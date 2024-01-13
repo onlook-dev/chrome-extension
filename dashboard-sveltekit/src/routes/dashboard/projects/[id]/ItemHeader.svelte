@@ -14,7 +14,7 @@
 	</div>
 	<div class="px-2">{userName}</div>
 	<div class="text-xs text-gray-500">
-		{timeSince(creationTime)}
+		{timeSince(new Date(creationTime))}
 	</div>
 	<div class="ml-auto">
 		<button class="p-2 hover:shadow-sm hover:bg-gray-50 rounded"> actions </button>
