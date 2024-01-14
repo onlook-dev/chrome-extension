@@ -10,7 +10,8 @@
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 
 	import type { Activity } from '$models/activity';
-	import { EventMetadataType, getEventDataByType, type EventMetadata } from '$models/eventData';
+	import type { Comment } from '$models/comment';
+	import { EventMetadataType, type EventMetadata } from '$models/eventData';
 
 	import Comments from './Comments.svelte';
 	import Activities from './Activities.svelte';
@@ -51,9 +52,44 @@
 					visible: true,
 					creationTime: new Date(),
 					styleChanges: [{ key: 'color', newVal: 'red', oldVal: 'blue' }]
+				} as Activity,
+				{
+					id: '2',
+					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
+					selector: 'body >',
+					projectId: project?.id,
+					eventData: [
+						{
+							key: 'click',
+							value: 'click',
+							type: EventMetadataType.SOURCE_MAP_ID
+						} as EventMetadata
+					],
+					visible: true,
+					creationTime: new Date(),
+					styleChanges: [{ key: 'color', newVal: 'red', oldVal: 'blue' }]
 				} as Activity
 			];
-			if (project) project.activities = activities;
+			let comments: Comment[] = [
+				{
+					id: '1',
+					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
+					projectId: project?.id,
+					creationTime: new Date(),
+					text: 'This is a comment'
+				} as Comment,
+				{
+					id: '2',
+					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
+					projectId: project?.id,
+					creationTime: new Date(),
+					text: 'This is a comment, too'
+				} as Comment
+			];
+			if (project) {
+				project.activities = activities;
+				project.comments = comments;
+			}
 			// End testing
 
 			// Get store users from activities and comments
@@ -61,7 +97,6 @@
 				.map((item) => item.userId)
 				.concat(project.comments.map((item) => item.userId));
 
-			console.log(userIds);
 			for (const userId of userIds) {
 				if (!$usersMapStore.has(userId)) {
 					const user = await getUserFromFirebase(userId);
@@ -105,10 +140,10 @@
 			</div>
 			<!-- Sidebar/ comments + activities -->
 			<div class="flex flex-col w-full sm:max-w-96 h-full text-sm">
-				<div class="border h-1/2 w-full">
+				<div class="border h-1/2 w-full overflow-auto">
 					<Activities {project} />
 				</div>
-				<div class="border h-1/2 w-full">
+				<div class="border h-1/2 w-full overflow-auto">
 					<Comments {project} />
 				</div>
 			</div>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { timeSince } from '$models/comment';
+	import Dots from '~icons/material-symbols/more-vert';
 
 	export let profileImageUrl = '';
 	export let userName = '';
@@ -17,6 +18,6 @@
 		{timeSince(new Date(creationTime))}
 	</div>
 	<div class="ml-auto">
-		<button class="p-2 hover:shadow-sm hover:bg-gray-50 rounded"> actions </button>
+		<button class="btn btn-square btn-ghost"> <Dots /> </button>
 	</div>
 </div>
