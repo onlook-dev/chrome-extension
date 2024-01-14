@@ -9,7 +9,7 @@ export enum EventMetadataType {
   BROWSER = "browser",
   OS = "os",
   TIME_STAMP = "time-stamp",
-  SOURCE_MAP_ID = "source-map-id",
+  SOURCE_MAP_ID = "data-onlook-id",
 }
 
 export let getEventDataByType = (

@@ -2,12 +2,14 @@
 	import { onMount } from 'svelte'
 	import ArrowLeft from '~icons/formkit/arrowleft'
 	import { PopupRoutes } from '$lib/utils/constants'
-	import { popupStateBucket, projectsMapBucket } from '$lib/utils/localstorage'
+	import { popupStateBucket, projectsMapBucket, teamsMapBucket } from '$lib/utils/localstorage'
 	import type { Project } from '$models/project'
 	import type { HostData } from '$models/hostData'
 
 	import { nanoid } from 'nanoid'
 	import validUrl from 'valid-url'
+	import { postProjectToFirebase } from '$lib/storage/project'
+	import { postTeamToFirebase } from '$lib/storage/team'
 
 	let projectName = ''
 	let projectUrl = ''
@@ -28,7 +30,7 @@
 		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
 	}
 
-	function createProject() {
+	async function createProject() {
 		nameError = !projectName
 		urlError = validUrl.isWebUri(projectUrl) === undefined
 
@@ -36,20 +38,32 @@
 			return
 		}
 
-		popupStateBucket.get().then(({ activeTeamId }) => {
-			const newProject = {
-				id: nanoid(),
-				name: projectName,
-				teamId: activeTeamId,
-				hostUrl: projectUrl,
-				activities: [],
-				comments: [],
-				hostData: {} as HostData
-			} as Project
+		// TODO: Move to a service
+		const { activeTeamId } = await popupStateBucket.get()
+		const teamMap = new Map(Object.entries(await teamsMapBucket.get()))
+		const team = teamMap.get(activeTeamId)
 
-			projectsMapBucket.set({ [newProject.id]: newProject })
-			popupStateBucket.set({ activeRoute: PopupRoutes.PROJECT, activeProjectId: newProject.id })
-		})
+		const newProject = {
+			id: nanoid(),
+			name: projectName,
+			teamId: activeTeamId,
+			hostUrl: projectUrl,
+			activities: [],
+			comments: [],
+			hostData: {} as HostData
+		} as Project
+
+		// Add project to team
+		team?.projectIds.push(newProject.id)
+
+		// Save locally
+		projectsMapBucket.set({ [newProject.id]: newProject })
+		teamsMapBucket.set({ [activeTeamId]: team })
+		popupStateBucket.set({ activeRoute: PopupRoutes.PROJECT, activeProjectId: newProject.id })
+
+		// Save to Firebase
+		team && postTeamToFirebase(team)
+		postProjectToFirebase(newProject)
 	}
 </script>
 

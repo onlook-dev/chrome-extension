@@ -1,8 +1,11 @@
 <script lang="ts">
+	import type { Project } from '$models/project';
 	import { CommentMediaType, type Comment } from '$models/comment';
 	import ItemHeader from './ItemHeader.svelte';
 
-	export let comments: Comment[] = [];
+	export let project: Project;
+
+	let comments: Comment[] = [];
 </script>
 
 {#if comments.length === 0}

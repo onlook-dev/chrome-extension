@@ -1,14 +1,30 @@
 <script lang="ts">
 	import type { Project } from '$models/project'
-	import { projectsMapBucket, popupStateBucket } from '$lib/utils/localstorage'
+	import { projectsMapBucket, popupStateBucket, teamsMapBucket } from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
+	import { deleteProjectFromFirebase } from '$lib/storage/project'
+	import { postTeamToFirebase } from '$lib/storage/team'
 
 	export let project: Project
 	const deleteModalId = 'delete-project-modal'
 
-	function deleteProject() {
+	async function deleteProject() {
+		// TODO: Check user permission in team first
+		const { activeTeamId } = await popupStateBucket.get()
+		const teamMap = new Map(Object.entries(await teamsMapBucket.get()))
+		const team = teamMap.get(activeTeamId)
+
+		// Remove project from team
+		team.projectIds = team.projectIds.filter((id: string) => id !== project.id)
+
+		// Save locally
 		projectsMapBucket.remove(project?.id ?? '')
 		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD, activeProjectId: '' })
+		teamsMapBucket.set({ [activeTeamId]: team })
+
+		// Save to Firebase
+		team && postTeamToFirebase(team)
+		deleteProjectFromFirebase(project.id)
 	}
 </script>
 
