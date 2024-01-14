@@ -16,7 +16,7 @@
 	});
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
 	{#if team?.projectIds.length}
 		{#each team?.projectIds.map((id) => $projectsMapStore.get(id)) as project}
 			<button
@@ -24,9 +24,9 @@
 				class="rounded space-y-4 p-4 hover:shadow block"
 			>
 				<figure class="">
-					{#if project?.previewImage}
+					{#if project?.hostData.previewImage}
 						<img
-							src={project.previewImage}
+							src={project.hostData.previewImage}
 							alt={project.name}
 							class="aspect-video rounded w-full"
 						/>
@@ -36,14 +36,18 @@
 				</figure>
 				<div class="flex items-center space-x-2">
 					<div class="avatar">
-						<div class="w-6 mask mask-circle">
+						<div class="w-8 mask mask-circle">
 							<!-- TODO: Get author from ID -->
-							<!-- <img src={project?.author.profileImage} alt="Avatar of {project.author.name}" /> -->
+							{#if project?.hostData?.favicon}
+								<img src={project.hostData.favicon} alt="Favicon of {project.hostUrl}" />
+							{:else}
+								<div class="bg-gray-100 rounded-full w-full h-full" />
+							{/if}
 						</div>
 					</div>
-					<div>
-						<p class="text-sm font-semibold">{project?.name}</p>
-						<p class="text-xs opacity-70">{project?.hostUrl}</p>
+					<div class="text-left overflow-x-hidden">
+						<p class="text-sm font-semibold truncate">{project?.name}</p>
+						<p class="text-xs opacity-70 truncate">{project?.hostUrl}</p>
 					</div>
 				</div>
 			</button>

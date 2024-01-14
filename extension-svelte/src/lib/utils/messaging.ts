@@ -1,3 +1,4 @@
+import type { Project } from '$models/project'
 import { getMessage } from '@extend-chrome/messages'
 import type { SendOptions } from '@extend-chrome/messages/types/types'
 import { Observable } from 'rxjs'
@@ -50,5 +51,10 @@ export const [sendToggleVigbug, toggleVisbugStream] = getExtendedMessages<void>(
 
 export const [sendAuthRequest, authRequestStream] = getExtendedMessages<void>(
 	'REQUEST_AUTH',
+	MessageReceiver.BACKGROUND
+)
+
+export const [sendEditProjectRequest, editProjectRequestStream] = getExtendedMessages<Project>(
+	'REQUEST_EDIT_PROJECT',
 	MessageReceiver.BACKGROUND
 )

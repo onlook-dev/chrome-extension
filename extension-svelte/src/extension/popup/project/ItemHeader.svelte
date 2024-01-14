@@ -1,10 +1,15 @@
 <script lang="ts">
-	import { timeSince } from '$models/comment';
-	import Dots from '~icons/material-symbols/more-vert';
+	import { onMount } from 'svelte'
+	import { timeSince } from '$models/comment'
+	import Dots from '~icons/material-symbols/more-vert'
 
-	export let profileImageUrl = '';
-	export let userName = '';
-	export let creationTime: Date = new Date();
+	export let profileImageUrl = ''
+	export let userName = ''
+	export let creationTime: Date = new Date()
+
+	onMount(() => {
+		console.log(creationTime)
+	})
 </script>
 
 <div class="flex flex-row items-center pb-4 w-full">

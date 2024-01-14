@@ -23,13 +23,19 @@
 			<button class="btn btn-primary">Invite</button>
 		</div>
 
-		<label class="label cursor-pointer">
+		<label for="access-input" class="label cursor-pointer">
 			<span class="label-text"
 				>Everyone at
 				<b>{teamName}</b>
 				can access this file</span
 			>
 		</label>
+		<input
+			type="text"
+			id="access-input"
+			placeholder="Email, comma separated"
+			class="input input-bordered w-full"
+		/>
 		<div class="divider"></div>
 
 		<!-- Users with access -->

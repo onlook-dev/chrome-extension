@@ -1,20 +1,27 @@
 <script lang="ts">
-	import type { Project } from '$models/project';
-	import { CommentMediaType, type Comment } from '$models/comment';
-	import { usersMapStore } from '$lib/utils/store';
+	import { onMount } from 'svelte'
+	import type { Project } from '$models/project'
+	import { CommentMediaType, type Comment } from '$models/comment'
+	import type { User } from '$models/user'
 
-	import ItemHeader from './ItemHeader.svelte';
+	import ItemHeader from './ItemHeader.svelte'
+	import { usersMapBucket } from '$lib/utils/localstorage'
 
-	export let project: Project;
+	export let project: Project
+	let usersMap: Map<string, User> = new Map()
 
-	let comments: Comment[];
-	let hoverComment = (comment: Comment) => {};
-	let leaveComment = (comment: Comment) => {};
-	let clickComment = (comment: Comment) => {};
+	let comments: Comment[]
+	let hoverComment = (comment: Comment) => {}
+	let leaveComment = (comment: Comment) => {}
+	let clickComment = (comment: Comment) => {}
+
+	onMount(async () => {
+		usersMap = new Map(Object.entries(await usersMapBucket.get()))
+	})
 
 	$: comments = project.comments.sort(
-		(a, b) => a.creationTime.getTime() - b.creationTime.getTime()
-	);
+		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
+	)
 </script>
 
 {#if comments.length === 0}
@@ -23,8 +30,6 @@
 	</div>
 {/if}
 <div class="divide-y flex flex-col w-full">
-	<h1 class="m-2 font-semibold">Comments</h1>
-
 	{#each comments as comment}
 		<button
 			class="p-4 flex flex-col pb-6 hover:bg-gray-50 transition duration-200 ease-in-out"
@@ -34,8 +39,8 @@
 		>
 			<!-- Item header -->
 			<ItemHeader
-				profileImageUrl={$usersMapStore.get(comment.userId)?.profileImage}
-				userName={$usersMapStore.get(comment.userId)?.name}
+				profileImageUrl={usersMap.get(comment.userId)?.profileImage}
+				userName={usersMap.get(comment.userId)?.name}
 				creationTime={comment.creationTime}
 			/>
 

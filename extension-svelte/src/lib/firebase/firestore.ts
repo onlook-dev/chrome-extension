@@ -1,5 +1,5 @@
-import { collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
-import { store } from './firebase';
+import { collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore'
+import { store } from './firebase'
 
 export async function postObjectToCollection(
 	collectionId: string,
@@ -7,28 +7,36 @@ export async function postObjectToCollection(
 	objectId?: string
 ) {
 	try {
-		const jsonObj = JSON.parse(JSON.stringify(object));
+		const jsonObj = JSON.parse(JSON.stringify(object))
 		if (objectId) {
 			// Preset ID
-			await setDoc(doc(store, collectionId, objectId), jsonObj, { merge: true });
-			return objectId;
+			await setDoc(doc(store, collectionId, objectId), jsonObj, { merge: true })
+			return objectId
 		} else {
 			// Auto-generate ID
-			const docRef = await addDoc(collection(store, collectionId), jsonObj);
-			return docRef.id;
+			const docRef = await addDoc(collection(store, collectionId), jsonObj)
+			return docRef.id
 		}
 	} catch (e) {
-		console.error(`Error adding document to collection ${collectionId}`, e);
+		console.error(`Error adding document to collection ${collectionId}`, e)
 	}
 }
 
 export async function getObjectFromCollection(collectionId: string, objectId: string) {
-	const docRef = doc(store, collectionId, objectId);
-	const docSnap = await getDoc(docRef);
+	const docRef = doc(store, collectionId, objectId)
+	const docSnap = await getDoc(docRef)
 
 	if (docSnap.exists()) {
-		return docSnap.data();
+		return docSnap.data()
 	} else {
-		console.error(`No such document with ID: ${objectId} in collection ${collectionId}`);
+		console.error(`No such document with ID: ${objectId} in collection ${collectionId}`)
 	}
+}
+
+export async function deleteObjectFromCollection(
+	collectionId: string,
+	objectId: string
+): Promise<void> {
+	const docRef = doc(store, collectionId, objectId)
+	return await setDoc(docRef, {})
 }

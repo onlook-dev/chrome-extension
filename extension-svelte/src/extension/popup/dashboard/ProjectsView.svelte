@@ -21,7 +21,9 @@
 	})
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+<div
+	class="pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
+>
 	{#each projectsMap.values() as project}
 		<button
 			class="rounded space-y-4 p-4 hover:shadow block"
@@ -51,7 +53,7 @@
 						{/if}
 					</div>
 				</div>
-				<div>
+				<div class="text-left">
 					<p class="text-sm font-semibold">{project.name}</p>
 					<p class="text-xs opacity-70">{project.hostUrl}</p>
 				</div>

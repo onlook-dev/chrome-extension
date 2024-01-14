@@ -1,20 +1,27 @@
 <script lang="ts">
-	import type { Project } from '$models/project';
-	import type { Activity } from '$models/activity';
-	import { EventMetadataType, getEventDataByType, type EventMetadata } from '$models/eventData';
-	import ItemHeader from './ItemHeader.svelte';
-	import { usersMapStore } from '$lib/utils/store';
+	import { onMount } from 'svelte'
+	import type { Project } from '$models/project'
+	import type { Activity } from '$models/activity'
+	import type { User } from '$models/user'
+	import { EventMetadataType, getEventDataByType } from '$models/eventData'
+	import ItemHeader from './ItemHeader.svelte'
+	import { usersMapBucket } from '$lib/utils/localstorage'
 
-	export let project: Project;
-	let activities: Activity[];
+	export let project: Project
+	let activities: Activity[]
+	let usersMap: Map<string, User> = new Map()
 
-	let hoverActivity = (activity: Activity) => {};
-	let leaveActivity = (activity: Activity) => {};
-	let clickActivity = (activity: Activity) => {};
+	let hoverActivity = (activity: Activity) => {}
+	let leaveActivity = (activity: Activity) => {}
+	let clickActivity = (activity: Activity) => {}
+
+	onMount(async () => {
+		usersMap = new Map(Object.entries(await usersMapBucket.get()))
+	})
 
 	$: activities = project.activities.sort(
-		(a, b) => a.creationTime.getTime() - b.creationTime.getTime()
-	);
+		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
+	)
 </script>
 
 {#if activities.length === 0}
@@ -23,7 +30,6 @@
 	</div>
 {/if}
 <div class="divide-y flex flex-col w-full">
-	<h1 class="m-2 font-semibold">Acitivities</h1>
 	{#each activities as activity}
 		<!-- TODO: Add helper -->
 		{#if activity.styleChanges.length > 0}
@@ -38,8 +44,8 @@
 			>
 				<!-- Item header -->
 				<ItemHeader
-					profileImageUrl={$usersMapStore.get(activity.userId)?.profileImage}
-					userName={$usersMapStore.get(activity.userId)?.name}
+					profileImageUrl={usersMap.get(activity.userId)?.profileImage}
+					userName={usersMap.get(activity.userId)?.name}
 					creationTime={activity.creationTime}
 				/>
 
