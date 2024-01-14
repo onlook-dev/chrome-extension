@@ -1,5 +1,9 @@
 import type { User as FirebaseUser } from 'firebase/auth'
-import { getObjectFromCollection, postObjectToCollection } from '../firebase/firestore'
+import {
+	getObjectFromCollection,
+	postObjectToCollection,
+	subscribeToDocument
+} from '../firebase/firestore'
 import type { User } from '$models/user'
 import { FIREBASE_COLLECTION_USERS } from '$lib/utils/constants'
 import { userBucket } from '$lib/utils/localstorage'
@@ -16,6 +20,11 @@ export async function postUserToFirebase(user: User) {
 	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_USERS, user, user.id)
 	console.log('Posted firebase user with ID', objectId)
 	return
+}
+
+export async function subscribeToUser(userId: string, callback: (data: User) => void) {
+	const unsubscribe = await subscribeToDocument(FIREBASE_COLLECTION_USERS, userId, callback)
+	return unsubscribe
 }
 
 export async function setBucketUser(authUser: FirebaseUser) {

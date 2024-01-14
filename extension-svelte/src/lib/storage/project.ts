@@ -1,7 +1,8 @@
 import {
 	deleteObjectFromCollection,
 	getObjectFromCollection,
-	postObjectToCollection
+	postObjectToCollection,
+	subscribeToDocument
 } from '$lib/firebase/firestore'
 import type { Project } from '$models/project'
 import { FIREBASE_COLLECTION_PROJECTS } from '$lib/utils/constants'
@@ -23,4 +24,12 @@ export async function deleteProjectFromFirebase(projectId: string): Promise<void
 	const result = await deleteObjectFromCollection(FIREBASE_COLLECTION_PROJECTS, projectId)
 	console.log('Deleted firebase project with ID', projectId)
 	return result
+}
+
+export async function subscribeToProject(
+	projectId: string,
+	callback: (data: Project) => void
+): Promise<() => void> {
+	const unsubscribe = await subscribeToDocument(FIREBASE_COLLECTION_PROJECTS, projectId, callback)
+	return unsubscribe
 }

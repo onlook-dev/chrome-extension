@@ -82,7 +82,7 @@ const setListeners = () => {
 		}
 	})
 
-	// TODO: Use subscribe instead to Firebase instead
+	// TODO: Use subscribe to Firebase instead
 	teamsMapBucket.valueStream.subscribe(async teamsMap => {
 		if (!teamsMap) return
 
@@ -157,7 +157,7 @@ const setListeners = () => {
 		}
 	})
 
-	// TODO: Use subscribe instead to Firebase instead
+	// TODO: Use subscribe to Firebase instead
 	projectsMapBucket.valueStream.subscribe(async projectsMap => {
 		if (!projectsMap) return
 
@@ -189,14 +189,6 @@ function toggleVisbugOnActiveTab() {
 }
 
 try {
-	// Reset for tests
-	// userBucket.clear()
-	// usersMapBucket.clear()
-	// authUserBucket.clear()
-	// popupStateBucket.clear()
-	// teamsMapBucket.clear()
-	// projectsMapBucket.clear()
-
 	setListeners()
 	console.log('Background script loaded!')
 } catch (error) {
