@@ -1,10 +1,69 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import type { Project } from '$models/project'
+	import { CommentMediaType, type Comment } from '$models/comment'
+	import type { User } from '$models/user'
 
-	import { projectsMapBucket, popupStateBucket } from '$lib/utils/localstorage'
-	import { PopupRoutes } from '$lib/utils/constants'
+	import ItemHeader from './ItemHeader.svelte'
+	import { usersMapBucket } from '$lib/utils/localstorage'
 
 	export let project: Project
+	let usersMap: Map<string, User> = new Map()
+
+	let comments: Comment[]
+	let hoverComment = (comment: Comment) => {}
+	let leaveComment = (comment: Comment) => {}
+	let clickComment = (comment: Comment) => {}
+
+	onMount(async () => {
+		usersMap = new Map(Object.entries(await usersMapBucket.get()))
+	})
+
+	$: comments = project.comments.sort(
+		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
+	)
 </script>
 
-Comments length: {project.comments.length}
+{#if comments.length === 0}
+	<div class="flex flex-col items-center justify-center h-full">
+		<p class="text-gray-500">No comments yet</p>
+	</div>
+{/if}
+<div class="divide-y flex flex-col w-full">
+	{#each comments as comment}
+		<button
+			class="p-4 flex flex-col pb-6 hover:bg-gray-50 transition duration-200 ease-in-out"
+			on:mouseenter={() => hoverComment(comment)}
+			on:mouseleave={() => leaveComment(comment)}
+			on:click={() => clickComment(comment)}
+		>
+			<!-- Item header -->
+			<ItemHeader
+				profileImageUrl={usersMap.get(comment.userId)?.profileImage}
+				userName={usersMap.get(comment.userId)?.name}
+				creationTime={comment.creationTime}
+			/>
+
+			<!-- Item body -->
+			<div class="">
+				{#if comment.media}
+					{#each comment.media as media}
+						<div class="p-2">
+							{#if media.type === CommentMediaType.IMAGE}
+								<img class="rounded" src={media.localUrl ?? media.remoteUrl} alt="Screenshot" />
+							{:else if media.type === CommentMediaType.VIDEO}
+								<video class="rounded" src={media.localUrl ?? media.remoteUrl ?? ''} controls>
+									<track kind="captions" />
+								</video>
+							{/if}
+						</div>
+					{/each}
+				{/if}
+				{#if comment.text}
+					<p class="p-2">{comment.text}</p>
+				{/if}
+			</div>
+			<!-- Metadata -->
+		</button>
+	{/each}
+</div>

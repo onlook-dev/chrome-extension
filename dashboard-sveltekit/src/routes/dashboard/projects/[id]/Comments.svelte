@@ -13,7 +13,7 @@
 	let clickComment = (comment: Comment) => {};
 
 	$: comments = project.comments.sort(
-		(a, b) => b.creationTime.getTime() - a.creationTime.getTime()
+		(a, b) => a.creationTime.getTime() - b.creationTime.getTime()
 	);
 </script>
 
@@ -27,7 +27,7 @@
 
 	{#each comments as comment}
 		<button
-			class="p-4 flex flex-col pb-6"
+			class="p-4 flex flex-col pb-6 hover:bg-gray-50 transition duration-200 ease-in-out"
 			on:mouseenter={() => hoverComment(comment)}
 			on:mouseleave={() => leaveComment(comment)}
 			on:click={() => clickComment(comment)}

@@ -35,63 +35,6 @@
 			projectsMapStore.set($projectsMapStore);
 			project = firebaseProject;
 
-			// Testing
-			let activities: Activity[] = [
-				{
-					id: '1',
-					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
-					selector: 'body >',
-					projectId: project?.id,
-					eventData: [
-						{
-							key: 'click',
-							value: 'click',
-							type: EventMetadataType.SOURCE_MAP_ID
-						} as EventMetadata
-					],
-					visible: true,
-					creationTime: new Date(),
-					styleChanges: [{ key: 'color', newVal: 'red', oldVal: 'blue' }]
-				} as Activity,
-				{
-					id: '2',
-					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
-					selector: 'body >',
-					projectId: project?.id,
-					eventData: [
-						{
-							key: 'click',
-							value: 'click',
-							type: EventMetadataType.SOURCE_MAP_ID
-						} as EventMetadata
-					],
-					visible: true,
-					creationTime: new Date(),
-					styleChanges: [{ key: 'color', newVal: 'red', oldVal: 'blue' }]
-				} as Activity
-			];
-			let comments: Comment[] = [
-				{
-					id: '1',
-					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
-					projectId: project?.id,
-					creationTime: new Date(),
-					text: 'This is a comment'
-				} as Comment,
-				{
-					id: '2',
-					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
-					projectId: project?.id,
-					creationTime: new Date(),
-					text: 'This is a comment, too'
-				} as Comment
-			];
-			if (project) {
-				project.activities = activities;
-				project.comments = comments;
-			}
-			// End testing
-
 			// Get store users from activities and comments
 			const userIds = project.activities
 				.map((item) => item.userId)

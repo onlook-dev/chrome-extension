@@ -7,14 +7,20 @@ import {
 import { toggleIn } from '$lib/visbug/visbug'
 import {
 	authUserBucket,
+	popupStateBucket,
 	projectsMapBucket,
 	teamsMapBucket,
-	userBucket
+	userBucket,
+	usersMapBucket
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { getTeamFromFirebase } from '$lib/storage/team'
 import { getProjectFromFirebase } from '$lib/storage/project'
 import type { Team } from '$models/team'
+import type { Activity } from '$models/activity'
+import type { Comment } from '$models/comment'
+import { EventMetadataType, type EventMetadata } from '$models/eventData'
+import { getUserFromFirebase } from '$lib/storage/user'
 
 // When triggered, open tab or use existin project tab and toggle visbug in
 
@@ -63,6 +69,7 @@ const setListeners = () => {
 		}
 	})
 
+	// TODO: Use subscribe instead to Firebase instead
 	userBucket.valueStream.subscribe(async ({ user }) => {
 		if (!user) return
 		// When user added, get teams and add to map if not already there
@@ -75,6 +82,7 @@ const setListeners = () => {
 		}
 	})
 
+	// TODO: Use subscribe instead to Firebase instead
 	teamsMapBucket.valueStream.subscribe(async teamsMap => {
 		if (!teamsMap) return
 
@@ -87,7 +95,89 @@ const setListeners = () => {
 		for (const projectId of projectsNotInMap) {
 			const project = await getProjectFromFirebase(projectId)
 			if (!project) return
+
+			// Testing
+			let activities: Activity[] = [
+				{
+					id: '1',
+					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
+					selector: 'body >',
+					projectId: project?.id,
+					eventData: [
+						{
+							key: 'click',
+							value: 'click',
+							type: EventMetadataType.SOURCE_MAP_ID
+						} as EventMetadata
+					],
+					visible: true,
+					creationTime: new Date(),
+					styleChanges: [{ key: 'color', newVal: 'red', oldVal: 'blue' }]
+				} as Activity,
+				{
+					id: '2',
+					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
+					selector: 'body >',
+					projectId: project?.id,
+					eventData: [
+						{
+							key: 'click',
+							value: 'click',
+							type: EventMetadataType.SOURCE_MAP_ID
+						} as EventMetadata
+					],
+					visible: true,
+					creationTime: new Date(),
+					styleChanges: [{ key: 'color', newVal: 'red', oldVal: 'blue' }]
+				} as Activity
+			]
+			let comments: Comment[] = [
+				{
+					id: '1',
+					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
+					projectId: project?.id,
+					creationTime: new Date(),
+					text: 'This is a comment'
+				} as Comment,
+				{
+					id: '2',
+					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
+					projectId: project?.id,
+					creationTime: new Date(),
+					text: 'This is a comment, too'
+				} as Comment
+			]
+			if (project) {
+				project.activities = activities
+				project.comments = comments
+			}
+			// End testing
+
 			projectsMapBucket.set({ [project.id]: project })
+		}
+	})
+
+	// TODO: Use subscribe instead to Firebase instead
+	projectsMapBucket.valueStream.subscribe(async projectsMap => {
+		if (!projectsMap) return
+
+		// When projects are added, get users and add to map if not already there
+		const mappedUserIds = await usersMapBucket.getKeys()
+
+		// Get users from activities and comments
+		const usersNotInMap: string[] = Object.values(projectsMap)
+			.flatMap(project => project.activities.map((item: Activity) => item.userId))
+			.concat(
+				Object.values(projectsMap).flatMap(project =>
+					project.comments.map((item: Comment) => item.userId)
+				)
+			)
+			.filter((userId: string) => !mappedUserIds.includes(userId))
+
+		for (const userId of usersNotInMap) {
+			const user = await getUserFromFirebase(userId)
+			if (!user) return
+			usersMapBucket.set({ [user.id]: user })
 		}
 	})
 }
@@ -99,6 +189,14 @@ function toggleVisbugOnActiveTab() {
 }
 
 try {
+	// Reset for tests
+	// userBucket.clear()
+	// usersMapBucket.clear()
+	// authUserBucket.clear()
+	// popupStateBucket.clear()
+	// teamsMapBucket.clear()
+	// projectsMapBucket.clear()
+
 	setListeners()
 	console.log('Background script loaded!')
 } catch (error) {

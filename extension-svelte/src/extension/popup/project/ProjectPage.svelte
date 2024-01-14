@@ -29,12 +29,19 @@
 	function startEditing() {
 		project && sendEditProjectRequest(project)
 	}
+
+	function truncateString(str: string, num: number) {
+		if (str.length <= num) {
+			return str
+		}
+		return str.slice(0, num) + '...'
+	}
 </script>
 
 <div class="navbar p-none border">
 	<div class="flex-1">
 		<button on:click={returnToDashboard} class="btn btn-sm btn-ghost">
-			<ArrowLeft /> {project?.name}</button
+			<ArrowLeft /> {truncateString(project?.name || 'Dashboard', 20)}</button
 		>
 	</div>
 	<div class="flex-none">

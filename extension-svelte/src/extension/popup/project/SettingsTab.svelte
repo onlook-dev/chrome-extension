@@ -8,23 +8,30 @@
 	export let project: Project
 	const deleteModalId = 'delete-project-modal'
 
-	async function deleteProject() {
+	function deleteProject() {
 		// TODO: Check user permission in team first
-		const { activeTeamId } = await popupStateBucket.get()
-		const teamMap = new Map(Object.entries(await teamsMapBucket.get()))
-		const team = teamMap.get(activeTeamId)
+		popupStateBucket
+			.get()
+			.then(({ activeTeamId }) => {
+				teamsMapBucket.get().then(map => {
+					const teamMap = new Map(Object.entries(map))
+					const team = teamMap.get(activeTeamId)
 
-		// Remove project from team
-		team.projectIds = team.projectIds.filter((id: string) => id !== project.id)
+					// Remove project from team
+					team.projectIds = team.projectIds.filter((id: string) => id !== project.id)
 
-		// Save locally
-		projectsMapBucket.remove(project?.id ?? '')
-		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD, activeProjectId: '' })
-		teamsMapBucket.set({ [activeTeamId]: team })
+					// Save to Firebase
+					team && postTeamToFirebase(team)
+					deleteProjectFromFirebase(project.id)
 
-		// Save to Firebase
-		team && postTeamToFirebase(team)
-		deleteProjectFromFirebase(project.id)
+					// Save locally
+					projectsMapBucket.remove(project?.id ?? '')
+					teamsMapBucket.set({ [activeTeamId]: team })
+				})
+			})
+			.finally(() => {
+				popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
+			})
 	}
 </script>
 
