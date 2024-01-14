@@ -5,8 +5,12 @@
 
 	import type { Project } from '$models/project';
 	import { getProjectFromFirebase } from '$lib/storage/project';
+	import { getUserFromFirebase } from '$lib/storage/user';
 	import { ROUTE_DASHBOARD } from '$lib/utils/constants';
-	import { projectsMapStore } from '$lib/utils/store';
+	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
+
+	import type { Activity } from '$models/activity';
+	import { EventMetadataType, getEventDataByType, type EventMetadata } from '$models/eventData';
 
 	import Comments from './Comments.svelte';
 	import Activities from './Activities.svelte';
@@ -15,7 +19,7 @@
 
 	let project: Project | undefined;
 
-	onMount(() => {
+	onMount(async () => {
 		// Get project
 		const projectId = $page.params.id;
 		if (!projectId) {
@@ -24,11 +28,46 @@
 		if ($projectsMapStore.has(projectId)) {
 			project = $projectsMapStore.get(projectId);
 		} else {
-			getProjectFromFirebase(projectId).then((firebaseProject) => {
-				$projectsMapStore.set(projectId, firebaseProject);
-				projectsMapStore.set($projectsMapStore);
-				project = firebaseProject;
-			});
+			const firebaseProject = await getProjectFromFirebase(projectId);
+
+			$projectsMapStore.set(projectId, firebaseProject);
+			projectsMapStore.set($projectsMapStore);
+			project = firebaseProject;
+
+			// Testing
+			let activities: Activity[] = [
+				{
+					id: '1',
+					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
+					selector: 'body >',
+					projectId: project?.id,
+					eventData: [
+						{
+							key: 'click',
+							value: 'click',
+							type: EventMetadataType.SOURCE_MAP_ID
+						} as EventMetadata
+					],
+					visible: true,
+					creationTime: new Date(),
+					styleChanges: [{ key: 'color', newVal: 'red', oldVal: 'blue' }]
+				} as Activity
+			];
+			if (project) project.activities = activities;
+			// End testing
+
+			// Get store users from activities and comments
+			const userIds = project.activities
+				.map((item) => item.userId)
+				.concat(project.comments.map((item) => item.userId));
+
+			console.log(userIds);
+			for (const userId of userIds) {
+				if (!$usersMapStore.has(userId)) {
+					const user = await getUserFromFirebase(userId);
+					user && usersMapStore.update((map) => map.set(userId, user));
+				}
+			}
 		}
 	});
 </script>

@@ -1,34 +1,20 @@
 <script lang="ts">
 	import type { Project } from '$models/project';
 	import type { Activity } from '$models/activity';
-	import { timeSince } from '$models/comment';
 	import { EventMetadataType, getEventDataByType, type EventMetadata } from '$models/eventData';
 	import ItemHeader from './ItemHeader.svelte';
+	import { usersMapStore } from '$lib/utils/store';
 
 	export let project: Project;
-	let activities: Activity[] = [
-		{
-			id: '1',
-			userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
-			selector: 'body >',
-			projectId: project.id,
-			eventData: [
-				{
-					key: 'click',
-					value: 'click',
-					type: EventMetadataType.SOURCE_MAP_ID
-				} as EventMetadata
-			],
-			visible: true,
-			creationTime: new Date(),
-			styleChanges: [{ key: 'color', newVal: 'red', oldVal: 'blue' }]
-		} as Activity
-	];
+	let activities: Activity[];
+
 	let hoverActivity: (activity: Activity) => void;
 	let leaveActivity: (activity: Activity) => void;
 	let clickActivity: (activity: Activity) => void;
 
-	$: activities = activities.sort((a, b) => b.creationTime.getTime() - a.creationTime.getTime());
+	$: activities = project.activities.sort(
+		(a, b) => b.creationTime.getTime() - a.creationTime.getTime()
+	);
 </script>
 
 {#if activities.length === 0}
@@ -51,8 +37,8 @@
 			<!-- Item header -->
 			<!-- TODO: Get user from map -->
 			<ItemHeader
-				profileImageUrl={activity.userId}
-				userName={activity.userId}
+				profileImageUrl={$usersMapStore.get(activity.userId)?.profileImage}
+				userName={$usersMapStore.get(activity.userId)?.name}
 				creationTime={activity.creationTime}
 			/>
 
