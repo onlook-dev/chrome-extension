@@ -1,15 +1,18 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "ES6",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,
-    "target": "es2017"
+    "target": "ES2017",
+    "moduleResolution": "node",
+    "paths": {
+      "$shared/*": ["../shared/*"]
+    }
   },
+  "exclude": ["node_modules", "**/*.spec.ts"],
   "compileOnSave": true,
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
