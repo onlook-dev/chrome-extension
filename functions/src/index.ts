@@ -2,16 +2,15 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as nanoid from "nanoid";
-import { onDocumentCreated } from "firebase-functions/v2/firestore";
 
 import {
   FIREBASE_COLLECTION_PROJECTS,
   FIREBASE_COLLECTION_USERS,
   FIREBASE_COLLECTION_TEAMS,
 } from "../../shared/constants";
-import { Team, Role } from "../../shared/models/team";
-import type { Project } from "../../shared/models/project";
-import type { User } from "../../shared/models/user";
+import {Team, Role} from "../../shared/models/team";
+// import type {Project} from "../../shared/models/project";
+import type {User} from "../../shared/models/user";
 
 admin.initializeApp();
 
@@ -81,25 +80,21 @@ export const deleteUser = functions.auth.user().onDelete(async (user: any) => {
   await userRef.delete();
 });
 
-export const createProject = onDocumentCreated(
-  `${FIREBASE_COLLECTION_PROJECTS}/{projectId}`,
-  async (event) => {
-    const snapshot = event.data;
-    if (!snapshot) {
-      console.log("No data associated with the event");
-      return;
-    }
-    const projectData = snapshot.data() as Project;
-
-    await admin
+exports.createProject = functions.firestore
+  .document(`${FIREBASE_COLLECTION_PROJECTS}/{projectId}`)
+  .onCreate(async (snapshot, context) => {
+    const projectData = snapshot.data();
+    const teamRef = admin
       .firestore()
       .collection(FIREBASE_COLLECTION_TEAMS)
-      .doc(projectData.teamId)
-      .update({
-        projectIds: admin.firestore.FieldValue.arrayUnion(projectData.id),
-      });
-  }
-);
+      .doc(projectData.teamId);
+
+    await teamRef.update({
+      projectIds: admin.firestore.FieldValue.arrayUnion(
+        context.params.projectId
+      ),
+    });
+  });
 
 export const deleteProject = functions.firestore
   .document(`${FIREBASE_COLLECTION_PROJECTS}/{projectId}`)
@@ -121,7 +116,7 @@ export const deleteProject = functions.firestore
 
 export const addUserToTeam = functions.https.onCall(
   async (data: any, context: any) => {
-    const { userId, teamId, role } = data;
+    const {userId, teamId, role} = data;
 
     // Update team with user id and role
     const teamRef = admin
