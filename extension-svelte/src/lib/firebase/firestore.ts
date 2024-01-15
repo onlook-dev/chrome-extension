@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore'
+import { collection, addDoc, doc, getDoc, setDoc, onSnapshot, deleteDoc } from 'firebase/firestore'
 import { store } from './firebase'
 
 export async function postObjectToCollection(
@@ -38,7 +38,7 @@ export async function deleteObjectFromCollection(
 	objectId: string
 ): Promise<void> {
 	const docRef = doc(store, collectionId, objectId)
-	return await setDoc(docRef, {})
+	await deleteDoc(docRef)
 }
 
 export async function subscribeToDocument(
