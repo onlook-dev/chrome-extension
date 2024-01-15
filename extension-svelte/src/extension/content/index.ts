@@ -1,4 +1,4 @@
-import { DASHBOARD_AUTH, DASHBOARD_URL } from '$shared/constants'
+import { DASHBOARD_AUTH, DASHBOARD_URL, STYLE_CHANGE } from '$shared/constants'
 import { authUserBucket } from '$lib/utils/localstorage'
 
 export function setupListeners() {
@@ -8,6 +8,8 @@ export function setupListeners() {
 		const message = event.data
 		if (message.type === DASHBOARD_AUTH && message.user) {
 			authUserBucket.set({ authUser: message.user })
+		} else if (message.type === STYLE_CHANGE) {
+			console.log(message.detail)
 		}
 	})
 }
