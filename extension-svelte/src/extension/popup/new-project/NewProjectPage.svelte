@@ -65,7 +65,6 @@
 		popupStateBucket.set({ activeRoute: PopupRoutes.PROJECT, activeProjectId: newProject.id })
 
 		// Save to Firebase
-		team && postTeamToFirebase(team)
 		postProjectToFirebase(newProject)
 	}
 </script>

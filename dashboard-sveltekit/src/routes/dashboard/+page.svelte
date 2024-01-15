@@ -34,13 +34,11 @@
 			unsubs.forEach((unsub: any) => unsub());
 
 			user?.teams.forEach((team) => {
-				if (!$teamsMapStore.has(team)) {
-					subscribeToTeam(team, (firebaseTeam) => {
-						teamsMapStore.update((map) => map.set(team, firebaseTeam));
-					}).then((unsubscribe) => {
-						unsubs.push(unsubscribe);
-					});
-				}
+				subscribeToTeam(team, (firebaseTeam) => {
+					teamsMapStore.update((map) => map.set(team, firebaseTeam));
+				}).then((unsubscribe) => {
+					unsubs.push(unsubscribe);
+				});
 			});
 		});
 	});
