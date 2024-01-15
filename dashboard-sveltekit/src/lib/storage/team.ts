@@ -1,4 +1,8 @@
-import { getObjectFromCollection, postObjectToCollection } from '$lib/firebase/firestore';
+import {
+	getObjectFromCollection,
+	postObjectToCollection,
+	subscribeToDocument
+} from '$lib/firebase/firestore';
 import { FIREBASE_COLLECTION_TEAMS } from '$shared/constants';
 import type { Team } from '$shared/models/team';
 
@@ -12,4 +16,12 @@ export async function postTeamToFirebase(team: Team) {
 	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_TEAMS, team, team.id);
 	console.log('Posted firebase team with ID', objectId);
 	return;
+}
+
+export async function subscribeToTeam(
+	teamId: string,
+	callback: (data: Team) => void
+): Promise<() => void> {
+	const unsubscribe = await subscribeToDocument(FIREBASE_COLLECTION_TEAMS, teamId, callback);
+	return unsubscribe;
 }

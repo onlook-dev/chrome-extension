@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
 
 	import { auth } from '$lib/firebase/firebase';
 	import { DashboardRoutes } from '$shared/constants';
 	import { teamsMapStore, userStore } from '$lib/utils/store';
-	import { getTeamFromFirebase } from '$lib/storage/team';
+	import { subscribeToTeam } from '$lib/storage/team';
 	import type { User } from '$shared/models/user';
 
 	import AvatarDropdown from './AvatarDropdown.svelte';
@@ -16,6 +16,7 @@
 	const dashboardDrawerId = 'dashboard-drawer';
 	let user: User | null;
 	let activeTeamId = '';
+	let unsubs: any[] = [];
 
 	onMount(async () => {
 		auth.onAuthStateChanged((user) => {
@@ -28,14 +29,24 @@
 			if (!storeUser) return;
 			user = storeUser;
 			activeTeamId = user?.teams[0] ?? '';
+
+			// Unsubscribe from previous teams
+			unsubs.forEach((unsub: any) => unsub());
+
 			user?.teams.forEach((team) => {
 				if (!$teamsMapStore.has(team)) {
-					getTeamFromFirebase(team).then((firebaseTeam) => {
+					subscribeToTeam(team, (firebaseTeam) => {
 						teamsMapStore.update((map) => map.set(team, firebaseTeam));
+					}).then((unsubscribe) => {
+						unsubs.push(unsubscribe);
 					});
 				}
 			});
 		});
+	});
+
+	onDestroy(() => {
+		unsubs.forEach((unsub: any) => unsub());
 	});
 </script>
 

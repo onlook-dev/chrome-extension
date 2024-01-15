@@ -9,7 +9,7 @@ import {
   FIREBASE_COLLECTION_TEAMS,
 } from "../../shared/constants";
 import {Team, Role} from "../../shared/models/team";
-// import type {Project} from "../../shared/models/project";
+import type {Project} from "../../shared/models/project";
 import type {User} from "../../shared/models/user";
 
 admin.initializeApp();
@@ -48,7 +48,7 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
     });
 });
 
-export const deleteUser = functions.auth.user().onDelete(async (user: any) => {
+export const deleteUser = functions.auth.user().onDelete(async (user) => {
   const userRef = admin
     .firestore()
     .collection(FIREBASE_COLLECTION_USERS)
@@ -80,10 +80,10 @@ export const deleteUser = functions.auth.user().onDelete(async (user: any) => {
   await userRef.delete();
 });
 
-exports.createProject = functions.firestore
+export const createProject = functions.firestore
   .document(`${FIREBASE_COLLECTION_PROJECTS}/{projectId}`)
   .onCreate(async (snapshot, context) => {
-    const projectData = snapshot.data();
+    const projectData = snapshot.data() as Project;
     const teamRef = admin
       .firestore()
       .collection(FIREBASE_COLLECTION_TEAMS)
@@ -98,8 +98,8 @@ exports.createProject = functions.firestore
 
 export const deleteProject = functions.firestore
   .document(`${FIREBASE_COLLECTION_PROJECTS}/{projectId}`)
-  .onDelete(async (snapshot: any, context: any) => {
-    const projectData = snapshot.data();
+  .onDelete(async (snapshot, context) => {
+    const projectData = snapshot.data() as Project;
 
     // Delete project from team
     const teamRef = admin
@@ -114,29 +114,66 @@ export const deleteProject = functions.firestore
     });
   });
 
-export const addUserToTeam = functions.https.onCall(
-  async (data: any, context: any) => {
-    const {userId, teamId, role} = data;
+export const createTeam = functions.firestore
+  .document(`${FIREBASE_COLLECTION_TEAMS}/{teamId}`)
+  .onCreate(async (snapshot, context) => {
+    const teamData = snapshot.data() as Team;
 
-    // Update team with user id and role
-    const teamRef = admin
-      .firestore()
-      .collection(FIREBASE_COLLECTION_TEAMS)
-      .doc(teamId);
-    const teamUpdate = {
-      [`users.${userId}`]: role,
-    };
+    // Add team id to each user
+    const userIds: string[] = Object.keys(teamData.users);
+    userIds.forEach((userId) => {
+      console.log(userId);
+      const userRef = admin
+        .firestore()
+        .collection(FIREBASE_COLLECTION_USERS)
+        .doc(userId);
 
-    teamUpdate[`users.${userId}`] = role;
-    await teamRef.update(teamUpdate);
-
-    // Update user with team id
-    const userRef = admin
-      .firestore()
-      .collection(FIREBASE_COLLECTION_USERS)
-      .doc(userId);
-    await userRef.update({
-      teams: admin.firestore.FieldValue.arrayUnion(teamId),
+      userRef.update({
+        teams: admin.firestore.FieldValue.arrayUnion(context.params.teamId),
+      });
     });
-  }
-);
+  });
+
+export const deleteTeam = functions.firestore
+  .document(`${FIREBASE_COLLECTION_TEAMS}/{teamId}`)
+  .onDelete(async (snapshot, context) => {
+    const teamData = snapshot.data() as Team;
+
+    // Delete team from each user
+    const userIds: string[] = Object.keys(teamData.users);
+    userIds.forEach((userId) => {
+      const userRef = admin
+        .firestore()
+        .collection(FIREBASE_COLLECTION_USERS)
+        .doc(userId);
+
+      userRef.update({
+        teams: admin.firestore.FieldValue.arrayRemove(context.params.teamId),
+      });
+    });
+  });
+
+export const addUserToTeam = functions.https.onCall(async (data, context) => {
+  const {userId, teamId, role} = data;
+
+  // Update team with user id and role
+  const teamRef = admin
+    .firestore()
+    .collection(FIREBASE_COLLECTION_TEAMS)
+    .doc(teamId);
+  const teamUpdate = {
+    [`users.${userId}`]: role,
+  };
+
+  teamUpdate[`users.${userId}`] = role;
+  await teamRef.update(teamUpdate);
+
+  // Update user with team id
+  const userRef = admin
+    .firestore()
+    .collection(FIREBASE_COLLECTION_USERS)
+    .doc(userId);
+  await userRef.update({
+    teams: admin.firestore.FieldValue.arrayUnion(teamId),
+  });
+});

@@ -1,18 +1,26 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { getProjectFromFirebase } from '$lib/storage/project';
+	import { onDestroy } from 'svelte';
+	import { subscribeToProject } from '$lib/storage/project';
 	import { DashboardRoutes } from '$shared/constants';
 	import { projectsMapStore } from '$lib/utils/store';
 	import type { Team } from '$shared/models/team';
 
 	export let team: Team | undefined;
+	let unsubs: any[] = [];
 
 	$: team?.projectIds.forEach((projectId) => {
 		if (!$projectsMapStore.has(projectId)) {
-			getProjectFromFirebase(projectId).then((firebaseProject) => {
+			subscribeToProject(projectId, (firebaseProject) => {
 				projectsMapStore.update((map) => map.set(projectId, firebaseProject));
+			}).then((unsubscribe) => {
+				unsubs.push(unsubscribe);
 			});
 		}
+	});
+
+	onDestroy(() => {
+		unsubs.forEach((unsub: any) => unsub());
 	});
 </script>
 

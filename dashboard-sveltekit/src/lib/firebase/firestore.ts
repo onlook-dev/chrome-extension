@@ -44,7 +44,8 @@ export async function deleteObjectFromCollection(
 export async function subscribeToDocument(
 	collectionId: string,
 	objectId: string,
-	callback: (data: unknown) => void
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	callback: (data: any) => void
 ) {
 	const docRef = doc(store, collectionId, objectId);
 	const unsubscribe = onSnapshot(docRef, (docSnap) => {

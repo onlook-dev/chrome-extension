@@ -3,7 +3,6 @@
 	import { teamsMapStore, userStore } from '$lib/utils/store';
 	import { Role, type Team } from '$shared/models/team';
 	import { nanoid } from 'nanoid';
-	import { postUserToFirebase } from '$lib/storage/user';
 	import { postTeamToFirebase } from '$lib/storage/team';
 
 	let plan = Tier.BASIC;
@@ -26,9 +25,8 @@
 			return user;
 		});
 
-		// Save to firebase
+		// Save to firebase. Firebase function will update user.
 		postTeamToFirebase(newTeam);
-		postUserToFirebase($userStore);
 	}
 
 	function showModal() {
