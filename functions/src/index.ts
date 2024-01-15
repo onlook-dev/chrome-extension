@@ -2,6 +2,7 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as nanoid from "nanoid";
+import { onDocumentCreated } from "firebase-functions/v2/firestore";
 
 import {
   FIREBASE_COLLECTION_PROJECTS,
@@ -17,7 +18,7 @@ admin.initializeApp();
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-export const createUser = functions.auth.user().onCreate(async (user: any) => {
+export const createUser = functions.auth.user().onCreate(async (user) => {
   const defaultTeam = {
     id: nanoid.nanoid(),
     name: `${user.displayName}'s Team`,
@@ -80,22 +81,25 @@ export const deleteUser = functions.auth.user().onDelete(async (user: any) => {
   await userRef.delete();
 });
 
-export const createProject = functions.firestore
-  .document(`${FIREBASE_COLLECTION_PROJECTS}/{projectId}`)
-  .onCreate(async (snapshot: any, context: any) => {
+export const createProject = onDocumentCreated(
+  `${FIREBASE_COLLECTION_PROJECTS}/{projectId}`,
+  async (event) => {
+    const snapshot = event.data;
+    if (!snapshot) {
+      console.log("No data associated with the event");
+      return;
+    }
     const projectData = snapshot.data() as Project;
-    const teamRef = admin
-      .firestore()
-      .collection("teams")
-      .doc(projectData.teamId);
 
-    // Add project to team
-    await teamRef.update({
-      projectIds: admin.firestore.FieldValue.arrayUnion(
-        context.params.projectId
-      ),
-    });
-  });
+    await admin
+      .firestore()
+      .collection(FIREBASE_COLLECTION_TEAMS)
+      .doc(projectData.teamId)
+      .update({
+        projectIds: admin.firestore.FieldValue.arrayUnion(projectData.id),
+      });
+  }
+);
 
 export const deleteProject = functions.firestore
   .document(`${FIREBASE_COLLECTION_PROJECTS}/{projectId}`)
