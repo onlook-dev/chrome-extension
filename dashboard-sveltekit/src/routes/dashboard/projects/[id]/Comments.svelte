@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Project } from '$models/project';
-	import { CommentMediaType, type Comment } from '$models/comment';
+	import type { Project } from '$shared/models/project';
+	import { CommentMediaType, type Comment } from '$shared/models/comment';
 	import { usersMapStore } from '$lib/utils/store';
 
 	import ItemHeader from './ItemHeader.svelte';

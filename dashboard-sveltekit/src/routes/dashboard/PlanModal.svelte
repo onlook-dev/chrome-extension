@@ -1,7 +1,7 @@
 <script lang="ts">
 	const modalId = 'plan-modal';
 	const teamName = 'Team name';
-	import { Tier } from '$models/pricing';
+	import { Tier } from '$shared/models/pricing';
 
 	let plan = Tier.BASIC;
 

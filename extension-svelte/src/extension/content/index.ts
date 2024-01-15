@@ -1,4 +1,4 @@
-import { DASHBOARD_AUTH, DASHBOARD_URL, IMPORT_PROJECT } from '$lib/utils/constants'
+import { DASHBOARD_AUTH, DASHBOARD_URL } from '$shared/constants'
 import { authUserBucket } from '$lib/utils/localstorage'
 
 export function setupListeners() {

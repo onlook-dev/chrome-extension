@@ -1,6 +1,6 @@
-import type { Project } from '$models/project';
-import type { User } from '$models/user';
-import type { Team } from '$models/team';
+import type { Project } from '$shared/models/project';
+import type { User } from '$shared/models/user';
+import type { Team } from '$shared/models/team';
 import { writable, type Writable } from 'svelte/store';
 
 export const userStore = <Writable<User | null>>writable(null);

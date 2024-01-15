@@ -12,7 +12,7 @@
 		"moduleResolution": "bundler",
 		"paths": {
 			"$*": ["./src/*"],
-			"$models/*": ["../models/*"]
+			"$shared/*": ["../shared/*"]
 		}
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias

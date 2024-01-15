@@ -1,32 +1,51 @@
 <script lang="ts">
-	import type { Project } from '$models/project'
+	import type { Project } from '$shared/models/project'
 	import { projectsMapBucket, popupStateBucket, teamsMapBucket } from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { deleteProjectFromFirebase } from '$lib/storage/project'
-	import { postTeamToFirebase } from '$lib/storage/team'
 
 	export let project: Project
-	const deleteModalId = 'delete-project-modal'
+	const modalId = 'delete-project-modal'
+
+	function showModal() {
+		const modal = document.getElementById(modalId) as HTMLDialogElement
+		if (modal) {
+			modal.showModal()
+			modal.addEventListener(
+				'click',
+				event => {
+					if (event.target === modal) {
+						closeModal()
+					}
+				},
+				{ once: true }
+			)
+		}
+	}
+
+	function closeModal() {
+		const modal = document.getElementById(modalId) as HTMLDialogElement
+		if (modal) {
+			modal.close()
+		}
+	}
 
 	function deleteProject() {
-		// TODO: Check user permission in team first
-		popupStateBucket
-			.get()
-			.then(({ activeTeamId }) => {
-				teamsMapBucket.get().then(map => {
-					const teamMap = new Map(Object.entries(map))
-					const team = teamMap.get(activeTeamId)
+		deleteProjectFromFirebase(project.id)
+			.then(() => {
+				popupStateBucket.get().then(({ activeTeamId }) => {
+					// Remove project from team locally
+					teamsMapBucket.get().then(map => {
+						const teamMap = new Map(Object.entries(map))
+						const team = teamMap.get(activeTeamId)
 
-					// Remove project from team
-					team.projectIds = team.projectIds.filter((id: string) => id !== project.id)
+						// Remove project from team
+						team.projectIds = team.projectIds.filter((id: string) => id !== project.id)
 
-					// Save to Firebase
-					team && postTeamToFirebase(team)
-					deleteProjectFromFirebase(project.id)
-
-					// Save locally
-					projectsMapBucket.remove(project?.id ?? '')
-					teamsMapBucket.set({ [activeTeamId]: team })
+						// Save locally
+						projectsMapBucket.remove(project?.id ?? '')
+						teamsMapBucket.set({ [activeTeamId]: team })
+					})
 				})
 			})
 			.finally(() => {
@@ -59,21 +78,14 @@
 			/>
 		</div>
 		<div class="divider">Danger zone</div>
-		<button
-			on:click={() => document.getElementById(deleteModalId)?.showModal()}
-			class="btn btn-outline btn-error"
-		>
-			Delete project
-		</button>
-		<dialog id={deleteModalId} class="modal">
+		<button on:click={showModal} class="btn btn-outline btn-error"> Delete project </button>
+		<dialog id={modalId} class="modal">
 			<div class="modal-box">
 				<h3 class="font-bold text-lg">Delete project?</h3>
 				<p class="py-4">Deleted projects can NOT be restored. Continue?</p>
-				<div class="modal-action">
-					<form method="dialog space-x-2">
-						<button class="btn btn-ghost">Cancel</button>
-						<button class="btn btn-error" on:click={deleteProject}>Delete</button>
-					</form>
+				<div class="modal-action space-x-2">
+					<button class="btn" on:click={closeModal}>Cancel</button>
+					<button class="btn btn-error" on:click={deleteProject}>Delete</button>
 				</div>
 			</div>
 			<form method="dialog" class="modal-backdrop">

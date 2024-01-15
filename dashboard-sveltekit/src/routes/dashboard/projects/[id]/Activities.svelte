@@ -1,7 +1,11 @@
 <script lang="ts">
-	import type { Project } from '$models/project';
-	import type { Activity } from '$models/activity';
-	import { EventMetadataType, getEventDataByType, type EventMetadata } from '$models/eventData';
+	import type { Project } from '$shared/models/project';
+	import type { Activity } from '$shared/models/activity';
+	import {
+		EventMetadataType,
+		getEventDataByType,
+		type EventMetadata
+	} from '$shared/models/eventData';
 	import ItemHeader from './ItemHeader.svelte';
 	import { usersMapStore } from '$lib/utils/store';
 

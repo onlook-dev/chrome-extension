@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import type { Project } from '$models/project'
-	import { CommentMediaType, type Comment } from '$models/comment'
-	import type { User } from '$models/user'
+	import type { Project } from '$shared/models/project'
+	import { CommentMediaType, type Comment } from '$shared/models/comment'
+	import type { User } from '$shared/models/user'
 
 	import ItemHeader from './ItemHeader.svelte'
 	import { usersMapBucket } from '$lib/utils/localstorage'

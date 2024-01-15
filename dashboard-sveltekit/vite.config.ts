@@ -12,7 +12,7 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
-			$models: path.resolve(__dirname, '../models') // Go up one level and then into models
+			$shared: path.resolve(__dirname, '../shared') // Go up one level and then into shared
 		}
 	}
 });

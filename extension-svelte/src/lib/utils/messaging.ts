@@ -1,4 +1,4 @@
-import type { Project } from '$models/project'
+import type { Project } from '../../../../shared/models/project'
 import { getMessage } from '@extend-chrome/messages'
 import type { SendOptions } from '@extend-chrome/messages/types/types'
 import { Observable } from 'rxjs'

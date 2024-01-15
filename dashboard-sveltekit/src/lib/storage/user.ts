@@ -1,12 +1,12 @@
-import { getObjectFromCollection, postObjectToCollection } from '$lib/firebase/firestore';
-import type { User } from '$models/user';
-import { DASHBOARD_AUTH, FIREBASE_COLLECTION_USERS } from '$lib/utils/constants';
-import { teamsMapStore, userStore } from '$lib/utils/store';
+import {
+	getObjectFromCollection,
+	postObjectToCollection,
+	subscribeToDocument
+} from '$lib/firebase/firestore';
+import type { User } from '$shared/models/user';
+import { DASHBOARD_AUTH, FIREBASE_COLLECTION_USERS } from '$shared/constants';
+import { userStore } from '$lib/utils/store';
 import type { User as FirebaseUser } from 'firebase/auth';
-import { get } from 'svelte/store';
-import { nanoid } from 'nanoid';
-import { postTeamToFirebase } from './team';
-import { Role, type Team } from '$models/team';
 
 export async function getUserFromFirebase(userId: string): Promise<User | undefined> {
 	console.log('Fetching firebase user');
@@ -23,6 +23,11 @@ export async function postUserToFirebase(user: User) {
 	return;
 }
 
+export async function subscribeToUser(userId: string, callback: (data: User) => void) {
+	const unsubscribe = await subscribeToDocument(FIREBASE_COLLECTION_USERS, userId, callback);
+	return unsubscribe;
+}
+
 export async function setStoreUser(authUser: FirebaseUser) {
 	// Send authUser to extension
 	window.postMessage(
@@ -32,39 +37,22 @@ export async function setStoreUser(authUser: FirebaseUser) {
 		},
 		window.location.origin
 	);
+	// Set default user while waiting for remote update
+	setDefaultUser(authUser);
 
-	// Fetch from remote if no user in store
-	if (!get(userStore)) {
-		getUserFromFirebase(authUser.uid).then((user) => {
-			if (!user) {
-				console.log('Creating new user');
+	// Listen and update user from remote
+	subscribeToUser(authUser.uid, (user) => {
+		userStore.set(user);
+	});
+}
 
-				// Create default team
-				const defaultTeam: Team = {
-					id: nanoid(),
-					name: 'My Team',
-					projectIds: [],
-					users: { [authUser.uid]: Role.ADMIN }
-				} as Team;
-
-				// If user doesn't exist, create new user
-				user = {
-					id: authUser.uid,
-					name: authUser.displayName ?? authUser.providerData[0].displayName ?? '',
-					email: authUser.email ?? '',
-					profileImage: authUser.photoURL ?? '',
-					teams: [defaultTeam.id]
-				};
-				postTeamToFirebase(defaultTeam);
-				postUserToFirebase(user);
-
-				// Add team to store
-				teamsMapStore.update((teamsMap) => {
-					teamsMap.set(defaultTeam.id, defaultTeam);
-					return teamsMap;
-				});
-			}
-			userStore.set(user);
-		});
-	}
+export function setDefaultUser(authUser: FirebaseUser) {
+	const user = {
+		id: authUser.uid,
+		name: authUser.displayName ?? authUser.providerData[0].displayName ?? '',
+		email: authUser.email ?? '',
+		profileImage: authUser.photoURL ?? '',
+		teams: []
+	} as User;
+	userStore.set(user);
 }

@@ -1,4 +1,4 @@
-import { DASHBOARD_AUTH_ROUTE, DASHBOARD_URL } from '../../lib/utils/constants'
+import { DashboardRoutes, DASHBOARD_URL } from '$shared/constants'
 import {
 	authRequestStream,
 	editProjectRequestStream,
@@ -7,22 +7,26 @@ import {
 import { toggleIn } from '$lib/visbug/visbug'
 import {
 	authUserBucket,
-	popupStateBucket,
 	projectsMapBucket,
 	teamsMapBucket,
 	userBucket,
 	usersMapBucket
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
-import { getTeamFromFirebase } from '$lib/storage/team'
-import { getProjectFromFirebase } from '$lib/storage/project'
-import type { Team } from '$models/team'
-import type { Activity } from '$models/activity'
-import type { Comment } from '$models/comment'
-import { EventMetadataType, type EventMetadata } from '$models/eventData'
-import { getUserFromFirebase } from '$lib/storage/user'
+
+import type { Team } from '../../../../shared/models/team'
+import type { Activity } from '../../../../shared/models/activity'
+import type { Comment } from '../../../../shared/models/comment'
+
+import { subscribeToUser } from '$lib/storage/user'
+import { subscribeToTeam } from '$lib/storage/team'
+import { subscribeToProject } from '$lib/storage/project'
 
 // When triggered, open tab or use existin project tab and toggle visbug in
+
+let projectSubs: (() => void)[] = []
+let teamSubs: (() => void)[] = []
+let userSubs: (() => void)[] = []
 
 const setListeners = () => {
 	subscribeToFirebaseAuthChanges()
@@ -32,7 +36,7 @@ const setListeners = () => {
 	})
 
 	authRequestStream.subscribe(() => {
-		const authUrl = `${DASHBOARD_URL}/${DASHBOARD_AUTH_ROUTE}`
+		const authUrl = `${DASHBOARD_URL}${DashboardRoutes.SIGNIN}`
 		chrome.tabs.create({ url: authUrl })
 		return
 	})
@@ -75,14 +79,21 @@ const setListeners = () => {
 		// When user added, get teams and add to map if not already there
 		const mappedTeamIds = await teamsMapBucket.getKeys()
 		const teamsNotInMap = user.teams.filter(teamId => !mappedTeamIds.includes(teamId))
+
+		// Unsubscribe from previous teams
+		teamSubs.forEach(unsubscribe => unsubscribe())
+
 		for (const teamId of teamsNotInMap) {
-			const team = await getTeamFromFirebase(teamId)
-			if (!team) return
-			teamsMapBucket.set({ [team.id]: team })
+			subscribeToTeam(teamId, async team => {
+				if (!team) return
+				teamsMapBucket.set({ [team.id]: team })
+			}).then(unsubscribe => {
+				teamSubs.push(unsubscribe)
+			})
 		}
 	})
 
-	// TODO: Use subscribe instead to Firebase instead
+	// TODO: Use subscribe to Firebase instead
 	teamsMapBucket.valueStream.subscribe(async teamsMap => {
 		if (!teamsMap) return
 
@@ -92,72 +103,20 @@ const setListeners = () => {
 			.flatMap((team: Team) => team.projectIds)
 			.filter((projectId: string) => !mappedProjectIds.includes(projectId))
 
+		// Unsubscribe from previous projects
+		projectSubs.forEach(unsubscribe => unsubscribe())
+
 		for (const projectId of projectsNotInMap) {
-			const project = await getProjectFromFirebase(projectId)
-			if (!project) return
-
-			// Testing
-			let activities: Activity[] = [
-				{
-					id: '1',
-					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
-					selector: 'body >',
-					projectId: project?.id,
-					eventData: [
-						{
-							key: 'click',
-							value: 'click',
-							type: EventMetadataType.SOURCE_MAP_ID
-						} as EventMetadata
-					],
-					visible: true,
-					creationTime: new Date(),
-					styleChanges: [{ key: 'color', newVal: 'red', oldVal: 'blue' }]
-				} as Activity,
-				{
-					id: '2',
-					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
-					selector: 'body >',
-					projectId: project?.id,
-					eventData: [
-						{
-							key: 'click',
-							value: 'click',
-							type: EventMetadataType.SOURCE_MAP_ID
-						} as EventMetadata
-					],
-					visible: true,
-					creationTime: new Date(),
-					styleChanges: [{ key: 'color', newVal: 'red', oldVal: 'blue' }]
-				} as Activity
-			]
-			let comments: Comment[] = [
-				{
-					id: '1',
-					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
-					projectId: project?.id,
-					creationTime: new Date(),
-					text: 'This is a comment'
-				} as Comment,
-				{
-					id: '2',
-					userId: 'urGM6E9N7yf9hoBuc9lPBwRNf4m2',
-					projectId: project?.id,
-					creationTime: new Date(),
-					text: 'This is a comment, too'
-				} as Comment
-			]
-			if (project) {
-				project.activities = activities
-				project.comments = comments
-			}
-			// End testing
-
-			projectsMapBucket.set({ [project.id]: project })
+			subscribeToProject(projectId, async project => {
+				if (!project) return
+				projectsMapBucket.set({ [project.id]: project })
+			}).then(unsubscribe => {
+				projectSubs.push(unsubscribe)
+			})
 		}
 	})
 
-	// TODO: Use subscribe instead to Firebase instead
+	// TODO: Use subscribe to Firebase instead
 	projectsMapBucket.valueStream.subscribe(async projectsMap => {
 		if (!projectsMap) return
 
@@ -174,10 +133,16 @@ const setListeners = () => {
 			)
 			.filter((userId: string) => !mappedUserIds.includes(userId))
 
+		// Unsubscribe from previous users
+		userSubs.forEach(unsubscribe => unsubscribe())
+
 		for (const userId of usersNotInMap) {
-			const user = await getUserFromFirebase(userId)
-			if (!user) return
-			usersMapBucket.set({ [user.id]: user })
+			subscribeToUser(userId, async user => {
+				if (!user) return
+				usersMapBucket.set({ [user.id]: user })
+			}).then(unsubscribe => {
+				userSubs.push(unsubscribe)
+			})
 		}
 	})
 }
@@ -189,14 +154,6 @@ function toggleVisbugOnActiveTab() {
 }
 
 try {
-	// Reset for tests
-	// userBucket.clear()
-	// usersMapBucket.clear()
-	// authUserBucket.clear()
-	// popupStateBucket.clear()
-	// teamsMapBucket.clear()
-	// projectsMapBucket.clear()
-
 	setListeners()
 	console.log('Background script loaded!')
 } catch (error) {

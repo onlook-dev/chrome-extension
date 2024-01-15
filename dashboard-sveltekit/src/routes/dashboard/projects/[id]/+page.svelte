@@ -1,17 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 
-	import type { Project } from '$models/project';
-	import { getProjectFromFirebase } from '$lib/storage/project';
+	import type { Project } from '$shared/models/project';
+	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
-	import { ROUTE_DASHBOARD } from '$lib/utils/constants';
+	import { DashboardRoutes } from '$shared/constants';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
-
-	import type { Activity } from '$models/activity';
-	import type { Comment } from '$models/comment';
-	import { EventMetadataType, type EventMetadata } from '$models/eventData';
 
 	import Comments from './Comments.svelte';
 	import Activities from './Activities.svelte';
@@ -19,34 +15,41 @@
 	import PublishModal from './PublishModal.svelte';
 
 	let project: Project | undefined;
+	let unsubs: any[] = [];
 
 	onMount(async () => {
 		// Get project
 		const projectId = $page.params.id;
 		if (!projectId) {
-			goto(ROUTE_DASHBOARD);
+			goto(DashboardRoutes.DASHBOARD);
 		}
 		if ($projectsMapStore.has(projectId)) {
 			project = $projectsMapStore.get(projectId);
 		} else {
-			const firebaseProject = await getProjectFromFirebase(projectId);
+			subscribeToProject(projectId, async (firebaseProject) => {
+				$projectsMapStore.set(projectId, firebaseProject);
+				projectsMapStore.set($projectsMapStore);
+				project = firebaseProject;
 
-			$projectsMapStore.set(projectId, firebaseProject);
-			projectsMapStore.set($projectsMapStore);
-			project = firebaseProject;
+				// Get store users from activities and comments
+				const userIds = project.activities
+					.map((item) => item.userId)
+					.concat(project.comments.map((item) => item.userId));
 
-			// Get store users from activities and comments
-			const userIds = project.activities
-				.map((item) => item.userId)
-				.concat(project.comments.map((item) => item.userId));
-
-			for (const userId of userIds) {
-				if (!$usersMapStore.has(userId)) {
-					const user = await getUserFromFirebase(userId);
-					user && usersMapStore.update((map) => map.set(userId, user));
+				for (const userId of userIds) {
+					if (!$usersMapStore.has(userId)) {
+						const user = await getUserFromFirebase(userId);
+						user && usersMapStore.update((map) => map.set(userId, user));
+					}
 				}
-			}
+			}).then((unsubscribe) => {
+				unsubs.push(unsubscribe);
+			});
 		}
+	});
+
+	onDestroy(() => {
+		unsubs.forEach((unsub: any) => unsub());
 	});
 </script>
 
@@ -55,7 +58,7 @@
 		<!-- Header -->
 		<div class="navbar bg-base-100">
 			<div class="navbar-start flex flex-row">
-				<a class="btn btn-ghost text-sm" href={ROUTE_DASHBOARD}>Onlook</a>
+				<a class="btn btn-ghost text-sm" href={DashboardRoutes.DASHBOARD}>Onlook</a>
 				<p class="text-sm mr-4">/</p>
 				<p class="">{project.name}</p>
 			</div>

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import type { Project } from '$models/project'
-	import type { Activity } from '$models/activity'
-	import type { User } from '$models/user'
-	import { EventMetadataType, getEventDataByType } from '$models/eventData'
+	import type { Project } from '$shared/models/project'
+	import type { Activity } from '$shared/models/activity'
+	import type { User } from '$shared/models/user'
+	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData'
 	import ItemHeader from './ItemHeader.svelte'
 	import { usersMapBucket } from '$lib/utils/localstorage'
 

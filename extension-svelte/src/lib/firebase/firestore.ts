@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, getDoc, setDoc } from 'firebase/firestore'
+import { collection, addDoc, doc, getDoc, setDoc, onSnapshot, deleteDoc } from 'firebase/firestore'
 import { store } from './firebase'
 
 export async function postObjectToCollection(
@@ -38,5 +38,21 @@ export async function deleteObjectFromCollection(
 	objectId: string
 ): Promise<void> {
 	const docRef = doc(store, collectionId, objectId)
-	return await setDoc(docRef, {})
+	await deleteDoc(docRef)
+}
+
+export async function subscribeToDocument(
+	collectionId: string,
+	objectId: string,
+	callback: (data: any) => void
+) {
+	const docRef = doc(store, collectionId, objectId)
+	const unsubscribe = onSnapshot(docRef, docSnap => {
+		if (docSnap.exists()) {
+			callback(docSnap.data())
+		} else {
+			console.error(`No such document with ID: ${objectId} in collection ${collectionId}`)
+		}
+	})
+	return unsubscribe
 }
