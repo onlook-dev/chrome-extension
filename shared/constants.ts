@@ -5,6 +5,7 @@ export const FIREBASE_COLLECTION_TEAMS = "teams";
 
 // Messaging
 export const DASHBOARD_AUTH = "DASHBOARD_AUTH";
+export const STYLE_CHANGE = "STYLE_CHANGE";
 
 // Links
 export const LINK_DISCORD = "https://discord.gg/vrEkdkj7";

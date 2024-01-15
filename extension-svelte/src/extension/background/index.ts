@@ -7,6 +7,7 @@ import {
 import { toggleIn } from '$lib/visbug/visbug'
 import {
 	authUserBucket,
+	changeMapBucket,
 	projectsMapBucket,
 	teamsMapBucket,
 	userBucket,
@@ -76,6 +77,9 @@ const setListeners = () => {
 	// TODO: Use subscribe instead to Firebase instead
 	userBucket.valueStream.subscribe(async ({ user }) => {
 		if (!user) return
+
+		// Save user in map
+		usersMapBucket.set({ [user.id]: user })
 		// When user added, get teams and add to map if not already there
 		const mappedTeamIds = await teamsMapBucket.getKeys()
 		const teamsNotInMap = user.teams.filter(teamId => !mappedTeamIds.includes(teamId))
@@ -138,12 +142,17 @@ const setListeners = () => {
 
 		for (const userId of usersNotInMap) {
 			subscribeToUser(userId, async user => {
+				console.log(user)
 				if (!user) return
 				usersMapBucket.set({ [user.id]: user })
 			}).then(unsubscribe => {
 				userSubs.push(unsubscribe)
 			})
 		}
+	})
+
+	changeMapBucket.valueStream.subscribe(changeMap => {
+		console.log(changeMap)
 	})
 }
 

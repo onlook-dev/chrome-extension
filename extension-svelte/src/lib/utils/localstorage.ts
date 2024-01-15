@@ -35,3 +35,5 @@ export const popupStateBucket = getBucket<PopupState>('POPUP_STATE')
 export const teamsMapBucket = getBucket<Map<string, Team>>('TEAMS_MAP')
 export const projectsMapBucket = getBucket<Map<string, Project>>('PROJECTS_MAP')
 export const usersMapBucket = getBucket<Map<string, User>>('USERS_MAP')
+
+export const changeMapBucket = getBucket<Map<string, Object>>('ACTIVITIES_MAP')
