@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Project } from '$models/project'
+	import type { Project } from '$shared/models/project'
 	import { projectsMapBucket, popupStateBucket, teamsMapBucket } from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { deleteProjectFromFirebase } from '$lib/storage/project'
@@ -60,7 +60,10 @@
 		</div>
 		<div class="divider">Danger zone</div>
 		<button
-			on:click={() => document.getElementById(deleteModalId)?.showModal()}
+			on:click={() => {
+				// @ts-ignore - showModal() does not exist on HTMLElement
+				document.getElementById(deleteModalId)?.showModal()
+			}}
 			class="btn btn-outline btn-error"
 		>
 			Delete project

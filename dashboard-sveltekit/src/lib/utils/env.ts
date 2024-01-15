@@ -22,7 +22,7 @@ import {
 	PUBLIC_PROD_STRIPE_PRODUCT_ID_ORG,
 	PUBLIC_PROD_STRIPE_PRODUCT_ID_ENTERPRISE
 } from '$env/static/public';
-import { Tier } from '$models/pricing';
+import { Tier } from '$shared/models/pricing';
 
 const testFirebaseConfig = {
 	apiKey: PUBLIC_TEST_API_KEY,

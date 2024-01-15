@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { getProjectFromFirebase } from '$lib/storage/project';
-	import { ROUTE_PROJECTS } from '$lib/utils/constants';
+	import { DashboardRoutes } from '$shared/constants';
 	import { projectsMapStore } from '$lib/utils/store';
-	import type { Team } from '$models/team';
+	import type { Team } from '$shared/models/team';
 
 	export let team: Team | undefined;
 
@@ -20,7 +20,7 @@
 	{#if team?.projectIds.length}
 		{#each team?.projectIds.map((id) => $projectsMapStore.get(id)) as project}
 			<button
-				on:click={() => goto(`${ROUTE_PROJECTS}/${project?.id}`)}
+				on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
 				class="rounded space-y-4 p-4 hover:shadow block"
 			>
 				<figure class="">

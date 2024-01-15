@@ -3,15 +3,15 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import type { Project } from '$models/project';
+	import type { Project } from '$shared/models/project';
 	import { getProjectFromFirebase } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
-	import { ROUTE_DASHBOARD } from '$lib/utils/constants';
+	import { DashboardRoutes } from '$shared/constants';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 
-	import type { Activity } from '$models/activity';
-	import type { Comment } from '$models/comment';
-	import { EventMetadataType, type EventMetadata } from '$models/eventData';
+	import type { Activity } from '$shared/models/activity';
+	import type { Comment } from '$shared/models/comment';
+	import { EventMetadataType, type EventMetadata } from '$shared/models/eventData';
 
 	import Comments from './Comments.svelte';
 	import Activities from './Activities.svelte';
@@ -24,7 +24,7 @@
 		// Get project
 		const projectId = $page.params.id;
 		if (!projectId) {
-			goto(ROUTE_DASHBOARD);
+			goto(DashboardRoutes.DASHBOARD);
 		}
 		if ($projectsMapStore.has(projectId)) {
 			project = $projectsMapStore.get(projectId);
@@ -55,7 +55,7 @@
 		<!-- Header -->
 		<div class="navbar bg-base-100">
 			<div class="navbar-start flex flex-row">
-				<a class="btn btn-ghost text-sm" href={ROUTE_DASHBOARD}>Onlook</a>
+				<a class="btn btn-ghost text-sm" href={DashboardRoutes.DASHBOARD}>Onlook</a>
 				<p class="text-sm mr-4">/</p>
 				<p class="">{project.name}</p>
 			</div>

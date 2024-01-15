@@ -4,8 +4,8 @@ import {
 	postObjectToCollection,
 	subscribeToDocument
 } from '../firebase/firestore'
-import type { User } from '$models/user'
-import { FIREBASE_COLLECTION_USERS } from '$lib/utils/constants'
+import type { User } from '../../../../shared/models/user'
+import { FIREBASE_COLLECTION_USERS } from '$shared/constants'
 import { userBucket } from '$lib/utils/localstorage'
 
 export async function getUserFromFirebase(userId: string): Promise<User | undefined> {

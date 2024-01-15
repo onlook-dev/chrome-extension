@@ -3,8 +3,8 @@ import {
 	postObjectToCollection,
 	subscribeToDocument
 } from '$lib/firebase/firestore'
-import { FIREBASE_COLLECTION_TEAMS } from '$lib/utils/constants'
-import type { Team } from '$models/team'
+import { FIREBASE_COLLECTION_TEAMS } from '$shared/constants'
+import type { Team } from '../../../../shared/models/team'
 
 export async function getTeamFromFirebase(teamId: string): Promise<Team> {
 	const teamData = await getObjectFromCollection(FIREBASE_COLLECTION_TEAMS, teamId)

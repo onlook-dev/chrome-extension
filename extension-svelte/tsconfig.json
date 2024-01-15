@@ -10,7 +10,7 @@
 		"isolatedModules": true,
 		"paths": {
 			"$*": ["./src/*"],
-			"$models/*": ["../models/*"]
+			"$shared/*": ["../shared/*"]
 		},
 		"strict": true
 	},

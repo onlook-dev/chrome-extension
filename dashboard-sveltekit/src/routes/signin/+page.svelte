@@ -1,5 +1,5 @@
 <script>
-	import { LINK_DISCORD, ROUTE_DASHBOARD, ROUTE_PRIVACY } from '$lib/utils/constants';
+	import { LINK_DISCORD, DashboardRoutes } from '$shared/constants';
 	import { signInWithGoogle } from '$lib/firebase/auth';
 	import Google from '~icons/devicon/google';
 	import { goto } from '$app/navigation';
@@ -9,7 +9,7 @@
 	onMount(() => {
 		userStore.subscribe((user) => {
 			if (user) {
-				goto(ROUTE_DASHBOARD);
+				goto(DashboardRoutes.DASHBOARD);
 			}
 		});
 	});
@@ -42,6 +42,6 @@
 	</div>
 	<div class="flex justify-between p-4 space-x-4">
 		<a href={LINK_DISCORD} target="_blank" class="link link-hover text-sm">Support</a>
-		<a href={ROUTE_PRIVACY} target="_blank" class="link link-hover text-sm">Privacy</a>
+		<a href={DashboardRoutes.PRIVACY} target="_blank" class="link link-hover text-sm">Privacy</a>
 	</div>
 </div>

@@ -1,4 +1,4 @@
-import { DASHBOARD_AUTH_ROUTE, DASHBOARD_URL } from '../../lib/utils/constants'
+import { DashboardRoutes, DASHBOARD_URL } from '$shared/constants'
 import {
 	authRequestStream,
 	editProjectRequestStream,
@@ -7,7 +7,6 @@ import {
 import { toggleIn } from '$lib/visbug/visbug'
 import {
 	authUserBucket,
-	popupStateBucket,
 	projectsMapBucket,
 	teamsMapBucket,
 	userBucket,
@@ -16,10 +15,10 @@ import {
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { getTeamFromFirebase } from '$lib/storage/team'
 import { getProjectFromFirebase } from '$lib/storage/project'
-import type { Team } from '$models/team'
-import type { Activity } from '$models/activity'
-import type { Comment } from '$models/comment'
-import { EventMetadataType, type EventMetadata } from '$models/eventData'
+import type { Team } from '../../../../shared/models/team'
+import type { Activity } from '../../../../shared/models/activity'
+import type { Comment } from '../../../../shared/models/comment'
+import { EventMetadataType, type EventMetadata } from '../../../../shared/models/eventData'
 import { getUserFromFirebase } from '$lib/storage/user'
 
 // When triggered, open tab or use existin project tab and toggle visbug in
@@ -32,7 +31,7 @@ const setListeners = () => {
 	})
 
 	authRequestStream.subscribe(() => {
-		const authUrl = `${DASHBOARD_URL}/${DASHBOARD_AUTH_ROUTE}`
+		const authUrl = `${DASHBOARD_URL}/${DashboardRoutes.SIGNIN}`
 		chrome.tabs.create({ url: authUrl })
 		return
 	})

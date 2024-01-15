@@ -3,10 +3,10 @@
 	import { goto } from '$app/navigation';
 
 	import { auth } from '$lib/firebase/firebase';
-	import { ROUTE_SIGNIN } from '$lib/utils/constants';
+	import { DashboardRoutes } from '$shared/constants';
 	import { teamsMapStore, userStore } from '$lib/utils/store';
 	import { getTeamFromFirebase } from '$lib/storage/team';
-	import type { User } from '$models/user';
+	import type { User } from '$shared/models/user';
 
 	import AvatarDropdown from './AvatarDropdown.svelte';
 	import ProjectsView from './ProjectsView.svelte';
@@ -20,7 +20,7 @@
 	onMount(async () => {
 		auth.onAuthStateChanged((user) => {
 			if (!user) {
-				goto(ROUTE_SIGNIN);
+				goto(DashboardRoutes.SIGNIN);
 			}
 		});
 

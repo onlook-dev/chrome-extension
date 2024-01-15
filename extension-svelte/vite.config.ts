@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import manifest from './src/manifest.config'
 import hotReloadExtension from 'hot-reload-extension-vite'
 import Icons from 'unplugin-icons/vite'
+import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -31,7 +32,7 @@ export default defineConfig({
 		alias: {
 			$lib: '/src/lib',
 			$utils: '/src/lib/utils',
-			$models: '/../models'
+			$shared: path.resolve(__dirname, '../shared') // Go up one level and then into shared
 		}
 	}
 })

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import type { User } from '$models/user'
-	import type { Team } from '$models/team'
+	import type { User } from '$shared/models/user'
+	import type { Team } from '$shared/models/team'
 
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { userBucket, teamsMapBucket, popupStateBucket } from '$lib/utils/localstorage'

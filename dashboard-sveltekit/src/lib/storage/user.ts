@@ -1,12 +1,12 @@
 import { getObjectFromCollection, postObjectToCollection } from '$lib/firebase/firestore';
-import type { User } from '$models/user';
-import { DASHBOARD_AUTH, FIREBASE_COLLECTION_USERS } from '$lib/utils/constants';
+import type { User } from '$shared/models/user';
+import { DASHBOARD_AUTH, FIREBASE_COLLECTION_USERS } from '$shared/constants';
 import { teamsMapStore, userStore } from '$lib/utils/store';
 import type { User as FirebaseUser } from 'firebase/auth';
 import { get } from 'svelte/store';
 import { nanoid } from 'nanoid';
 import { postTeamToFirebase } from './team';
-import { Role, type Team } from '$models/team';
+import { Role, type Team } from '$shared/models/team';
 
 export async function getUserFromFirebase(userId: string): Promise<User | undefined> {
 	console.log('Fetching firebase user');
