@@ -6,10 +6,6 @@
 	export let profileImageUrl = ''
 	export let userName = ''
 	export let creationTime: Date = new Date()
-
-	onMount(() => {
-		console.log(creationTime)
-	})
 </script>
 
 <div class="flex flex-row items-center pb-4 w-full">

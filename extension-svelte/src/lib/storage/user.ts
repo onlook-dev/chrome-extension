@@ -28,6 +28,7 @@ export async function subscribeToUser(userId: string, callback: (data: User) => 
 }
 
 export async function setBucketUser(authUser: FirebaseUser) {
+	console.log('Setting bucket user')
 	// Fetch from remote if no user in store
 	setDefaultUser(authUser)
 

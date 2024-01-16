@@ -8,9 +8,9 @@ import {
   FIREBASE_COLLECTION_USERS,
   FIREBASE_COLLECTION_TEAMS,
 } from "../../shared/constants";
-import {Team, Role} from "../../shared/models/team";
-import type {Project} from "../../shared/models/project";
-import type {User} from "../../shared/models/user";
+import { Team, Role } from "../../shared/models/team";
+import type { Project } from "../../shared/models/project";
+import type { User } from "../../shared/models/user";
 
 admin.initializeApp();
 
@@ -122,7 +122,6 @@ export const createTeam = functions.firestore
     // Add team id to each user
     const userIds: string[] = Object.keys(teamData.users);
     userIds.forEach((userId) => {
-      console.log(userId);
       const userRef = admin
         .firestore()
         .collection(FIREBASE_COLLECTION_USERS)
@@ -154,7 +153,7 @@ export const deleteTeam = functions.firestore
   });
 
 export const addUserToTeam = functions.https.onCall(async (data, context) => {
-  const {userId, teamId, role} = data;
+  const { userId, teamId, role } = data;
 
   // Update team with user id and role
   const teamRef = admin

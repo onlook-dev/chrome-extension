@@ -8,8 +8,9 @@ export function setupListeners() {
 
 		const message = event.data
 
-		if (message.type === DASHBOARD_AUTH && event.origin != DASHBOARD_URL && message.user) {
+		if (message.type === DASHBOARD_AUTH && event.origin === DASHBOARD_URL && message.user) {
 			authUserBucket.set({ authUser: message.user })
+			console.log('Auth user set')
 			return
 		}
 

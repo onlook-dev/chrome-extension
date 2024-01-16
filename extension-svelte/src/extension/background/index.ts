@@ -142,7 +142,6 @@ const setListeners = () => {
 
 		for (const userId of usersNotInMap) {
 			subscribeToUser(userId, async user => {
-				console.log(user)
 				if (!user) return
 				usersMapBucket.set({ [user.id]: user })
 			}).then(unsubscribe => {
@@ -152,7 +151,7 @@ const setListeners = () => {
 	})
 
 	changeMapBucket.valueStream.subscribe(changeMap => {
-		console.log(changeMap)
+		// console.log(changeMap)
 	})
 }
 
