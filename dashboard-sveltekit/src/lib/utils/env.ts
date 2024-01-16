@@ -20,9 +20,11 @@ import {
 	PUBLIC_PROD_STRIPE_SK,
 	PUBLIC_PROD_STRIPE_PRODUCT_ID_PRO,
 	PUBLIC_PROD_STRIPE_PRODUCT_ID_ORG,
-	PUBLIC_PROD_STRIPE_PRODUCT_ID_ENTERPRISE
+	PUBLIC_PROD_STRIPE_PRODUCT_ID_ENTERPRISE,
+	PUBLIC_TEST_URL,
+	PUBLIC_PROD_URL
 } from '$env/static/public';
-import { Tier } from '$shared/models/pricing';
+import { Tier } from '$shared/models/team';
 
 const testFirebaseConfig = {
 	apiKey: PUBLIC_TEST_API_KEY,
@@ -61,8 +63,10 @@ const prodStripeConfig = {
 export const isDevelopment = process.env.NODE_ENV === 'development';
 export const firebaseConfig = isDevelopment ? testFirebaseConfig : prodFirebaseConfig;
 export const stripeConfig = isDevelopment ? testStripeConfig : prodStripeConfig;
+export const baseUrl = isDevelopment ? PUBLIC_TEST_URL : PUBLIC_PROD_URL;
 
 export const priceIdMapping = {
+	[Tier.BASIC]: isDevelopment ? '' : '',
 	[Tier.PRO]: isDevelopment ? testStripeConfig.proPriceId : prodStripeConfig.proPriceId,
 	[Tier.ORG]: isDevelopment ? testStripeConfig.orgPriceId : prodStripeConfig.orgPriceId,
 	[Tier.ENTERPRISE]: isDevelopment

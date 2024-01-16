@@ -1,9 +1,12 @@
 <script lang="ts">
+	import { priceIdMapping } from '$lib/utils/env';
 	const modalId = 'plan-modal';
 	const teamName = 'Team name';
-	import { Tier } from '$shared/models/pricing';
+	import { Tier } from '$shared/models/team';
 
-	let plan = Tier.BASIC;
+	let selectedPlan = Tier.BASIC;
+
+	$: plan = selectedPlan;
 
 	function selectPlan() {
 		closeModal();
@@ -31,6 +34,21 @@
 			modal.close();
 		}
 	}
+
+	async function checkout() {
+		const priceId = priceIdMapping[plan];
+		const data = await fetch('/payment', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				priceId
+			})
+		}).then((data) => data.json());
+
+		window.location.replace(data.url);
+	}
 </script>
 
 <button on:click={showModal}>
@@ -42,13 +60,16 @@
 		<h3 class="font-bold text-lg mb-4">Select a Plan</h3>
 
 		<div class="flex flex-row space-x-2">
-			<select bind:value={plan} class="input input-bordered w-full">
+			<select bind:value={selectedPlan} class="input input-bordered w-full">
 				<option value={Tier.BASIC}>{Tier.BASIC}</option>
 				<option value={Tier.PRO}>{Tier.PRO}</option>
 				<option value={Tier.ORG}>{Tier.ORG}</option>
 				<option value={Tier.ENTERPRISE}>{Tier.ENTERPRISE}</option>
 			</select>
-			<button class="btn btn-primary" on:click={selectPlan}>Select</button>
+			<button
+				class="btn btn-primary"
+				on:click={() => (plan === Tier.BASIC ? selectPlan() : checkout())}>Select</button
+			>
 		</div>
 
 		<div class="label cursor-pointer">

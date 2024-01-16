@@ -42,6 +42,7 @@
 	"dependencies": {
 		"firebase": "^10.7.1",
 		"nanoid": "^5.0.4",
+		"stripe": "^14.12.0",
 		"theme-change": "^2.5.0"
 	}
 }

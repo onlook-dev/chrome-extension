@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Tier } from '$shared/models/pricing';
+	import { Tier } from '$shared/models/team';
 	import { teamsMapStore, userStore } from '$lib/utils/store';
 	import { Role, type Team } from '$shared/models/team';
 	import { nanoid } from 'nanoid';
@@ -14,8 +14,9 @@
 		const newTeam: Team = {
 			id: nanoid(),
 			name: teamName,
-			projectIds: [],
-			users: { [$userStore.id]: Role.ADMIN }
+			tier: plan,
+			users: { [$userStore.id]: Role.ADMIN },
+			projectIds: []
 		};
 
 		teamsMapStore.update((map) => map.set(newTeam.id, newTeam));
