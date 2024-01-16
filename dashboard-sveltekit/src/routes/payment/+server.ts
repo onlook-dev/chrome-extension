@@ -20,7 +20,8 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	return new Response(
 		JSON.stringify({
-			url: session.url
+			url: session.url,
+			sessionId: session.id
 		}),
 		{
 			status: 200,

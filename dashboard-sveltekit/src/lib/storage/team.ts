@@ -1,13 +1,23 @@
 import {
 	getObjectFromCollection,
+	getObjectFromCollectionWhere,
 	postObjectToCollection,
 	subscribeToDocument
 } from '$lib/firebase/firestore';
 import { FIREBASE_COLLECTION_TEAMS } from '$shared/constants';
-import type { Team } from '$shared/models/team';
+import type { Team, Tier } from '$shared/models/team';
 
 export async function getTeamFromFirebase(teamId: string): Promise<Team> {
 	const teamData = await getObjectFromCollection(FIREBASE_COLLECTION_TEAMS, teamId);
+	return teamData as Team;
+}
+
+export async function getTeamFromPaymentId(paymentId: string): Promise<Team> {
+	const teamData = await getObjectFromCollectionWhere(
+		FIREBASE_COLLECTION_TEAMS,
+		'paymentId',
+		paymentId
+	);
 	return teamData as Team;
 }
 
@@ -26,8 +36,14 @@ export async function subscribeToTeam(
 	return unsubscribe;
 }
 
-export async function setPaymentId(teamId: string, paymentId: string) {
+export async function setTeamPaymentId(teamId: string, paymentId: string) {
 	const team = await getTeamFromFirebase(teamId);
 	team.paymentId = paymentId;
+	await postTeamToFirebase(team);
+}
+
+export async function setTeamTier(teamId: string, tier: Tier) {
+	const team = await getTeamFromFirebase(teamId);
+	team.tier = tier;
 	await postTeamToFirebase(team);
 }

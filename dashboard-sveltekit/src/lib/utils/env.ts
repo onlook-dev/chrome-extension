@@ -17,10 +17,12 @@ import {
 	PUBLIC_TEST_STRIPE_PRODUCT_ID_PRO,
 	PUBLIC_TEST_STRIPE_PRODUCT_ID_ENTERPRISE,
 	PUBLIC_TEST_STRIPE_PRODUCT_ID_ORG,
+	PUBLIC_TEST_STRIPE_WEBHOOK,
 	PUBLIC_PROD_STRIPE_SK,
 	PUBLIC_PROD_STRIPE_PRODUCT_ID_PRO,
 	PUBLIC_PROD_STRIPE_PRODUCT_ID_ORG,
 	PUBLIC_PROD_STRIPE_PRODUCT_ID_ENTERPRISE,
+	PUBLIC_PROD_STRIPE_WEBHOOK,
 	PUBLIC_TEST_URL,
 	PUBLIC_PROD_URL
 } from '$env/static/public';
@@ -50,14 +52,16 @@ const testStripeConfig = {
 	stripeKey: PUBLIC_TEST_STRIPE_SK,
 	proPriceId: PUBLIC_TEST_STRIPE_PRODUCT_ID_PRO,
 	orgPriceId: PUBLIC_TEST_STRIPE_PRODUCT_ID_ORG,
-	enterprisePriceId: PUBLIC_TEST_STRIPE_PRODUCT_ID_ENTERPRISE
+	enterprisePriceId: PUBLIC_TEST_STRIPE_PRODUCT_ID_ENTERPRISE,
+	webhookSecret: PUBLIC_TEST_STRIPE_WEBHOOK
 };
 
 const prodStripeConfig = {
 	stripeKey: PUBLIC_PROD_STRIPE_SK,
 	proPriceId: PUBLIC_PROD_STRIPE_PRODUCT_ID_PRO,
 	orgPriceId: PUBLIC_PROD_STRIPE_PRODUCT_ID_ORG,
-	enterprisePriceId: PUBLIC_PROD_STRIPE_PRODUCT_ID_ENTERPRISE
+	enterprisePriceId: PUBLIC_PROD_STRIPE_PRODUCT_ID_ENTERPRISE,
+	webhookSecret: PUBLIC_PROD_STRIPE_WEBHOOK
 };
 
 export const isDevelopment = process.env.NODE_ENV === 'development';
@@ -66,10 +70,14 @@ export const stripeConfig = isDevelopment ? testStripeConfig : prodStripeConfig;
 export const baseUrl = isDevelopment ? PUBLIC_TEST_URL : PUBLIC_PROD_URL;
 
 export const priceIdMapping = {
-	[Tier.BASIC]: isDevelopment ? '' : '',
+	[Tier.BASIC]: isDevelopment ? 'basic' : 'basic',
 	[Tier.PRO]: isDevelopment ? testStripeConfig.proPriceId : prodStripeConfig.proPriceId,
 	[Tier.ORG]: isDevelopment ? testStripeConfig.orgPriceId : prodStripeConfig.orgPriceId,
 	[Tier.ENTERPRISE]: isDevelopment
 		? testStripeConfig.enterprisePriceId
 		: prodStripeConfig.enterprisePriceId
 };
+
+export const tierMapping = Object.fromEntries(
+	Object.entries(priceIdMapping).map(([key, value]) => [value, key])
+);

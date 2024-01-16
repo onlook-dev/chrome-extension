@@ -1,16 +1,61 @@
 <script lang="ts">
-	import { setPaymentId } from '$lib/storage/team';
+	import { setTeamPaymentId } from '$lib/storage/team';
 	import { priceIdMapping } from '$lib/utils/env';
-	const modalId = 'plan-modal';
-	const teamName = 'Team name';
+	import { paymentsMapStore, teamsMapStore } from '$lib/utils/store';
+	import { PaymentStatus, type Payment } from '$shared/models/payment';
+	import { nanoid } from 'nanoid';
 	import { Tier } from '$shared/models/team';
+	import { postPaymentToFirebase } from '$lib/storage/payment';
+	const modalId = 'plan-modal';
 
-	let selectedPlan = Tier.BASIC;
+	export let teamId: string;
+
+	let selectedPlan = $teamsMapStore.get(teamId)?.tier ?? Tier.BASIC;
 
 	$: plan = selectedPlan;
 
 	function selectPlan() {
 		closeModal();
+	}
+
+	async function createPayment(checkoutSessionId: string) {
+		const priceId = priceIdMapping[plan];
+
+		const newPayment: Payment = {
+			id: nanoid(),
+			stripePriceId: priceId,
+			paymentStatus: PaymentStatus.PENDING,
+			checkoutSessionId: checkoutSessionId
+		};
+
+		paymentsMapStore.update((payments) => payments.set(newPayment.id, newPayment));
+		teamsMapStore.update((teams) => {
+			const team = teams.get(teamId);
+			if (team) {
+				team.paymentId = newPayment.id;
+			}
+			return teams;
+		});
+
+		await postPaymentToFirebase(newPayment);
+		await setTeamPaymentId(teamId, newPayment.id);
+	}
+
+	async function checkout() {
+		const priceId = priceIdMapping[plan];
+		const data = await fetch('/payment', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				priceId
+			})
+		}).then((data) => data.json());
+
+		await createPayment(data.sessionId);
+
+		window.location.replace(data.url);
 	}
 
 	function showModal() {
@@ -35,28 +80,11 @@
 			modal.close();
 		}
 	}
-
-	async function checkout() {
-		const priceId = priceIdMapping[plan];
-		const data = await fetch('/payment', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				priceId
-			})
-		}).then((data) => data.json());
-
-		// setPaymentId(data.paymentId);
-
-		window.location.replace(data.url);
-	}
 </script>
 
 <button
 	on:click={showModal}
-	class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded opacity-80"
+	class="bg-blue-500 hover:bg-blue-700 text-white text-xs font-bold py-1 px-2 rounded opacity-80"
 >
 	{plan}
 </button>
@@ -79,11 +107,7 @@
 		</div>
 
 		<div class="label cursor-pointer">
-			<span class="label-text">
-				Everyone at
-				<b>{teamName}</b>
-				will have this plan's features
-			</span>
+			<span class="label-text"> Everyone on the team will have this plan</span>
 		</div>
 	</div>
 	<form method="dialog" class="modal-backdrop">

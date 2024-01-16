@@ -1,4 +1,14 @@
-import { collection, addDoc, doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import {
+	collection,
+	addDoc,
+	doc,
+	where,
+	getDocs,
+	query,
+	setDoc,
+	onSnapshot,
+	getDoc
+} from 'firebase/firestore';
 import { store } from './firebase';
 
 export async function postObjectToCollection(
@@ -31,6 +41,23 @@ export async function getObjectFromCollection(collectionId: string, objectId: st
 	} else {
 		console.error(`No such document with ID: ${objectId} in collection ${collectionId}`);
 	}
+}
+
+export async function getObjectFromCollectionWhere(collectionId: string, key: string, value: any) {
+	const q = query(collection(store, collectionId), where(key, '==', value));
+	const querySnapshot = await getDocs(q);
+
+	if (querySnapshot.empty) {
+		console.error(`No document found with ${key} = ${value} in collection ${collectionId}`);
+		return undefined;
+	} else if (querySnapshot.size > 1) {
+		console.warn(
+			`Multiple documents found with ${key} = ${value} in collection ${collectionId}, returning the first one.`
+		);
+	}
+
+	const firstDoc = querySnapshot.docs[0];
+	return firstDoc.data();
 }
 
 export async function deleteObjectFromCollection(

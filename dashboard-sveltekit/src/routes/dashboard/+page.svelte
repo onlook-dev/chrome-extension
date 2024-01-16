@@ -87,9 +87,11 @@
 								>
 									{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}
 								</button>
-								<div class="col-start-3 justify-self-end">
-									<PlanModal />
-								</div>
+								{#if activeTeamId === teamId}
+									<div class="col-start-3 justify-self-end">
+										<PlanModal {teamId} />
+									</div>
+								{/if}
 							</div>
 						</li>
 					{/each}

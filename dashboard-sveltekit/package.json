@@ -9,6 +9,7 @@
 		"test": "playwright test",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"stripe:listen": "stripe listen --events checkout.session.completed --forward-to localhost:5173/payment/webhooks",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write ."
 	},

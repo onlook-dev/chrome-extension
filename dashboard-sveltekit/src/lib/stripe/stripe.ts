@@ -1,4 +1,9 @@
-import { stripeConfig } from '$lib/utils/env';
+import { getPaymentFromSessionId, setPaymentStatus } from '$lib/storage/payment';
+import { getTeamFromPaymentId, setTeamTier } from '$lib/storage/team';
+import { stripeConfig, tierMapping } from '$lib/utils/env';
+import { paymentsMapStore, teamsMapStore } from '$lib/utils/store';
+import { PaymentStatus } from '$shared/models/payment';
+import type { Tier } from '$shared/models/team';
 import Stripe from 'stripe';
 
 export const stripe = new Stripe(stripeConfig.stripeKey, {
@@ -6,7 +11,7 @@ export const stripe = new Stripe(stripeConfig.stripeKey, {
 	typescript: true
 });
 
-export async function getPaymentStatus(session: Stripe.Checkout.Session) {
+export async function getStripePaymentStatus(session: Stripe.Checkout.Session) {
 	const paymentStatus = session?.payment_status;
 
 	if (!paymentStatus) {
@@ -25,18 +30,39 @@ export async function handleStripeEvent(event: Stripe.Event) {
 		return Error('No session id');
 	}
 
-	// Find payment with checkout session id
+	const payment = await getPaymentFromSessionId(session.id);
+	console.log('paymentId      :', payment.id);
+	console.log('stripePriceId  :', payment.stripePriceId);
 
-	// throw error if payment not found
+	if (!payment) {
+		return Error('Payment not found');
+	}
 
 	if (event.type === 'checkout.session.completed') {
-		const paymentStatus = await getPaymentStatus(session);
+		const stripePaymentStatus = await getStripePaymentStatus(session);
+		const team = await getTeamFromPaymentId(payment.id);
 
-		if (paymentStatus === 'paid' || paymentStatus === 'succeeded') {
-			// update payment status
-			// find team with payment id and update tier
+		if (stripePaymentStatus === 'paid' || stripePaymentStatus === 'succeeded') {
+			payment.paymentStatus = PaymentStatus.PAID;
+			team.tier = tierMapping[payment.stripePriceId] as Tier;
+
+			paymentsMapStore.update((payments) => payments.set(payment.id, payment));
+			teamsMapStore.update((teams) => teams.set(team.id, team));
+
+			await setTeamTier(team.id, team.tier);
+			await setPaymentStatus(payment.id, payment.paymentStatus);
+
+			return;
 		} else {
-			// update status to unpaid
+			await setPaymentStatus(payment.id, PaymentStatus.UNPAID);
+
+			return;
 		}
+	}
+
+	if (event.type === 'checkout.session.expired') {
+		await setPaymentStatus(payment.id, PaymentStatus.EXPIRED);
+
+		return;
 	}
 }
