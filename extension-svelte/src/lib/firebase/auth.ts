@@ -8,14 +8,9 @@ import { authUserBucket, userBucket } from '$lib/utils/localstorage'
 export function signInUser(userJson: string) {
 	const userData = JSON.parse(userJson)
 	const user: User = FirebaseUserImpl._fromJSON(auth as any, userData)
-	auth
-		.updateCurrentUser(user)
-		.catch(err => {
-			alert(`Sign in failed: ${JSON.stringify(err)}`)
-		})
-		.finally(() => {
-			setBucketUser(user)
-		})
+	auth.updateCurrentUser(user).catch(err => {
+		alert(`Sign in failed: ${JSON.stringify(err)}`)
+	})
 }
 
 export function subscribeToFirebaseAuthChanges() {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import type { Project } from '$shared/models/project'
-	import type { Activity, StyleChange } from '$shared/models/activity'
+	import type { Activity } from '$shared/models/activity'
 	import type { User } from '$shared/models/user'
 	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData'
 	import ItemHeader from './ItemHeader.svelte'
@@ -20,7 +20,7 @@
 		usersMap = new Map(Object.entries(await usersMapBucket.get()))
 	})
 
-	$: activities = project.activities.sort(
+	$: activities = Object.values(project.activities).sort(
 		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
 	)
 </script>
@@ -66,7 +66,7 @@
 				</div>
 			{/if}
 			<div class="bg-gray-50 rounded p-4 border w-full text-start">
-				{#each activity.styleChanges as styleChange}
+				{#each Object.values(activity.styleChanges) as styleChange}
 					<div class="">{styleChange.key}: {styleChange.newVal};</div>
 				{/each}
 			</div>

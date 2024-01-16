@@ -48,7 +48,7 @@ async function updateProjectTabHostData(tab: chrome.tabs.Tab) {
 
 async function captureTab(windowId: number): Promise<string> {
 	return new Promise((resolve, reject) => {
-		chrome.tabs.captureVisibleTab(windowId, { format: 'jpeg' }, dataUri => {
+		chrome.tabs.captureVisibleTab(windowId, { format: 'jpeg', quality: 0 }, dataUri => {
 			if (chrome.runtime.lastError) {
 				reject(chrome.runtime.lastError)
 			} else {

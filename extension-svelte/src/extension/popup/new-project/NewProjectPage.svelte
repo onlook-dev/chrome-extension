@@ -55,7 +55,7 @@
 			name: projectName,
 			teamId: activeTeamId,
 			hostUrl: projectUrl,
-			activities: [],
+			activities: {},
 			comments: [],
 			hostData: {} as HostData
 		} as Project

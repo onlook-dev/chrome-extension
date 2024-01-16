@@ -9,6 +9,7 @@ import { toggleIn } from '$lib/visbug/visbug'
 import {
 	authUserBucket,
 	getActiveProject,
+	getActiveUser,
 	projectsMapBucket,
 	teamsMapBucket,
 	userBucket,
@@ -16,16 +17,15 @@ import {
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 
-import type { Team } from '../../../../shared/models/team'
-import type { Activity } from '../../../../shared/models/activity'
-import type { Comment } from '../../../../shared/models/comment'
+import type { Team } from '$shared/models/team'
+import type { Activity, StyleChange } from '$shared/models/activity'
+import type { Comment } from '$shared/models/comment'
 
 import { subscribeToUser } from '$lib/storage/user'
 import { subscribeToTeam } from '$lib/storage/team'
 import { subscribeToProject } from '$lib/storage/project'
 import { updateProjectTabHostWithDebounce } from './tabs'
-
-// When triggered, open tab or use existin project tab and toggle visbug in
+import { nanoid } from 'nanoid'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
@@ -78,7 +78,6 @@ const setListeners = () => {
 		}
 	})
 
-	// TODO: Use subscribe instead to Firebase instead
 	userBucket.valueStream.subscribe(async ({ user }) => {
 		if (!user) return
 
@@ -101,7 +100,6 @@ const setListeners = () => {
 		}
 	})
 
-	// TODO: Use subscribe to Firebase instead
 	teamsMapBucket.valueStream.subscribe(async teamsMap => {
 		if (!teamsMap) return
 
@@ -124,7 +122,6 @@ const setListeners = () => {
 		}
 	})
 
-	// TODO: Use subscribe to Firebase instead
 	projectsMapBucket.valueStream.subscribe(async projectsMap => {
 		if (!projectsMap) return
 
@@ -155,35 +152,43 @@ const setListeners = () => {
 	})
 
 	styleChangeStream.subscribe(async ([styleChange]) => {
-		const activeProject = getActiveProject()
+		const activeProject = await getActiveProject()
+		if (!activeProject) return
 
-		// changeMapBucket.valueStream.subscribe((changes: any) => {
-		// 	Object.keys(changes).forEach((selector: string) => {
-		// 		const styleChanges = []
+		let activity = activeProject.activities[styleChange.selector]
 
-		// 		for (const [key, value] of Object.entries(changes[selector])) {
-		// 			// TODO: Make valid css key
-		// 			const styleChange = {
-		// 				key: key,
-		// 				oldVal: '',
-		// 				newVal: value
-		// 			} as StyleChange
-		// 			styleChanges.push(styleChange)
-		// 		}
+		// Create activity if it doesn't exist
+		if (!activity) {
+			const user = await getActiveUser()
+			activity = {
+				id: nanoid(),
+				userId: user.id,
+				projectId: activeProject.id,
+				eventData: [],
+				creationTime: new Date(),
+				selector: styleChange.selector,
+				styleChanges: {},
+				visible: true
+			} as Activity
+		}
 
-		// 		const activity = {
-		// 			id: '0',
-		// 			userId: 'S1Waz3ec25Zo2RykTFXSOOoJ4nx2',
-		// 			projectId: project.id,
-		// 			eventData: [],
-		// 			creationTime: new Date(),
-		// 			selector: selector,
-		// 			styleChanges: styleChanges,
-		// 			visible: true
-		// 		} as Activity
-		// 		activities = [...activities, activity]
-		// 	})
-		// })
+		// Create style change objects and update activity
+		for (const [key, value] of Object.entries(styleChange.changeMap)) {
+			const styleChange = {
+				key: key,
+				oldVal: '',
+				newVal: value
+			} as StyleChange
+			activity.styleChanges[key] = styleChange
+		}
+
+		activity.creationTime = new Date()
+
+		activeProject.activities[styleChange.selector] = activity
+
+		// Update project
+		projectsMapBucket.set({ [activeProject.id]: activeProject })
+		console.log('Updated project with style change', activeProject)
 	})
 }
 

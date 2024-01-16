@@ -36,6 +36,11 @@ export const teamsMapBucket = getBucket<Map<string, Team>>('TEAMS_MAP')
 export const projectsMapBucket = getBucket<Map<string, Project>>('PROJECTS_MAP')
 export const usersMapBucket = getBucket<Map<string, User>>('USERS_MAP')
 
+export const getActiveUser = async (): Promise<User> => {
+	const { user } = await userBucket.get()
+	return user
+}
+
 export const getActiveProject = async (): Promise<Project> => {
 	const { activeProjectId } = await popupStateBucket.get()
 	const projectsMap = new Map(Object.entries(await projectsMapBucket.get()))
