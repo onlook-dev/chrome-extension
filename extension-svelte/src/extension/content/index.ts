@@ -1,5 +1,6 @@
 import { DASHBOARD_AUTH, DASHBOARD_URL, STYLE_CHANGE } from '$shared/constants'
-import { authUserBucket, changeMapBucket } from '$lib/utils/localstorage'
+import { authUserBucket } from '$lib/utils/localstorage'
+import { sendStyleChange } from '$lib/utils/messaging'
 
 export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
@@ -14,18 +15,12 @@ export function setupListeners() {
 			return
 		}
 
+		// TODO: Should add check for origin being same as project URL
 		if (message.type === STYLE_CHANGE) {
-			// TODO: Should add check for origin being same as project URL
-			saveStyleChange(message.detail)
+			sendStyleChange(message.detail)
 			return
 		}
 	})
-}
-
-async function saveStyleChange(detail: any) {
-	const oldMap = (await changeMapBucket.get()) as any
-	const oldVal = oldMap[detail.selector] ?? {}
-	changeMapBucket.set({ [detail.selector]: { ...oldVal, ...detail.newValue } })
 }
 
 try {

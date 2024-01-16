@@ -58,3 +58,5 @@ export const [sendEditProjectRequest, editProjectRequestStream] = getExtendedMes
 	'REQUEST_EDIT_PROJECT',
 	MessageReceiver.BACKGROUND
 )
+
+export const [sendStyleChange, styleChangeStream] = getExtendedMessages<any>()

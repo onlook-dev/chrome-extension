@@ -36,7 +36,7 @@
 						<img
 							src={project.hostData.previewImage}
 							alt={project.name}
-							class="aspect-video rounded w-full"
+							class="object-cover object-top aspect-video rounded w-full"
 						/>
 					{:else}
 						<div class="bg-gray-100 aspect-video rounded w-full" />

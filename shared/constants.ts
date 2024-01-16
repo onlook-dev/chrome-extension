@@ -2,6 +2,7 @@
 export const FIREBASE_COLLECTION_PROJECTS = "projects";
 export const FIREBASE_COLLECTION_USERS = "users";
 export const FIREBASE_COLLECTION_TEAMS = "teams";
+export const FIREBASE_FOLDER_IMAGES = "images";
 
 // Messaging
 export const DASHBOARD_AUTH = "DASHBOARD_AUTH";

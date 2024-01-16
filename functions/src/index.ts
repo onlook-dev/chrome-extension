@@ -8,14 +8,15 @@ import {
   FIREBASE_COLLECTION_USERS,
   FIREBASE_COLLECTION_TEAMS,
 } from "../../shared/constants";
-import { Team, Role } from "../../shared/models/team";
-import type { Project } from "../../shared/models/project";
-import type { User } from "../../shared/models/user";
+import {Team, Role} from "../../shared/models/team";
+import type {Project} from "../../shared/models/project";
+import type {User} from "../../shared/models/user";
 
 admin.initializeApp();
-
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
+
+export {storeImageUri} from "./file-storage";
 
 export const createUser = functions.auth.user().onCreate(async (user) => {
   const defaultTeam = {
@@ -153,7 +154,7 @@ export const deleteTeam = functions.firestore
   });
 
 export const addUserToTeam = functions.https.onCall(async (data, context) => {
-  const { userId, teamId, role } = data;
+  const {userId, teamId, role} = data;
 
   // Update team with user id and role
   const teamRef = admin

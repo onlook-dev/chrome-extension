@@ -5,7 +5,7 @@
 	import type { User } from '$shared/models/user'
 	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData'
 	import ItemHeader from './ItemHeader.svelte'
-	import { usersMapBucket, changeMapBucket } from '$lib/utils/localstorage'
+	import { usersMapBucket } from '$lib/utils/localstorage'
 
 	export let project: Project
 
@@ -18,42 +18,11 @@
 
 	onMount(async () => {
 		usersMap = new Map(Object.entries(await usersMapBucket.get()))
-		getTestChanges()
 	})
 
-	// $: activities = project.activities.sort(
-	// 	(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
-	// )
-
-	function getTestChanges() {
-		changeMapBucket.valueStream.subscribe((changes: any) => {
-			Object.keys(changes).forEach((selector: string) => {
-				const styleChanges = []
-
-				for (const [key, value] of Object.entries(changes[selector])) {
-					// TODO: Make valid css key
-					const styleChange = {
-						key: key,
-						oldVal: '',
-						newVal: value
-					} as StyleChange
-					styleChanges.push(styleChange)
-				}
-
-				const activity = {
-					id: '0',
-					userId: 'S1Waz3ec25Zo2RykTFXSOOoJ4nx2',
-					projectId: project.id,
-					eventData: [],
-					creationTime: new Date(),
-					selector: selector,
-					styleChanges: styleChanges,
-					visible: true
-				} as Activity
-				activities = [...activities, activity]
-			})
-		})
-	}
+	$: activities = project.activities.sort(
+		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
+	)
 </script>
 
 {#if activities.length === 0}

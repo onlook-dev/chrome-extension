@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte'
 
 	import type { Project } from '$shared/models/project'
-	import { projectsMapBucket, popupStateBucket } from '$lib/utils/localstorage'
+	import { popupStateBucket, getActiveProject } from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { sendEditProjectRequest } from '$lib/utils/messaging'
 
@@ -21,9 +21,7 @@
 
 	onMount(async () => {
 		// Get active team's projects
-		const { activeProjectId } = await popupStateBucket.get()
-		const projectsMap = new Map(Object.entries(await projectsMapBucket.get()))
-		project = projectsMap.get(activeProjectId)
+		project = await getActiveProject()
 	})
 
 	function startEditing() {

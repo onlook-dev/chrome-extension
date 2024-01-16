@@ -16,9 +16,8 @@ export async function getUserFromFirebase(userId: string): Promise<User | undefi
 }
 
 export async function postUserToFirebase(user: User) {
-	console.log('Posting firebase user')
 	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_USERS, user, user.id)
-	console.log('Posted firebase user with ID', objectId)
+	console.log('Posted firebase user')
 	return
 }
 

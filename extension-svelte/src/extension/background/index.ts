@@ -2,12 +2,13 @@ import { DashboardRoutes, DASHBOARD_URL } from '$shared/constants'
 import {
 	authRequestStream,
 	editProjectRequestStream,
+	styleChangeStream,
 	toggleVisbugStream
 } from '$lib/utils/messaging'
 import { toggleIn } from '$lib/visbug/visbug'
 import {
 	authUserBucket,
-	changeMapBucket,
+	getActiveProject,
 	projectsMapBucket,
 	teamsMapBucket,
 	userBucket,
@@ -52,8 +53,8 @@ const setListeners = () => {
 			if (tabs?.length) {
 				// Make sure tab is active
 				chrome.tabs.update(tabs[0].id as number, { active: true })
-				toggleIn({ id: tabs[0].id })
 				updateProjectTabHostWithDebounce(tabs[0])
+				toggleIn({ id: tabs[0].id })
 				return
 			} else {
 				chrome.tabs
@@ -61,8 +62,8 @@ const setListeners = () => {
 						url: project.hostUrl
 					})
 					.then(tab => {
-						toggleIn({ id: tab.id })
 						updateProjectTabHostWithDebounce(tab)
+						toggleIn({ id: tab.id })
 					})
 				return
 			}
@@ -153,8 +154,36 @@ const setListeners = () => {
 		}
 	})
 
-	changeMapBucket.valueStream.subscribe(changeMap => {
-		console.log(changeMap)
+	styleChangeStream.subscribe(async ([styleChange]) => {
+		const activeProject = getActiveProject()
+
+		// changeMapBucket.valueStream.subscribe((changes: any) => {
+		// 	Object.keys(changes).forEach((selector: string) => {
+		// 		const styleChanges = []
+
+		// 		for (const [key, value] of Object.entries(changes[selector])) {
+		// 			// TODO: Make valid css key
+		// 			const styleChange = {
+		// 				key: key,
+		// 				oldVal: '',
+		// 				newVal: value
+		// 			} as StyleChange
+		// 			styleChanges.push(styleChange)
+		// 		}
+
+		// 		const activity = {
+		// 			id: '0',
+		// 			userId: 'S1Waz3ec25Zo2RykTFXSOOoJ4nx2',
+		// 			projectId: project.id,
+		// 			eventData: [],
+		// 			creationTime: new Date(),
+		// 			selector: selector,
+		// 			styleChanges: styleChanges,
+		// 			visible: true
+		// 		} as Activity
+		// 		activities = [...activities, activity]
+		// 	})
+		// })
 	})
 }
 

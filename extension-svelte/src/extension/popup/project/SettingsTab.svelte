@@ -1,6 +1,11 @@
 <script lang="ts">
 	import type { Project } from '$shared/models/project'
-	import { projectsMapBucket, popupStateBucket, teamsMapBucket } from '$lib/utils/localstorage'
+	import {
+		projectsMapBucket,
+		popupStateBucket,
+		teamsMapBucket,
+		getTeamById
+	} from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { deleteProjectFromFirebase } from '$lib/storage/project'
 
@@ -35,10 +40,7 @@
 			.then(() => {
 				popupStateBucket.get().then(({ activeTeamId }) => {
 					// Remove project from team locally
-					teamsMapBucket.get().then(map => {
-						const teamMap = new Map(Object.entries(map))
-						const team = teamMap.get(activeTeamId)
-
+					getTeamById(activeTeamId).then(team => {
 						// Remove project from team
 						team.projectIds = team.projectIds.filter((id: string) => id !== project.id)
 

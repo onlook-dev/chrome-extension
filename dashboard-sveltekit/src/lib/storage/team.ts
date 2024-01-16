@@ -12,10 +12,9 @@ export async function getTeamFromFirebase(teamId: string): Promise<Team> {
 }
 
 export async function postTeamToFirebase(team: Team) {
-	console.log('Posting firebase team');
 	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_TEAMS, team, team.id);
-	console.log('Posted firebase team with ID', objectId);
-	return;
+	console.log('Posted firebase team');
+	return objectId;
 }
 
 export async function subscribeToTeam(
