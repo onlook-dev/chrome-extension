@@ -5,7 +5,6 @@ import type { RequestHandler } from '@sveltejs/kit';
 export const POST: RequestHandler = async ({ request }) => {
 	const data = await request.json();
 	const priceId = data.priceId;
-	console.log('priceId:', priceId);
 
 	const session = await stripe.checkout.sessions.create({
 		line_items: [

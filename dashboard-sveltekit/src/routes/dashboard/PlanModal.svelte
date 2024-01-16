@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { setPaymentId } from '$lib/storage/team';
 	import { priceIdMapping } from '$lib/utils/env';
 	const modalId = 'plan-modal';
 	const teamName = 'Team name';
@@ -47,12 +48,17 @@
 			})
 		}).then((data) => data.json());
 
+		// setPaymentId(data.paymentId);
+
 		window.location.replace(data.url);
 	}
 </script>
 
-<button on:click={showModal}>
-	Plan ({plan})
+<button
+	on:click={showModal}
+	class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded opacity-80"
+>
+	{plan}
 </button>
 
 <dialog id={modalId} class="modal fixed inset-0 flex items-center justify-center">

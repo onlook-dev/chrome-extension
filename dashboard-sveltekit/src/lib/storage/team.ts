@@ -25,3 +25,9 @@ export async function subscribeToTeam(
 	const unsubscribe = await subscribeToDocument(FIREBASE_COLLECTION_TEAMS, teamId, callback);
 	return unsubscribe;
 }
+
+export async function setPaymentId(teamId: string, paymentId: string) {
+	const team = await getTeamFromFirebase(teamId);
+	team.paymentId = paymentId;
+	await postTeamToFirebase(team);
+}

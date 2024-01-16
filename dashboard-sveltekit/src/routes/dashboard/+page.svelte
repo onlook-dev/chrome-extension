@@ -12,6 +12,7 @@
 	import ProjectsView from './ProjectsView.svelte';
 	import SideBarLine from '~icons/ri/side-bar-line';
 	import NewTeamModal from './NewTeamModal.svelte';
+	import PlanModal from './PlanModal.svelte';
 
 	const dashboardDrawerId = 'dashboard-drawer';
 	let user: User | null;
@@ -77,11 +78,19 @@
 				{#if user?.teams}
 					{#each user?.teams as teamId}
 						<li>
-							<button
-								class={activeTeamId === teamId ? 'active font-semibold ' : ''}
-								on:click={() => (activeTeamId = teamId)}
-								>{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}</button
-							>
+							<div class="grid grid-cols-3 items-center w-full">
+								<button
+									class="{activeTeamId === teamId
+										? 'active font-extrabold'
+										: ''} col-span-2 text-left"
+									on:click={() => (activeTeamId = teamId)}
+								>
+									{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}
+								</button>
+								<div class="col-start-3 justify-self-end">
+									<PlanModal />
+								</div>
+							</div>
 						</li>
 					{/each}
 				{/if}
