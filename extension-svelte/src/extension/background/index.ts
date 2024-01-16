@@ -22,6 +22,7 @@ import type { Comment } from '../../../../shared/models/comment'
 import { subscribeToUser } from '$lib/storage/user'
 import { subscribeToTeam } from '$lib/storage/team'
 import { subscribeToProject } from '$lib/storage/project'
+import { updateProjectTabHostWithDebounce } from './tabs'
 
 // When triggered, open tab or use existin project tab and toggle visbug in
 
@@ -52,6 +53,7 @@ const setListeners = () => {
 				// Make sure tab is active
 				chrome.tabs.update(tabs[0].id as number, { active: true })
 				toggleIn({ id: tabs[0].id })
+				updateProjectTabHostWithDebounce(tabs[0])
 				return
 			} else {
 				chrome.tabs
@@ -60,6 +62,7 @@ const setListeners = () => {
 					})
 					.then(tab => {
 						toggleIn({ id: tab.id })
+						updateProjectTabHostWithDebounce(tab)
 					})
 				return
 			}
@@ -151,7 +154,7 @@ const setListeners = () => {
 	})
 
 	changeMapBucket.valueStream.subscribe(changeMap => {
-		// console.log(changeMap)
+		console.log(changeMap)
 	})
 }
 

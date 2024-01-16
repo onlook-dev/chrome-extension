@@ -37,7 +37,7 @@
 					<img
 						src={project.hostData.previewImage}
 						alt={project.name}
-						class="aspect-video rounded w-full"
+						class="aspect-video object-cover object-top rounded w-full"
 					/>
 				{:else}
 					<div class="bg-gray-100 aspect-video rounded w-full" />
@@ -53,9 +53,9 @@
 						{/if}
 					</div>
 				</div>
-				<div class="text-left">
-					<p class="text-sm font-semibold">{project.name}</p>
-					<p class="text-xs opacity-70">{project.hostUrl}</p>
+				<div class="text-left overflow-x-hidden">
+					<p class="text-sm font-semibold truncate">{project.name}</p>
+					<p class="text-xs opacity-70 truncate">{project.hostUrl}</p>
 				</div>
 			</div>
 		</button>
