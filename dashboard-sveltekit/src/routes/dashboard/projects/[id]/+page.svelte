@@ -32,7 +32,7 @@
 				project = firebaseProject;
 
 				// Get store users from activities and comments
-				const userIds = project.activities
+				const userIds = Object.values(project.activities)
 					.map((item) => item.userId)
 					.concat(project.comments.map((item) => item.userId));
 

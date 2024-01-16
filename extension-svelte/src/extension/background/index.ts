@@ -130,7 +130,9 @@ const setListeners = () => {
 
 		// Get users from activities and comments
 		const usersNotInMap: string[] = Object.values(projectsMap)
-			.flatMap(project => project.activities.map((item: Activity) => item.userId))
+			.flatMap(project =>
+				Object.values<Activity>(project.activities).map((item: Activity) => item.userId)
+			)
 			.concat(
 				Object.values(projectsMap).flatMap(project =>
 					project.comments.map((item: Comment) => item.userId)
@@ -165,7 +167,7 @@ const setListeners = () => {
 				userId: user.id,
 				projectId: activeProject.id,
 				eventData: [],
-				creationTime: new Date(),
+				creationTime: new Date().toISOString(),
 				selector: styleChange.selector,
 				styleChanges: {},
 				visible: true
@@ -182,13 +184,12 @@ const setListeners = () => {
 			activity.styleChanges[key] = styleChange
 		}
 
-		activity.creationTime = new Date()
+		activity.creationTime = new Date().toISOString()
 
 		activeProject.activities[styleChange.selector] = activity
 
 		// Update project
 		projectsMapBucket.set({ [activeProject.id]: activeProject })
-		console.log('Updated project with style change', activeProject)
 	})
 }
 

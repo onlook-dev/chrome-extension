@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import type { Project } from '$shared/models/project'
-	import {
-		projectsMapBucket,
-		popupStateBucket,
-		teamsMapBucket,
-		getTeamById
-	} from '$lib/utils/localstorage'
+	import { projectsMapBucket, popupStateBucket, getTeamById } from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 
 	let projectsMap: Map<string, Project> = new Map()

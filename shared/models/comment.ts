@@ -34,10 +34,16 @@ export function getInitials(name: string) {
 }
 
 export function timeSince(date: Date) {
-  // @ts-ignore - Date arithmetic overrides
-  const seconds = Math.floor((new Date() - date) / 1000);
+  if (!(date instanceof Date) || isNaN(date.getTime())) {
+    console.error("Invalid date provided");
+    return "Invalid date";
+  }
+
+  const now = new Date();
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
   let interval = seconds / 31536000;
 
+  console.log(interval);
   if (interval > 1) {
     return Math.floor(interval) + "y";
   }
