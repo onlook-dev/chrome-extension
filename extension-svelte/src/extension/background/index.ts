@@ -1,11 +1,12 @@
 import { DashboardRoutes, DASHBOARD_URL } from '$shared/constants'
 import {
+	MessageReceiver,
 	authRequestStream,
 	editProjectRequestStream,
 	styleChangeStream,
 	toggleVisbugStream
 } from '$lib/utils/messaging'
-import { toggleIn } from '$lib/visbug/visbug'
+import { toggleIn, visbugState } from '$lib/visbug/visbug'
 import {
 	authUserBucket,
 	getActiveProject,
@@ -34,6 +35,25 @@ let userSubs: (() => void)[] = []
 const setListeners = () => {
 	subscribeToFirebaseAuthChanges()
 
+	chrome.runtime.onMessage.addListener(async (message, sender) => {
+		switch (message.payload?.data?.to) {
+			case MessageReceiver.CONTENT:
+				// Send message to content script of active tab
+				chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+					// If tab is not active, don't send message
+					if (!tabs[0]) return
+
+					// If tab is not injected, don't send message
+					const visbugActiveInTab = visbugState.injected[tabs[0].id as number]
+
+					if (!visbugActiveInTab) {
+						toggleIn(tabs[0])
+					}
+					chrome.tabs.sendMessage(tabs[0].id as number, message)
+				})
+				break
+		}
+	})
 	toggleVisbugStream.subscribe(() => {
 		toggleVisbugOnActiveTab()
 	})
@@ -54,7 +74,7 @@ const setListeners = () => {
 				// Make sure tab is active
 				chrome.tabs.update(tabs[0].id as number, { active: true })
 				updateProjectTabHostWithDebounce(tabs[0])
-				toggleIn({ id: tabs[0].id })
+				toggleIn(tabs[0])
 				return
 			} else {
 				chrome.tabs
@@ -63,7 +83,7 @@ const setListeners = () => {
 					})
 					.then(tab => {
 						updateProjectTabHostWithDebounce(tab)
-						toggleIn({ id: tab.id })
+						toggleIn(tabs[0])
 					})
 				return
 			}
@@ -195,7 +215,7 @@ const setListeners = () => {
 
 function toggleVisbugOnActiveTab() {
 	chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-		toggleIn({ id: tabs[0].id })
+		toggleIn(tabs[0])
 	})
 }
 

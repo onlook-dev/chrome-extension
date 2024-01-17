@@ -1,6 +1,6 @@
 import { DASHBOARD_AUTH, DASHBOARD_URL, STYLE_CHANGE } from '$shared/constants'
 import { authUserBucket } from '$lib/utils/localstorage'
-import { sendStyleChange } from '$lib/utils/messaging'
+import { activityInspectStream, sendStyleChange } from '$lib/utils/messaging'
 
 export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
@@ -21,6 +21,32 @@ export function setupListeners() {
 			return
 		}
 	})
+
+	activityInspectStream.subscribe(([detail, sender]) => {
+		simulateEventOnSelector(detail.selector, detail.event, detail.scrollToElement)
+	})
+
+	function simulateEventOnSelector(
+		selector: string,
+		event: string,
+		scrollToElement: boolean = false
+	) {
+		const element = document.querySelector(selector)
+		if (!element) return
+
+		var rect = element.getBoundingClientRect()
+		element.dispatchEvent(
+			new MouseEvent(event, {
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+				bubbles: true,
+				cancelable: true
+			})
+		)
+		if (scrollToElement) {
+			element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+		}
+	}
 }
 
 try {

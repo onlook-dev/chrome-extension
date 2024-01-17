@@ -1,3 +1,4 @@
+import type { MouseEvent } from '$shared/constants'
 import type { Project } from '../../../../shared/models/project'
 import { getMessage } from '@extend-chrome/messages'
 import type { SendOptions } from '@extend-chrome/messages/types/types'
@@ -6,7 +7,6 @@ import { map } from 'rxjs/operators'
 
 export enum MessageReceiver {
 	CONTENT = 'CONTENT',
-	SIDEPANEL = 'SIDEPANEL',
 	BACKGROUND = 'BACKGROUND'
 }
 
@@ -43,6 +43,18 @@ function getExtendedMessages<T>(
 	return [sendExtended, streamExtended]
 }
 
+export interface StyleChangeDetail {
+	selector: string
+	styleType: string
+	changeMap: Record<string, string>
+}
+
+export interface ActivityInspectDetail {
+	selector: string
+	event: MouseEvent
+	scrollToElement: boolean
+}
+
 // Messages
 export const [sendToggleVigbug, toggleVisbugStream] = getExtendedMessages<void>(
 	'TOGGLE_VISBUG',
@@ -59,13 +71,10 @@ export const [sendEditProjectRequest, editProjectRequestStream] = getExtendedMes
 	MessageReceiver.BACKGROUND
 )
 
-export interface StyleChangeDetail {
-	selector: string
-	styleType: string
-	changeMap: Record<string, string>
-}
-
 export const [sendStyleChange, styleChangeStream] = getExtendedMessages<StyleChangeDetail>(
 	'STYLE_CHANGE',
 	MessageReceiver.BACKGROUND
 )
+
+export const [sendActivityInspect, activityInspectStream] =
+	getExtendedMessages<ActivityInspectDetail>('ACTIVITY_INSPECT', MessageReceiver.CONTENT)

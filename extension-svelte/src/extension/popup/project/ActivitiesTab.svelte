@@ -6,15 +6,13 @@
 	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData'
 	import ItemHeader from './ItemHeader.svelte'
 	import { usersMapBucket } from '$lib/utils/localstorage'
+	import { sendActivityInspect } from '$lib/utils/messaging'
+	import { MouseEvent } from '$shared/constants'
 
 	export let project: Project
 
 	let activities: Activity[] = []
 	let usersMap: Map<string, User> = new Map()
-
-	let hoverActivity = (activity: Activity) => {}
-	let leaveActivity = (activity: Activity) => {}
-	let clickActivity = (activity: Activity) => {}
 
 	onMount(async () => {
 		usersMap = new Map(Object.entries(await usersMapBucket.get()))
@@ -23,6 +21,28 @@
 	$: activities = Object.values(project.activities).sort(
 		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
 	)
+
+	let clickActivity = (activity: Activity) => {
+		sendActivityInspect({
+			selector: activity.selector,
+			event: MouseEvent.CLICK,
+			scrollToElement: true
+		})
+	}
+	let hoverActivity = (activity: Activity) => {
+		sendActivityInspect({
+			selector: activity.selector,
+			event: MouseEvent.MOUSEMOVE,
+			scrollToElement: false
+		})
+	}
+	let leaveActivity = (activity: Activity) => {
+		sendActivityInspect({
+			selector: activity.selector,
+			event: MouseEvent.MOUSEMOVE,
+			scrollToElement: false
+		})
+	}
 </script>
 
 {#if activities.length === 0}
@@ -33,7 +53,9 @@
 <div class="divide-y flex flex-col w-full">
 	{#each activities as activity}
 		<!-- TODO: Add helper -->
-		<button
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<div
 			class="w-full p-4 flex flex-col pb-6 hover:bg-gray-50 transition duration-200 ease-in-out {!activity.visible
 				? 'opacity-60'
 				: ''}
@@ -67,9 +89,9 @@
 			{/if}
 			<div class="bg-gray-50 rounded p-4 border w-full text-start">
 				{#each Object.values(activity.styleChanges) as styleChange}
-					<div class="">{styleChange.key}: {styleChange.newVal};</div>
+					<span class="">{styleChange.key}: {styleChange.newVal};</span>
 				{/each}
 			</div>
-		</button>
+		</div>
 	{/each}
 </div>
