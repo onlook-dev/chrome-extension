@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import { timeSince } from '$shared/models/comment'
-	import Dots from '~icons/material-symbols/more-vert'
+	// import Dots from '~icons/material-symbols/more-vert'
 
 	export let profileImageUrl: string = ''
 	export let userName: string = ''
@@ -21,6 +21,7 @@
 		{timeSince(new Date(creationTime))}
 	</div>
 	<div class="ml-auto">
-		<button class="btn btn-square btn-ghost"> <Dots /> </button>
+		<!-- <button class="btn btn-sm btn-square btn-ghost"> <Dots /> </button> -->
+		<slot />
 	</div>
 </div>

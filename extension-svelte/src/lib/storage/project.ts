@@ -19,7 +19,6 @@ export async function postProjectToFirebase(project: Project): Promise<string | 
 }
 
 export async function deleteProjectFromFirebase(projectId: string): Promise<void> {
-	console.log('Deleting firebase project')
 	const result = await deleteObjectFromCollection(FIREBASE_COLLECTION_PROJECTS, projectId)
 	console.log('Deleted firebase project')
 	return result

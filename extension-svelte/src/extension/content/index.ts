@@ -34,15 +34,17 @@ export function setupListeners() {
 		const element = document.querySelector(selector)
 		if (!element) return
 
-		var rect = element.getBoundingClientRect()
-		element.dispatchEvent(
-			new MouseEvent(event, {
-				clientX: rect.left + rect.width / 2,
-				clientY: rect.top + rect.height / 2,
-				bubbles: true,
-				cancelable: true
-			})
-		)
+		// TODO: This sometimes catches the child elements instead.
+		const rect = element.getBoundingClientRect()
+
+		const mouseEvent = new MouseEvent(event, {
+			clientX: rect.x + rect.width / 2,
+			clientY: rect.y + rect.height / 2,
+			bubbles: false,
+			cancelable: true
+		})
+		element.dispatchEvent(mouseEvent)
+
 		if (scrollToElement) {
 			element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
 		}

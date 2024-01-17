@@ -56,11 +56,6 @@ export interface ActivityInspectDetail {
 }
 
 // Messages
-export const [sendToggleVigbug, toggleVisbugStream] = getExtendedMessages<void>(
-	'TOGGLE_VISBUG',
-	MessageReceiver.BACKGROUND
-)
-
 export const [sendAuthRequest, authRequestStream] = getExtendedMessages<void>(
 	'REQUEST_AUTH',
 	MessageReceiver.BACKGROUND
@@ -78,3 +73,8 @@ export const [sendStyleChange, styleChangeStream] = getExtendedMessages<StyleCha
 
 export const [sendActivityInspect, activityInspectStream] =
 	getExtendedMessages<ActivityInspectDetail>('ACTIVITY_INSPECT', MessageReceiver.CONTENT)
+
+export const [sendOpenUrlRequest, openUrlRequestStream] = getExtendedMessages<string>(
+	'SEND_OPEN_URL_REQUEST',
+	MessageReceiver.BACKGROUND
+)

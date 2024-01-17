@@ -21,11 +21,11 @@
 </script>
 
 <div
-	class="pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
+	class=" pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
 >
 	{#each projectsMap.values() as project}
 		<button
-			class="rounded space-y-4 p-4 hover:shadow block"
+			class="bg-base-100 rounded space-y-4 p-4 hover:shadow block"
 			on:click={() => {
 				popupStateBucket.set({ activeRoute: PopupRoutes.PROJECT, activeProjectId: project.id })
 			}}

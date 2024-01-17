@@ -1,36 +1,32 @@
+import { visbugStateBucket } from '$lib/utils/localstorage.js'
 import { getColorMode } from './contextmenu/colormode.js'
 import { getColorScheme } from './contextmenu/colorscheme.js'
 
+// @ts-ignore
 var platform = typeof browser === 'undefined' ? chrome : browser
 
-interface State {
-	loaded: Record<number, boolean>
-	injected: Record<number, boolean>
-}
+export const toggleIn = async (tabId: number, projectId?: string) => {
+	let visbugState = await visbugStateBucket.get()
 
-export const visbugState = {
-	loaded: {} as Record<number, boolean>,
-	injected: {} as Record<number, boolean>
-}
-
-export const toggleIn = (tab: chrome.tabs.Tab) => {
-	let tab_id = tab.id ?? 0
-	// toggle out: it's currently loaded and injected
-	if (visbugState.loaded[tab_id] && visbugState.injected[tab_id]) {
+	// toggle out: it's currently loadedTabs and injectedTabs
+	if (visbugState.loadedTabs[tabId] && visbugState.injectedTabs[tabId]) {
 		platform.scripting.executeScript({
-			target: { tabId: tab_id },
+			target: { tabId: tabId },
 			files: ['src/lib/visbug/toolbar/eject.js']
 		})
-		visbugState.injected[tab_id] = false
+		visbugState.injectedTabs[tabId] = false
+		if (projectId) visbugState.injectedProjects[projectId] = false
 	}
 
-	// toggle in: it's loaded and needs injected
-	else if (visbugState.loaded[tab_id] && !visbugState.injected[tab_id]) {
+	// toggle in: it's loadedTabs and needs injectedTabs
+	else if (visbugState.loadedTabs[tabId] && !visbugState.injectedTabs[tabId]) {
 		platform.scripting.executeScript({
-			target: { tabId: tab_id },
+			target: { tabId: tabId },
 			files: ['src/lib/visbug/toolbar/restore.js']
 		})
-		visbugState.injected[tab_id] = true
+		visbugState.injectedTabs[tabId] = true
+		if (projectId) visbugState.injectedProjects[projectId] = true
+
 		getColorMode()
 		getColorScheme()
 	}
@@ -38,21 +34,28 @@ export const toggleIn = (tab: chrome.tabs.Tab) => {
 	// fresh start in tab
 	else {
 		platform.scripting.insertCSS({
-			target: { tabId: tab_id },
+			target: { tabId: tabId },
 			files: ['src/lib/visbug/toolbar/bundle.css']
 		})
 		platform.scripting.executeScript({
-			target: { tabId: tab_id },
+			target: { tabId: tabId },
 			files: ['src/lib/visbug/toolbar/inject.js']
 		})
 
-		visbugState.loaded[tab_id] = true
-		visbugState.injected[tab_id] = true
+		visbugState.loadedTabs[tabId] = true
+		visbugState.injectedTabs[tabId] = true
+		if (projectId) visbugState.injectedProjects[projectId] = true
 		getColorMode()
 		getColorScheme()
 	}
 
 	platform.tabs.onUpdated.addListener(function (tabId: number) {
-		if (tabId === tab_id) visbugState.loaded[tabId] = false
+		if (tabId === tabId) {
+			visbugState.loadedTabs[tabId] = false
+			visbugState.injectedTabs[tabId] = false
+			if (projectId) visbugState.injectedProjects[projectId] = false
+		}
 	})
+
+	visbugStateBucket.set(visbugState)
 }

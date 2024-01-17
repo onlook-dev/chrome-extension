@@ -6,8 +6,9 @@
 	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData'
 	import ItemHeader from './ItemHeader.svelte'
 	import { usersMapBucket } from '$lib/utils/localstorage'
-	import { sendActivityInspect } from '$lib/utils/messaging'
-	import { MouseEvent } from '$shared/constants'
+	import { sendActivityInspect, sendOpenUrlRequest } from '$lib/utils/messaging'
+	import { DASHBOARD_URL, DashboardRoutes, MouseEvent } from '$shared/constants'
+	import Open from '~icons/ion/open-outline'
 
 	export let project: Project
 
@@ -69,7 +70,17 @@
 				profileImageUrl={usersMap.get(activity.userId)?.profileImage}
 				userName={usersMap.get(activity.userId)?.name}
 				creationTime={activity.creationTime}
-			/>
+			>
+				<div class="tooltip tooltip-left" data-tip="Open in dashboard">
+					<button
+						on:click={() =>
+							sendOpenUrlRequest(`${DASHBOARD_URL}${DashboardRoutes.PROJECTS}/${project.id}`)}
+						class="btn btn-sm btn-square btn-ghost"
+					>
+						<Open />
+					</button>
+				</div>
+			</ItemHeader>
 
 			<!-- Item body -->
 			<div class="mb-2 w-full text-start">

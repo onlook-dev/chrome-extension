@@ -57,3 +57,10 @@ async function captureTab(windowId: number): Promise<string> {
 		})
 	})
 }
+
+export function sameTabHost(url1: string, url2: string) {
+	const url1Obj = new URL(url1)
+	const url2Obj = new URL(url2)
+
+	return url1Obj.origin === url2Obj.origin
+}

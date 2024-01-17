@@ -7,10 +7,6 @@ import type { PopupRoutes } from './constants'
 // Maps that get shared across the whole extension using local storage
 // https://github.com/extend-chrome/storage
 
-interface ExtensionState {
-	visbugActive: boolean
-}
-
 interface AuthUserState {
 	authUser: string
 }
@@ -25,8 +21,13 @@ interface PopupState {
 	activeRoute: PopupRoutes
 }
 
+interface VisbugState {
+	loadedTabs: Record<number, boolean>
+	injectedTabs: Record<number, boolean>
+	injectedProjects: Record<string, boolean>
+}
+
 // Objects
-export const stateBucket = getBucket<ExtensionState>('EXTENSION_STATE')
 export const authUserBucket = getBucket<AuthUserState>('AUTH_USER_STATE')
 export const userBucket = getBucket<UserState>('USER_STATE')
 export const popupStateBucket = getBucket<PopupState>('POPUP_STATE')
@@ -35,6 +36,7 @@ export const popupStateBucket = getBucket<PopupState>('POPUP_STATE')
 export const teamsMapBucket = getBucket<Map<string, Team>>('TEAMS_MAP')
 export const projectsMapBucket = getBucket<Map<string, Project>>('PROJECTS_MAP')
 export const usersMapBucket = getBucket<Map<string, User>>('USERS_MAP')
+export const visbugStateBucket = getBucket<VisbugState>('VISBUG_STATE')
 
 export const getActiveUser = async (): Promise<User> => {
 	const { user } = await userBucket.get()
