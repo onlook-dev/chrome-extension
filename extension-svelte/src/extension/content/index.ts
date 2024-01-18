@@ -1,11 +1,13 @@
 import { DASHBOARD_AUTH, DASHBOARD_URL, STYLE_CHANGE } from '$shared/constants'
 import { authUserBucket, getActiveProject } from '$lib/utils/localstorage'
 import {
+	activityApplyStream,
 	activityInspectStream,
+	activityRevertStream,
 	applyProjectChangesStream,
 	sendStyleChange
 } from '$lib/utils/messaging'
-import type { StyleChange } from '$shared/models/activity'
+import type { Activity } from '$shared/models/activity'
 import type { VisbugStyleChange } from '$shared/models/visbug'
 
 function simulateEventOnSelector(
@@ -29,6 +31,26 @@ function simulateEventOnSelector(
 
 	if (scrollToElement) {
 		element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+	}
+}
+
+function applyActivityChanges(activity: Activity) {
+	const element = document.querySelector(activity.selector) as any
+	if (element) {
+		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
+			// Apply style to element
+			element.style[style] = changeObject.newVal
+		})
+	}
+}
+
+function revertActivityChanges(activity: Activity) {
+	const element = document.querySelector(activity.selector) as any
+	if (element) {
+		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
+			// Apply style to element
+			element.style[style] = changeObject.oldVal
+		})
 	}
 }
 
@@ -56,19 +78,21 @@ export function setupListeners() {
 		simulateEventOnSelector(detail.selector, detail.event, detail.scrollToElement)
 	})
 
+	activityRevertStream.subscribe(([activity, sender]) => {
+		revertActivityChanges(activity)
+	})
+
+	activityApplyStream.subscribe(([activity, sender]) => {
+		applyActivityChanges(activity)
+	})
+
 	applyProjectChangesStream.subscribe(async () => {
 		const activeProject = await getActiveProject()
 		if (!activeProject) return
 
 		// Get each activity and their style change
 		Object.values(activeProject.activities).forEach(activity => {
-			const element = document.querySelector(activity.selector) as any
-			if (element) {
-				Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
-					// Apply style to element
-					element.style[style] = changeObject.newVal
-				})
-			}
+			applyActivityChanges(activity)
 		})
 	})
 }

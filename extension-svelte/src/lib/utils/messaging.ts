@@ -1,4 +1,5 @@
 import type { MouseEvent } from '$shared/constants'
+import type { Activity } from '$shared/models/activity'
 import type { Project } from '$shared/models/project'
 import type { VisbugStyleChange } from '$shared/models/visbug'
 import { getMessage } from '@extend-chrome/messages'
@@ -78,3 +79,13 @@ export const [sendApplyProjectChanges, applyProjectChangesStream] = getExtendedM
 
 export const [sendActivityInspect, activityInspectStream] =
 	getExtendedMessages<ActivityInspectDetail>('ACTIVITY_INSPECT', MessageReceiver.CONTENT)
+
+export const [sendActivityApply, activityApplyStream] = getExtendedMessages<Activity>(
+	'ACTIVITY_APPLY',
+	MessageReceiver.CONTENT
+)
+
+export const [sendActivityRevert, activityRevertStream] = getExtendedMessages<Activity>(
+	'ACTIVITY_REVERT',
+	MessageReceiver.CONTENT
+)

@@ -4,15 +4,24 @@
 	import type { Activity } from '$shared/models/activity'
 	import type { User } from '$shared/models/user'
 	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData'
-	import ItemHeader from './ItemHeader.svelte'
-	import { usersMapBucket } from '$lib/utils/localstorage'
-	import { sendActivityInspect, sendOpenUrlRequest } from '$lib/utils/messaging'
+	import { usersMapBucket, projectsMapBucket } from '$lib/utils/localstorage'
+	import {
+		sendActivityInspect,
+		sendOpenUrlRequest,
+		sendActivityRevert,
+		sendActivityApply
+	} from '$lib/utils/messaging'
 	import { DASHBOARD_URL, DashboardRoutes, MouseEvent } from '$shared/constants'
-	import Open from '~icons/ion/open-outline'
 	import { jsToCssProperty } from '$shared/helpers'
+
+	import ItemHeader from './ItemHeader.svelte'
+	import Open from '~icons/ion/open-outline'
+	import Undo from '~icons/material-symbols/undo'
+	import Trash from '~icons/material-symbols/delete'
 
 	export let project: Project
 
+	const modalId = 'delete-activity-modal'
 	let activities: Activity[] = []
 	let usersMap: Map<string, User> = new Map()
 
@@ -24,6 +33,17 @@
 		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
 	)
 
+	let deleteActivity = (activity: Activity) => {
+		project.activities = Object.fromEntries(
+			Object.entries(project.activities).filter(([key, value]) => key !== activity.selector)
+		)
+
+		projectsMapBucket.set({ [project.id]: project })
+		project = { ...project }
+		sendActivityRevert(activity)
+		closeModal()
+	}
+
 	let clickActivity = (activity: Activity) => {
 		sendActivityInspect({
 			selector: activity.selector,
@@ -31,6 +51,7 @@
 			scrollToElement: true
 		})
 	}
+
 	let hoverActivity = (activity: Activity) => {
 		// sendActivityInspect({
 		// 	selector: activity.selector,
@@ -44,6 +65,29 @@
 		// 	event: MouseEvent.MOUSEMOVE,
 		// 	scrollToElement: false
 		// })
+	}
+
+	function showModal() {
+		const modal = document.getElementById(modalId) as HTMLDialogElement
+		if (modal) {
+			modal.showModal()
+			modal.addEventListener(
+				'click',
+				event => {
+					if (event.target === modal) {
+						closeModal()
+					}
+				},
+				{ once: true }
+			)
+		}
+	}
+
+	function closeModal() {
+		const modal = document.getElementById(modalId) as HTMLDialogElement
+		if (modal) {
+			modal.close()
+		}
 	}
 </script>
 
@@ -72,6 +116,19 @@
 				userName={usersMap.get(activity.userId)?.name}
 				creationTime={activity.creationTime}
 			>
+				<div class="tooltip tooltip-left" data-tip="View original">
+					<button
+						on:mousedown={() => {
+							sendActivityRevert(activity)
+						}}
+						on:mouseup={() => {
+							sendActivityApply(activity)
+						}}
+						class="btn btn-sm btn-square btn-ghost"
+					>
+						<Undo />
+					</button>
+				</div>
 				<div class="tooltip tooltip-left" data-tip="Open in dashboard">
 					<button
 						on:click={() =>
@@ -80,6 +137,26 @@
 					>
 						<Open />
 					</button>
+				</div>
+				<div class="tooltip tooltip-left" data-tip="Delete activity">
+					<button on:click={showModal} class="btn btn-sm btn-square btn-ghost">
+						<Trash />
+					</button>
+					<dialog id={modalId} class="modal">
+						<div class="modal-box">
+							<h3 class="font-bold text-lg">Delete activity?</h3>
+							<p class="py-4">Deleted activities can NOT be restored. Continue?</p>
+							<div class="modal-action space-x-2">
+								<button class="btn" on:click={closeModal}>Cancel</button>
+								<button class="btn btn-error" on:click={() => deleteActivity(activity)}
+									>Delete</button
+								>
+							</div>
+						</div>
+						<form method="dialog" class="modal-backdrop">
+							<button>close</button>
+						</form>
+					</dialog>
 				</div>
 			</ItemHeader>
 

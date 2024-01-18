@@ -2,12 +2,16 @@ import { DashboardRoutes, DASHBOARD_URL } from '$shared/constants'
 import {
 	MessageReceiver,
 	activityInspectStream,
+	activityRevertStream,
 	authRequestStream,
 	editProjectRequestStream,
 	openUrlRequestStream,
 	sendActivityInspect,
 	sendApplyProjectChanges,
-	styleChangeStream
+	sendActivityRevert,
+	styleChangeStream,
+	activityApplyStream,
+	sendActivityApply
 } from '$lib/utils/messaging'
 import { toggleIn } from '$lib/visbug/visbug'
 import {
@@ -64,36 +68,55 @@ const makeProjectTabActive = (tab: chrome.tabs.Tab, project: Project) => {
 	})
 }
 
+function forwardToActiveProjectTab(detail: any, callback: any) {
+	chrome.tabs.query({ active: true, currentWindow: true }, async tabs => {
+		// If tab is not active, don't send message
+		if (!tabs[0]) return
+		const project = await getActiveProject()
+
+		// If active tab is not project tab
+		if (!sameTabHost(tabs[0].url ?? '', project.hostUrl)) return
+
+		const visbugState = await visbugStateBucket.get()
+		// If tab is not injected, inject it
+		if (!visbugState.injectedTabs[tabs[0].id as number]) {
+			toggleIn(tabs[0].id as number, project.id)
+		}
+
+		callback(detail, {
+			tabId: tabs[0].id
+		})
+	})
+}
+
 const setListeners = () => {
 	subscribeToFirebaseAuthChanges()
 
+	// Forward messages to content script
 	activityInspectStream.subscribe(async ([detail, sender]) => {
-		chrome.tabs.query({ active: true, currentWindow: true }, async tabs => {
-			// If tab is not active, don't send message
-			if (!tabs[0]) return
-			const project = await getActiveProject()
-
-			// If active tab is not project tab
-			if (!sameTabHost(tabs[0].url ?? '', project.hostUrl)) return
-
-			const visbugState = await visbugStateBucket.get()
-			// If tab is not injected, inject it
-			if (!visbugState.injectedTabs[tabs[0].id as number]) {
-				toggleIn(tabs[0].id as number, project.id)
-			}
-
-			sendActivityInspect(detail, {
-				tabId: tabs[0].id
-			})
-		})
+		forwardToActiveProjectTab(detail, sendActivityInspect)
 	})
 
+	// Forward messages to content script
+	activityRevertStream.subscribe(async ([detail, sender]) => {
+		console.log('activityRevertStream', detail)
+		forwardToActiveProjectTab(detail, sendActivityRevert)
+	})
+
+	// Forward messages to content script
+	activityApplyStream.subscribe(async ([detail, sender]) => {
+		console.log('activityApplyStream', detail)
+		forwardToActiveProjectTab(detail, sendActivityApply)
+	})
+
+	// Auth request from popup
 	authRequestStream.subscribe(() => {
 		const authUrl = `${DASHBOARD_URL}${DashboardRoutes.SIGNIN}`
 		chrome.tabs.create({ url: authUrl })
 		return
 	})
 
+	// Start editing request from popip
 	editProjectRequestStream.subscribe(([project]) => {
 		// Get tab if same host using pattern matching
 		const searchUrl = new URL(project.hostUrl).origin + '/*'
@@ -116,12 +139,14 @@ const setListeners = () => {
 		})
 	})
 
+	// Auth user changes from content script
 	authUserBucket.valueStream.subscribe(({ authUser }) => {
 		if (authUser) {
 			signInUser(authUser)
 		}
 	})
 
+	// User  change from signing in
 	userBucket.valueStream.subscribe(async ({ user }) => {
 		if (!user) return
 
@@ -144,6 +169,7 @@ const setListeners = () => {
 		}
 	})
 
+	// Teams bucket change from user change
 	teamsMapBucket.valueStream.subscribe(async teamsMap => {
 		if (!teamsMap) return
 
@@ -166,6 +192,7 @@ const setListeners = () => {
 		}
 	})
 
+	// Project changes from team
 	projectsMapBucket.valueStream.subscribe(async projectsMap => {
 		if (!projectsMap) return
 
@@ -197,10 +224,12 @@ const setListeners = () => {
 		}
 	})
 
+	// Open url from popup
 	openUrlRequestStream.subscribe(([url, sender]) => {
 		chrome.tabs.create({ url: url })
 	})
 
+	// Style change from visbug and content script
 	styleChangeStream.subscribe(async ([visbugStyleChange]) => {
 		const activeProject = await getActiveProject()
 		if (!activeProject) return
@@ -223,22 +252,22 @@ const setListeners = () => {
 		}
 
 		const mappedStyleChange = convertVisbugToStyleChangeMap(visbugStyleChange)
-		// Keep the oldest oldVal from activity and newest newVal from visbug
 
-		const newStyleChange = {
-			...activity.styleChanges,
-			...mappedStyleChange
-		}
-
-		Object.entries(activity.styleChanges).forEach(([key, val]) => {
-			if (val.oldVal) {
-				newStyleChange[key].oldVal = val.oldVal
+		// For each key in mappedStyleChange,
+		// if key does not exist in activity, add the oldVal and newVal.
+		// if it does, only apply newVal
+		Object.entries(mappedStyleChange).forEach(([key, val]) => {
+			if (!activity.styleChanges[key]) {
+				activity.styleChanges[key] = {
+					key: key,
+					oldVal: val.oldVal ?? '',
+					newVal: val.newVal
+				} as StyleChange
+			} else {
+				activity.styleChanges[key].newVal = val.newVal
 			}
 		})
-
-		activity.styleChanges = newStyleChange
-
-		console.log('activity', activity.styleChanges)
+		console.log('activity', activity)
 
 		activity.creationTime = new Date().toISOString()
 		activeProject.activities[visbugStyleChange.selector] = activity
