@@ -1,5 +1,6 @@
 import type { MouseEvent } from '$shared/constants'
-import type { Project } from '../../../../shared/models/project'
+import type { Project } from '$shared/models/project'
+import type { VisbugStyleChange } from '$shared/models/visbug'
 import { getMessage } from '@extend-chrome/messages'
 import type { SendOptions } from '@extend-chrome/messages/types/types'
 import { Observable } from 'rxjs'
@@ -43,12 +44,6 @@ function getExtendedMessages<T>(
 	return [sendExtended, streamExtended]
 }
 
-export interface StyleChangeDetail {
-	selector: string
-	styleType: string
-	changeMap: Record<string, string>
-}
-
 export interface ActivityInspectDetail {
 	selector: string
 	event: MouseEvent
@@ -66,7 +61,7 @@ export const [sendEditProjectRequest, editProjectRequestStream] = getExtendedMes
 	MessageReceiver.BACKGROUND
 )
 
-export const [sendStyleChange, styleChangeStream] = getExtendedMessages<StyleChangeDetail>(
+export const [sendStyleChange, styleChangeStream] = getExtendedMessages<VisbugStyleChange>(
 	'STYLE_CHANGE',
 	MessageReceiver.BACKGROUND
 )

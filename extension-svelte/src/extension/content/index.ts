@@ -5,6 +5,8 @@ import {
 	applyProjectChangesStream,
 	sendStyleChange
 } from '$lib/utils/messaging'
+import type { StyleChange } from '$shared/models/activity'
+import type { VisbugStyleChange } from '$shared/models/visbug'
 
 function simulateEventOnSelector(
 	selector: string,
@@ -42,9 +44,9 @@ export function setupListeners() {
 			return
 		}
 
-		// TODO: Should add check for origin being same as project URL
 		if (message.type === STYLE_CHANGE) {
-			sendStyleChange(message.detail)
+			const visbugStyleChange = message.detail as VisbugStyleChange
+			sendStyleChange(visbugStyleChange)
 			return
 		}
 	})

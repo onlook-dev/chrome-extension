@@ -32,6 +32,7 @@ import { subscribeToProject } from '$lib/storage/project'
 import { sameTabHost, updateProjectTabHostWithDebounce } from './tabs'
 import { nanoid } from 'nanoid'
 import type { Project } from '$shared/models/project'
+import { convertVisbugToStyleChangeMap } from '$shared/helpers'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
@@ -200,11 +201,11 @@ const setListeners = () => {
 		chrome.tabs.create({ url: url })
 	})
 
-	styleChangeStream.subscribe(async ([styleChange]) => {
+	styleChangeStream.subscribe(async ([visbugStyleChange]) => {
 		const activeProject = await getActiveProject()
 		if (!activeProject) return
 
-		let activity = activeProject.activities[styleChange.selector]
+		let activity = activeProject.activities[visbugStyleChange.selector]
 
 		// Create activity if it doesn't exist
 		if (!activity) {
@@ -215,25 +216,32 @@ const setListeners = () => {
 				projectId: activeProject.id,
 				eventData: [],
 				creationTime: new Date().toISOString(),
-				selector: styleChange.selector,
+				selector: visbugStyleChange.selector,
 				styleChanges: {},
 				visible: true
 			} as Activity
 		}
 
-		// Create style change objects and update activity
-		for (const [key, value] of Object.entries(styleChange.changeMap)) {
-			const styleChange = {
-				key: key,
-				oldVal: '',
-				newVal: value
-			} as StyleChange
-			activity.styleChanges[key] = styleChange
+		const mappedStyleChange = convertVisbugToStyleChangeMap(visbugStyleChange)
+		// Keep the oldest oldVal from activity and newest newVal from visbug
+
+		const newStyleChange = {
+			...activity.styleChanges,
+			...mappedStyleChange
 		}
 
-		activity.creationTime = new Date().toISOString()
+		Object.entries(activity.styleChanges).forEach(([key, val]) => {
+			if (val.oldVal) {
+				newStyleChange[key].oldVal = val.oldVal
+			}
+		})
 
-		activeProject.activities[styleChange.selector] = activity
+		activity.styleChanges = newStyleChange
+
+		console.log('activity', activity.styleChanges)
+
+		activity.creationTime = new Date().toISOString()
+		activeProject.activities[visbugStyleChange.selector] = activity
 
 		// Update project
 		projectsMapBucket.set({ [activeProject.id]: activeProject })
