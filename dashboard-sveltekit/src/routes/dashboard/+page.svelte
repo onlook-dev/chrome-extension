@@ -4,7 +4,7 @@
 
 	import { auth } from '$lib/firebase/firebase';
 	import { DashboardRoutes } from '$shared/constants';
-	import { teamsMapStore, userStore } from '$lib/utils/store';
+	import { paymentsMapStore, teamsMapStore, userStore } from '$lib/utils/store';
 	import { subscribeToTeam } from '$lib/storage/team';
 	import type { User } from '$shared/models/user';
 
@@ -12,6 +12,8 @@
 	import ProjectsView from './ProjectsView.svelte';
 	import SideBarLine from '~icons/ri/side-bar-line';
 	import NewTeamModal from './NewTeamModal.svelte';
+	import PlanModal from './PlanModal.svelte';
+	import { subscribeToPayment } from '$lib/storage/payment';
 
 	const dashboardDrawerId = 'dashboard-drawer';
 	let user: User | null;
@@ -36,6 +38,11 @@
 			user?.teams.forEach((team) => {
 				subscribeToTeam(team, (firebaseTeam) => {
 					teamsMapStore.update((map) => map.set(team, firebaseTeam));
+					if (firebaseTeam.paymentId) {
+						subscribeToPayment(firebaseTeam.paymentId, (payment) => {
+							paymentsMapStore.update((map) => map.set(payment.id, payment));
+						});
+					}
 				}).then((unsubscribe) => {
 					unsubs.push(unsubscribe);
 				});
@@ -77,11 +84,21 @@
 				{#if user?.teams}
 					{#each user?.teams as teamId}
 						<li>
-							<button
-								class={activeTeamId === teamId ? 'active font-semibold ' : ''}
-								on:click={() => (activeTeamId = teamId)}
-								>{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}</button
-							>
+							<div class="grid grid-cols-3 items-center w-full">
+								<button
+									class="{activeTeamId === teamId
+										? 'active font-extrabold'
+										: ''} col-span-2 text-left"
+									on:click={() => (activeTeamId = teamId)}
+								>
+									{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}
+								</button>
+								{#if activeTeamId === teamId}
+									<div class="col-start-3 justify-self-end">
+										<PlanModal {teamId} />
+									</div>
+								{/if}
+							</div>
 						</li>
 					{/each}
 				{/if}
