@@ -70,7 +70,7 @@ export const stripeConfig = isDevelopment ? testStripeConfig : prodStripeConfig;
 export const baseUrl = isDevelopment ? PUBLIC_TEST_URL : PUBLIC_PROD_URL;
 
 export const priceIdMapping = {
-	[Tier.BASIC]: isDevelopment ? 'basic' : 'basic',
+	[Tier.FREE]: isDevelopment ? 'free' : 'free',
 	[Tier.PRO]: isDevelopment ? testStripeConfig.proPriceId : prodStripeConfig.proPriceId,
 	[Tier.ORG]: isDevelopment ? testStripeConfig.orgPriceId : prodStripeConfig.orgPriceId,
 	[Tier.ENTERPRISE]: isDevelopment

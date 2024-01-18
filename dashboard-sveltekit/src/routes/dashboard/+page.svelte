@@ -4,7 +4,7 @@
 
 	import { auth } from '$lib/firebase/firebase';
 	import { DashboardRoutes } from '$shared/constants';
-	import { teamsMapStore, userStore } from '$lib/utils/store';
+	import { paymentsMapStore, teamsMapStore, userStore } from '$lib/utils/store';
 	import { subscribeToTeam } from '$lib/storage/team';
 	import type { User } from '$shared/models/user';
 
@@ -13,6 +13,7 @@
 	import SideBarLine from '~icons/ri/side-bar-line';
 	import NewTeamModal from './NewTeamModal.svelte';
 	import PlanModal from './PlanModal.svelte';
+	import { subscribeToPayment } from '$lib/storage/payment';
 
 	const dashboardDrawerId = 'dashboard-drawer';
 	let user: User | null;
@@ -37,6 +38,11 @@
 			user?.teams.forEach((team) => {
 				subscribeToTeam(team, (firebaseTeam) => {
 					teamsMapStore.update((map) => map.set(team, firebaseTeam));
+					if (firebaseTeam.paymentId) {
+						subscribeToPayment(firebaseTeam.paymentId, (payment) => {
+							paymentsMapStore.update((map) => map.set(payment.id, payment));
+						});
+					}
 				}).then((unsubscribe) => {
 					unsubs.push(unsubscribe);
 				});

@@ -5,7 +5,7 @@
 	import { nanoid } from 'nanoid';
 	import { postTeamToFirebase } from '$lib/storage/team';
 
-	let plan = Tier.BASIC;
+	let plan = Tier.FREE;
 	const modalId = 'new-team-modal';
 	let teamName = '';
 
@@ -69,17 +69,6 @@
 					placeholder="Team name"
 					class="input input-bordered w-full"
 				/>
-			</div>
-
-			<!-- TODO: Add plan -->
-			<div class="space-y-2">
-				<span class="label-text">Select a plan</span>
-				<select bind:value={plan} class="input input-bordered w-full">
-					<option value={Tier.BASIC}>{Tier.BASIC}</option>
-					<option value={Tier.PRO}>{Tier.PRO}</option>
-					<option value={Tier.ORG}>{Tier.ORG}</option>
-					<option value={Tier.ENTERPRISE}>{Tier.ENTERPRISE}</option>
-				</select>
 			</div>
 
 			<div class="modal-action">

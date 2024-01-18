@@ -21,6 +21,15 @@ export async function getPaymentFromSessionId(checkoutSessionId: string): Promis
 	return paymentData as Payment;
 }
 
+export async function getPaymentFromSubscriptionId(subscriptionId: string): Promise<Payment> {
+	const paymentData = await getObjectFromCollectionWhere(
+		FIREBASE_COLLECTION_PAYMENTS,
+		'subscriptionId',
+		subscriptionId
+	);
+	return paymentData as Payment;
+}
+
 export async function postPaymentToFirebase(payment: Payment) {
 	console.log('Posting firebase payment');
 	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_PAYMENTS, payment, payment.id);
