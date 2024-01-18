@@ -1,3 +1,7 @@
+export function jsToCssProperty(key: string) {
+  return key.replace(/([A-Z])/g, "-$1").toLowerCase();
+}
+
 export function debounce(func: any, wait: number) {
   let timeout: any;
   let isInitialCall = true;

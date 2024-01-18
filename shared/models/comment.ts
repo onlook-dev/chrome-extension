@@ -7,7 +7,7 @@ export interface Comment {
   text?: string;
   media: CommentMedia[];
   metadata: EventMetadata[];
-  creationTime: Date;
+  creationTime: string;
   open: boolean;
   thread: Comment[];
 }
@@ -43,7 +43,6 @@ export function timeSince(date: Date) {
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
   let interval = seconds / 31536000;
 
-  console.log(interval);
   if (interval > 1) {
     return Math.floor(interval) + "y";
   }

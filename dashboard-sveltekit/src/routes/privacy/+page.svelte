@@ -13,7 +13,7 @@
 	</p>
 	<p>
 		The terms used in this Privacy Policy have the same meanings as in our Terms and Conditions,
-		which are accessible at 0.engineering unless otherwise defined in this Privacy Policy.
+		which are accessible at onlook.dev unless otherwise defined in this Privacy Policy.
 	</p>
 	<p><strong>Information Collection and Use</strong></p>
 	<p>
@@ -105,6 +105,6 @@
 	<p><strong>Contact Us</strong></p>
 	<p>
 		If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me
-		at <a href="mailto:kiet@0.engineering" class="underline">kiet@0.engineering</a>
+		at <a href="mailto:kiet@onlook.dev" class="underline">kiet@onlook.dev</a>
 	</p>
 </main>

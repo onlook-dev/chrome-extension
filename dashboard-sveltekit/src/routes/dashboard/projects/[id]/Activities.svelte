@@ -13,7 +13,7 @@
 	let clickActivity = (activity: Activity) => {};
 
 	$: activities = Object.values(project.activities).sort(
-		(a, b) => a.creationTime.getTime() - b.creationTime.getTime()
+		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
 	);
 </script>
 

@@ -58,6 +58,8 @@
 
 <div class="p-4 space-y-2">
 	<div class="flex flex-col space-y-4">
+		<div class="divider">Project information</div>
+
 		<div class="space-y-2">
 			<span class="label-text">Name</span>
 			<input
@@ -79,6 +81,31 @@
 				disabled
 			/>
 		</div>
+
+		<div class="divider">Editor preferences</div>
+
+		<!-- Toggles -->
+		<div class="flex flex-col">
+			<div class="form-control w-52">
+				<label class="cursor-pointer label">
+					<span class="label-text">Save image changes</span>
+					<input type="checkbox" class="toggle toggle-primary" disabled />
+				</label>
+			</div>
+			<div class="form-control w-52">
+				<label class="cursor-pointer label">
+					<span class="label-text">Save text changes</span>
+					<input type="checkbox" class="toggle toggle-primary" disabled />
+				</label>
+			</div>
+			<div class="form-control w-52">
+				<label class="cursor-pointer label">
+					<span class="label-text">Save position changes</span>
+					<input type="checkbox" class="toggle toggle-primary" disabled />
+				</label>
+			</div>
+		</div>
+
 		<div class="divider">Danger zone</div>
 		<button on:click={showModal} class="btn btn-outline btn-error"> Delete project </button>
 		<dialog id={modalId} class="modal">

@@ -71,10 +71,15 @@ export const [sendStyleChange, styleChangeStream] = getExtendedMessages<StyleCha
 	MessageReceiver.BACKGROUND
 )
 
-export const [sendActivityInspect, activityInspectStream] =
-	getExtendedMessages<ActivityInspectDetail>('ACTIVITY_INSPECT', MessageReceiver.CONTENT)
-
 export const [sendOpenUrlRequest, openUrlRequestStream] = getExtendedMessages<string>(
 	'SEND_OPEN_URL_REQUEST',
 	MessageReceiver.BACKGROUND
 )
+
+export const [sendApplyProjectChanges, applyProjectChangesStream] = getExtendedMessages<void>(
+	'APPLY_PROJECT_CHANGES',
+	MessageReceiver.CONTENT
+)
+
+export const [sendActivityInspect, activityInspectStream] =
+	getExtendedMessages<ActivityInspectDetail>('ACTIVITY_INSPECT', MessageReceiver.CONTENT)

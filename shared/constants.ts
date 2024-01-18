@@ -24,3 +24,8 @@ export enum DashboardRoutes {
 // Just swap this out for testing
 // export const DASHBOARD_URL = 'https://app.onlook.dev'
 export const DASHBOARD_URL = "http://localhost:5173";
+
+export enum MouseEvent {
+  CLICK = "click",
+  MOUSEMOVE = "mousemove",
+}

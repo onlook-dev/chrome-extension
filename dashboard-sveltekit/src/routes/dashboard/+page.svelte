@@ -51,7 +51,7 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="drawer-content px-4 py-6 overflow-auto">
+	<div class="bg-base-200 drawer-content px-4 py-6 overflow-auto h-screen">
 		<!-- Page content here -->
 		<label for={dashboardDrawerId} class="btn drawer-button lg:hidden"><SideBarLine /></label>
 

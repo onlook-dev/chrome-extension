@@ -1,6 +1,6 @@
 import { storeImageUri } from '$lib/firebase/functions'
 import { postProjectToFirebase } from '$lib/storage/project'
-import { debounce } from '$shared/debounce'
+import { debounce } from '$shared/helpers'
 import { getActiveProject, projectsMapBucket } from '$lib/utils/localstorage'
 import type { HostData } from '$shared/models/hostData'
 
@@ -59,8 +59,12 @@ async function captureTab(windowId: number): Promise<string> {
 }
 
 export function sameTabHost(url1: string, url2: string) {
-	const url1Obj = new URL(url1)
-	const url2Obj = new URL(url2)
+	try {
+		const url1Obj = new URL(url1)
+		const url2Obj = new URL(url2)
 
-	return url1Obj.origin === url2Obj.origin
+		return url1Obj.origin === url2Obj.origin
+	} catch (e) {
+		return false
+	}
 }

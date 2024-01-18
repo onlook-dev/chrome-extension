@@ -9,6 +9,7 @@
 	import { sendActivityInspect, sendOpenUrlRequest } from '$lib/utils/messaging'
 	import { DASHBOARD_URL, DashboardRoutes, MouseEvent } from '$shared/constants'
 	import Open from '~icons/ion/open-outline'
+	import { jsToCssProperty } from '$shared/helpers'
 
 	export let project: Project
 
@@ -31,24 +32,24 @@
 		})
 	}
 	let hoverActivity = (activity: Activity) => {
-		sendActivityInspect({
-			selector: activity.selector,
-			event: MouseEvent.MOUSEMOVE,
-			scrollToElement: false
-		})
+		// sendActivityInspect({
+		// 	selector: activity.selector,
+		// 	event: MouseEvent.MOUSEMOVE,
+		// 	scrollToElement: false
+		// })
 	}
 	let leaveActivity = (activity: Activity) => {
-		sendActivityInspect({
-			selector: activity.selector,
-			event: MouseEvent.MOUSEMOVE,
-			scrollToElement: false
-		})
+		// sendActivityInspect({
+		// 	selector: activity.selector,
+		// 	event: MouseEvent.MOUSEMOVE,
+		// 	scrollToElement: false
+		// })
 	}
 </script>
 
 {#if activities.length === 0}
-	<div class="flex flex-col items-center justify-center h-full">
-		<p class="text-gray-500">No activities yet</p>
+	<div class="flex flex-col items-center justify-center text-center h-full pt-6">
+		<p class="text-gray-500">No activities yet<br />Start editing to see changes</p>
 	</div>
 {/if}
 <div class="divide-y flex flex-col w-full">
@@ -98,9 +99,9 @@
 					>
 				</div>
 			{/if}
-			<div class="bg-gray-50 rounded p-4 border w-full text-start">
+			<div class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col">
 				{#each Object.values(activity.styleChanges) as styleChange}
-					<span class="">{styleChange.key}: {styleChange.newVal};</span>
+					<span class="">{jsToCssProperty(styleChange.key)}: {styleChange.newVal};</span>
 				{/each}
 			</div>
 		</div>

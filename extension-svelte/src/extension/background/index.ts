@@ -5,6 +5,8 @@ import {
 	authRequestStream,
 	editProjectRequestStream,
 	openUrlRequestStream,
+	sendActivityInspect,
+	sendApplyProjectChanges,
 	styleChangeStream
 } from '$lib/utils/messaging'
 import { toggleIn } from '$lib/visbug/visbug'
@@ -29,6 +31,7 @@ import { subscribeToTeam } from '$lib/storage/team'
 import { subscribeToProject } from '$lib/storage/project'
 import { sameTabHost, updateProjectTabHostWithDebounce } from './tabs'
 import { nanoid } from 'nanoid'
+import type { Project } from '$shared/models/project'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
@@ -42,35 +45,46 @@ const setDefaultState = () => {
 	})
 }
 
+const makeProjectTabActive = (tab: chrome.tabs.Tab, project: Project) => {
+	updateProjectTabHostWithDebounce(tab)
+	toggleIn(tab.id as number, project.id)
+
+	// Forward message
+	chrome.tabs.sendMessage(tab.id as number, {
+		greeting: 'APPLY_PROJECT_CHANGES',
+		payload: {
+			data: {},
+			to: MessageReceiver.CONTENT
+		}
+	})
+
+	sendApplyProjectChanges(undefined, {
+		tabId: tab.id
+	})
+}
+
 const setListeners = () => {
 	subscribeToFirebaseAuthChanges()
 
-	chrome.runtime.onMessage.addListener(async (message, sender) => {
-		switch (message.payload?.data?.to) {
-			case MessageReceiver.CONTENT:
-				// Forward message to content script of active tab
-				chrome.tabs.query({ active: true, currentWindow: true }, async tabs => {
-					// If tab is not active, don't send message
-					if (!tabs[0]) return
+	activityInspectStream.subscribe(async ([detail, sender]) => {
+		chrome.tabs.query({ active: true, currentWindow: true }, async tabs => {
+			// If tab is not active, don't send message
+			if (!tabs[0]) return
+			const project = await getActiveProject()
 
-					if (message.payload.greeting === 'ACTIVITY_INSPECT') {
-						const project = await getActiveProject()
+			// If active tab is not project tab
+			if (!sameTabHost(tabs[0].url ?? '', project.hostUrl)) return
 
-						// If active tab is not project tab
-						if (!sameTabHost(tabs[0].url ?? '', project.hostUrl)) return
+			const visbugState = await visbugStateBucket.get()
+			// If tab is not injected, inject it
+			if (!visbugState.injectedTabs[tabs[0].id as number]) {
+				toggleIn(tabs[0].id as number, project.id)
+			}
 
-						const visbugState = await visbugStateBucket.get()
-						// If tab is not injected, inject it
-						if (!visbugState.injectedTabs[tabs[0].id as number]) {
-							toggleIn(tabs[0].id as number, project.id)
-						}
-
-						// Forward message
-						chrome.tabs.sendMessage(tabs[0].id as number, message)
-					}
-				})
-				break
-		}
+			sendActivityInspect(detail, {
+				tabId: tabs[0].id
+			})
+		})
 	})
 
 	authRequestStream.subscribe(() => {
@@ -88,23 +102,17 @@ const setListeners = () => {
 			if (tabs?.length) {
 				// Make sure tab is active
 				chrome.tabs.update(tabs[0].id as number, { active: true })
-				updateProjectTabHostWithDebounce(tabs[0])
-				toggleIn(tabs[0].id as number, project.id)
-				return
+				makeProjectTabActive(tabs[0], project)
 			} else {
 				chrome.tabs
 					.create({
 						url: project.hostUrl
 					})
 					.then(tab => {
-						updateProjectTabHostWithDebounce(tab)
-						toggleIn(tabs[0].id as number, project.id)
+						makeProjectTabActive(tab, project)
 					})
-				return
 			}
 		})
-
-		return
 	})
 
 	authUserBucket.valueStream.subscribe(({ authUser }) => {
