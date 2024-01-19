@@ -22,6 +22,7 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
   const defaultTeam = {
     id: nanoid.nanoid(),
     name: `${user.displayName}'s Team`,
+    tier: "Free",
     users: {
       [user.uid]: Role.ADMIN,
     },
