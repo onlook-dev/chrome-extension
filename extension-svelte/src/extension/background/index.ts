@@ -1,4 +1,5 @@
-import { DashboardRoutes, DASHBOARD_URL } from '$shared/constants'
+import { DashboardRoutes } from '$shared/constants'
+import { baseUrl } from '$lib/utils/env'
 import {
 	MessageReceiver,
 	activityInspectStream,
@@ -111,7 +112,7 @@ const setListeners = () => {
 
 	// Auth request from popup
 	authRequestStream.subscribe(() => {
-		const authUrl = `${DASHBOARD_URL}${DashboardRoutes.SIGNIN}`
+		const authUrl = `${baseUrl}${DashboardRoutes.SIGNIN}`
 		chrome.tabs.create({ url: authUrl })
 		return
 	})

@@ -1,4 +1,4 @@
-import { DASHBOARD_AUTH, DASHBOARD_URL, STYLE_CHANGE } from '$shared/constants'
+import { DASHBOARD_AUTH, STYLE_CHANGE } from '$shared/constants'
 import { authUserBucket, getActiveProject } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
@@ -9,7 +9,7 @@ import {
 } from '$lib/utils/messaging'
 import type { Activity } from '$shared/models/activity'
 import type { VisbugStyleChange } from '$shared/models/visbug'
-
+import { baseUrl } from '$lib/utils/env'
 function simulateEventOnSelector(
 	selector: string,
 	event: string,
@@ -62,7 +62,7 @@ export function setupListeners() {
 
 		const message = event.data
 
-		if (message.type === DASHBOARD_AUTH && event.origin === DASHBOARD_URL && message.user) {
+		if (message.type === DASHBOARD_AUTH && event.origin === baseUrl && message.user) {
 			authUserBucket.set({ authUser: message.user })
 			return
 		}
