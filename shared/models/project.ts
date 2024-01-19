@@ -8,7 +8,7 @@ export interface Project {
   name: string;
   teamId: string;
   hostUrl: string;
-  activities: Activity[];
-  comments: Comment[];
   hostData: HostData;
+  comments: Comment[];
+  activities: Record<string, Activity>;
 }

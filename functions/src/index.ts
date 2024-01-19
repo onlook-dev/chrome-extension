@@ -13,9 +13,10 @@ import type {Project} from "../../shared/models/project";
 import type {User} from "../../shared/models/user";
 
 admin.initializeApp();
-
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
+
+export {storeImageUri} from "./file-storage";
 
 export const createUser = functions.auth.user().onCreate(async (user) => {
   const defaultTeam = {
@@ -122,7 +123,6 @@ export const createTeam = functions.firestore
     // Add team id to each user
     const userIds: string[] = Object.keys(teamData.users);
     userIds.forEach((userId) => {
-      console.log(userId);
       const userRef = admin
         .firestore()
         .collection(FIREBASE_COLLECTION_USERS)

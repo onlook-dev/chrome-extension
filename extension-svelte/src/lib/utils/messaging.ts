@@ -1,4 +1,7 @@
-import type { Project } from '../../../../shared/models/project'
+import type { MouseEvent } from '$shared/constants'
+import type { Activity } from '$shared/models/activity'
+import type { Project } from '$shared/models/project'
+import type { VisbugStyleChange } from '$shared/models/visbug'
 import { getMessage } from '@extend-chrome/messages'
 import type { SendOptions } from '@extend-chrome/messages/types/types'
 import { Observable } from 'rxjs'
@@ -6,7 +9,6 @@ import { map } from 'rxjs/operators'
 
 export enum MessageReceiver {
 	CONTENT = 'CONTENT',
-	SIDEPANEL = 'SIDEPANEL',
 	BACKGROUND = 'BACKGROUND'
 }
 
@@ -43,12 +45,13 @@ function getExtendedMessages<T>(
 	return [sendExtended, streamExtended]
 }
 
-// Messages
-export const [sendToggleVigbug, toggleVisbugStream] = getExtendedMessages<void>(
-	'TOGGLE_VISBUG',
-	MessageReceiver.BACKGROUND
-)
+export interface ActivityInspectDetail {
+	selector: string
+	event: MouseEvent
+	scrollToElement: boolean
+}
 
+// Messages
 export const [sendAuthRequest, authRequestStream] = getExtendedMessages<void>(
 	'REQUEST_AUTH',
 	MessageReceiver.BACKGROUND
@@ -57,4 +60,32 @@ export const [sendAuthRequest, authRequestStream] = getExtendedMessages<void>(
 export const [sendEditProjectRequest, editProjectRequestStream] = getExtendedMessages<Project>(
 	'REQUEST_EDIT_PROJECT',
 	MessageReceiver.BACKGROUND
+)
+
+export const [sendStyleChange, styleChangeStream] = getExtendedMessages<VisbugStyleChange>(
+	'STYLE_CHANGE',
+	MessageReceiver.BACKGROUND
+)
+
+export const [sendOpenUrlRequest, openUrlRequestStream] = getExtendedMessages<string>(
+	'SEND_OPEN_URL_REQUEST',
+	MessageReceiver.BACKGROUND
+)
+
+export const [sendApplyProjectChanges, applyProjectChangesStream] = getExtendedMessages<void>(
+	'APPLY_PROJECT_CHANGES',
+	MessageReceiver.CONTENT
+)
+
+export const [sendActivityInspect, activityInspectStream] =
+	getExtendedMessages<ActivityInspectDetail>('ACTIVITY_INSPECT', MessageReceiver.CONTENT)
+
+export const [sendActivityApply, activityApplyStream] = getExtendedMessages<Activity>(
+	'ACTIVITY_APPLY',
+	MessageReceiver.CONTENT
+)
+
+export const [sendActivityRevert, activityRevertStream] = getExtendedMessages<Activity>(
+	'ACTIVITY_REVERT',
+	MessageReceiver.CONTENT
 )

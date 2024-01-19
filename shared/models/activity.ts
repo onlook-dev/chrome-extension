@@ -8,9 +8,9 @@ export interface Activity {
   projectId: string;
   eventData: EventMetadata[];
   visible: boolean;
-  creationTime: Date;
+  creationTime: string; // ISO string
   // TODO: Handle content changes + structure changes
-  styleChanges: StyleChange[];
+  styleChanges: Record<string, StyleChange>;
 }
 
 export interface StyleChange {

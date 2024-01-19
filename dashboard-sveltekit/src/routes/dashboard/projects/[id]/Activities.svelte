@@ -1,11 +1,7 @@
 <script lang="ts">
 	import type { Project } from '$shared/models/project';
 	import type { Activity } from '$shared/models/activity';
-	import {
-		EventMetadataType,
-		getEventDataByType,
-		type EventMetadata
-	} from '$shared/models/eventData';
+	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData';
 	import ItemHeader from './ItemHeader.svelte';
 	import { usersMapStore } from '$lib/utils/store';
 
@@ -16,8 +12,8 @@
 	let leaveActivity = (activity: Activity) => {};
 	let clickActivity = (activity: Activity) => {};
 
-	$: activities = project.activities.sort(
-		(a, b) => a.creationTime.getTime() - b.creationTime.getTime()
+	$: activities = Object.values(project.activities).sort(
+		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
 	);
 </script>
 
@@ -30,7 +26,7 @@
 	<h1 class="m-2 font-semibold">Acitivities</h1>
 	{#each activities as activity}
 		<!-- TODO: Add helper -->
-		{#if activity.styleChanges.length > 0}
+		{#if Object.keys(activity.styleChanges).length > 0}
 			<button
 				class="w-full p-4 flex flex-col pb-6 hover:bg-gray-50 transition duration-200 ease-in-out {!activity.visible
 					? 'opacity-60'

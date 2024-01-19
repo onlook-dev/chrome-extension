@@ -24,19 +24,20 @@
 	});
 </script>
 
+
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
 	{#if team?.projectIds?.length}
 		{#each team?.projectIds.map((id) => $projectsMapStore.get(id)) as project}
 			<button
 				on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
-				class="rounded space-y-4 p-4 hover:shadow block"
+				class="bg-base-100 rounded space-y-4 p-4 hover:shadow block"
 			>
 				<figure class="">
 					{#if project?.hostData.previewImage}
 						<img
 							src={project.hostData.previewImage}
 							alt={project.name}
-							class="aspect-video rounded w-full"
+							class="object-cover object-top aspect-video rounded w-full"
 						/>
 					{:else}
 						<div class="bg-gray-100 aspect-video rounded w-full" />

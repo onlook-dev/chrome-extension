@@ -2,7 +2,12 @@
 	import { onMount } from 'svelte'
 	import ArrowLeft from '~icons/formkit/arrowleft'
 	import { PopupRoutes } from '$lib/utils/constants'
-	import { popupStateBucket, projectsMapBucket, teamsMapBucket } from '$lib/utils/localstorage'
+	import {
+		getTeamById,
+		popupStateBucket,
+		projectsMapBucket,
+		teamsMapBucket
+	} from '$lib/utils/localstorage'
 	import type { Project } from '$shared/models/project'
 	import type { HostData } from '$shared/models/hostData'
 	import type { Activity } from '$shared/models/activity'
@@ -43,15 +48,14 @@
 
 		// TODO: Move to a service
 		const { activeTeamId } = await popupStateBucket.get()
-		const teamMap = new Map(Object.entries(await teamsMapBucket.get()))
-		const team = teamMap.get(activeTeamId)
+		const team = await getTeamById(activeTeamId)
 
 		const newProject = {
 			id: nanoid(),
 			name: projectName,
 			teamId: activeTeamId,
 			hostUrl: projectUrl,
-			activities: [],
+			activities: {},
 			comments: [],
 			hostData: {} as HostData
 		} as Project

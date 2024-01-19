@@ -25,8 +25,8 @@
 </script>
 
 {#if comments.length === 0}
-	<div class="flex flex-col items-center justify-center h-full">
-		<p class="text-gray-500">No comments yet</p>
+	<div class="flex flex-col items-center justify-center text-center h-full pt-6">
+		<p class="text-gray-500">No comments yet<br /></p>
 	</div>
 {/if}
 <div class="divide-y flex flex-col w-full">

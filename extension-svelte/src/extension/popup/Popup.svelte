@@ -12,6 +12,7 @@
 
 	let authenticated = false
 	let route = PopupRoutes.DASHBOARD
+	let projectId = ''
 
 	onMount(() => {
 		// Get user from local storage
@@ -19,12 +20,13 @@
 			authenticated = user ? true : false
 		})
 
-		popupStateBucket.valueStream.subscribe(({ activeRoute }) => {
+		popupStateBucket.valueStream.subscribe(({ activeRoute, activeProjectId }) => {
 			if (!activeRoute) {
 				route = PopupRoutes.DASHBOARD
 				return
 			}
 			route = activeRoute
+			projectId = activeProjectId
 		})
 	})
 </script>
@@ -38,7 +40,7 @@
 		<div out:slide>
 			<NewProjectPage />
 		</div>
-	{:else if route === PopupRoutes.PROJECT}
+	{:else if route === PopupRoutes.PROJECT && projectId}
 		<div out:slide>
 			<ProjectPage />
 		</div>

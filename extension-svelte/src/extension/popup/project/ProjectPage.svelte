@@ -2,18 +2,29 @@
 	import { onMount } from 'svelte'
 
 	import type { Project } from '$shared/models/project'
-	import { projectsMapBucket, popupStateBucket } from '$lib/utils/localstorage'
+	import { popupStateBucket, getActiveProject, visbugStateBucket } from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { sendEditProjectRequest } from '$lib/utils/messaging'
 
 	import ArrowLeft from '~icons/formkit/arrowleft'
 	import Pencil from '~icons/mdi/pencil'
+	import Stop from '~icons/carbon/stop-outline'
+
 	import SettingsTab from './SettingsTab.svelte'
 	import ActivitiesTab from './ActivitiesTab.svelte'
 	import CommentsTab from './CommentsTab.svelte'
+	import { postProjectToFirebase } from '$lib/storage/project'
 
-	let project: Project | undefined
 	const tabsName = 'project-tabs-id'
+	let saved = false
+	let project: Project | undefined
+	let projectInjected: boolean = false
+
+	$: projectEdited = Object.keys(project?.activities ?? {}).length > 0
+
+	$: if (project) {
+		saved = false
+	}
 
 	function returnToDashboard() {
 		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
@@ -21,12 +32,16 @@
 
 	onMount(async () => {
 		// Get active team's projects
-		const { activeProjectId } = await popupStateBucket.get()
-		const projectsMap = new Map(Object.entries(await projectsMapBucket.get()))
-		project = projectsMap.get(activeProjectId)
+		project = await getActiveProject()
+
+		visbugStateBucket.valueStream.subscribe(({ injectedProjects }) => {
+			if (!project || !injectedProjects) return
+			projectInjected =
+				Object.keys(injectedProjects).includes(project.id) && injectedProjects[project?.id]
+		})
 	})
 
-	function startEditing() {
+	function toggleEditing() {
 		project && sendEditProjectRequest(project)
 	}
 
@@ -45,16 +60,26 @@
 		>
 	</div>
 	<div class="flex-none">
-		<button class="btn btn-sm btn-outline" on:click={startEditing}>
-			<Pencil />
-			{#if project?.activities.length}
-				Edit
+		<button class="btn btn-sm btn-outline" on:click={toggleEditing}>
+			{#if projectInjected}
+				<Stop />
+				{projectEdited ? 'Stop' : 'Stop editing'}
 			{:else}
-				Start editing
+				<Pencil />
+				{projectEdited ? 'Edit' : 'Start editing'}
 			{/if}
 		</button>
-		{#if project?.activities.length}
-			<button class="ml-2 btn btn-sm btn-primary">Publish</button>
+		{#if projectEdited}
+			<button
+				disabled={saved}
+				on:click={() => {
+					if (project && !saved) {
+						postProjectToFirebase(project)
+						saved = true
+					}
+				}}
+				class="ml-2 btn btn-sm btn-primary">{saved ? 'Saved' : 'Save'}</button
+			>
 		{/if}
 	</div>
 </div>

@@ -1,16 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import type { Project } from '$shared/models/project'
-	import { projectsMapBucket, popupStateBucket, teamsMapBucket } from '$lib/utils/localstorage'
+	import { projectsMapBucket, popupStateBucket, getTeamById } from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
+	import { sendOpenUrlRequest } from '$lib/utils/messaging'
+	import { DASHBOARD_URL, DashboardRoutes } from '$shared/constants'
+
+	import Open from '~icons/ion/open-outline'
 
 	let projectsMap: Map<string, Project> = new Map()
 
 	onMount(async () => {
 		// Get active team's projects
 		popupStateBucket.valueStream.subscribe(async ({ activeTeamId }) => {
-			const teamMap = new Map(Object.entries(await teamsMapBucket.get()))
-			const team = teamMap.get(activeTeamId)
+			const team = await getTeamById(activeTeamId)
 			if (team) {
 				const teamProjectsMap = await projectsMapBucket.get()
 				projectsMap = new Map(
@@ -22,22 +25,28 @@
 </script>
 
 <div
-	class="pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
+	class=" pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
 >
 	{#each projectsMap.values() as project}
 		<button
-			class="rounded space-y-4 p-4 hover:shadow block"
+			class="bg-base-100 rounded space-y-4 p-4 hover:shadow block"
 			on:click={() => {
 				popupStateBucket.set({ activeRoute: PopupRoutes.PROJECT, activeProjectId: project.id })
 			}}
 		>
-			<figure class="">
-				<!-- TODO: Add preview image -->
+			<figure class="relative">
+				<button
+					on:click={() =>
+						sendOpenUrlRequest(`${DASHBOARD_URL}${DashboardRoutes.PROJECTS}/${project.id}`)}
+					class="btn btn-xs opacity-70 absolute top-2 right-2"
+				>
+					Dashboard <Open />
+				</button>
 				{#if project.hostData?.previewImage}
 					<img
 						src={project.hostData.previewImage}
 						alt={project.name}
-						class="aspect-video rounded w-full"
+						class="aspect-video object-cover object-top rounded w-full"
 					/>
 				{:else}
 					<div class="bg-gray-100 aspect-video rounded w-full" />
@@ -53,9 +62,9 @@
 						{/if}
 					</div>
 				</div>
-				<div class="text-left">
-					<p class="text-sm font-semibold">{project.name}</p>
-					<p class="text-xs opacity-70">{project.hostUrl}</p>
+				<div class="text-left overflow-x-hidden">
+					<p class="text-sm font-semibold truncate">{project.name}</p>
+					<p class="text-xs opacity-70 truncate">{project.hostUrl}</p>
 				</div>
 			</div>
 		</button>

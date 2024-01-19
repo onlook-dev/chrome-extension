@@ -40,7 +40,7 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="drawer-content px-2 overflow-auto">
+	<div class="drawer-content px-2 overflow-auto bg-base-200">
 		<!-- Page content here -->
 
 		<div class="navbar p-none">

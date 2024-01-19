@@ -13,16 +13,14 @@ export async function getProjectFromFirebase(projectId: string): Promise<Project
 }
 
 export async function postProjectToFirebase(project: Project): Promise<string | undefined> {
-	console.log('Posting firebase project')
 	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_PROJECTS, project, project.id)
-	console.log('Posted firebase project with ID', objectId)
+	console.log('Posted firebase project')
 	return objectId
 }
 
 export async function deleteProjectFromFirebase(projectId: string): Promise<void> {
-	console.log('Deleting firebase project')
 	const result = await deleteObjectFromCollection(FIREBASE_COLLECTION_PROJECTS, projectId)
-	console.log('Deleted firebase project with ID', projectId)
+	console.log('Deleted firebase project')
 	return result
 }
 
