@@ -100,13 +100,11 @@ const setListeners = () => {
 
 	// Forward messages to content script
 	activityRevertStream.subscribe(async ([detail, sender]) => {
-		console.log('activityRevertStream', detail)
 		forwardToActiveProjectTab(detail, sendActivityRevert)
 	})
 
 	// Forward messages to content script
 	activityApplyStream.subscribe(async ([detail, sender]) => {
-		console.log('activityApplyStream', detail)
 		forwardToActiveProjectTab(detail, sendActivityApply)
 	})
 
@@ -258,7 +256,6 @@ const setListeners = () => {
 		// if key does not exist in activity, add the oldVal and newVal.
 		// if it does, only apply newVal
 		Object.entries(mappedStyleChange).forEach(([key, val]) => {
-			console.log('key', key, activity.styleChanges[key], !activity.styleChanges[key])
 			if (!activity.styleChanges[key]) {
 				activity.styleChanges[key] = {
 					key: key,
@@ -269,7 +266,6 @@ const setListeners = () => {
 				activity.styleChanges[key].newVal = val.newVal
 			}
 		})
-		console.log('activity', activity)
 
 		activity.creationTime = new Date().toISOString()
 		activeProject.activities[visbugStyleChange.selector] = activity

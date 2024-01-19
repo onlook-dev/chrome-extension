@@ -3,7 +3,6 @@ import type { VisbugStyleChange } from "./models/visbug";
 
 export function jsToCssProperty(key: string) {
   if (!key) return "";
-  console.log("key", key);
   return key.replace(/([A-Z])/g, "-$1").toLowerCase();
 }
 

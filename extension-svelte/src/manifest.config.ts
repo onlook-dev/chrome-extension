@@ -17,10 +17,10 @@ export default defineManifest(async env => ({
 	version: `${major}.${minor}.${patch}`,
 	version_name: version,
 	icons: {
-		'16': 'src/assets/icons/icon-16.png',
-		'32': 'src/assets/icons/icon-32.png',
-		'48': 'src/assets/icons/icon-48.png',
-		'128': 'src/assets/icons/icon-128.png'
+		'16': 'src/assets/icons/icon16.png',
+		'32': 'src/assets/icons/icon32.png',
+		'48': 'src/assets/icons/icon48.png',
+		'128': 'src/assets/icons/icon128.png'
 	},
 	content_scripts: [
 		{
@@ -37,10 +37,10 @@ export default defineManifest(async env => ({
 	action: {
 		default_popup: 'src/extension/popup/popup.html',
 		default_icon: {
-			'16': 'src/assets/icons/icon-active-16.png',
-			'32': 'src/assets/icons/icon-active-32.png',
-			'48': 'src/assets/icons/icon-active-48.png',
-			'128': 'src/assets/icons/icon-active-128.png'
+			'16': 'src/assets/icons/icon16.png',
+			'32': 'src/assets/icons/icon32.png',
+			'48': 'src/assets/icons/icon48.png',
+			'128': 'src/assets/icons/icon128.png'
 		}
 	},
 	web_accessible_resources: [
