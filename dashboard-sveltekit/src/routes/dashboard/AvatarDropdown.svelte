@@ -19,7 +19,7 @@
 					{#if user?.profileImage}
 						<img src={user?.profileImage} alt="profile" />
 					{:else}
-						<span class="text-xs">{getInitials(user?.name ?? '👤')}</span>
+						<span class="text-xs">{getInitials(user?.name ?? '')}</span>
 					{/if}
 				</div>
 			</div>

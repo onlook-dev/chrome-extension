@@ -9,7 +9,6 @@ import { userStore } from '$lib/utils/store';
 import type { User as FirebaseUser } from 'firebase/auth';
 
 export async function getUserFromFirebase(userId: string): Promise<User | undefined> {
-	console.log('Fetching firebase user');
 	const userData = await getObjectFromCollection(FIREBASE_COLLECTION_USERS, userId);
 	if (!userData) return undefined;
 	console.log('Got firebase user');
@@ -19,7 +18,7 @@ export async function getUserFromFirebase(userId: string): Promise<User | undefi
 export async function postUserToFirebase(user: User) {
 	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_USERS, user, user.id);
 	console.log('Posted firebase user');
-	return;
+	return objectId;
 }
 
 export async function subscribeToUser(userId: string, callback: (data: User) => void) {
@@ -50,7 +49,7 @@ export function setDefaultUser(authUser: FirebaseUser) {
 		id: authUser.uid,
 		name: authUser.displayName ?? authUser.providerData[0].displayName ?? '',
 		email: authUser.email ?? '',
-		profileImage: authUser.photoURL ?? '',
+		profileImage: authUser.photoURL,
 		teams: []
 	} as User;
 	userStore.set(user);

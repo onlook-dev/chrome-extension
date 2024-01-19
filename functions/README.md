@@ -20,3 +20,19 @@ export GOOGLE_APPLICATION_CREDENTIALS="/path/to/.config/gcloud/application_defau
 ```
 
 Restart terminal to apply env variable
+
+# Deploy
+
+Deploy test
+
+```
+firebase use default
+bun run deploy
+```
+
+Deploy prod
+
+```
+firebase use prod
+bun run deploy
+```
