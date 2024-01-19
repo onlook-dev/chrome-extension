@@ -4,7 +4,8 @@
 	import { projectsMapBucket, popupStateBucket, getTeamById } from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { sendOpenUrlRequest } from '$lib/utils/messaging'
-	import { DASHBOARD_URL, DashboardRoutes } from '$shared/constants'
+	import { DashboardRoutes } from '$shared/constants'
+	import { baseUrl } from '$lib/utils/env'
 
 	import Open from '~icons/ion/open-outline'
 
@@ -36,8 +37,7 @@
 		>
 			<figure class="relative">
 				<button
-					on:click={() =>
-						sendOpenUrlRequest(`${DASHBOARD_URL}${DashboardRoutes.PROJECTS}/${project.id}`)}
+					on:click={() => sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project.id}`)}
 					class="btn btn-xs opacity-70 absolute top-2 right-2"
 				>
 					Dashboard <Open />

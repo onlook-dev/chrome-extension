@@ -31,7 +31,6 @@ export async function getPaymentFromSubscriptionId(subscriptionId: string): Prom
 }
 
 export async function postPaymentToFirebase(payment: Payment) {
-	console.log('Posting firebase payment');
 	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_PAYMENTS, payment, payment.id);
 	console.log('Posted firebase payment with ID', objectId);
 	return;

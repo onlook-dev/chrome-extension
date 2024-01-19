@@ -7,10 +7,10 @@
 	import { Tier } from '$shared/models/team';
 	import { postPaymentToFirebase } from '$lib/storage/payment';
 	import { getStripeSubscriptionEnd } from '$lib/stripe/stripe';
-	const modalId = 'plan-modal';
 
 	export let teamId: string;
 	let subscriptionEnd = '';
+	const modalId = 'plan-modal';
 
 	$: plan = $teamsMapStore.get(teamId)?.tier ?? Tier.FREE;
 

@@ -20,3 +20,4 @@ const prodFirebaseConfig = {
 
 export const isDevelopment = process.env.NODE_ENV === 'development'
 export const firebaseConfig = isDevelopment ? testFirebaseConfig : prodFirebaseConfig
+export const baseUrl = isDevelopment ? import.meta.env.VITE_TEST_URL : import.meta.env.VITE_PROD_URL
