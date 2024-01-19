@@ -63,7 +63,7 @@
 	{:else}
 		<!-- TODO: Add call to action -->
 		<div class="col-span-full mt-10">
-			<p class="text-center">No projects yet</p>
+			<p class="text-center">No projects yet <br /> Use extension to create project</p>
 		</div>
 	{/if}
 </div>

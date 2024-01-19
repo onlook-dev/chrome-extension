@@ -4,13 +4,14 @@ import { store } from './firebase'
 export async function postObjectToCollection(
 	collectionId: string,
 	object: unknown,
-	objectId?: string
+	objectId?: string,
+	merge = false
 ) {
 	try {
 		const jsonObj = JSON.parse(JSON.stringify(object))
 		if (objectId) {
 			// Preset ID
-			await setDoc(doc(store, collectionId, objectId), jsonObj, { merge: true })
+			await setDoc(doc(store, collectionId, objectId), jsonObj, { merge })
 			return objectId
 		} else {
 			// Auto-generate ID

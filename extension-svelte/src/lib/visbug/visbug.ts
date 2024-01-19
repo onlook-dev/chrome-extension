@@ -50,6 +50,7 @@ export const toggleIn = async (tabId: number, projectId?: string) => {
 	}
 
 	platform.tabs.onUpdated.addListener(function (tabId: number) {
+		console.log('tab updated', tabId)
 		if (tabId === tabId) {
 			visbugState.loadedTabs[tabId] = false
 			visbugState.injectedTabs[tabId] = false

@@ -24,7 +24,7 @@ export default defineManifest(async env => ({
 	},
 	content_scripts: [
 		{
-			matches: ['https://*/*', 'http://*/*'],
+			matches: ['<all_urls>'],
 			js: ['src/extension/content/index.ts'],
 			run_at: 'document_idle'
 		}
@@ -59,7 +59,8 @@ export default defineManifest(async env => ({
 			}
 		}
 	},
-	key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv18eK1MhBgVx6W0HGq+OtRHZQl9AiiAcddgTqfXUSFw8XSVCCvfvlbUk4zccEmk/FIXHYiE4Zq31RqMwzJXSdM49jAvQgqRftAvSfSZ25qrmfAicQmotN48fKu7C50zLMNytyYZtVVpdZJTfmONVTtbQ+N3g3XregUlbrjb9ywH/UsP4wdw5iWqyYigpJM3BjU2u304c3tkxJjb5pdbtCdT1O6oYLfuTNLzcnRVVQOdb2/LwGLac6ZgNof5xkNrmdldAU/a5Q+2pfgv4f5VaR9Qny/cJIgj+f3nzn2OqtRVWp3ujBDfxZWFCtdKio66ADRgJ3m/UushMo1LThtnRcQIDAQAB',
+	// Old 0.engineering key
+	// key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv18eK1MhBgVx6W0HGq+OtRHZQl9AiiAcddgTqfXUSFw8XSVCCvfvlbUk4zccEmk/FIXHYiE4Zq31RqMwzJXSdM49jAvQgqRftAvSfSZ25qrmfAicQmotN48fKu7C50zLMNytyYZtVVpdZJTfmONVTtbQ+N3g3XregUlbrjb9ywH/UsP4wdw5iWqyYigpJM3BjU2u304c3tkxJjb5pdbtCdT1O6oYLfuTNLzcnRVVQOdb2/LwGLac6ZgNof5xkNrmdldAU/a5Q+2pfgv4f5VaR9Qny/cJIgj+f3nzn2OqtRVWp3ujBDfxZWFCtdKio66ADRgJ3m/UushMo1LThtnRcQIDAQAB',
 	host_permissions: ['<all_urls>'],
 	permissions: [
 		'tabs',

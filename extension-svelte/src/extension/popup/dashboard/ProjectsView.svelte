@@ -71,8 +71,7 @@
 	{/each}
 
 	{#if projectsMap.size === 0}
-		<!-- TODO: Add call to action -->
-		<div class="flex flex-col col-span-full mt-10 align-middle">
+		<div class="flex flex-col col-span-full h-60 mt-10 align-middle">
 			<p class="text-center">No projects yet</p>
 		</div>
 	{/if}
