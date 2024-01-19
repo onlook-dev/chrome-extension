@@ -1,3 +1,4 @@
+// @ts-ignore
 var platform = typeof browser === 'undefined' ? chrome : browser
 
 const script = document.createElement('script')
@@ -12,7 +13,7 @@ visbug.setAttribute('tutsBaseURL', src_path.slice(0, src_path.lastIndexOf('/')))
 
 document.body.prepend(visbug)
 
-platform.runtime.onMessage.addListener(request => {
+platform.runtime.onMessage.addListener((request: any) => {
 	if (request.action === 'COLOR_MODE') visbug.setAttribute('color-mode', request.params.mode)
 	else if (request.action === 'COLOR_SCHEME')
 		visbug.setAttribute('color-scheme', request.params.mode)
