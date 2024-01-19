@@ -91,6 +91,32 @@ function forwardToActiveProjectTab(detail: any, callback: any) {
 }
 
 const setListeners = () => {
+	chrome.runtime.onInstalled.addListener(async () => {
+		for (const cs of chrome.runtime.getManifest().content_scripts ?? []) {
+			for (const tab of await chrome.tabs.query({ url: cs.matches })) {
+				chrome.scripting.executeScript({
+					target: { tabId: tab.id as number },
+					files: cs.js ?? []
+				})
+			}
+		}
+	})
+
+	chrome.tabs.onUpdated.addListener(
+		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
+			// Remove tab info from state when it's refreshed
+			if (changeInfo.status === 'complete') {
+				const visbugState = await visbugStateBucket.get()
+				visbugState.loadedTabs[tabId] = false
+				visbugState.injectedTabs[tabId] = false
+				const activeProject = await getActiveProject()
+				if (activeProject) visbugState.injectedProjects[activeProject.id] = false
+
+				visbugStateBucket.set(visbugState)
+			}
+		}
+	)
+
 	subscribeToFirebaseAuthChanges()
 
 	// Forward messages to content script

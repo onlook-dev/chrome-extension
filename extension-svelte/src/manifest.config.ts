@@ -24,7 +24,7 @@ export default defineManifest(async env => ({
 	},
 	content_scripts: [
 		{
-			matches: ['https://*/*', 'http://*/*'],
+			matches: ['<all_urls>'],
 			js: ['src/extension/content/index.ts'],
 			run_at: 'document_idle'
 		}
