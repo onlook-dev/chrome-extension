@@ -257,6 +257,7 @@ const setListeners = () => {
 		// if key does not exist in activity, add the oldVal and newVal.
 		// if it does, only apply newVal
 		Object.entries(mappedStyleChange).forEach(([key, val]) => {
+			console.log('key', key, activity.styleChanges[key], !activity.styleChanges[key])
 			if (!activity.styleChanges[key]) {
 				activity.styleChanges[key] = {
 					key: key,

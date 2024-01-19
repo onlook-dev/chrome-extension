@@ -50,6 +50,7 @@ function revertActivityChanges(activity: Activity) {
 		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
 			// Apply style to element
 			element.style[style] = changeObject.oldVal
+			console.log('Reverting style', style, changeObject.oldVal)
 		})
 	}
 }

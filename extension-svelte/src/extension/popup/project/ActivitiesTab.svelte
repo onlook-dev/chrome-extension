@@ -5,17 +5,11 @@
 	import type { User } from '$shared/models/user'
 	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData'
 	import { usersMapBucket, projectsMapBucket } from '$lib/utils/localstorage'
-	import {
-		sendActivityInspect,
-		sendOpenUrlRequest,
-		sendActivityRevert,
-		sendActivityApply
-	} from '$lib/utils/messaging'
-	import { DASHBOARD_URL, DashboardRoutes, MouseEvent } from '$shared/constants'
+	import { sendActivityInspect, sendActivityRevert, sendActivityApply } from '$lib/utils/messaging'
+	import { MouseEvent } from '$shared/constants'
 	import { jsToCssProperty } from '$shared/helpers'
 
 	import ItemHeader from './ItemHeader.svelte'
-	import Open from '~icons/ion/open-outline'
 	import Undo from '~icons/material-symbols/undo'
 	import Trash from '~icons/material-symbols/delete'
 
@@ -98,7 +92,6 @@
 {/if}
 <div class="divide-y flex flex-col w-full">
 	{#each activities as activity}
-		<!-- TODO: Add helper -->
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
@@ -129,15 +122,7 @@
 						<Undo />
 					</button>
 				</div>
-				<div class="tooltip tooltip-left" data-tip="Open in dashboard">
-					<button
-						on:click={() =>
-							sendOpenUrlRequest(`${DASHBOARD_URL}${DashboardRoutes.PROJECTS}/${project.id}`)}
-						class="btn btn-sm btn-square btn-ghost"
-					>
-						<Open />
-					</button>
-				</div>
+
 				<div class="tooltip tooltip-left" data-tip="Delete activity">
 					<button on:click={showModal} class="btn btn-sm btn-square btn-ghost">
 						<Trash />

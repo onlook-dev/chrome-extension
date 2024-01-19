@@ -3,6 +3,10 @@
 	import type { Project } from '$shared/models/project'
 	import { projectsMapBucket, popupStateBucket, getTeamById } from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
+	import { sendOpenUrlRequest } from '$lib/utils/messaging'
+	import { DASHBOARD_URL, DashboardRoutes } from '$shared/constants'
+
+	import Open from '~icons/ion/open-outline'
 
 	let projectsMap: Map<string, Project> = new Map()
 
@@ -30,8 +34,14 @@
 				popupStateBucket.set({ activeRoute: PopupRoutes.PROJECT, activeProjectId: project.id })
 			}}
 		>
-			<figure class="">
-				<!-- TODO: Add preview image -->
+			<figure class="relative">
+				<button
+					on:click={() =>
+						sendOpenUrlRequest(`${DASHBOARD_URL}${DashboardRoutes.PROJECTS}/${project.id}`)}
+					class="btn btn-xs opacity-70 absolute top-2 right-2"
+				>
+					Dashboard <Open />
+				</button>
 				{#if project.hostData?.previewImage}
 					<img
 						src={project.hostData.previewImage}

@@ -13,11 +13,18 @@
 	import SettingsTab from './SettingsTab.svelte'
 	import ActivitiesTab from './ActivitiesTab.svelte'
 	import CommentsTab from './CommentsTab.svelte'
+	import { postProjectToFirebase } from '$lib/storage/project'
 
+	const tabsName = 'project-tabs-id'
+	let saved = false
 	let project: Project | undefined
 	let projectInjected: boolean = false
 
-	const tabsName = 'project-tabs-id'
+	$: projectEdited = Object.keys(project?.activities ?? {}).length > 0
+
+	$: if (project) {
+		saved = false
+	}
 
 	function returnToDashboard() {
 		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
@@ -56,15 +63,24 @@
 		<button class="btn btn-sm btn-outline" on:click={toggleEditing}>
 			{#if projectInjected}
 				<Stop />
-				Stop editing
+				{projectEdited ? 'Stop' : 'Stop editing'}
 			{:else}
 				<Pencil />
-				Start editing
+				{projectEdited ? 'Edit' : 'Start editing'}
 			{/if}
 		</button>
-		<!-- {#if Object.keys(project?.activities ?? {}).length}
-			<button class="ml-2 btn btn-sm btn-primary">Publish</button>
-		{/if} -->
+		{#if projectEdited}
+			<button
+				disabled={saved}
+				on:click={() => {
+					if (project && !saved) {
+						postProjectToFirebase(project)
+						saved = true
+					}
+				}}
+				class="ml-2 btn btn-sm btn-primary">{saved ? 'Saved' : 'Save'}</button
+			>
+		{/if}
 	</div>
 </div>
 
