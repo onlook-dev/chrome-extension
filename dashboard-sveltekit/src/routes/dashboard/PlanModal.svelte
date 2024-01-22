@@ -7,6 +7,7 @@
 	import { Tier } from '$shared/models/team';
 	import { postPaymentToFirebase } from '$lib/storage/payment';
 	import { getStripeSubscriptionEnd } from '$lib/stripe/stripe';
+	import PlanFeatureRow from './PlanFeatureRow.svelte';
 
 	export let teamId: string;
 	let subscriptionEnd = '';
@@ -95,57 +96,61 @@
 </button>
 
 <dialog id={modalId} class="modal fixed inset-0 flex items-center justify-center">
-	<div class="modal-container bg-white rounded-md p-4 shadow-lg">
-		<h3 class="font-bold text-lg mb-4">Choose a plan</h3>
-
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-			<div
-				class="plan-card bg-gray-300 p-4 rounded-lg border opacity-80 flex items-center justify-center flex-col"
-			>
-				<h4 class="text-xl font-bold mb-2">
-					{Tier.FREE}
-					{plan === Tier.FREE ? '(your plan)' : ''}
-				</h4>
-				<div class="mb-2 flex items-center justify-center flex-col">
-					<p class="plan-description">for trying things out</p>
+	<div class="modal-container bg-white rounded-md shadow-lg p-6 w-full max-w-[80%] mx-auto">
+		<h2 class="text-2xl font-bold text-center">Choose Your Plan</h2>
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+			<div class="border border-gray-200 rounded-lg p-6">
+				<h3 class="text-xl font-bold text-center">{Tier.FREE}</h3>
+				<p class="text-center text-gray-500">Basic features for free</p>
+				<div class="grid gap-4 mt-4">
+					<PlanFeatureRow description="File Storage" />
+					<PlanFeatureRow description="Team Collaboration" />
+					<PlanFeatureRow description="Advanced Design Tools" />
 				</div>
-				<div class="py-8"></div>
-			</div>
 
-			{#if subscriptionEnd === ''}
-				<div
-					class="plan-card bg-blue-600 p-4 rounded-lg border opacity-80 flex items-center justify-center flex-col"
+				<button
+					class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mt-4 w-full"
+					disabled={plan === Tier.FREE}
 				>
-					<h4 class="text-xl font-bold text-white mb-2">
-						{Tier.PRO}
-						{plan === Tier.PRO ? '(your plan)' : ''}
-					</h4>
-					<div class="mb-2 flex items-center justify-center flex-col">
-						<p class="text-white">$15/team/mo.</p>
-						<p class="text-white">early access to new features</p>
+					{plan === Tier.FREE ? 'Current Plan' : 'Downgrade'}
+				</button>
+			</div>
+			{#if subscriptionEnd === ''}
+				<div class="border border-gray-200 rounded-lg p-6">
+					<h3 class="text-xl font-bold text-center">{Tier.PRO}</h3>
+					<p class="text-center text-gray-500">Advanced features for $15/month</p>
+					<div class="grid gap-4 mt-4">
+						<PlanFeatureRow description="File Storage" />
+						<PlanFeatureRow description="Team Collaboration" />
+						<PlanFeatureRow description="Advanced Design Tools" />
 					</div>
-					<div class="py-2"></div>
 					<button
-						class="btn-select-plan bg-gray-100 hover:bg-gray-300 cursor-pointer text-xs font-bold py-1 px-2 rounded opacity-80"
+						class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mt-4 w-full"
 						on:click={() => (plan === Tier.PRO ? cancelSubscription() : checkout(Tier.PRO))}
 					>
-						{plan === Tier.PRO ? 'cancel' : 'upgrade'}
+						{plan === Tier.PRO ? 'Cancel' : 'Upgrade'}
 					</button>
 				</div>
 			{:else}
-				<div
-					class="plan-card bg-blue-600 p-4 rounded-lg border opacity-80 flex items-center justify-center flex-col max-w-xs"
-				>
-					<div class="mb-2 flex items-center justify-center flex-col">
-						<p class="text-white">please email erik@onlook.dev to cancel</p>
-						<p class="text-white">your plan is live until {subscriptionEnd}</p>
+				<div class="border border-gray-200 rounded-lg p-6">
+					<h3 class="text-xl font-bold text-center">{Tier.PRO}</h3>
+					<p class="text-center text-gray-500">Advanced features for $15/month</p>
+					<div class="grid gap-4 mt-4">
+						<PlanFeatureRow description="File Storage" />
+						<PlanFeatureRow description="Team Collaboration" />
+						<PlanFeatureRow description="Advanced Design Tools" />
+					</div>
+					<div class="divider" />
+					<div class="flex flex-col">
+						<p class="">Your plan is live until {subscriptionEnd}</p>
+						<p class="">Please email <b>contact@onlook.dev</b> to cancel</p>
 					</div>
 				</div>
 			{/if}
 		</div>
 
 		<div class="modal-footer mt-4 text-right">
-			<button class="btn-close" on:click={closeModal}>Close</button>
+			<button class="btn-close btn btn-ghost" on:click={closeModal}>Cancel</button>
 		</div>
 	</div>
 </dialog>
