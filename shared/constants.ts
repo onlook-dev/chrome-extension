@@ -3,7 +3,10 @@ export const FIREBASE_COLLECTION_PROJECTS = "projects";
 export const FIREBASE_COLLECTION_USERS = "users";
 export const FIREBASE_COLLECTION_TEAMS = "teams";
 export const FIREBASE_FOLDER_IMAGES = "images";
-export const FIREBASE_COLLECTION_PAYMENTS = 'payments';
+export const FIREBASE_COLLECTION_PAYMENTS = "payments";
+
+// Settings
+export const MAX_PROJECT_NAME_LENGTH = 50;
 
 // Messaging
 export const DASHBOARD_AUTH = "DASHBOARD_AUTH";

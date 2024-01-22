@@ -14,6 +14,7 @@
 	import ActivitiesTab from './ActivitiesTab.svelte'
 	import CommentsTab from './CommentsTab.svelte'
 	import { postProjectToFirebase } from '$lib/storage/project'
+	import { truncateString } from '$shared/helpers'
 
 	const tabsName = 'project-tabs-id'
 	let saved = false
@@ -43,13 +44,6 @@
 
 	function toggleEditing() {
 		project && sendEditProjectRequest(project)
-	}
-
-	function truncateString(str: string, num: number) {
-		if (str.length <= num) {
-			return str
-		}
-		return str.slice(0, num) + '...'
 	}
 </script>
 

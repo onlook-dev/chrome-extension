@@ -10,14 +10,11 @@
 	} from '$lib/utils/localstorage'
 	import type { Project } from '$shared/models/project'
 	import type { HostData } from '$shared/models/hostData'
-	import type { Activity } from '$shared/models/activity'
-	import type { Comment } from '$shared/models/comment'
-	import { type EventMetadata, EventMetadataType } from '$shared/models/eventData'
+	import { MAX_PROJECT_NAME_LENGTH } from '$shared/constants'
 
 	import { nanoid } from 'nanoid'
 	import validUrl from 'valid-url'
 	import { postProjectToFirebase } from '$lib/storage/project'
-	import { postTeamToFirebase } from '$lib/storage/team'
 
 	let projectName = ''
 	let projectUrl = ''
@@ -34,12 +31,17 @@
 		})
 	})
 
+	$: if (projectName.length > MAX_PROJECT_NAME_LENGTH) {
+		projectName = projectName.slice(0, MAX_PROJECT_NAME_LENGTH)
+	}
+
 	function returnToDashboard() {
 		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
 	}
 
 	async function createProject() {
-		nameError = !projectName
+		nameError =
+			!projectName || projectName.length === 0 || projectName.length > MAX_PROJECT_NAME_LENGTH
 		urlError = validUrl.isWebUri(projectUrl) === undefined
 
 		if (nameError || urlError) {
@@ -92,6 +94,7 @@
 				type="text"
 				placeholder="My project"
 				class="input input-bordered w-full {nameError && 'input-error'}"
+				maxlength={MAX_PROJECT_NAME_LENGTH}
 			/>
 
 			{#if nameError}

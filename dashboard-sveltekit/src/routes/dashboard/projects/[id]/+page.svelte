@@ -6,13 +6,14 @@
 	import type { Project } from '$shared/models/project';
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
-	import { DashboardRoutes } from '$shared/constants';
+	import { DashboardRoutes, MAX_PROJECT_NAME_LENGTH } from '$shared/constants';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 
 	import Comments from './Comments.svelte';
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';
 	import PublishModal from './PublishModal.svelte';
+	import { truncateString } from '$shared/helpers';
 
 	let project: Project | undefined;
 	let unsubs: any[] = [];
@@ -60,27 +61,29 @@
 			<div class="navbar-start flex flex-row">
 				<a class="btn btn-ghost text-sm" href={DashboardRoutes.DASHBOARD}>Onlook</a>
 				<p class="text-sm mr-4">/</p>
-				<p class="">{project.name}</p>
+				<p class="truncate">
+					{truncateString(project?.name || 'Dashboard', MAX_PROJECT_NAME_LENGTH)}
+				</p>
 			</div>
 
 			<div class="navbar-end space-x-2">
-				<ShareModal />
+				<ShareModal teamId={project.teamId} />
 				<PublishModal />
 			</div>
 		</div>
 		<!-- Main content -->
-		<div class="flex flex-col sm:flex-row flex-grow overflow-auto">
+		<div class="bg-base-200 flex flex-col sm:flex-row flex-grow overflow-auto">
 			<!-- Screenshot -->
 			<div class="sm:w-full flex flex-grow h-full border items-center justify-center">
 				{#if project.hostData?.previewImage}
 					<img
 						src={project.hostData?.previewImage}
 						alt="Screenshot"
-						class="w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
+						class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] object-cover object-top aspect-video skeleton mx-auto my-auto"
 					/>
 				{:else}
 					<div
-						class="w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
+						class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
 					></div>
 				{/if}
 			</div>
