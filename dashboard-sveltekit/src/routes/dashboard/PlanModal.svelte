@@ -96,16 +96,16 @@
 </button>
 
 <dialog id={modalId} class="modal fixed inset-0 flex items-center justify-center">
-	<div class="modal-container bg-white rounded-md shadow-lg p-6 w-full max-w-[80%] mx-auto">
+	<div class="modal-container bg-white rounded-md shadow-lg p-6 w-[80%] max-w-2xl mx-auto">
 		<h2 class="text-2xl font-bold text-center">Choose Your Plan</h2>
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
 			<div class="border border-gray-200 rounded-lg p-6">
 				<h3 class="text-xl font-bold text-center">{Tier.FREE}</h3>
 				<p class="text-center text-gray-500">Basic features for free</p>
 				<div class="grid gap-4 mt-4">
-					<PlanFeatureRow description="File Storage" />
-					<PlanFeatureRow description="Team Collaboration" />
-					<PlanFeatureRow description="Advanced Design Tools" />
+					<PlanFeatureRow description="Unlimited editing" />
+					<PlanFeatureRow description="Design inspection tools" />
+					<PlanFeatureRow description="Invite up to 3 teammates" />
 				</div>
 
 				<button
@@ -115,38 +115,29 @@
 					{plan === Tier.FREE ? 'Current Plan' : 'Downgrade'}
 				</button>
 			</div>
-			{#if subscriptionEnd === ''}
-				<div class="border border-gray-200 rounded-lg p-6">
-					<h3 class="text-xl font-bold text-center">{Tier.PRO}</h3>
-					<p class="text-center text-gray-500">Advanced features for $15/month</p>
-					<div class="grid gap-4 mt-4">
-						<PlanFeatureRow description="File Storage" />
-						<PlanFeatureRow description="Team Collaboration" />
-						<PlanFeatureRow description="Advanced Design Tools" />
-					</div>
+			<div class="border border-gray-200 rounded-lg p-6">
+				<h3 class="text-xl font-bold text-center">{Tier.PRO}</h3>
+				<p class="text-center text-gray-500">Advanced features for $15/month</p>
+				<div class="grid gap-4 mt-4">
+					<PlanFeatureRow description="Publish changes to Github" />
+					<PlanFeatureRow description="Advanced design tools" />
+					<PlanFeatureRow description="Early access to new features" />
+				</div>
+				{#if subscriptionEnd === ''}
 					<button
 						class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mt-4 w-full"
 						on:click={() => (plan === Tier.PRO ? cancelSubscription() : checkout(Tier.PRO))}
 					>
 						{plan === Tier.PRO ? 'Cancel' : 'Upgrade'}
 					</button>
-				</div>
-			{:else}
-				<div class="border border-gray-200 rounded-lg p-6">
-					<h3 class="text-xl font-bold text-center">{Tier.PRO}</h3>
-					<p class="text-center text-gray-500">Advanced features for $15/month</p>
-					<div class="grid gap-4 mt-4">
-						<PlanFeatureRow description="File Storage" />
-						<PlanFeatureRow description="Team Collaboration" />
-						<PlanFeatureRow description="Advanced Design Tools" />
-					</div>
+				{:else}
 					<div class="divider" />
 					<div class="flex flex-col">
 						<p class="">Your plan is live until {subscriptionEnd}</p>
 						<p class="">Please email <b>contact@onlook.dev</b> to cancel</p>
 					</div>
-				</div>
-			{/if}
+				{/if}
+			</div>
 		</div>
 
 		<div class="modal-footer mt-4 text-right">
