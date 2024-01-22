@@ -3,6 +3,7 @@
 	import GitHub from '~icons/mdi/github';
 	import Slack from '~icons/devicon/slack';
 	import Jira from '~icons/logos/jira';
+	import Linear from '~icons/logos/linear-icon';
 
 	// import type { ProjectImpl } from '$lib/models/project';
 	// export let project: ProjectImpl | undefined;
@@ -19,7 +20,7 @@
 	}}>Publish</button
 >
 <dialog id={modalId} class="modal">
-	<div class="modal-box relative space-y-4">
+	<div class="modal-box relative space-y-6">
 		<h3 class="font-bold text-lg mb-4">Publish project</h3>
 
 		<div class="flex flex-row space-x-2">
@@ -32,17 +33,21 @@
 			>
 		</div>
 
-		<div class="divider space-y-2"></div>
+		<div class="divider">Coming soon</div>
 
 		<!-- Actions -->
 		<div class="form-control space-y-4">
 			<button class="btn btn-outline">
-				<Jira class="w-4 h-4" />
-				Open Jira ticket</button
-			>
-			<button class="btn btn-outline">
 				<GitHub class="w-5 h-5" />
 				Publish changes to Github</button
+			>
+			<button class="btn btn-outline">
+				<Linear class="w-4 h-4" />
+				Open Linear ticket</button
+			>
+			<button class="btn btn-outline">
+				<Jira class="w-4 h-4" />
+				Open Jira ticket</button
 			>
 			<button class="btn btn-outline">
 				<Slack class="w-4 h-4" />

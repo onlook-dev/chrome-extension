@@ -84,21 +84,23 @@
 				{#if user?.teams}
 					{#each user?.teams as teamId}
 						<li>
-							<div class="grid grid-cols-3 items-center w-full">
-								<button
+							<button
+								class="grid grid-cols-3 items-center w-full"
+								on:click={() => (activeTeamId = teamId)}
+							>
+								<p
 									class="{activeTeamId === teamId
 										? 'active font-extrabold'
 										: ''} col-span-2 text-left"
-									on:click={() => (activeTeamId = teamId)}
 								>
 									{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}
-								</button>
+								</p>
 								{#if activeTeamId === teamId}
 									<div class="col-start-3 justify-self-end">
 										<PlanModal {teamId} />
 									</div>
 								{/if}
-							</div>
+							</button>
 						</li>
 					{/each}
 				{/if}

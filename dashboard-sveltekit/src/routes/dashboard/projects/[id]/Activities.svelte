@@ -4,6 +4,7 @@
 	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData';
 	import ItemHeader from './ItemHeader.svelte';
 	import { usersMapStore } from '$lib/utils/store';
+	import { jsToCssProperty } from '$shared/helpers';
 
 	export let project: Project;
 	let activities: Activity[];
@@ -59,9 +60,9 @@
 						>
 					</div>
 				{/if}
-				<div class="bg-gray-50 rounded p-4 border w-full text-start">
-					{#each Object.entries(activity.styleChanges) as [key, value]}
-						<div class="">{key}: {value};</div>
+				<div class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col">
+					{#each Object.values(activity.styleChanges) as styleChange}
+						<span class="">{jsToCssProperty(styleChange.key)}: {styleChange.newVal};</span>
 					{/each}
 				</div>
 			</button>
