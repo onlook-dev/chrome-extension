@@ -1,11 +1,12 @@
 export interface GithubAuth {
   id: string;
-  accessToken: string;
+  installationId: string;
 }
 
 export interface GithubSettings {
-  repo: string;
-  author: string;
-  root: string;
   auth: string;
+  repo: string;
+  owner: string;
+  rootPath: string;
+  baseBranch: string;
 }

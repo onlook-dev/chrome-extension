@@ -6,12 +6,14 @@
 	import type { Project } from '$shared/models/project';
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
-	import { DashboardRoutes } from '$shared/constants';
-	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
+	import { DashboardRoutes, GITHUB_APP_URL } from '$shared/constants';
+	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 	import ChevronLeft from '~icons/mdi/chevron-left';
+	import GitHub from '~icons/mdi/github';
 
 	let project: Project | undefined;
 	let unsubs: any[] = [];
+	$: user = $userStore;
 
 	// Get github account from user
 
@@ -32,9 +34,11 @@
 	onMount(async () => {
 		// Get project
 		const projectId = $page.params.id;
+
 		if (!projectId) {
 			goto(DashboardRoutes.DASHBOARD);
 		}
+
 		if ($projectsMapStore.has(projectId)) {
 			project = $projectsMapStore.get(projectId);
 		} else {
@@ -83,31 +87,43 @@
 				<div class="card w-full md:w-2/3 shadow border p-6">
 					<h2 class="text-xl font-semibold mb-3">Import Git Repository</h2>
 
-					<div class="space-y-3">
-						<div class="flex flex-row gap-3">
-							<select class="select select-bordered w-1/3">
-								<option selected>Kitenite</option>
-								<option>Onlook-dev</option>
-								<option>0.engineering</option>
-							</select>
-							<input
-								class="input input-bordered w-2/3"
-								type="text"
-								placeholder="Search for repository"
-							/>
+					{#if user?.github}
+						<div class="space-y-3">
+							<div class="flex flex-row gap-3">
+								<select class="select select-bordered w-1/3">
+									<option selected>Kitenite</option>
+									<option>Onlook-dev</option>
+									<option>0.engineering</option>
+								</select>
+								<input
+									class="input input-bordered w-2/3"
+									type="text"
+									placeholder="Search for repository"
+								/>
+							</div>
+							<ul class="border divide-y rounded-lg p-2">
+								{#each repositories as repo}
+									<li class="flex justify-between items-center p-4">
+										<div>
+											<p class="text-sm">{repo.name}</p>
+											<p class="text-xs text-gray-600">{repo.updated}</p>
+										</div>
+										<button class="btn btn-outline btn-sm">Connect</button>
+									</li>
+								{/each}
+							</ul>
 						</div>
-						<ul class="border divide-y rounded-lg p-2">
-							{#each repositories as repo}
-								<li class="flex justify-between items-center p-4">
-									<div>
-										<p class="text-sm">{repo.name}</p>
-										<p class="text-xs text-gray-600">{repo.updated}</p>
-									</div>
-									<button class="btn btn-outline btn-sm">Connect</button>
-								</li>
-							{/each}
-						</ul>
-					</div>
+					{:else}
+						<div class="flex flex-col items-center justify-center h-full">
+							<button
+								class="btn btn-primary"
+								on:click={() => {
+									// @ts-ignore
+									window.open(`${GITHUB_APP_URL}/installations/new?state=${project.id}`, '_blank');
+								}}><GitHub class="h-5 w-5" />Connect Github Account</button
+							>
+						</div>
+					{/if}
 				</div>
 				<div class="card border w-full md:w-1/3 shadow p-6">
 					<div class="badge badge-lg badge-success badge-outline my-2">Coming soon</div>

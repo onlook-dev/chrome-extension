@@ -1,4 +1,4 @@
-import { GithubAuth } from "./github";
+import type { GithubAuth } from "./github";
 
 export interface User {
   id: string;
