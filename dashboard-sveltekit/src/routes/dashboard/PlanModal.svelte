@@ -112,8 +112,11 @@
 					<PlanFeatureRow description="Invite up to 3 teammates" />
 				</div>
 
-				{#if plan !== Tier.FREE}
-					<button class="btn btn-outline border-gray-300 h-10 px-4 py-2 mt-4 w-full" disabled>
+				{#if plan === Tier.FREE}
+					<button
+						class="btn btn-outline disabled:text-gray-500 border-gray-300 h-10 px-4 py-2 mt-4 w-full"
+						disabled
+					>
 						Current Plan
 					</button>
 				{/if}
