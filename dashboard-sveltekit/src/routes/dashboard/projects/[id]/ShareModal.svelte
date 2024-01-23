@@ -6,6 +6,7 @@
 	import { getTeamFromFirebase } from '$lib/storage/team';
 	import type { User } from '$shared/models/user';
 	import { getUserFromFirebase } from '$lib/storage/user';
+	import CopyIcon from '~icons/mdi/content-copy';
 
 	export let teamId: string;
 
@@ -57,6 +58,13 @@
 		}
 		return user;
 	}
+
+	function closeModal() {
+		const modal = document.getElementById(modalId) as HTMLDialogElement;
+		if (modal) {
+			modal.close();
+		}
+	}
 </script>
 
 <button
@@ -67,48 +75,29 @@
 	}}>Share</button
 >
 <dialog id={modalId} class="modal">
-	<div class="modal-box relative space-y-2">
-		<h3 class="font-bold text-lg mb-4">Share project</h3>
+	<div class="modal-box w-4/12">
+		<h3 class="font-bold text-lg">Share project</h3>
 
 		<div class="flex flex-row space-x-2">
-			<input type="text" placeholder="Email, comma separated" class="input input-bordered w-full" />
-			<button class="btn btn-primary">Invite</button>
+			<button
+				class="modal-action btn btn-outline mb-2"
+				on:click={async () => {
+					try {
+						await navigator.clipboard.writeText(window.location.href);
+						closeModal();
+						toast.push('Link copied to clipboard');
+					} catch (err) {
+						toast.push('Failed to copy text: ' + err);
+					}
+				}}
+			>
+				<span>copy link to share project</span><CopyIcon class="w-5 h-5" />
+			</button>
 		</div>
 
 		<label for="access-input" class="label cursor-pointer">
-			<span class="label-text"
-				>Everyone at
-				<b>{team?.name ?? 'this team'}</b>
-				can access this file</span
-			>
+			<span class="label-text">Anyone with the link can access this file</span>
 		</label>
-		<div class="divider"></div>
-
-		<!-- Users with access -->
-		<div class="flex flex-col items-center">
-			<!-- TODO: Use team's access -->
-			{#each users as { userId, role, userName, profileImageUrl }, i}
-				<div class="flex flex-row items-center pb-4 w-full">
-					<div class="avatar">
-						<div class="skeleton w-6 mask mask-circle">
-							<img src={profileImageUrl} alt="Avatar of {userName}" />
-						</div>
-					</div>
-					<div class="px-2">{userName}</div>
-					<div class="ml-auto">
-						<button class="text-xs p-2 hover:shadow-sm hover:bg-gray-50 rounded">
-							{role.toLocaleLowerCase()}
-						</button>
-					</div>
-				</div>
-			{/each}
-		</div>
-		<button
-			class="modal-action btn btn-outline"
-			on:click={() => toast.push('Link copied to clipboard')}
-		>
-			Copy link
-		</button>
 	</div>
 	<form method="dialog" class="modal-backdrop">
 		<button>close</button>
