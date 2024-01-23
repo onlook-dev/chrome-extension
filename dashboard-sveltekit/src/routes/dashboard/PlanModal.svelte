@@ -12,6 +12,7 @@
 	export let teamId: string;
 	let subscriptionEnd = '';
 	const modalId = 'plan-modal';
+	let loading = false;
 
 	$: plan = $teamsMapStore.get(teamId)?.tier ?? Tier.FREE;
 
@@ -37,6 +38,7 @@
 	}
 
 	async function checkout(tier: Tier) {
+		loading = true;
 		const priceId = priceIdMapping[tier];
 		const data = await fetch('/payment', {
 			method: 'POST',
@@ -49,7 +51,7 @@
 		}).then((data) => data.json());
 
 		await createPayment(data.sessionId, priceId);
-
+		loading = false;
 		window.location.replace(data.url);
 	}
 
@@ -90,7 +92,9 @@
 
 <button
 	on:click={showModal}
-	class="bg-blue-500 hover:bg-blue-700 text-white text-xs font-bold py-1 px-2 rounded opacity-80"
+	class="hover:outline text-xs font-semibold py-1 px-2 rounded opacity-80 {plan === Tier.FREE
+		? 'bg-blue-100 text-blue-700'
+		: 'bg-red-100 text-red-700'}"
 >
 	{plan}
 </button>
@@ -107,6 +111,15 @@
 					<PlanFeatureRow description="Design inspection tools" />
 					<PlanFeatureRow description="Invite up to 3 teammates" />
 				</div>
+
+				{#if plan === Tier.FREE}
+					<button
+						class="btn btn-outline disabled:text-gray-500 border-gray-300 h-10 px-4 py-2 mt-4 w-full"
+						disabled
+					>
+						Current Plan
+					</button>
+				{/if}
 			</div>
 			<div class="border border-gray-200 rounded-lg p-6">
 				<h3 class="text-xl font-bold text-center">{Tier.PRO}</h3>
@@ -118,10 +131,18 @@
 				</div>
 				{#if subscriptionEnd === ''}
 					<button
-						class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mt-4 w-full"
+						class="{plan === Tier.FREE
+							? 'btn btn-primary'
+							: 'btn-outline'} border-gray-300 btn h-10 px-4 py-2 mt-4 w-full"
 						on:click={() => (plan === Tier.PRO ? cancelSubscription() : checkout(Tier.PRO))}
+						disabled={loading}
 					>
-						{plan === Tier.PRO ? 'Cancel' : 'Upgrade'}
+						{#if loading}
+							<span class="loading loading-xs mr-2"></span>
+							<p>Checking out</p>
+						{:else}
+							{plan === Tier.PRO ? 'Cancel' : `Upgrade to ${Tier.PRO}`}
+						{/if}
 					</button>
 				{:else}
 					<div class="divider" />

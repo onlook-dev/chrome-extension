@@ -14,16 +14,13 @@
 
 - [Chrome Extensions Manifest V3](https://developer.chrome.com/docs/extensions/mv3/intro/)
 - [CRXJS Vite Plugin](https://github.com/crxjs/chrome-extension-tools/blob/main/packages/vite-plugin/README.md)
+- [Chrome storage](https://github.com/extend-chrome/storage)
+- [Chrome messaging](https://github.com/extend-chrome/messages)
 
 ### Components
 
 - [DaisyUI](https://daisyui.com/components/)
 - [Unplugin Icon](https://github.com/unplugin/unplugin-icons/) + [Iconify](https://icon-sets.iconify.design/)
-
-### Libraries
-
-- [Pickr](https://github.com/simonwep/pickr)
-- [Color.js](https://colorjs.io/)
 
 ## Development
 
