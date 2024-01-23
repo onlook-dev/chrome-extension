@@ -112,17 +112,11 @@
 					<PlanFeatureRow description="Invite up to 3 teammates" />
 				</div>
 
-				<button
-					class="btn btn-outline border-gray-300 h-10 px-4 py-2 mt-4 w-full"
-					disabled={plan === Tier.FREE || loading}
-				>
-					{#if loading}
-						<span class="loading loading-xs mr-2"></span>
-						<p>Checking out</p>
-					{:else}
-						{plan === Tier.FREE ? 'Current Plan' : `Downgrade from ${plan}`}
-					{/if}
-				</button>
+				{#if plan !== Tier.FREE}
+					<button class="btn btn-outline border-gray-300 h-10 px-4 py-2 mt-4 w-full" disabled>
+						Current Plan
+					</button>
+				{/if}
 			</div>
 			<div class="border border-gray-200 rounded-lg p-6">
 				<h3 class="text-xl font-bold text-center">{Tier.PRO}</h3>
