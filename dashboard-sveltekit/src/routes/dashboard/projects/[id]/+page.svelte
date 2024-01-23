@@ -68,7 +68,7 @@
 
 			<div class="navbar-end space-x-2">
 				<ShareModal teamId={project.teamId} />
-				<PublishModal />
+				<PublishModal {project} />
 			</div>
 		</div>
 		<!-- Main content -->

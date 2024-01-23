@@ -1,7 +1,12 @@
+import { GithubAuth } from "./github";
+
 export interface User {
   id: string;
   name: string;
   email: string;
   profileImage?: string;
   teams: string[];
+
+  // Integrations
+  github?: GithubAuth;
 }

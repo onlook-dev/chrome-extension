@@ -21,8 +21,9 @@ export enum DashboardRoutes {
   SIGNIN = "/signin",
   SHARE = "/share",
   DASHBOARD = "/dashboard",
-  PROJECTS = `/dashboard/projects`,
+  PROJECTS = "/dashboard/projects",
   PRIVACY = "/privacy",
+  GITHUB = "/github",
 }
 
 export enum MouseEvent {
