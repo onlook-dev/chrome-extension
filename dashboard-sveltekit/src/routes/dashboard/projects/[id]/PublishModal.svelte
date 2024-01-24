@@ -47,7 +47,6 @@
 		isLoading = true;
 		try {
 			prLink = await exportToPRComments(userId, project.id);
-			console.log('PR Link:', prLink);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
 			// TODO: handle error
