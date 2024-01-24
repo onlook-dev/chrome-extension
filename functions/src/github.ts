@@ -1,51 +1,41 @@
-import { Octokit } from "@octokit/core";
-import { createAppAuth } from "@octokit/auth-app";
+import {Octokit} from "@octokit/core";
+import {createAppAuth} from "@octokit/auth-app";
 import * as functions from "firebase-functions";
 
 const appId = process.env.GITHUB_APP_ID;
 const privateKey = process.env.GITHUB_PRIVATE_KEY;
 
 async function getInstallationOctokit(installationId: string) {
-  console.log(installationId, appId, privateKey);
+  // Decode from base64
+  const decodedPrivateKey = Buffer.from(privateKey!, "base64").toString();
   console.log("Getting installation octokit...");
-  const appOctokit = new Octokit({
+
+  const installationOctokit = new Octokit({
     authStrategy: createAppAuth,
     auth: {
-      appId,
-      privateKey,
-      installationId,
+      appId: appId,
+      privateKey: decodedPrivateKey,
+      installationId: installationId,
     },
   });
 
-  console.log(appOctokit);
-
-  const installationResponse: any = await appOctokit.auth({
-    type: "installation",
-  });
-
-  console.log(installationResponse);
-
-  return new Octokit({
-    auth: installationResponse.token,
-  });
+  return installationOctokit;
 }
 
 export const getReposByInstallation = functions.https.onCall(async (data) => {
-  const { installationId } = data;
+  const {installationId} = data;
   const octokit = await getInstallationOctokit(installationId);
 
   // Get the repositories accessible to the installation
   console.log("Getting user repositories...");
-  const reposResponse = await octokit.request(
-    `GET /user/installations/${installationId}/repositories`,
-    {
-      headers: {
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    }
-  );
 
-  const repos = reposResponse.data.repositories.map((repo: any) => repo.id);
-  console.log("Repos:", repos.length);
-  return { repos };
+  // https://docs.github.com/en/rest/apps/installations?apiVersion=2022-11-28#list-repositories-accessible-to-the-app-installation
+  const repos = await octokit.request("GET /installation/repositories", {
+    headers: {
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  });
+
+  console.log(repos);
+  return {repos};
 });

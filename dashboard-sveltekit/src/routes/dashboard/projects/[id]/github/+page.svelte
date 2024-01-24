@@ -4,6 +4,8 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	import type { Project } from '$shared/models/project';
+	import type { User } from '$shared/models/user';
+	import type { GithubAuth } from '$shared/models/github';
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
 	import { DashboardRoutes, GITHUB_APP_URL } from '$shared/constants';
@@ -15,17 +17,12 @@
 
 	let project: Project | undefined;
 	let unsubs: any[] = [];
-	let installationId: string | undefined;
-
-	$: user = $userStore;
+	let user: User | undefined;
 
 	$: if (user?.githubAuthId) {
 		getGithubAuthFromFirebase(user.githubAuthId)
 			.then((auth) => {
-				installationId = auth.installationId;
-			})
-			.then(() => {
-				return getGithubReposByInstallationId({ installationId: installationId as string });
+				return getGithubReposByInstallationId({ installationId: auth.installationId as string });
 			})
 			.then((repos) => {
 				console.log(repos);
@@ -82,6 +79,20 @@
 				unsubs.push(unsubscribe);
 			});
 		}
+
+		userStore.subscribe((newUser) => {
+			user = newUser;
+			if (user && user.githubAuthId) {
+				console.log('Getting github auth from firebase', user.githubAuthId);
+				getGithubAuthFromFirebase(user.githubAuthId).then((auth: GithubAuth) => {
+					console.log('Getting repos with installation: ', auth.installationId);
+
+					getGithubReposByInstallationId({ installationId: auth.installationId }).then((repos) => {
+						console.log(repos);
+					});
+				});
+			}
+		});
 	});
 
 	onDestroy(() => {

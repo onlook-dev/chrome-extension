@@ -5,7 +5,7 @@ import {
   FIREBASE_COLLECTION_USERS,
   FIREBASE_COLLECTION_TEAMS,
 } from "../../shared/constants";
-import { Team } from "../../shared/models/team";
+import {Team} from "../../shared/models/team";
 
 export const createTeam = functions.firestore
   .document(`${FIREBASE_COLLECTION_TEAMS}/{teamId}`)
@@ -46,7 +46,7 @@ export const deleteTeam = functions.firestore
   });
 
 export const addUserToTeam = functions.https.onCall(async (data) => {
-  const { userId, teamId, role } = data;
+  const {userId, teamId, role} = data;
 
   // Update team with user id and role
   const teamRef = admin
