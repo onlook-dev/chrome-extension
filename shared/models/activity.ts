@@ -5,6 +5,7 @@ export interface Activity {
   id: string;
   userId: string;
   selector: string;
+  codeSelector: string; // path/to/file:line
   projectId: string;
   eventData: EventMetadata[];
   visible: boolean;
