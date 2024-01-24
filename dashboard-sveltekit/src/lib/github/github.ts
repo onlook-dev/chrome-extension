@@ -154,13 +154,20 @@ export const getReposByInstallation = async (installationId: string) => {
 	console.log('Getting user repositories...');
 
 	// https://docs.github.com/en/rest/apps/installations?apiVersion=2022-11-28#list-repositories-accessible-to-the-app-installation
-	const repos = await octokit.request('GET /installation/repositories', {
+	const response = await octokit.request('GET /installation/repositories', {
 		headers: {
 			'X-GitHub-Api-Version': '2022-11-28'
 		}
 	});
 
-	console.log(repos);
+	const repos = response.data.repositories.map((repo: any) => {
+		return {
+			id: repo.id,
+			name: repo.name,
+			owner: repo.owner.login
+		};
+	});
+
 	return { repos };
 };
 
