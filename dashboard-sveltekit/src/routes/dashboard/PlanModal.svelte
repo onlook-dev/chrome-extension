@@ -123,11 +123,14 @@
 			</div>
 			<div class="border border-gray-200 rounded-lg p-6">
 				<h3 class="text-xl font-bold text-center">{Tier.PRO}</h3>
-				<p class="text-center text-gray-500">Advanced features for $15/month</p>
+				<p class="text-center text-gray-500">$15/month</p>
+				<div class="grid gap-4 mt-4 mb-4">
+					<PlanFeatureRow description="Early access to new features" />
+				</div>
+				<p class="text-center text-gray-500">Advanced features coming soon</p>
 				<div class="grid gap-4 mt-4">
 					<PlanFeatureRow description="Publish changes to Github" />
 					<PlanFeatureRow description="Advanced design tools" />
-					<PlanFeatureRow description="Early access to new features" />
 				</div>
 				{#if subscriptionEnd === ''}
 					<button
