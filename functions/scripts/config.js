@@ -1,10 +1,10 @@
 const fs = require("fs");
-const { exec } = require("child_process");
+const {exec} = require("child_process");
 
 // Function to parse .env file
 const parseEnvFile = (filePath) => {
   const vars = {};
-  const fileContent = fs.readFileSync(filePath, { encoding: "utf-8" });
+  const fileContent = fs.readFileSync(filePath, {encoding: "utf-8"});
   fileContent.split("\n").forEach((line) => {
     const [key, value] = line.split("=");
     if (key && value) {

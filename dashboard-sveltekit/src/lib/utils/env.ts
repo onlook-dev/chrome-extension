@@ -69,7 +69,6 @@ export const isFirebaseEmulator: boolean = import.meta.env.VITE_FIREBASE_EMULATO
 export const firebaseConfig = isDevelopment ? testFirebaseConfig : prodFirebaseConfig;
 export const stripeConfig = isDevelopment ? testStripeConfig : prodStripeConfig;
 export const baseUrl = isDevelopment ? PUBLIC_TEST_URL : PUBLIC_PROD_URL;
-
 export const priceIdMapping = {
 	[Tier.FREE]: isDevelopment ? 'free' : 'free',
 	[Tier.PRO]: isDevelopment ? testStripeConfig.proPriceId : prodStripeConfig.proPriceId,
