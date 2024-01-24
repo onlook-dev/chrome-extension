@@ -115,7 +115,8 @@ async function createPRWithComments(
 
 	for (const activityKey in activities) {
 		const activity = activities[activityKey];
-		const [filePath, lineString] = activity.codeSelector.split(':');
+		// TODO: will have to decrypt tag to get file:lineNumber
+		const [filePath, lineString] = activity.onlookTag.split(':');
 		const lineNumber = parseInt(lineString);
 
 		let commentBody = 'onlook changes:\n';
