@@ -1,6 +1,7 @@
 import type { Comment } from "./comment";
 import type { HostData } from "./hostData";
 import type { Activity } from "./activity";
+import type { GithubSettings } from "./github";
 
 // A project is a set of feedback, comments, and style changes
 export interface Project {
@@ -11,4 +12,7 @@ export interface Project {
   hostData: HostData;
   comments: Comment[];
   activities: Record<string, Activity>;
+
+  // Integrations
+  githubSettings?: GithubSettings;
 }

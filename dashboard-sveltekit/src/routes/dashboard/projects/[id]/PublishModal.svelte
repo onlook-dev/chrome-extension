@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { toast } from '@zerodevx/svelte-toast';
 	import GitHub from '~icons/mdi/github';
 	import Slack from '~icons/devicon/slack';
 	import Jira from '~icons/logos/jira';
 	import Linear from '~icons/logos/linear-icon';
+	import { goto } from '$app/navigation';
+	import { DashboardRoutes } from '$shared/constants';
+	import type { Project } from '$shared/models/project';
 
-	// import type { ProjectImpl } from '$lib/models/project';
-	// export let project: ProjectImpl | undefined;
+	export let project: Project;
 
 	const modalId = 'publish-modal';
-	const teamName = 'Team name';
 </script>
 
 <button
@@ -23,7 +23,7 @@
 	<div class="modal-box relative space-y-6">
 		<h3 class="font-bold text-lg mb-4">Publish project</h3>
 
-		<div class="flex flex-row space-x-2">
+		<!-- <div class="flex flex-row space-x-2">
 			<input type="text" placeholder="Email, comma separated" class="input input-bordered w-full" />
 			<button
 				class="btn btn-primary"
@@ -31,25 +31,29 @@
 					toast.push('Sent invite email');
 				}}>Invite to project</button
 			>
-		</div>
-
-		<div class="divider">Coming soon</div>
+		</div> -->
 
 		<!-- Actions -->
 		<div class="form-control space-y-4">
-			<button class="btn btn-outline">
+			<button
+				class="btn btn-outline"
+				on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project.id}${DashboardRoutes.GITHUB}`)}
+			>
 				<GitHub class="w-5 h-5" />
 				Publish changes to Github</button
 			>
-			<button class="btn btn-outline">
+
+			<div class="divider">Coming soon</div>
+
+			<button disabled class="btn btn-outline">
 				<Linear class="w-4 h-4" />
 				Open Linear ticket</button
 			>
-			<button class="btn btn-outline">
+			<button disabled class="btn btn-outline">
 				<Jira class="w-4 h-4" />
 				Open Jira ticket</button
 			>
-			<button class="btn btn-outline">
+			<button disabled class="btn btn-outline">
 				<Slack class="w-4 h-4" />
 				Create Slack thread</button
 			>
