@@ -11,10 +11,29 @@
 	import ChevronLeft from '~icons/mdi/chevron-left';
 	import GitHub from '~icons/mdi/github';
 	import { getGithubReposByInstallationId } from '$lib/firebase/functions';
+	import { getGithubAuthFromFirebase } from '$lib/storage/github';
 
 	let project: Project | undefined;
 	let unsubs: any[] = [];
+	let installationId: string | undefined;
+
 	$: user = $userStore;
+
+	$: if (user?.githubAuthId) {
+		getGithubAuthFromFirebase(user.githubAuthId)
+			.then((auth) => {
+				installationId = auth.installationId;
+			})
+			.then(() => {
+				return getGithubReposByInstallationId({ installationId: installationId as string });
+			})
+			.then((repos) => {
+				console.log(repos);
+			})
+			.catch((error) => {
+				console.error('Error fetching GitHub data:', error);
+			});
+	}
 
 	// Get github account from user
 
@@ -31,13 +50,6 @@
 		{ id: 3, name: 'Angular', description: 'Typescript framework' },
 		{ id: 4, name: 'Vite', description: 'Vue framework' }
 	];
-
-	$: if (user?.github) {
-		console.log('Getting repos with installation: ', user.github.installationId);
-		getGithubReposByInstallationId({ installationId: user.github.installationId }).then((repos) => {
-			console.log(repos);
-		});
-	}
 
 	onMount(async () => {
 		// Get project
@@ -95,7 +107,7 @@
 				<div class="card w-full md:w-2/3 shadow border p-6">
 					<h2 class="text-xl font-semibold mb-3">Import Git Repository</h2>
 
-					{#if user?.github}
+					{#if user?.githubAuthId}
 						<div class="space-y-3">
 							<div class="flex flex-row gap-3">
 								<select class="select select-bordered w-1/3">
@@ -126,8 +138,7 @@
 							<button
 								class="btn btn-primary"
 								on:click={() => {
-									// @ts-ignore
-									window.open(`${GITHUB_APP_URL}/installations/new?state=${project.id}`, '_blank');
+									window.open(`${GITHUB_APP_URL}/installations/new?state=${project?.id}`, '_blank');
 								}}><GitHub class="h-5 w-5" />Connect Github Account</button
 							>
 						</div>

@@ -7,18 +7,32 @@
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
 	import { DashboardRoutes, MAX_PROJECT_NAME_LENGTH } from '$shared/constants';
-	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
+	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 
 	import Comments from './Comments.svelte';
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';
 	import PublishModal from './PublishModal.svelte';
 	import { truncateString } from '$shared/helpers';
+	import type { User } from '$shared/models/user';
+	import { auth } from '$lib/firebase/firebase';
 
 	let project: Project | undefined;
+	let user: User | null;
 	let unsubs: any[] = [];
 
 	onMount(async () => {
+		auth.onAuthStateChanged((user) => {
+			if (!user) {
+				goto(DashboardRoutes.SIGNIN);
+			}
+		});
+
+		userStore.subscribe((storeUser) => {
+			if (!storeUser) return;
+			user = storeUser;
+		});
+
 		// Get project
 		const projectId = $page.params.id;
 		if (!projectId) {
@@ -68,7 +82,7 @@
 
 			<div class="navbar-end space-x-2">
 				<ShareModal teamId={project.teamId} />
-				<PublishModal {project} />
+				<PublishModal {project} userId={user?.id} />
 			</div>
 		</div>
 		<!-- Main content -->
