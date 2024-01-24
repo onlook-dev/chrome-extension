@@ -1,8 +1,16 @@
-import { httpsCallable } from 'firebase/functions'
-import { functions } from './firebase'
+import { httpsCallable } from 'firebase/functions';
+import { functions } from './firebase';
 
 interface StoreImageUriData {
-	dataUri: string
+	dataUri: string;
 }
 
-export const storeImageUri = httpsCallable<StoreImageUriData, string>(functions, 'storeImageUri')
+interface InstallationData {
+	installationId: string;
+}
+
+export const storeImageUri = httpsCallable<StoreImageUriData, string>(functions, 'storeImageUri');
+export const getGithubReposByInstallationId = httpsCallable<InstallationData, string[]>(
+	functions,
+	'getReposByInstallation'
+);
