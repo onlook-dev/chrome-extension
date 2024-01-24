@@ -6,5 +6,5 @@ export interface User {
   teams: string[];
 
   // Integrations
-  github?: string;
+  githubAuthId?: string;
 }

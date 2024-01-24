@@ -10,7 +10,7 @@
 
 	let installationId = $page.url.searchParams.get('installation_id');
 	let errorMessage = 'Saving project state failed';
-
+	let savedAuthId = '';
 	enum CallbackState {
 		loading,
 		success,
@@ -30,7 +30,8 @@
 			if (!user) {
 				return;
 			} else {
-				if (user.github) {
+				if (user.githubAuthId === savedAuthId) {
+					// Already saved, can close window
 					setTimeout(() => {
 						window.close();
 					}, 1000);
@@ -41,11 +42,12 @@
 					installationId: installationId
 				} as GithubAuth;
 
-				user.github = githubAuth.id;
+				user.githubAuthId = githubAuth.id;
 
 				await postGithubAuthToFirebase(githubAuth);
 				await postUserToFirebase(user);
 
+				savedAuthId = githubAuth.id;
 				state = CallbackState.success;
 				userStore.set(user);
 				// Wait 1 second
