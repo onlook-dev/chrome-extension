@@ -25,11 +25,7 @@ module.exports = {
   rules: {
     quotes: ["error", "double"],
     "import/no-unresolved": 0,
-<<<<<<< HEAD
     "indent": ["error", 2],
     "require-jsdoc": "off",
-=======
-    indent: ["error", 2],
->>>>>>> main
   },
 };
