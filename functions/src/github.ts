@@ -24,7 +24,7 @@ async function getInstallationOctokit(installationId: string) {
   });
 }
 
-export const getRepositoriesFromInstallation = async (
+export const getGithubReposByInstallationId = async (
   installationId: string
 ) => {
   const octokit = await getInstallationOctokit(installationId);
