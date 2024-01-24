@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "NODE_ENV=development vite dev",
+		"dev:emulator": "NODE_ENV=development VITE_FIREBASE_EMULATOR=true vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "playwright test",
