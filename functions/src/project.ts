@@ -5,7 +5,11 @@ import {
   FIREBASE_COLLECTION_PROJECTS,
   FIREBASE_COLLECTION_TEAMS,
 } from "../../shared/constants";
+<<<<<<< HEAD
 import type {Project} from "../../shared/models/project";
+=======
+import type { Project } from "../../shared/models/project";
+>>>>>>> main
 
 export const createProject = functions.firestore
   .document(`${FIREBASE_COLLECTION_PROJECTS}/{projectId}`)
