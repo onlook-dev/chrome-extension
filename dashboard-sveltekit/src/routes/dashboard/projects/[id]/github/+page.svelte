@@ -5,41 +5,27 @@
 
 	import type { Project } from '$shared/models/project';
 	import type { User } from '$shared/models/user';
-	import type { GithubAuth } from '$shared/models/github';
+	import type { GithubRepo, GithubSettings } from '$shared/models/github';
+
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
 	import { DashboardRoutes, GITHUB_APP_URL } from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
+	import { getGithubAuthFromFirebase } from '$lib/storage/github';
+	import { getReposByInstallation } from '$lib/github/github';
+	import { postProjectToFirebase } from '$lib/storage/project';
+
 	import ChevronLeft from '~icons/mdi/chevron-left';
 	import GitHub from '~icons/mdi/github';
-	import { getGithubReposByInstallationId } from '$lib/firebase/functions';
-	import { getGithubAuthFromFirebase } from '$lib/storage/github';
 
 	let project: Project | undefined;
 	let unsubs: any[] = [];
 	let user: User | undefined;
+	let filterTerm = '';
+	let loadingRepos = false;
 
-	$: if (user?.githubAuthId) {
-		getGithubAuthFromFirebase(user.githubAuthId)
-			.then((auth) => {
-				return getGithubReposByInstallationId({ installationId: auth.installationId as string });
-			})
-			.then((repos) => {
-				console.log(repos);
-			})
-			.catch((error) => {
-				console.error('Error fetching GitHub data:', error);
-			});
-	}
-
-	// Get github account from user
-
-	let repositories = [
-		{ id: 1, name: '0.monorepo', updated: '49d ago' },
-		{ id: 2, name: '0.demo', updated: '94d ago' },
-		{ id: 1, name: '0.monorepo', updated: '49d ago' },
-		{ id: 2, name: '0.demo', updated: '94d ago' }
-	];
+	let repositories: GithubRepo[] = [];
+	let filteredRepositories: GithubRepo[] = [];
 
 	const templates = [
 		{ id: 1, name: 'Next.js', description: 'React framework' },
@@ -48,6 +34,45 @@
 		{ id: 4, name: 'Vite', description: 'Vue framework' }
 	];
 
+	$: if (user?.githubAuthId) {
+		loadingRepos = true;
+		getGithubAuthFromFirebase(user.githubAuthId)
+			.then((auth) => {
+				return getReposByInstallation(auth.installationId);
+			})
+			.then(({ repos }) => {
+				repositories = repos;
+				filteredRepositories = repos;
+				loadingRepos = false;
+			})
+			.catch((error) => {
+				console.error('Error fetching GitHub data:', error);
+			});
+	}
+
+	$: if (filterTerm !== '') {
+		filteredRepositories = repositories.filter((repo) => repo.name.includes(filterTerm));
+	} else {
+		filteredRepositories = repositories;
+	}
+
+	function connectRepoToProject(repo: any) {
+		console.log(repo);
+		if (!project) return;
+
+		project.githubSettings = {
+			auth: user?.githubAuthId,
+			repositoryName: repo.name,
+			owner: repo.owner,
+			rootPath: 'src',
+			baseBranch: 'main'
+		} as GithubSettings;
+
+		postProjectToFirebase(project).then(() => {
+			goto(`${DashboardRoutes.PROJECTS}/${project?.id}`);
+		});
+	}
+
 	onMount(async () => {
 		// Get project
 		const projectId = $page.params.id;
@@ -55,6 +80,10 @@
 		if (!projectId) {
 			goto(DashboardRoutes.DASHBOARD);
 		}
+
+		userStore.subscribe((newUser) => {
+			user = newUser;
+		});
 
 		if ($projectsMapStore.has(projectId)) {
 			project = $projectsMapStore.get(projectId);
@@ -79,20 +108,6 @@
 				unsubs.push(unsubscribe);
 			});
 		}
-
-		userStore.subscribe((newUser) => {
-			user = newUser;
-			if (user && user.githubAuthId) {
-				console.log('Getting github auth from firebase', user.githubAuthId);
-				getGithubAuthFromFirebase(user.githubAuthId).then((auth: GithubAuth) => {
-					console.log('Getting repos with installation: ', auth.installationId);
-
-					getGithubReposByInstallationId({ installationId: auth.installationId }).then((repos) => {
-						console.log(repos);
-					});
-				});
-			}
-		});
 	});
 
 	onDestroy(() => {
@@ -117,29 +132,35 @@
 			<div class="flex flex-col md:flex-row gap-10">
 				<div class="card w-full md:w-2/3 shadow border p-6">
 					<h2 class="text-xl font-semibold mb-3">Import Git Repository</h2>
-
 					{#if user?.githubAuthId}
 						<div class="space-y-3">
 							<div class="flex flex-row gap-3">
-								<select class="select select-bordered w-1/3">
+								<!-- <select class="select select-bordered w-1/3">
 									<option selected>Kitenite</option>
-									<option>Onlook-dev</option>
-									<option>0.engineering</option>
-								</select>
+								</select> -->
 								<input
-									class="input input-bordered w-2/3"
+									bind:value={filterTerm}
+									class="input input-bordered w-full"
 									type="text"
 									placeholder="Search for repository"
 								/>
 							</div>
-							<ul class="border divide-y rounded-lg p-2">
-								{#each repositories as repo}
+							<ul class="border divide-y rounded-lg p-2 max-h-96 overflow-auto">
+								{#if loadingRepos}
+									<div class="w-full text-center">
+										<div class="loading h-10"></div>
+									</div>
+								{/if}
+								{#each filteredRepositories as repo}
 									<li class="flex justify-between items-center p-4">
 										<div>
 											<p class="text-sm">{repo.name}</p>
-											<p class="text-xs text-gray-600">{repo.updated}</p>
+											<p class="text-xs text-gray-600">{repo.owner}</p>
 										</div>
-										<button class="btn btn-outline btn-sm">Connect</button>
+										<button
+											on:click={() => connectRepoToProject(repo)}
+											class="btn btn-outline btn-sm">Connect</button
+										>
 									</li>
 								{/each}
 							</ul>

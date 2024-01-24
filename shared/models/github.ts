@@ -10,3 +10,9 @@ export interface GithubSettings {
   rootPath: string;
   baseBranch: string;
 }
+
+export interface GithubRepo {
+  id: number;
+  name: string;
+  owner: string;
+}
