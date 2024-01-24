@@ -4,6 +4,7 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	import type { Project } from '$shared/models/project';
+	import type { GithubAuth } from '$shared/models/github';
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
 	import { DashboardRoutes, GITHUB_APP_URL } from '$shared/constants';
@@ -11,6 +12,7 @@
 	import ChevronLeft from '~icons/mdi/chevron-left';
 	import GitHub from '~icons/mdi/github';
 	import { getGithubReposByInstallationId } from '$lib/firebase/functions';
+	import { getGithubAuthFromFirebase } from '$lib/storage/github';
 
 	let project: Project | undefined;
 	let unsubs: any[] = [];
@@ -33,9 +35,11 @@
 	];
 
 	$: if (user?.github) {
-		console.log('Getting repos with installation: ', user.github.installationId);
-		getGithubReposByInstallationId({ installationId: user.github.installationId }).then((repos) => {
-			console.log(repos);
+		console.log('Getting repos with installation: ', user.github);
+		getGithubAuthFromFirebase(user.github).then((auth: GithubAuth) => {
+			getGithubReposByInstallationId({ installationId: auth.installationId }).then((repos) => {
+				console.log(repos);
+			});
 		});
 	}
 

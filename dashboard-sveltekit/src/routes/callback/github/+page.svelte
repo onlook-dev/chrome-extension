@@ -6,6 +6,7 @@
 	import { userStore } from '$lib/utils/store';
 	import { postUserToFirebase } from '$lib/storage/user';
 	import { nanoid } from 'nanoid';
+	import { postGithubAuthToFirebase } from '$lib/storage/github';
 
 	let installationId = $page.url.searchParams.get('installation_id');
 	let errorMessage = 'Saving project state failed';
@@ -25,7 +26,7 @@
 			errorMessage = 'Missing parameters';
 			return;
 		}
-		userStore.subscribe((user) => {
+		userStore.subscribe(async (user) => {
 			if (!user) {
 				return;
 			} else {
@@ -40,15 +41,17 @@
 					installationId: installationId
 				} as GithubAuth;
 
-				user.github = githubAuth;
-				postUserToFirebase(user).finally(() => {
-					state = CallbackState.success;
-					userStore.set(user);
-					// Wait 1 second
-					setTimeout(() => {
-						window.close();
-					}, 1000);
-				});
+				user.github = githubAuth.id;
+
+				await postGithubAuthToFirebase(githubAuth);
+				await postUserToFirebase(user);
+
+				state = CallbackState.success;
+				userStore.set(user);
+				// Wait 1 second
+				setTimeout(() => {
+					window.close();
+				}, 1000);
 			}
 		});
 	});

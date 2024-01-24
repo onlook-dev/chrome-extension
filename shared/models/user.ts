@@ -1,5 +1,3 @@
-import type { GithubAuth } from "./github";
-
 export interface User {
   id: string;
   name: string;
@@ -8,5 +6,5 @@ export interface User {
   teams: string[];
 
   // Integrations
-  github?: GithubAuth;
+  github?: string;
 }
