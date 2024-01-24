@@ -6,8 +6,6 @@
 	import type { Project } from '$shared/models/project';
 	import type { User } from '$shared/models/user';
 	import type { GithubAuth } from '$shared/models/github';
-	import type { User } from '$shared/models/user';
-	import type { GithubAuth } from '$shared/models/github';
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
 	import { DashboardRoutes, GITHUB_APP_URL } from '$shared/constants';
@@ -15,7 +13,6 @@
 	import ChevronLeft from '~icons/mdi/chevron-left';
 	import GitHub from '~icons/mdi/github';
 	import { getGithubReposByInstallationId } from '$lib/firebase/functions';
-	import { getGithubAuthFromFirebase } from '$lib/storage/github';
 	import { getGithubAuthFromFirebase } from '$lib/storage/github';
 
 	let project: Project | undefined;
@@ -134,8 +131,6 @@
 			<div class="flex flex-col md:flex-row gap-10">
 				<div class="card w-full md:w-2/3 shadow border p-6">
 					<h2 class="text-xl font-semibold mb-3">Import Git Repository</h2>
-
-					{#if user?.githubAuthId}
 					{#if user?.githubAuthId}
 						<div class="space-y-3">
 							<div class="flex flex-row gap-3">
