@@ -69,7 +69,7 @@
 </script>
 
 <div class="flex h-screen w-screen flex-col">
-	{#if project}
+	{#if project && user}
 		<!-- Header -->
 		<div class="navbar bg-base-100">
 			<div class="navbar-start flex flex-row">
@@ -82,7 +82,7 @@
 
 			<div class="navbar-end space-x-2">
 				<ShareModal teamId={project.teamId} />
-				<PublishModal {project} userId={user?.id} />
+				<PublishModal {project} userId={user.id} />
 			</div>
 		</div>
 		<!-- Main content -->
