@@ -74,6 +74,9 @@
 		document?.getElementById(modalId)?.showModal();
 	}}>Share</button
 >
+
+<!-- TODO: Add back this flow then ready for emails https://github.com/onlook-dev/monorepo/blob/013814645ceddd3a0d7ccc2140561050c826884d/dashboard-sveltekit/src/routes/dashboard/projects/%5Bid%5D/ShareModal.svelte -->
+
 <dialog id={modalId} class="modal">
 	<div class="modal-box w-4/12">
 		<h3 class="font-bold text-lg">Share project</h3>
@@ -91,7 +94,7 @@
 					}
 				}}
 			>
-				<span>copy link to share project</span><CopyIcon class="w-5 h-5" />
+				<span>Copy link to share project</span><CopyIcon class="w-5 h-5" />
 			</button>
 		</div>
 

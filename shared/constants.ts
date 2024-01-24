@@ -4,6 +4,7 @@ export const FIREBASE_COLLECTION_USERS = "users";
 export const FIREBASE_COLLECTION_TEAMS = "teams";
 export const FIREBASE_FOLDER_IMAGES = "images";
 export const FIREBASE_COLLECTION_PAYMENTS = "payments";
+export const FIREBASE_COLLECTION_GITHUB = "github";
 
 // Settings
 export const MAX_PROJECT_NAME_LENGTH = 50;
@@ -14,6 +15,7 @@ export const STYLE_CHANGE = "STYLE_CHANGE";
 
 // Links
 export const LINK_DISCORD = "mailto:support@onlook.dev";
+export const GITHUB_APP_URL = "https://github.com/apps/onlook-dev";
 
 // Dashboard routes
 export enum DashboardRoutes {
@@ -21,8 +23,9 @@ export enum DashboardRoutes {
   SIGNIN = "/signin",
   SHARE = "/share",
   DASHBOARD = "/dashboard",
-  PROJECTS = `/dashboard/projects`,
+  PROJECTS = "/dashboard/projects",
   PRIVACY = "/privacy",
+  GITHUB = "/github",
 }
 
 export enum MouseEvent {

@@ -18,6 +18,8 @@ const prodFirebaseConfig = {
 	measurementId: import.meta.env.VITE_PROD_MEASUREMENT_ID
 }
 
-export const isDevelopment = process.env.NODE_ENV === 'development'
+export const isDevelopment: boolean = import.meta.env.DEV
+export const isFirebaseEmulator: boolean = import.meta.env.VITE_FIREBASE_EMULATOR
+console.log('isFirebaseEmulator', isFirebaseEmulator)
 export const firebaseConfig = isDevelopment ? testFirebaseConfig : prodFirebaseConfig
 export const baseUrl = isDevelopment ? import.meta.env.VITE_TEST_URL : import.meta.env.VITE_PROD_URL

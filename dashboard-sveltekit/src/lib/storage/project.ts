@@ -26,6 +26,11 @@ export async function exportToGithubComments(userId: string, projectId: string):
 
 	const project = await getProjectFromFirebase(projectId);
 
+	if (!project.githubSettings) {
+		console.error('No github settings found for this project');
+		return;
+	}
+
 	const githubSettings = project.githubSettings;
 
 	// TODO: get access token? something like await getGithubAccessToken(instillationId)?
