@@ -21,7 +21,7 @@ export const createTeam = functions.firestore
         .doc(userId);
 
       userRef.update({
-        teams: admin.firestore.FieldValue.arrayUnion(context.params.teamId),
+        teamIds: admin.firestore.FieldValue.arrayUnion(context.params.teamId),
       });
     });
   });
@@ -40,7 +40,7 @@ export const deleteTeam = functions.firestore
         .doc(userId);
 
       userRef.update({
-        teams: admin.firestore.FieldValue.arrayRemove(context.params.teamId),
+        teamIds: admin.firestore.FieldValue.arrayRemove(context.params.teamId),
       });
     });
   });
@@ -66,6 +66,6 @@ export const addUserToTeam = functions.https.onCall(async (data) => {
     .collection(FIREBASE_COLLECTION_USERS)
     .doc(userId);
   await userRef.update({
-    teams: admin.firestore.FieldValue.arrayUnion(teamId),
+    teamIds: admin.firestore.FieldValue.arrayUnion(teamId),
   });
 });

@@ -21,7 +21,7 @@
 				user = bucketUser
 				// Set active team to first team if not set
 				popupStateBucket.get().then(({ activeTeamId: bucketActiveTeamId }) => {
-					setActiveTeam(bucketActiveTeamId ?? bucketUser.teams[0] ?? '')
+					setActiveTeam(bucketActiveTeamId ?? bucketUser.teamIds[0] ?? '')
 				})
 			}
 		})
@@ -76,8 +76,8 @@
 
 			<!-- Project folder navigation -->
 			<ul class="menu p-2 space-y-2">
-				{#if user?.teams}
-					{#each user?.teams as teamId}
+				{#if user?.teamIds}
+					{#each user?.teamIds as teamId}
 						<li>
 							<button
 								class={activeTeamId === teamId ? 'active font-semibold ' : ''}

@@ -3,7 +3,7 @@ export interface User {
   name: string;
   email: string;
   profileImage?: string;
-  teams: string[];
+  teamIds: string[];
 
   // Integrations
   githubAuthId?: string;
