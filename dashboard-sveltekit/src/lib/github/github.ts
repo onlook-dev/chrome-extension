@@ -1,8 +1,10 @@
 import { getProjectFromFirebase } from '$lib/storage/project';
 import { getUserFromFirebase } from '$lib/storage/user';
 import { Octokit } from '@octokit/core';
+import { createAppAuth } from '@octokit/auth-app';
 import { getGithubAuthFromFirebase } from '$lib/storage/github';
 import type { Activity } from '$shared/models/activity';
+import { githubConfig } from '$lib/utils/env';
 
 export async function exportToPRComments(userId: string, projectId: string): Promise<string> {
 	const user = await getUserFromFirebase(userId);
@@ -17,7 +19,6 @@ export async function exportToPRComments(userId: string, projectId: string): Pro
 		return 'export failed: no github auth ID found for this user';
 	}
 
-	// TODO: create cloud function for github auth
 	const { installationId } = await getGithubAuthFromFirebase(user.githubAuthId);
 
 	const project = await getProjectFromFirebase(projectId);
@@ -29,12 +30,9 @@ export async function exportToPRComments(userId: string, projectId: string): Pro
 
 	const githubSettings = project.githubSettings;
 
-	// TODO: get access token - something like await getGithubAccessToken(instillationId)?
-	const githubAccessToken = installationId;
+	const octokit = await getInstallationOctokit(installationId);
 
-	const octokit = new Octokit({ auth: githubAccessToken });
-
-	const branchName = `onlook-${project.name}-${Date.now()}`;
+	const branchName = `onlook-${Date.now()}`;
 
 	const newBranch = await createBranch(
 		octokit,
@@ -147,4 +145,17 @@ export async function createPRWithComments(
 	}
 
 	return pullRequestUrl;
+}
+
+async function getInstallationOctokit(installationId: string) {
+	const installationOctokit = new Octokit({
+		authStrategy: createAppAuth,
+		auth: {
+			appId: githubConfig.appId,
+			privateKey: githubConfig.privateKey,
+			installationId: installationId
+		}
+	});
+
+	return installationOctokit;
 }
