@@ -4,6 +4,8 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	import type { Project } from '$shared/models/project';
+	import type { User } from '$shared/models/user';
+	import type { GithubAuth } from '$shared/models/github';
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
 	import { DashboardRoutes, GITHUB_APP_URL } from '$shared/constants';
@@ -11,10 +13,11 @@
 	import ChevronLeft from '~icons/mdi/chevron-left';
 	import GitHub from '~icons/mdi/github';
 	import { getGithubReposByInstallationId } from '$lib/firebase/functions';
+	import { getGithubAuthFromFirebase } from '$lib/storage/github';
 
 	let project: Project | undefined;
 	let unsubs: any[] = [];
-	$: user = $userStore;
+	let user: User | undefined;
 
 	// Get github account from user
 
@@ -31,13 +34,6 @@
 		{ id: 3, name: 'Angular', description: 'Typescript framework' },
 		{ id: 4, name: 'Vite', description: 'Vue framework' }
 	];
-
-	$: if (user?.github) {
-		console.log('Getting repos with installation: ', user.github.installationId);
-		getGithubReposByInstallationId({ installationId: user.github.installationId }).then((repos) => {
-			console.log(repos);
-		});
-	}
 
 	onMount(async () => {
 		// Get project
@@ -70,6 +66,20 @@
 				unsubs.push(unsubscribe);
 			});
 		}
+
+		userStore.subscribe((newUser) => {
+			user = newUser;
+			if (user && user.githubAuthId) {
+				console.log('Getting github auth from firebase', user.githubAuthId);
+				getGithubAuthFromFirebase(user.githubAuthId).then((auth: GithubAuth) => {
+					console.log('Getting repos with installation: ', auth.installationId);
+
+					getGithubReposByInstallationId({ installationId: auth.installationId }).then((repos) => {
+						console.log(repos);
+					});
+				});
+			}
+		});
 	});
 
 	onDestroy(() => {
@@ -95,7 +105,7 @@
 				<div class="card w-full md:w-2/3 shadow border p-6">
 					<h2 class="text-xl font-semibold mb-3">Import Git Repository</h2>
 
-					{#if user?.github}
+					{#if user?.githubAuthId}
 						<div class="space-y-3">
 							<div class="flex flex-row gap-3">
 								<select class="select select-bordered w-1/3">

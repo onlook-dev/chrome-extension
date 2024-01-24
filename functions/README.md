@@ -46,3 +46,13 @@ Environment variables need to be set for certain functions to use (For example G
 
 To set them in Firebase, you can run `bun run config` which will print out the Firebase commands you need to run to set your env variables.
 Copy and run those to set local Firebase env variables.
+
+# Github Secret Key
+
+To authenticate Github requests on cloud functions, we need to generate a secret key on the Github App. This downloads a `.pem` file that we can base64 decode and add to the `.env` file. For example:
+
+```bash
+base64 -i path/to/key.pem
+```
+
+Then follow the steps above to set the env variable.
