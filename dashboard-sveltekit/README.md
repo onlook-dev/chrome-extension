@@ -11,7 +11,7 @@ bun stripe:listen
 # then copy the stripe webhook secret to .env
 
 # finally run
-bun dev
+bun run dev
 ```
 
 ## Getting Github private keys
