@@ -147,7 +147,26 @@ export async function createPRWithComments(
 	return pullRequestUrl;
 }
 
+export const getReposByInstallation = async (installationId: string) => {
+	const octokit = await getInstallationOctokit(installationId);
+
+	// Get the repositories accessible to the installation
+	console.log('Getting user repositories...');
+
+	// https://docs.github.com/en/rest/apps/installations?apiVersion=2022-11-28#list-repositories-accessible-to-the-app-installation
+	const repos = await octokit.request('GET /installation/repositories', {
+		headers: {
+			'X-GitHub-Api-Version': '2022-11-28'
+		}
+	});
+
+	console.log(repos);
+	return { repos };
+};
+
 async function getInstallationOctokit(installationId: string) {
+	console.log('Getting installation octokit...');
+
 	const installationOctokit = new Octokit({
 		authStrategy: createAppAuth,
 		auth: {
@@ -156,6 +175,8 @@ async function getInstallationOctokit(installationId: string) {
 			installationId: installationId
 		}
 	});
+
+	console.log('Got installation octokit', installationOctokit);
 
 	return installationOctokit;
 }
