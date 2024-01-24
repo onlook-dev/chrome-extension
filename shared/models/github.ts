@@ -5,7 +5,7 @@ export interface GithubAuth {
 
 export interface GithubSettings {
   auth: string;
-  repo: string;
+  repositoryName: string;
   owner: string;
   rootPath: string;
   baseBranch: string;

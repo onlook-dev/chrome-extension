@@ -180,7 +180,7 @@ const setListeners = () => {
 		usersMapBucket.set({ [user.id]: user })
 		// When user added, get teams and add to map if not already there
 		const mappedTeamIds = await teamsMapBucket.getKeys()
-		const teamsNotInMap = user.teams.filter(teamId => !mappedTeamIds.includes(teamId))
+		const teamsNotInMap = user.teamIds.filter(teamId => !mappedTeamIds.includes(teamId))
 
 		// Unsubscribe from previous teams
 		teamSubs.forEach(unsubscribe => unsubscribe())
@@ -272,6 +272,8 @@ const setListeners = () => {
 				eventData: [],
 				creationTime: new Date().toISOString(),
 				selector: visbugStyleChange.selector,
+				// TODO: create onlook tag
+				onlookTag: '',
 				styleChanges: {},
 				visible: true
 			} as Activity

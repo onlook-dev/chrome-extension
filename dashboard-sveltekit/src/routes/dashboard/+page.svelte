@@ -30,14 +30,14 @@
 		userStore.subscribe((storeUser) => {
 			if (!storeUser) return;
 			user = storeUser;
-			activeTeamId = user?.teams[0] ?? '';
+			activeTeamId = user?.teamIds[0] ?? '';
 
 			// Unsubscribe from previous teams
 			unsubs.forEach((unsub: any) => unsub());
 
-			user?.teams.forEach((team) => {
-				subscribeToTeam(team, (firebaseTeam) => {
-					teamsMapStore.update((map) => map.set(team, firebaseTeam));
+			user?.teamIds.forEach((teamId) => {
+				subscribeToTeam(teamId, (firebaseTeam) => {
+					teamsMapStore.update((map) => map.set(teamId, firebaseTeam));
 					if (firebaseTeam.paymentId) {
 						subscribeToPayment(firebaseTeam.paymentId, (payment) => {
 							paymentsMapStore.update((map) => map.set(payment.id, payment));
@@ -81,8 +81,8 @@
 			<!-- Project folder navigation -->
 			<ul class="menu p-2 space-y-2">
 				<!-- TODO: Make responsive with teamsMapStore-->
-				{#if user?.teams}
-					{#each user?.teams as teamId}
+				{#if user?.teamIds}
+					{#each user?.teamIds as teamId}
 						<li>
 							<button
 								class="grid grid-cols-3 items-center w-full"

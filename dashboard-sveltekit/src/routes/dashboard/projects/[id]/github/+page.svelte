@@ -6,6 +6,8 @@
 	import type { Project } from '$shared/models/project';
 	import type { User } from '$shared/models/user';
 	import type { GithubAuth } from '$shared/models/github';
+	import type { User } from '$shared/models/user';
+	import type { GithubAuth } from '$shared/models/github';
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
 	import { DashboardRoutes, GITHUB_APP_URL } from '$shared/constants';
@@ -14,10 +16,24 @@
 	import GitHub from '~icons/mdi/github';
 	import { getGithubReposByInstallationId } from '$lib/firebase/functions';
 	import { getGithubAuthFromFirebase } from '$lib/storage/github';
+	import { getGithubAuthFromFirebase } from '$lib/storage/github';
 
 	let project: Project | undefined;
 	let unsubs: any[] = [];
 	let user: User | undefined;
+
+	$: if (user?.githubAuthId) {
+		getGithubAuthFromFirebase(user.githubAuthId)
+			.then((auth) => {
+				return getGithubReposByInstallationId({ installationId: auth.installationId as string });
+			})
+			.then((repos) => {
+				console.log(repos);
+			})
+			.catch((error) => {
+				console.error('Error fetching GitHub data:', error);
+			});
+	}
 
 	// Get github account from user
 
@@ -80,6 +96,20 @@
 				});
 			}
 		});
+
+		userStore.subscribe((newUser) => {
+			user = newUser;
+			if (user && user.githubAuthId) {
+				console.log('Getting github auth from firebase', user.githubAuthId);
+				getGithubAuthFromFirebase(user.githubAuthId).then((auth: GithubAuth) => {
+					console.log('Getting repos with installation: ', auth.installationId);
+
+					getGithubReposByInstallationId({ installationId: auth.installationId }).then((repos) => {
+						console.log(repos);
+					});
+				});
+			}
+		});
 	});
 
 	onDestroy(() => {
@@ -105,6 +135,7 @@
 				<div class="card w-full md:w-2/3 shadow border p-6">
 					<h2 class="text-xl font-semibold mb-3">Import Git Repository</h2>
 
+					{#if user?.githubAuthId}
 					{#if user?.githubAuthId}
 						<div class="space-y-3">
 							<div class="flex flex-row gap-3">
@@ -136,8 +167,7 @@
 							<button
 								class="btn btn-primary"
 								on:click={() => {
-									// @ts-ignore
-									window.open(`${GITHUB_APP_URL}/installations/new?state=${project.id}`, '_blank');
+									window.open(`${GITHUB_APP_URL}/installations/new?state=${project?.id}`, '_blank');
 								}}><GitHub class="h-5 w-5" />Connect Github Account</button
 							>
 						</div>

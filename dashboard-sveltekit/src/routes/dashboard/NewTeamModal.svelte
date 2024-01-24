@@ -22,7 +22,7 @@
 		teamsMapStore.update((map) => map.set(newTeam.id, newTeam));
 		userStore.update((user) => {
 			if (!user) return user;
-			user.teams.push(newTeam.id);
+			user.teamIds.push(newTeam.id);
 			return user;
 		});
 
