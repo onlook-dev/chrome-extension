@@ -45,7 +45,7 @@ export const deleteTeam = functions.firestore
     });
   });
 
-export const addUserToTeam = functions.https.onCall(async (data, context) => {
+export const addUserToTeam = functions.https.onCall(async (data) => {
   const { userId, teamId, role } = data;
 
   // Update team with user id and role

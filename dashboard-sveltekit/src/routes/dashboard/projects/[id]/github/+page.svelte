@@ -10,6 +10,7 @@
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 	import ChevronLeft from '~icons/mdi/chevron-left';
 	import GitHub from '~icons/mdi/github';
+	import { getGithubReposByInstallationId } from '$lib/firebase/functions';
 
 	let project: Project | undefined;
 	let unsubs: any[] = [];
@@ -30,6 +31,13 @@
 		{ id: 3, name: 'Angular', description: 'Typescript framework' },
 		{ id: 4, name: 'Vite', description: 'Vue framework' }
 	];
+
+	$: if (user?.github) {
+		console.log('Getting repos with installation: ', user.github.installationId);
+		getGithubReposByInstallationId({ installationId: user.github.installationId }).then((repos) => {
+			console.log(repos);
+		});
+	}
 
 	onMount(async () => {
 		// Get project

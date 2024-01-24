@@ -36,3 +36,13 @@ Deploy prod
 firebase use prod
 bun run deploy
 ```
+
+# Setting env variables
+
+Environment variables need to be set for certain functions to use (For example Github secrets).
+
+1. Fill them out from the `.env.example`
+2. Set them in Firebase
+
+To set them in Firebase, you can run `bun run config` which will print out the Firebase commands you need to run to set your env variables.
+Copy and run those to set local Firebase env variables.
