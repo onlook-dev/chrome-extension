@@ -50,7 +50,7 @@ export function setDefaultUser(authUser: FirebaseUser) {
 		name: authUser.displayName ?? authUser.providerData[0].displayName ?? '',
 		email: authUser.email ?? '',
 		profileImage: authUser.photoURL,
-		teams: []
+		teamIds: []
 	} as User;
 	userStore.set(user);
 }

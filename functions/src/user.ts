@@ -37,7 +37,7 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
       name: user.displayName,
       email: user.email,
       profileImage: user.photoURL,
-      teams: [defaultTeam.id],
+      teamIds: [defaultTeam.id],
     });
 });
 
@@ -49,8 +49,8 @@ export const deleteUser = functions.auth.user().onDelete(async (user) => {
   const userData: User = (await userRef.get()).data() as User;
 
   if (userData) {
-    const teams: string[] = userData.teams;
-    teams.forEach(async (teamId) => {
+    const teamIds: string[] = userData.teamIds;
+    teamIds.forEach(async (teamId) => {
       const teamRef = admin
         .firestore()
         .collection(FIREBASE_COLLECTION_TEAMS)
