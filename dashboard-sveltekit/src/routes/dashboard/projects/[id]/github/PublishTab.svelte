@@ -14,7 +14,7 @@
 
 	let isLoading = false;
 	let prLink: string | undefined;
-	let pathFound = false;
+	let pathFound = true;
 
 	onMount(() => {
 		// Check each activities for a path
@@ -34,7 +34,6 @@
 		}
 
 		isLoading = true;
-
 		try {
 			prLink = await exportToPRComments(userId, project?.id);
 		} catch (error) {
@@ -48,19 +47,38 @@
 
 <div class="flex flex-col items-center justify-center h-full mt-4">
 	{#if pathFound}
-		{#if isLoading}
-			<button disabled class="btn btn-outline"> Loading... </button>
-		{:else if prLink}
-			<a href={prLink} target="_blank" class="btn btn-outline">
-				<GitHub class="w-5 h-5" />
-				View changes in Github
-			</a>
-		{:else}
-			<button class="btn btn-outline" on:click={handlePublishClick}>
-				<GitHub class="w-5 h-5" />
-				Publish changes to Github
-			</button>
-		{/if}
+		<label class="form-control w-full max-w-sm">
+			<div class="label">
+				<span class="label-text">Title</span>
+			</div>
+			<input
+				type="text"
+				placeholder="Design QA with onlook.dev"
+				class="input input-bordered w-full text-sm"
+			/>
+			<div class="label">
+				<span class="label-text">Description</span>
+			</div>
+			<textarea
+				class="textarea textarea-bordered h-24"
+				placeholder="Made UI adjustments using the onlook platform"
+			></textarea>
+			<div class="mt-6 ml-auto">
+				{#if isLoading}
+					<button disabled class="btn btn-primary"> Loading... </button>
+				{:else if prLink}
+					<a href={prLink} target="_blank" class="btn btn-primary">
+						<GitHub class="w-5 h-5" />
+						View changes in Github
+					</a>
+				{:else}
+					<button class="btn btn-primary" on:click={handlePublishClick}>
+						<GitHub class="w-5 h-5" />
+						Publish
+					</button>
+				{/if}
+			</div>
+		</label>
 	{:else}
 		<p class="text-md text-center">
 			<b>{new URL(project.hostUrl).host}</b> is not configured with Onlook. <br />Follow

@@ -164,11 +164,10 @@
 			{/each}
 		</div>
 	{/if}
+	<button
+		class="btn btn-link mt-4"
+		on:click={() => {
+			window.open(`${GITHUB_APP_URL}/installations/new?state=${project?.id}`, '_blank');
+		}}>Configure Github Account</button
+	>
 </div>
-
-<button
-	class="btn btn-link mt-4"
-	on:click={() => {
-		window.open(`${GITHUB_APP_URL}/installations/new?state=${project?.id}`, '_blank');
-	}}><GitHub class="h-5 w-5" />Configure Github Account</button
->
