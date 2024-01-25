@@ -272,8 +272,8 @@ const setListeners = () => {
 				eventData: [],
 				creationTime: new Date().toISOString(),
 				selector: visbugStyleChange.selector,
-				// TODO: create onlook tag
-				onlookTag: '',
+				// TODO: save path to file
+				path: '',
 				styleChanges: {},
 				visible: true
 			} as Activity
