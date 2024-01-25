@@ -12,7 +12,6 @@ export interface GithubSettings {
 }
 
 export interface GithubRepo {
-  id: number;
   name: string;
   owner: string;
 }

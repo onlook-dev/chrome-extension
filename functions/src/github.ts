@@ -1,5 +1,5 @@
-import {Octokit} from "@octokit/core";
-import {createAppAuth} from "@octokit/auth-app";
+import { Octokit } from "@octokit/core";
+import { createAppAuth } from "@octokit/auth-app";
 import * as functions from "firebase-functions";
 
 const appId = process.env.GITHUB_APP_ID;
@@ -8,7 +8,6 @@ const privateKey = process.env.GITHUB_PRIVATE_KEY;
 async function getInstallationOctokit(installationId: string) {
   // Decode from base64
   const decodedPrivateKey = Buffer.from(privateKey!, "base64").toString();
-  console.log("Getting installation octokit...");
 
   const installationOctokit = new Octokit({
     authStrategy: createAppAuth,
@@ -23,11 +22,10 @@ async function getInstallationOctokit(installationId: string) {
 }
 
 export const getReposByInstallation = functions.https.onCall(async (data) => {
-  const {installationId} = data;
+  const { installationId } = data;
   const octokit = await getInstallationOctokit(installationId);
 
   // Get the repositories accessible to the installation
-  console.log("Getting user repositories...");
 
   // https://docs.github.com/en/rest/apps/installations?apiVersion=2022-11-28#list-repositories-accessible-to-the-app-installation
   const repos = await octokit.request("GET /installation/repositories", {
@@ -37,5 +35,5 @@ export const getReposByInstallation = functions.https.onCall(async (data) => {
   });
 
   console.log(repos);
-  return {repos};
+  return { repos };
 });

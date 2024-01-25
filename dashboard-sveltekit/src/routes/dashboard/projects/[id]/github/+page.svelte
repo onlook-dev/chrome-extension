@@ -24,6 +24,7 @@
 	let filterTerm = '';
 	let loadingRepos = false;
 
+	let selectedRepo: GithubRepo | undefined;
 	let repositories: GithubRepo[] = [];
 	let filteredRepositories: GithubRepo[] = [];
 
@@ -34,30 +35,15 @@
 		{ id: 4, name: 'Vite', description: 'Vue framework' }
 	];
 
-	$: if (user?.githubAuthId) {
-		loadingRepos = true;
-		getGithubAuthFromFirebase(user.githubAuthId)
-			.then((auth) => {
-				return getReposByInstallation(auth.installationId);
-			})
-			.then(({ repos }) => {
-				repositories = repos;
-				filteredRepositories = repos;
-				loadingRepos = false;
-			})
-			.catch((error) => {
-				console.error('Error fetching GitHub data:', error);
-			});
-	}
-
 	$: if (filterTerm !== '') {
-		filteredRepositories = repositories.filter((repo) => repo.name.includes(filterTerm));
+		filteredRepositories = repositories.filter(
+			(repo) => repo.name.includes(filterTerm) && repo.name !== selectedRepo?.name
+		);
 	} else {
-		filteredRepositories = repositories;
+		filteredRepositories = repositories.filter((repo) => repo.name !== selectedRepo?.name);
 	}
 
 	function connectRepoToProject(repo: any) {
-		console.log(repo);
 		if (!project) return;
 
 		project.githubSettings = {
@@ -67,6 +53,16 @@
 			rootPath: 'src',
 			baseBranch: 'main'
 		} as GithubSettings;
+
+		postProjectToFirebase(project).then(() => {
+			goto(`${DashboardRoutes.PROJECTS}/${project?.id}`);
+		});
+	}
+
+	function disconnectRepoFromProject() {
+		if (!project) return;
+
+		project.githubSettings = undefined;
 
 		postProjectToFirebase(project).then(() => {
 			goto(`${DashboardRoutes.PROJECTS}/${project?.id}`);
@@ -83,6 +79,21 @@
 
 		userStore.subscribe((newUser) => {
 			user = newUser;
+			if (user?.githubAuthId) {
+				loadingRepos = true;
+				getGithubAuthFromFirebase(user.githubAuthId)
+					.then((auth) => {
+						return getReposByInstallation(auth.installationId);
+					})
+					.then(({ repos }) => {
+						repositories = repos;
+						filteredRepositories = repos;
+						loadingRepos = false;
+					})
+					.catch((error) => {
+						console.error('Error fetching GitHub data:', error);
+					});
+			}
 		});
 
 		if ($projectsMapStore.has(projectId)) {
@@ -100,13 +111,20 @@
 
 				for (const userId of userIds) {
 					if (!$usersMapStore.has(userId)) {
-						const user = await getUserFromFirebase(userId);
-						user && usersMapStore.update((map) => map.set(userId, user));
+						const newUser = await getUserFromFirebase(userId);
+						newUser && usersMapStore.update((map) => map.set(userId, newUser));
 					}
 				}
 			}).then((unsubscribe) => {
 				unsubs.push(unsubscribe);
 			});
+		}
+
+		if (project?.githubSettings) {
+			selectedRepo = {
+				name: project.githubSettings.repositoryName,
+				owner: project.githubSettings.owner
+			};
 		}
 	});
 
@@ -145,10 +163,30 @@
 									placeholder="Search for repository"
 								/>
 							</div>
+
+							{#if selectedRepo}
+								<ul class="border divide-y rounded-lg p-2 max-h-96 overflow-auto">
+									<li class="flex justify-between items-center p-4">
+										<div>
+											<p class="text-sm">{selectedRepo.name}</p>
+											<p class="text-xs text-gray-600">{selectedRepo.owner}</p>
+										</div>
+										<button
+											on:click={() => disconnectRepoFromProject()}
+											class="btn btn-outline btn-sm btn-error">Disconnect</button
+										>
+									</li>
+								</ul>
+							{/if}
+
 							<ul class="border divide-y rounded-lg p-2 max-h-96 overflow-auto">
 								{#if loadingRepos}
 									<div class="w-full text-center">
 										<div class="loading h-10"></div>
+									</div>
+								{:else if filteredRepositories.length === 0}
+									<div class="flex flex-col items-center justify-center h-full">
+										<p class="text-gray-500">No repositories found</p>
 									</div>
 								{/if}
 								{#each filteredRepositories as repo}
