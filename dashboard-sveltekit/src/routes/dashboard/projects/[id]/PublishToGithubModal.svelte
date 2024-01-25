@@ -23,7 +23,7 @@
 		CONFIGURE = 'Configure'
 	}
 
-	let selectedTab = Tab.PUBLISH;
+	let selectedTab = Tab.CONFIGURE;
 
 	const modalId = 'publish-modal';
 	let isLoading = false;
@@ -53,13 +53,20 @@
 			auth: user?.githubAuthId,
 			repositoryName: repo.name,
 			owner: repo.owner,
-			rootPath: 'src',
+			rootPath: '.',
 			baseBranch: 'main'
 		} as GithubSettings;
 
 		selectedRepo = repo;
 
 		updateProject(project);
+	}
+
+	function saveSelectedProject() {
+		if (!project) return;
+
+		console.log(project.githubSettings);
+		// updateProject(project);
 	}
 
 	async function disconnectRepoFromProject() {
@@ -218,54 +225,89 @@
 					/>
 					<div role="tabpanel" class="tab-content py-4">
 						<div class="space-y-3">
-							<div class="flex flex-row gap-3">
-								<!-- <select class="select select-bordered w-1/3">
-									<option selected>Kitenite</option>
-								</select> -->
-								<input
-									bind:value={filterTerm}
-									class="input input-bordered w-full"
-									type="text"
-									placeholder="Search for repository"
-								/>
-							</div>
-
 							{#if selectedRepo}
-								<div class="border rounded-lg flex flex-row justify-between items-center p-4">
-									<div>
-										<p class="text-sm">{selectedRepo.name}</p>
-										<p class="text-xs text-gray-600">{selectedRepo.owner}</p>
-									</div>
-									<button
-										on:click={() => disconnectRepoFromProject()}
-										class="btn btn-outline btn-sm btn-error">Disconnect</button
-									>
-								</div>
-							{/if}
-
-							<div class="border py-2 divide-y rounded-lg max-h-64 overflow-auto">
-								{#if loadingRepos}
-									<div class="w-full text-center">
-										<div class="loading h-10"></div>
-									</div>
-								{:else if filteredRepositories.length === 0}
-									<div class="flex items-center justify-center h-full">
-										<p class="text-gray-500">No repositories found</p>
-									</div>
-								{/if}
-								{#each filteredRepositories as repo}
-									<div class="flex flex-row justify-between items-center p-4">
+								<div class="border rounded-lg flex flex-col justify-between p-4 space-y-4">
+									<div class="flex flex-row align-middle">
+										<GitHub class="h-9 w-9 mr-2" />
 										<div>
-											<p class="text-sm">{repo.name}</p>
-											<p class="text-xs text-gray-600">{repo.owner}</p>
+											<p class="text-sm">{selectedRepo.name}</p>
+											<p class="text-xs text-gray-600">{selectedRepo.owner}</p>
 										</div>
+									</div>
+
+									<div class="flex flex-row">
+										<p class="label w-28">Base branch</p>
+										<input
+											class="input input-bordered input-sm"
+											type="text"
+											placeholder="main"
+											value={project?.githubSettings?.baseBranch}
+											on:input={(e) => {
+												if (!project?.githubSettings) return;
+												project.githubSettings.baseBranch = e.target.value;
+											}}
+										/>
+									</div>
+									<div class="flex flex-row">
+										<p class="label w-28">Root directory</p>
+										<input
+											class="input input-bordered input-sm"
+											type="text"
+											placeholder="."
+											value={project?.githubSettings?.rootPath}
+											on:input={(e) => {
+												if (!project?.githubSettings) return;
+												project.githubSettings.rootPath = e.target.value;
+											}}
+										/>
+									</div>
+									<div class="ml-auto mt-4 space-x-2">
+										<button on:click={() => updateProject(project)} class="btn btn-outline btn-sm"
+											>Save</button
+										>
 										<button
-											on:click={() => connectRepoToProject(repo)}
-											class="btn btn-outline btn-sm">Connect</button
+											on:click={() => disconnectRepoFromProject()}
+											class="btn btn-outline btn-sm btn-error">Disconnect</button
 										>
 									</div>
-								{/each}
-							</div>
+								</div>
+							{:else}
+								<div class="flex flex-row gap-3">
+									<!-- <select class="select select-bordered w-1/3">
+									<option selected>Kitenite</option>
+								</select> -->
+									<input
+										bind:value={filterTerm}
+										class="input input-bordered w-full"
+										type="text"
+										placeholder="Search for repository"
+									/>
+								</div>
+								<div class="border py-2 divide-y rounded-lg max-h-80 overflow-auto">
+									{#if loadingRepos}
+										<div class="w-full text-center">
+											<div class="loading h-10"></div>
+										</div>
+									{:else if filteredRepositories.length === 0}
+										<div class="flex items-center justify-center h-full">
+											<p class="text-gray-500">No repositories found</p>
+										</div>
+									{/if}
+
+									{#each filteredRepositories as repo}
+										<div class="flex flex-row justify-between items-center p-4">
+											<div>
+												<p class="text-sm">{repo.name}</p>
+												<p class="text-xs text-gray-600">{repo.owner}</p>
+											</div>
+											<button
+												on:click={() => connectRepoToProject(repo)}
+												class="btn btn-outline btn-sm">Connect</button
+											>
+										</div>
+									{/each}
+								</div>
+							{/if}
 						</div>
 
 						<button
