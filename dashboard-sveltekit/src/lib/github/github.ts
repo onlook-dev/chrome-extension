@@ -203,7 +203,7 @@ async function prepareCommit(
 					{ owner, repo, path: filePath }
 				);
 
-				let content = base64ToUtf8(contentResponse.data.content);
+				let content = atob(contentResponse.data.content);
 				let contentLines = content.split('\n');
 
 				lineNumbers.sort((a, b) => b - a); // Sort line numbers in descending order
@@ -336,20 +336,4 @@ async function getInstallationOctokit(installationId: string) {
 	console.log('Got installation octokit', installationOctokit);
 
 	return installationOctokit;
-}
-
-function utf8ToBase64(str: string): string {
-	return btoa(
-		encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) =>
-			String.fromCharCode(parseInt(p1, 16))
-		)
-	);
-}
-
-function base64ToUtf8(str: string) {
-	return decodeURIComponent(
-		Array.prototype.map
-			.call(atob(str), (c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-			.join('')
-	);
 }
