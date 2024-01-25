@@ -172,8 +172,6 @@ export const getReposByInstallation = async (installationId: string) => {
 };
 
 async function getInstallationOctokit(installationId: string) {
-	console.log('Getting installation octokit...');
-
 	const installationOctokit = new Octokit({
 		authStrategy: createAppAuth,
 		auth: {
@@ -182,8 +180,6 @@ async function getInstallationOctokit(installationId: string) {
 			installationId: installationId
 		}
 	});
-
-	console.log('Got installation octokit', installationOctokit);
 
 	return installationOctokit;
 }

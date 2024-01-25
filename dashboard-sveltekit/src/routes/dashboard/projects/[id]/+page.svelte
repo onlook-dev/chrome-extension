@@ -93,7 +93,7 @@
 						tabindex="0"
 						class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
 					>
-						<li><PublishToGithubModal {project} userId={user?.id} /></li>
+						<li><PublishToGithubModal {project} /></li>
 						<div class="divider">Coming soon</div>
 						<li class="opacity-60"><button disabled><Linear /> Open Linear ticket</button></li>
 						<li class="opacity-60"><button disabled><Jira /> Open Jira ticket</button></li>

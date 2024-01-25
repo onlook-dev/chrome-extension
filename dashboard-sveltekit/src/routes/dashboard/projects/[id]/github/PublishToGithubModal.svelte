@@ -2,18 +2,15 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-
 	import type { Project } from '$shared/models/project';
 	import type { User } from '$shared/models/user';
 	import { DashboardRoutes, GITHUB_APP_URL } from '$shared/constants';
 	import { userStore } from '$lib/utils/store';
 
-	import { exportToPRComments } from '$lib/github/github';
-
 	import GitHub from '~icons/mdi/github';
 	import ConfigureTab from './ConfigureTab.svelte';
+	import PublishTab from './PublishTab.svelte';
 
-	export let userId: string;
 	export let project: Project;
 
 	enum Tab {
@@ -23,8 +20,6 @@
 
 	const modalId = 'publish-modal';
 	let selectedTab = Tab.PUBLISH;
-	let isLoading = false;
-	let prLink: string | undefined;
 	let unsubs: any[] = [];
 	let user: User | undefined;
 
@@ -70,23 +65,6 @@
 			modal.close();
 		}
 	}
-
-	async function handlePublishClick() {
-		if (!project?.githubSettings) {
-			goto(`${DashboardRoutes.PROJECTS}/${project?.id}${DashboardRoutes.GITHUB}`);
-			return;
-		}
-
-		isLoading = true;
-		try {
-			prLink = await exportToPRComments(userId, project?.id);
-		} catch (error) {
-			console.error('Error publishing changes:', error);
-			// TODO: handle error
-		} finally {
-			isLoading = false;
-		}
-	}
 </script>
 
 <div>
@@ -95,7 +73,7 @@
 	>
 	<dialog id={modalId} class="modal">
 		<div class="modal-box card w-full h-[60%] flex flex-col p-6">
-			<h2 class="text-xl font-semibold mb-3">Connect GitHub Repository</h2>
+			<h2 class="text-xl font-semibold mb-3">Publish to Github</h2>
 
 			{#if !user?.githubAuthId}
 				<div class="flex flex-col items-center justify-center h-full mt-4">
@@ -118,21 +96,8 @@
 						bind:group={selectedTab}
 						disabled={!project?.githubSettings}
 					/>
-					<!-- Actions -->
-					<div role="tabpanel" class="tab-content py-4">
-						{#if isLoading}
-							<button disabled class="btn btn-outline"> Loading... </button>
-						{:else if prLink}
-							<a href={prLink} target="_blank" class="btn btn-outline">
-								<GitHub class="w-5 h-5" />
-								View changes in Github
-							</a>
-						{:else}
-							<button class="btn btn-outline" on:click={handlePublishClick}>
-								<GitHub class="w-5 h-5" />
-								Publish changes to Github
-							</button>
-						{/if}
+					<div role="tabpanel" class="tab-content py-4 overflow-auto">
+						<PublishTab {project} userId={user.id} />
 					</div>
 
 					<input
