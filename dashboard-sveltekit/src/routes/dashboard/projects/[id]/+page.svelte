@@ -16,12 +16,10 @@
 	import Comments from './Comments.svelte';
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';
-	import PublishModal from './PublishModal.svelte';
-	import GitHub from '~icons/mdi/github';
 	import Slack from '~icons/devicon/slack';
 	import Jira from '~icons/logos/jira';
 	import Linear from '~icons/logos/linear-icon';
-	import PublishToGithubModal from './PublishToGithubModal.svelte';
+	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
 
 	let project: Project | undefined;
 	let user: User | null;
@@ -88,7 +86,7 @@
 
 			<div class="navbar-end space-x-2">
 				<ShareModal teamId={project.teamId} />
-				<div class="dropdown dropdown-end border">
+				<div class="dropdown dropdown-end">
 					<button tabindex="0" class="btn btn-primary">Publish</button>
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 					<ul
@@ -102,7 +100,6 @@
 						<li class="opacity-60"><button disabled><Slack /> Create Slack thread</button></li>
 					</ul>
 				</div>
-				<!-- <PublishModal {project} userId={user.id} /> -->
 			</div>
 		</div>
 		<!-- Main content -->
