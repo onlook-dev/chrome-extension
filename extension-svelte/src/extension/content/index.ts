@@ -1,5 +1,5 @@
 import { DASHBOARD_AUTH, STYLE_CHANGE } from '$shared/constants'
-import { authUserBucket, getActiveProject } from '$lib/utils/localstorage'
+import { authUserBucket, getActiveProject, projectsMapBucket } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
 	activityInspectStream,
@@ -10,6 +10,7 @@ import {
 import type { Activity } from '$shared/models/activity'
 import type { VisbugStyleChange } from '$shared/models/visbug'
 import { baseUrl } from '$lib/utils/env'
+
 function simulateEventOnSelector(
 	selector: string,
 	event: string,
@@ -34,14 +35,19 @@ function simulateEventOnSelector(
 	}
 }
 
-function applyActivityChanges(activity: Activity) {
+function applyActivityChanges(activity: Activity): boolean {
 	const element = document.querySelector(activity.selector) as any
 	if (element) {
 		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
 			// Apply style to element
 			element.style[style] = changeObject.newVal
 		})
+		if (activity.path !== element.dataset.onlookId) {
+			activity.path = element.dataset.onlookId
+			return true
+		}
 	}
+	return false
 }
 
 function revertActivityChanges(activity: Activity) {
@@ -90,10 +96,20 @@ export function setupListeners() {
 		const activeProject = await getActiveProject()
 		if (!activeProject) return
 
+		let shouldSaveProject = false
+
 		// Get each activity and their style change
 		Object.values(activeProject.activities).forEach(activity => {
-			applyActivityChanges(activity)
+			let activityMutated = applyActivityChanges(activity)
+			if (activityMutated) {
+				activeProject.activities[activity.id] = activity
+				shouldSaveProject = true
+			}
 		})
+
+		if (shouldSaveProject) {
+			projectsMapBucket.set({ [activeProject.id]: activeProject })
+		}
 	})
 }
 

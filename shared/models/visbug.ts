@@ -3,4 +3,5 @@ export interface VisbugStyleChange {
   styleType: string;
   newVal: Record<string, string>;
   oldVal: Record<string, string>;
+  path?: string;
 }

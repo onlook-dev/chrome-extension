@@ -277,7 +277,7 @@ const setListeners = () => {
 				createdAt: new Date().toISOString(),
 				selector: visbugStyleChange.selector,
 				// TODO: save path to file
-				path: '',
+				path: visbugStyleChange.path,
 				styleChanges: {},
 				visible: true
 			} as Activity

@@ -148,9 +148,13 @@
 			</ItemHeader>
 
 			<!-- Item body -->
-			<div class="mb-2 w-full text-start">
+			<div class="mb-2 w-full text-start flex flex-col">
 				Element:
 				<span class="text-orange-600 bg-gray-100 p-0.5 rounded border">{activity.selector}</span>
+				{#if activity.path}
+					Path: <span class="text-orange-600 bg-gray-100 p-0.5 rounded border">{activity.path}</span
+					>
+				{/if}
 			</div>
 
 			{#if getEventDataByType(activity.eventData, EventMetadataType.SOURCE_MAP_ID)}
