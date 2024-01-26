@@ -24,7 +24,7 @@
 	</div>
 {/if}
 <div class="divide-y flex flex-col w-full">
-	<h1 class="m-2 font-semibold">Acitivities</h1>
+	<h1 class="m-2 font-semibold">Activities</h1>
 	{#each activities as activity}
 		<!-- TODO: Add helper -->
 		{#if Object.keys(activity.styleChanges).length > 0}
