@@ -42,7 +42,8 @@ function setDefaultUser(authUser: FirebaseUser) {
 		name: authUser.displayName ?? authUser.providerData[0].displayName ?? '',
 		email: authUser.email ?? '',
 		profileImage: authUser.photoURL ?? '',
-		teamIds: []
+		teamIds: [],
+		createdAt: new Date().toISOString()
 	}
 	userBucket.set({ user })
 }

@@ -4,6 +4,7 @@ export interface User {
   email: string;
   profileImage?: string;
   teamIds: string[];
+  createdAt: string;
 
   // Integrations
   githubAuthId?: string;

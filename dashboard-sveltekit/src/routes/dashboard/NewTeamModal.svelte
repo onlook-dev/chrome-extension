@@ -16,7 +16,8 @@
 			name: teamName,
 			tier: plan,
 			users: { [$userStore.id]: Role.ADMIN },
-			projectIds: []
+			projectIds: [],
+			createdAt: new Date().toISOString()
 		};
 
 		teamsMapStore.update((map) => map.set(newTeam.id, newTeam));
