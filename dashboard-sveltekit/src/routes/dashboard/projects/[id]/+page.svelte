@@ -6,16 +6,20 @@
 	import type { Project } from '$shared/models/project';
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
-	import { DashboardRoutes, MAX_PROJECT_NAME_LENGTH } from '$shared/constants';
+	import { DashboardRoutes, MAX_TITLE_LENGTH } from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
+
+	import { truncateString } from '$shared/helpers';
+	import type { User } from '$shared/models/user';
+	import { auth } from '$lib/firebase/firebase';
 
 	import Comments from './Comments.svelte';
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';
-	import PublishModal from './PublishModal.svelte';
-	import { truncateString } from '$shared/helpers';
-	import type { User } from '$shared/models/user';
-	import { auth } from '$lib/firebase/firebase';
+	import Slack from '~icons/devicon/slack';
+	import Jira from '~icons/logos/jira';
+	import Linear from '~icons/logos/linear-icon';
+	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
 
 	let project: Project | undefined;
 	let user: User | null;
@@ -76,13 +80,26 @@
 				<a class="btn btn-ghost text-sm" href={DashboardRoutes.DASHBOARD}>Onlook</a>
 				<p class="text-sm mr-4">/</p>
 				<p class="truncate">
-					{truncateString(project?.name || 'Dashboard', MAX_PROJECT_NAME_LENGTH)}
+					{truncateString(project?.name || 'Dashboard', MAX_TITLE_LENGTH)}
 				</p>
 			</div>
 
 			<div class="navbar-end space-x-2">
 				<ShareModal teamId={project.teamId} />
-				<PublishModal {project} userId={user.id} />
+				<div class="dropdown dropdown-end">
+					<button tabindex="0" class="btn btn-primary">Publish</button>
+					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+					<ul
+						tabindex="0"
+						class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+					>
+						<li><PublishToGithubModal {project} /></li>
+						<div class="divider">Coming soon</div>
+						<li class="opacity-60"><button disabled><Linear /> Open Linear ticket</button></li>
+						<li class="opacity-60"><button disabled><Jira /> Open Jira ticket</button></li>
+						<li class="opacity-60"><button disabled><Slack /> Create Slack thread</button></li>
+					</ul>
+				</div>
 			</div>
 		</div>
 		<!-- Main content -->

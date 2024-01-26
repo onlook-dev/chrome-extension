@@ -59,8 +59,7 @@ export default defineManifest(async env => ({
 			}
 		}
 	},
-	// Old 0.engineering key
-	// key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv18eK1MhBgVx6W0HGq+OtRHZQl9AiiAcddgTqfXUSFw8XSVCCvfvlbUk4zccEmk/FIXHYiE4Zq31RqMwzJXSdM49jAvQgqRftAvSfSZ25qrmfAicQmotN48fKu7C50zLMNytyYZtVVpdZJTfmONVTtbQ+N3g3XregUlbrjb9ywH/UsP4wdw5iWqyYigpJM3BjU2u304c3tkxJjb5pdbtCdT1O6oYLfuTNLzcnRVVQOdb2/LwGLac6ZgNof5xkNrmdldAU/a5Q+2pfgv4f5VaR9Qny/cJIgj+f3nzn2OqtRVWp3ujBDfxZWFCtdKio66ADRgJ3m/UushMo1LThtnRcQIDAQAB',
+	key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0ZbbiZr79FXRJD9Z+jGZsskQstsnkpMHy2yh0HO/udWPFWx/RMjztm/5WQ5p1rIKdBPPZ+xx0WmBZte8OGJ+Ls8MWXo9oUIsKFfxeD8eFNEpaFNKZ6hCvck761/ZXaMN4kCsnwzadR6dTcEoyuPgdUjsrMzDOdCgBgornITel+YfgML6rJb0dBjoTiI1SHGXt5jhO18hjFI9knNtTt2zrQK773YV3fWFKkqCWwWSSlmc0vsivKVgSAie6olRNmV4UyfO7iosFDyA2Q4UoTgMovrwy233OXPi2H24VVXqRYF8wNn1VnakoQWdp+n8zcju+iyPdvjM1w40uv8Hvxnb9wIDAQAB',
 	host_permissions: ['<all_urls>'],
 	permissions: [
 		'tabs',

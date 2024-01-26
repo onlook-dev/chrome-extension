@@ -14,7 +14,9 @@
 	let clickActivity = (activity: Activity) => {};
 
 	$: activities = Object.values(project.activities).sort(
-		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
+		(a, b) =>
+			new Date(a.creationTime ?? a.createdAt).getTime() -
+			new Date(b.creationTime ?? b.createdAt).getTime()
 	);
 </script>
 
@@ -24,7 +26,7 @@
 	</div>
 {/if}
 <div class="divide-y flex flex-col w-full">
-	<h1 class="m-2 font-semibold">Acitivities</h1>
+	<h1 class="m-2 font-semibold">Activities</h1>
 	{#each activities as activity}
 		<!-- TODO: Add helper -->
 		{#if Object.keys(activity.styleChanges).length > 0}
@@ -41,7 +43,7 @@
 				<ItemHeader
 					profileImageUrl={$usersMapStore.get(activity.userId)?.profileImage}
 					userName={$usersMapStore.get(activity.userId)?.name}
-					creationTime={activity.creationTime}
+					createdAt={activity.creationTime ?? activity.createdAt}
 				/>
 
 				<!-- Item body -->

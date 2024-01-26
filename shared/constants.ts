@@ -7,7 +7,8 @@ export const FIREBASE_COLLECTION_PAYMENTS = "payments";
 export const FIREBASE_COLLECTION_GITHUB = "github";
 
 // Settings
-export const MAX_PROJECT_NAME_LENGTH = 50;
+export const MAX_TITLE_LENGTH = 50;
+export const MAX_DESCRIPTION_LENGTH = 250;
 
 // Messaging
 export const DASHBOARD_AUTH = "DASHBOARD_AUTH";

@@ -18,4 +18,5 @@ export interface Team {
   users: Record<string, Role>;
   projectIds: string[];
   paymentId?: string;
+  createdAt: string;
 }

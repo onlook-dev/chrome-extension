@@ -12,15 +12,24 @@ export interface GithubSettings {
 }
 
 export interface GithubRepo {
-  id: number;
   name: string;
   owner: string;
 }
 
 export interface TreeItem {
-	path: string;
-	mode: '100644' | '100755' | '040000' | '160000' | '120000';
-	type: 'blob' | 'tree' | 'commit';
-	content?: string;
-	sha?: string | null;
-};
+  path: string;
+  mode: "100644" | "100755" | "040000" | "160000" | "120000";
+  type: "blob" | "tree" | "commit";
+  content?: string;
+  sha?: string | null;
+}
+
+export interface GithubPublish {
+  id: string;
+  title: string;
+  description: string;
+  userId: string;
+  projectId: string;
+  createdAt: string;
+  pullRequestUrl: string;
+}

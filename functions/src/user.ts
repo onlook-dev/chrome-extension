@@ -6,8 +6,8 @@ import {
   FIREBASE_COLLECTION_USERS,
   FIREBASE_COLLECTION_TEAMS,
 } from "../../shared/constants";
-import {Team, Role} from "../../shared/models/team";
-import type {User} from "../../shared/models/user";
+import { Team, Role } from "../../shared/models/team";
+import type { User } from "../../shared/models/user";
 
 export const createUser = functions.auth.user().onCreate(async (user) => {
   const defaultTeam = {
@@ -18,6 +18,7 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
       [user.uid]: Role.ADMIN,
     },
     projectIds: [],
+    createdAt: new Date().toISOString(),
   } as Team;
 
   // Create default team

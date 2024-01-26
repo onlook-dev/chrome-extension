@@ -78,7 +78,7 @@
 <!-- TODO: Add back this flow then ready for emails https://github.com/onlook-dev/monorepo/blob/013814645ceddd3a0d7ccc2140561050c826884d/dashboard-sveltekit/src/routes/dashboard/projects/%5Bid%5D/ShareModal.svelte -->
 
 <dialog id={modalId} class="modal">
-	<div class="modal-box w-4/12">
+	<div class="modal-box w-2/3 min-w-96">
 		<h3 class="font-bold text-lg">Share project</h3>
 
 		<div class="flex flex-row space-x-2">

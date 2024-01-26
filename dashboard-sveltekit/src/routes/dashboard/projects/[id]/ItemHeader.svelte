@@ -4,7 +4,7 @@
 
 	export let profileImageUrl = '';
 	export let userName = '';
-	export let creationTime: string = '';
+	export let createdAt: string;
 </script>
 
 <div class="flex flex-row items-center pb-4 w-full">
@@ -15,7 +15,7 @@
 	</div>
 	<div class="px-2">{userName}</div>
 	<div class="text-xs text-gray-500">
-		{timeSince(new Date(creationTime))}
+		{timeSince(new Date(createdAt))}
 	</div>
 	<div class="ml-auto">
 		<button class="btn btn-square btn-ghost"> <Dots /> </button>

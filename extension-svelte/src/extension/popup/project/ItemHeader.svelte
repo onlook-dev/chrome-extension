@@ -4,7 +4,7 @@
 
 	export let profileImageUrl: string = ''
 	export let userName: string = ''
-	export let creationTime: string = ''
+	export let createdAt: string
 
 	onMount(async () => {})
 </script>
@@ -17,7 +17,7 @@
 	</div>
 	<div class="px-2">{userName}</div>
 	<div class="text-xs text-gray-500">
-		{timeSince(new Date(creationTime))}
+		{timeSince(new Date(createdAt))}
 	</div>
 	<div class="ml-auto">
 		<slot />
