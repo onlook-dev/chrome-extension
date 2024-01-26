@@ -14,16 +14,20 @@ import {
 	activityApplyStream,
 	sendActivityApply
 } from '$lib/utils/messaging'
-import { toggleIn } from '$lib/visbug/visbug'
+import { toggleProjectTab } from '$lib/visbug/visbug'
 import {
 	authUserBucket,
 	getActiveProject,
 	getActiveUser,
+	InjectState,
 	projectsMapBucket,
 	teamsMapBucket,
 	userBucket,
 	usersMapBucket,
-	visbugStateBucket
+	tabsMapBucket,
+	type VisbugState,
+	saveTabState,
+	getTabState
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 
@@ -43,17 +47,16 @@ let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
 let userSubs: (() => void)[] = []
 
-const setDefaultState = () => {
-	visbugStateBucket.set({
-		loadedTabs: {},
-		injectedTabs: {},
-		injectedProjects: {}
-	})
+function setDefaultMaps() {
+	teamsMapBucket.set({})
+	projectsMapBucket.set({})
+	usersMapBucket.set({})
+	tabsMapBucket.set({})
 }
 
-const makeProjectTabActive = (tab: chrome.tabs.Tab, project: Project) => {
+const updateTabActiveState = (tab: chrome.tabs.Tab, project: Project, enable: boolean) => {
 	updateProjectTabHostWithDebounce(tab)
-	toggleIn(tab.id as number, project.id)
+	toggleProjectTab(tab.id as number, project.id, enable)
 
 	// Forward message
 	chrome.tabs.sendMessage(tab.id as number, {
@@ -72,20 +75,23 @@ const makeProjectTabActive = (tab: chrome.tabs.Tab, project: Project) => {
 function forwardToActiveProjectTab(detail: any, callback: any) {
 	chrome.tabs.query({ active: true, currentWindow: true }, async tabs => {
 		// If tab is not active, don't send message
-		if (!tabs[0]) return
+		const activeTab = tabs[0]
+		if (!activeTab) return
 		const project = await getActiveProject()
 
 		// If active tab is not project tab
-		if (!sameTabHost(tabs[0].url ?? '', project.hostUrl)) return
+		if (!sameTabHost(activeTab.url ?? '', project.hostUrl)) return
 
-		const visbugState = await visbugStateBucket.get()
+		let tabState: VisbugState = await getTabState(activeTab.id as number)
+
 		// If tab is not injected, inject it
-		if (!visbugState.injectedTabs[tabs[0].id as number]) {
-			toggleIn(tabs[0].id as number, project.id)
+		if (tabState.state !== InjectState.injected) {
+			toggleProjectTab(activeTab.id as number, project.id, true)
 		}
 
+		// Forward to callback
 		callback(detail, {
-			tabId: tabs[0].id
+			tabId: activeTab.id
 		})
 	})
 }
@@ -93,16 +99,7 @@ function forwardToActiveProjectTab(detail: any, callback: any) {
 const setListeners = () => {
 	// Refresh tabs on update
 	chrome.runtime.onInstalled.addListener(async () => {
-		visbugStateBucket.get().then(visbugState => {
-			if (!visbugState) {
-				visbugStateBucket.set({
-					loadedTabs: {},
-					injectedTabs: {},
-					injectedProjects: {}
-				})
-			}
-		})
-
+		setDefaultMaps()
 		for (const cs of chrome.runtime.getManifest().content_scripts ?? []) {
 			for (const tab of await chrome.tabs.query({ url: cs.matches })) {
 				chrome.scripting.executeScript({
@@ -117,13 +114,10 @@ const setListeners = () => {
 		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
 			// Remove tab info from state when it's refreshed
 			if (changeInfo.status === 'complete') {
-				const visbugState = await visbugStateBucket.get()
-				visbugState.loadedTabs[tabId] = false
-				visbugState.injectedTabs[tabId] = false
-				const activeProject = await getActiveProject()
-				if (activeProject) visbugState.injectedProjects[activeProject.id] = false
-
-				visbugStateBucket.set(visbugState)
+				saveTabState(tabId, {
+					projectId: '',
+					state: InjectState.none
+				})
 			}
 		}
 	)
@@ -153,7 +147,7 @@ const setListeners = () => {
 	})
 
 	// Start editing request from popip
-	editProjectRequestStream.subscribe(([project]) => {
+	editProjectRequestStream.subscribe(([{ project, enable }]) => {
 		// Get tab if same host using pattern matching
 		const searchUrl = new URL(project.hostUrl).origin + '/*'
 
@@ -161,15 +155,15 @@ const setListeners = () => {
 			// Check if tab with same url exists
 			if (tabs?.length) {
 				// Make sure tab is active
-				chrome.tabs.update(tabs[0].id as number, { active: true })
-				makeProjectTabActive(tabs[0], project)
+				if (enable) chrome.tabs.update(tabs[0].id as number, { active: true })
+				updateTabActiveState(tabs[0], project, enable)
 			} else {
 				chrome.tabs
 					.create({
 						url: project.hostUrl
 					})
-					.then(tab => {
-						makeProjectTabActive(tab, project)
+					.then((tab: chrome.tabs.Tab) => {
+						updateTabActiveState(tab, project, enable)
 					})
 			}
 		})
@@ -315,7 +309,6 @@ const setListeners = () => {
 }
 
 try {
-	setDefaultState()
 	setListeners()
 	console.log('Background script loaded!')
 } catch (error) {

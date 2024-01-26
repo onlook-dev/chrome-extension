@@ -1,7 +1,7 @@
 {
 	"name": "onlook.dev",
 	"description": "Inspect, test, and edit any web app or website online.",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"type": "module",
 	"scripts": {
 		"dev": "NODE_ENV=development vite build --watch",

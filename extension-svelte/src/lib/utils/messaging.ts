@@ -51,16 +51,19 @@ export interface ActivityInspectDetail {
 	scrollToElement: boolean
 }
 
+export interface EditProjectRequest {
+	project: Project
+	enable: boolean
+}
+
 // Messages
 export const [sendAuthRequest, authRequestStream] = getExtendedMessages<void>(
 	'REQUEST_AUTH',
 	MessageReceiver.BACKGROUND
 )
 
-export const [sendEditProjectRequest, editProjectRequestStream] = getExtendedMessages<Project>(
-	'REQUEST_EDIT_PROJECT',
-	MessageReceiver.BACKGROUND
-)
+export const [sendEditProjectRequest, editProjectRequestStream] =
+	getExtendedMessages<EditProjectRequest>('REQUEST_EDIT_PROJECT', MessageReceiver.BACKGROUND)
 
 export const [sendStyleChange, styleChangeStream] = getExtendedMessages<VisbugStyleChange>(
 	'STYLE_CHANGE',

@@ -2,7 +2,12 @@
 	import { onMount } from 'svelte'
 
 	import type { Project } from '$shared/models/project'
-	import { popupStateBucket, getActiveProject, visbugStateBucket } from '$lib/utils/localstorage'
+	import {
+		popupStateBucket,
+		getActiveProject,
+		tabsMapBucket,
+		type VisbugState
+	} from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { sendEditProjectRequest } from '$lib/utils/messaging'
 
@@ -28,6 +33,7 @@
 	}
 
 	function returnToDashboard() {
+		project && sendEditProjectRequest({ project, enable: false })
 		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
 	}
 
@@ -35,15 +41,14 @@
 		// Get active team's projects
 		project = await getActiveProject()
 
-		visbugStateBucket.valueStream.subscribe(({ injectedProjects }) => {
-			if (!project || !injectedProjects) return
-			projectInjected =
-				Object.keys(injectedProjects).includes(project.id) && injectedProjects[project?.id]
+		tabsMapBucket.valueStream.subscribe(visbugMap => {
+			let tabStates: VisbugState[] = Object.values(visbugMap)
+			projectInjected = tabStates.some(tabState => tabState.projectId === project?.id)
 		})
 	})
 
 	function toggleEditing() {
-		project && sendEditProjectRequest(project)
+		project && sendEditProjectRequest({ project, enable: !projectInjected })
 	}
 </script>
 
