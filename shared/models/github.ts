@@ -26,6 +26,8 @@ export interface TreeItem {
 
 export interface GithubPublish {
   id: string;
+  title: string;
+  description: string;
   userId: string;
   projectId: string;
   createdAt: string;

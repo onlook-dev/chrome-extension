@@ -10,7 +10,7 @@
 	} from '$lib/utils/localstorage'
 	import type { Project } from '$shared/models/project'
 	import type { HostData } from '$shared/models/hostData'
-	import { MAX_PROJECT_NAME_LENGTH } from '$shared/constants'
+	import { MAX_TITLE_LENGTH } from '$shared/constants'
 
 	import { nanoid } from 'nanoid'
 	import validUrl from 'valid-url'
@@ -31,8 +31,8 @@
 		})
 	})
 
-	$: if (projectName.length > MAX_PROJECT_NAME_LENGTH) {
-		projectName = projectName.slice(0, MAX_PROJECT_NAME_LENGTH)
+	$: if (projectName.length > MAX_TITLE_LENGTH) {
+		projectName = projectName.slice(0, MAX_TITLE_LENGTH)
 	}
 
 	function returnToDashboard() {
@@ -40,8 +40,7 @@
 	}
 
 	async function createProject() {
-		nameError =
-			!projectName || projectName.length === 0 || projectName.length > MAX_PROJECT_NAME_LENGTH
+		nameError = !projectName || projectName.length === 0 || projectName.length > MAX_TITLE_LENGTH
 		urlError = validUrl.isWebUri(projectUrl) === undefined
 
 		if (nameError || urlError) {
@@ -59,7 +58,9 @@
 			hostUrl: projectUrl,
 			activities: {},
 			comments: [],
-			hostData: {} as HostData
+			hostData: {} as HostData,
+			createdAt: new Date().toISOString(),
+			githubHistory: []
 		} as Project
 
 		// Add project to team
@@ -94,7 +95,7 @@
 				type="text"
 				placeholder="My project"
 				class="input input-bordered w-full {nameError && 'input-error'}"
-				maxlength={MAX_PROJECT_NAME_LENGTH}
+				maxlength={MAX_TITLE_LENGTH}
 			/>
 
 			{#if nameError}

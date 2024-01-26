@@ -17,7 +17,7 @@ export async function exportToPRComments(userId: string, projectId: string): Pro
 
 	if (!user.githubAuthId) {
 		console.error('No github auth ID found for this user');
-		return 'export failed: no github auth ID found for this user';
+		throw 'export failed: no github auth ID found for this user';
 	}
 
 	const { installationId } = await getGithubAuthFromFirebase(user.githubAuthId);
@@ -26,7 +26,7 @@ export async function exportToPRComments(userId: string, projectId: string): Pro
 
 	if (!project.githubSettings) {
 		console.error('No github settings found for this project');
-		return 'export failed: no github settings found for this project';
+		throw 'Export failed: No github settings found for this project';
 	}
 
 	const githubSettings = project.githubSettings;
@@ -45,7 +45,7 @@ export async function exportToPRComments(userId: string, projectId: string): Pro
 
 	if (!newBranch) {
 		console.error('Failed to create a new branch');
-		return 'export failed: failed to create a new branch';
+		throw 'Export failed: Failed to create a new branch';
 	}
 
 	console.log('created new branch: ', branchName);
@@ -203,8 +203,8 @@ async function prepareCommit(
 					{ owner, repo, path: filePath }
 				);
 
-				let content = atob(contentResponse.data.content);
-				let contentLines = content.split('\n');
+				const content = atob(contentResponse.data.content);
+				const contentLines = content.split('\n');
 
 				lineNumbers.sort((a, b) => b - a); // Sort line numbers in descending order
 

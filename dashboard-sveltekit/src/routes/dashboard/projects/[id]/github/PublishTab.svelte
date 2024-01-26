@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
 	import { exportToPRComments } from '$lib/github/github';
-	import { DashboardRoutes } from '$shared/constants';
-	import type { Project } from '$shared/models/project';
+	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import { MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
 
-	import SvelteCodeblock from './SvelteCodeblock.svelte';
-	import NextjsCodeblock from './NextjsCodeblock.svelte';
+	import type { Project } from '$shared/models/project';
+	import type { GithubPublish } from '$shared/models/github';
+	import { postProjectToFirebase } from '$lib/storage/project';
+	import { projectsMapStore } from '$lib/utils/store';
+
+	import OpenLink from '~icons/gridicons/external';
 	import GitHub from '~icons/mdi/github';
 
 	export let project: Project;
@@ -15,6 +18,11 @@
 	let isLoading = false;
 	let prLink: string | undefined;
 	let pathFound = true;
+
+	let titlePlaceholder = 'Design QA with onlook.dev';
+	let descriptionPlaceholder = 'Made UI adjustments using the onlook platform';
+	let title = '';
+	let description = '';
 
 	onMount(() => {
 		// Check each activities for a path
@@ -28,95 +36,101 @@
 	});
 
 	async function handlePublishClick() {
-		if (!project?.githubSettings) {
-			goto(`${DashboardRoutes.PROJECTS}/${project?.id}${DashboardRoutes.GITHUB}`);
-			return;
-		}
-
+		title = title || titlePlaceholder;
+		description = description || descriptionPlaceholder;
 		isLoading = true;
 		try {
 			prLink = await exportToPRComments(userId, project?.id);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
-			// TODO: handle error
+			alert(`Error publishing changes. ${error}`);
 		} finally {
 			isLoading = false;
+			if (!prLink) {
+				return;
+			}
+
+			// Add to history
+			project.githubHistory = [
+				...(project.githubHistory || []),
+				{
+					title,
+					description,
+					createdAt: new Date().toISOString(),
+					userId,
+					projectId: project.id,
+					pullRequestUrl: prLink
+				} as GithubPublish
+			];
+
+			// Save project
+			postProjectToFirebase(project);
+			projectsMapStore.update((projectsMap) => {
+				projectsMap.set(project.id, project);
+				return projectsMap;
+			});
 		}
 	}
 </script>
 
 <div class="flex flex-col items-center justify-center h-full mt-4">
 	{#if pathFound}
-		<label class="form-control w-full max-w-sm">
+		<label class="form-control w-full p-2">
 			<div class="label">
 				<span class="label-text">Title</span>
 			</div>
 			<input
+				disabled={isLoading}
+				bind:value={title}
 				type="text"
-				placeholder="Design QA with onlook.dev"
+				placeholder={titlePlaceholder}
 				class="input input-bordered w-full text-sm"
+				maxlength={MAX_TITLE_LENGTH}
 			/>
 			<div class="label">
 				<span class="label-text">Description</span>
 			</div>
 			<textarea
+				disabled={isLoading}
+				bind:value={description}
 				class="textarea textarea-bordered h-24"
-				placeholder="Made UI adjustments using the onlook platform"
+				placeholder={descriptionPlaceholder}
+				maxlength={MAX_DESCRIPTION_LENGTH}
 			></textarea>
 			<div class="mt-6 ml-auto">
-				{#if isLoading}
-					<button disabled class="btn btn-primary"> Loading... </button>
-				{:else if prLink}
-					<a href={prLink} target="_blank" class="btn btn-primary">
-						<GitHub class="w-5 h-5" />
-						View changes in Github
-					</a>
-				{:else}
-					<button class="btn btn-primary" on:click={handlePublishClick}>
-						<GitHub class="w-5 h-5" />
-						Publish
-					</button>
-				{/if}
+				<button class="btn btn-primary" on:click={handlePublishClick}>
+					{#if isLoading}
+						<div class="loading"></div>
+						Publishing
+					{:else}
+						<GitHub class="w-5 h-5" /> Publish
+					{/if}
+				</button>
 			</div>
 		</label>
-	{:else}
-		<p class="text-md text-center">
-			<b>{new URL(project.hostUrl).host}</b> is not configured with Onlook. <br />Follow
-			instructions below.
-		</p>
 
-		<div class="text-start max-w-[100%] space-y-4 my-4">
-			<div>
-				<p class="mt-3 font-semibold">1. Install the onlook library:</p>
-				<div role="tablist" class="tabs tabs-bordered">
-					<input
-						type="radio"
-						name="my_tabs_2"
-						role="tab"
-						class="tab"
-						aria-label="Next.js"
-						checked
-					/>
-					<div role="tabpanel" class="tab-content bg-base-100 rounded-box py-4 overflow-auto">
-						<NextjsCodeblock />
-					</div>
-					<input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Svelte" />
-					<div role="tabpanel" class="tab-content bg-base-100 rounded-box py-4 overflow-auto">
-						<SvelteCodeblock />
-					</div>
+		{#if project.githubHistory && project.githubHistory.length > 0}
+			<div class="collapse collapse-arrow border rounded-md mt-6">
+				<input type="checkbox" />
+				<div class="collapse-title">Publish history ({project.githubHistory.length})</div>
+				<div class="collapse-content space-y-2">
+					{#each project.githubHistory as githubPublish}
+						<div class="flex flex-row max-w-[100%]">
+							<p class="line-clamp-1 text-ellipsis max-w-[70%]">
+								{githubPublish.title}
+							</p>
+							<a
+								class="link font-semibold ml-auto"
+								href={githubPublish.pullRequestUrl}
+								target="_blank"
+								>Pull request <OpenLink class="inline-block w-4 h-4" />
+							</a>
+						</div>
+					{/each}
 				</div>
-				<p class="">This will add a secure onlook identifier in your app.</p>
 			</div>
-
-			<div>
-				<p class="font-semibold py-2">2. Publish project:</p>
-				<p class="">Run your project in localhost or publish it again.</p>
-			</div>
-			<div>
-				<p class="font-semibold py-2">3. Sync your project:</p>
-				<p class="">Open project in Chrome extension and press sync.</p>
-				<p class="">Example.jpg</p>
-			</div>
-		</div>
+		{/if}
+	{:else}
+		<ConfigureProjectInstructions {project} />
 	{/if}
 </div>

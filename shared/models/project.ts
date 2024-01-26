@@ -12,6 +12,7 @@ export interface Project {
   hostData: HostData;
   comments: Comment[];
   activities: Record<string, Activity>;
+  createdAt?: string;
 
   // Integrations
   githubSettings?: GithubSettings;

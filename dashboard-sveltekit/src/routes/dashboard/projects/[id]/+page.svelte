@@ -6,7 +6,7 @@
 	import type { Project } from '$shared/models/project';
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
-	import { DashboardRoutes, MAX_PROJECT_NAME_LENGTH } from '$shared/constants';
+	import { DashboardRoutes, MAX_TITLE_LENGTH } from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 
 	import { truncateString } from '$shared/helpers';
@@ -80,7 +80,7 @@
 				<a class="btn btn-ghost text-sm" href={DashboardRoutes.DASHBOARD}>Onlook</a>
 				<p class="text-sm mr-4">/</p>
 				<p class="truncate">
-					{truncateString(project?.name || 'Dashboard', MAX_PROJECT_NAME_LENGTH)}
+					{truncateString(project?.name || 'Dashboard', MAX_TITLE_LENGTH)}
 				</p>
 			</div>
 
