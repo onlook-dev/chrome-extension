@@ -93,6 +93,16 @@ function forwardToActiveProjectTab(detail: any, callback: any) {
 const setListeners = () => {
 	// Refresh tabs on update
 	chrome.runtime.onInstalled.addListener(async () => {
+		visbugStateBucket.get().then(visbugState => {
+			if (!visbugState) {
+				visbugStateBucket.set({
+					loadedTabs: {},
+					injectedTabs: {},
+					injectedProjects: {}
+				})
+			}
+		})
+
 		for (const cs of chrome.runtime.getManifest().content_scripts ?? []) {
 			for (const tab of await chrome.tabs.query({ url: cs.matches })) {
 				chrome.scripting.executeScript({
