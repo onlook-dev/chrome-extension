@@ -17,7 +17,7 @@
 
 	let isLoading = false;
 	let prLink: string | undefined;
-	let pathFound = true;
+	let pathFound = false;
 
 	let titlePlaceholder = 'Design QA with onlook.dev';
 	let descriptionPlaceholder = 'Made UI adjustments using the onlook platform';
@@ -26,7 +26,9 @@
 
 	onMount(() => {
 		// Check each activities for a path
+
 		Object.values(project.activities).forEach((activity) => {
+			console.log('activity', activity.path);
 			if (activity.path) {
 				// If a path is found, open the modal
 				pathFound = true;

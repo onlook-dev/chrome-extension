@@ -36,7 +36,6 @@
 
 		userStore.subscribe((newUser) => {
 			user = newUser;
-			console.log('github Auth', user?.githubAuthId);
 		});
 	});
 

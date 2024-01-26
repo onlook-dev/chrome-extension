@@ -257,7 +257,6 @@ async function createCommit(
 			type: 'blob', // type is explicitly typed
 			content: file.content
 		}));
-		console.log('trees:', trees);
 
 		// Getting the SHA of the latest commit on the branch
 		const latestCommit = await octokit.request(`GET /repos/{owner}/{repo}/git/ref/{ref}`, {
