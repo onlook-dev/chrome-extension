@@ -146,6 +146,10 @@ export async function createPRWithComments(
 	for (const activityKey in activities) {
 		const activity = activities[activityKey];
 		// TODO: will have to decrypt tag to get file:lineNumber
+		if (!activity.path) {
+			console.error('No path found for activity');
+			continue;
+		}
 		const [filePath, lineString] = activity.path.split(':');
 
 		const lineNumber = parseInt(lineString);
@@ -187,7 +191,12 @@ async function prepareCommit(
 	const fileEdits = new Map<string, number[]>();
 
 	for (const activityKey in activities) {
-		const [filePath, lineNumberString] = activities[activityKey].path.split(':');
+		const path = activities[activityKey].path;
+		if (!path) {
+			console.error('No path found for activity');
+			continue;
+		}
+		const [filePath, lineNumberString] = path.split(':');
 		const lineNumber = parseInt(lineNumberString);
 		if (!fileEdits.has(filePath)) {
 			fileEdits.set(filePath, []);
