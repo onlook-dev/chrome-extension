@@ -34,6 +34,5 @@ export const getReposByInstallation = functions.https.onCall(async (data) => {
     },
   });
 
-  console.log(repos);
   return { repos };
 });

@@ -13,7 +13,7 @@
 	let clickComment = (comment: Comment) => {};
 
 	$: comments = project.comments.sort(
-		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
+		(a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
 	);
 </script>
 
@@ -36,7 +36,7 @@
 			<ItemHeader
 				profileImageUrl={$usersMapStore.get(comment.userId)?.profileImage}
 				userName={$usersMapStore.get(comment.userId)?.name}
-				creationTime={comment.creationTime}
+				createdAt={comment.createdAt}
 			/>
 
 			<!-- Item body -->

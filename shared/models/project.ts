@@ -15,4 +15,5 @@ export interface Project {
 
   // Integrations
   githubSettings?: GithubSettings;
+  githubHistory?: GithubPublish[];
 }

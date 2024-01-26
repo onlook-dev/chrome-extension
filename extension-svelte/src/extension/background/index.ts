@@ -270,7 +270,7 @@ const setListeners = () => {
 				userId: user.id,
 				projectId: activeProject.id,
 				eventData: [],
-				creationTime: new Date().toISOString(),
+				createdAt: new Date().toISOString(),
 				selector: visbugStyleChange.selector,
 				// TODO: save path to file
 				path: '',
@@ -296,7 +296,7 @@ const setListeners = () => {
 			}
 		})
 
-		activity.creationTime = new Date().toISOString()
+		activity.createdAt = new Date().toISOString()
 		activeProject.activities[visbugStyleChange.selector] = activity
 
 		// Update project

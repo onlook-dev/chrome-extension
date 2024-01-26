@@ -17,9 +17,17 @@ export interface GithubRepo {
 }
 
 export interface TreeItem {
-	path: string;
-	mode: '100644' | '100755' | '040000' | '160000' | '120000';
-	type: 'blob' | 'tree' | 'commit';
-	content?: string;
-	sha?: string | null;
-};
+  path: string;
+  mode: "100644" | "100755" | "040000" | "160000" | "120000";
+  type: "blob" | "tree" | "commit";
+  content?: string;
+  sha?: string | null;
+}
+
+export interface GithubPublish {
+  id: string;
+  userId: string;
+  projectId: string;
+  text?: string;
+  createdAt: string;
+}

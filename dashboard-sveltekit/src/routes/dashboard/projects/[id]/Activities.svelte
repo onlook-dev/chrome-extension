@@ -14,7 +14,9 @@
 	let clickActivity = (activity: Activity) => {};
 
 	$: activities = Object.values(project.activities).sort(
-		(a, b) => new Date(a.creationTime).getTime() - new Date(b.creationTime).getTime()
+		(a, b) =>
+			new Date(a.creationTime ?? a.createdAt).getTime() -
+			new Date(b.creationTime ?? b.createdAt).getTime()
 	);
 </script>
 
@@ -41,7 +43,7 @@
 				<ItemHeader
 					profileImageUrl={$usersMapStore.get(activity.userId)?.profileImage}
 					userName={$usersMapStore.get(activity.userId)?.name}
-					creationTime={activity.creationTime}
+					createdAt={activity.creationTime ?? activity.createdAt}
 				/>
 
 				<!-- Item body -->
