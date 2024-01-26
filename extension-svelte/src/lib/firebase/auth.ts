@@ -8,7 +8,7 @@ import {
 	projectsMapBucket,
 	teamsMapBucket,
 	userBucket,
-	visbugStateBucket
+	tabsMapBucket
 } from '$lib/utils/localstorage'
 
 // Use firebase user from dashboard
@@ -32,7 +32,7 @@ export function subscribeToFirebaseAuthChanges() {
 			popupStateBucket.clear()
 			projectsMapBucket.clear()
 			teamsMapBucket.clear()
-			visbugStateBucket.clear()
+			tabsMapBucket.clear()
 		}
 	})
 }

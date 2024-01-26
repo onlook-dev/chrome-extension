@@ -29,11 +29,10 @@
 
 	<div>
 		<p class="font-semibold py-2">2. Publish project:</p>
-		<p class="">Run your project in localhost or publish it again.</p>
+		<p class="">Run your project in localhost or publish it.</p>
 	</div>
 	<div>
 		<p class="font-semibold py-2">3. Sync your project:</p>
-		<p class="">Open project in Chrome extension and press sync.</p>
-		<p class="">Example.jpg</p>
+		<p class="">Open project in Chrome extension and press edit.</p>
 	</div>
 </div>

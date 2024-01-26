@@ -15,8 +15,8 @@
 
 	$: activities = Object.values(project.activities).sort(
 		(a, b) =>
-			new Date(a.creationTime ?? a.createdAt).getTime() -
-			new Date(b.creationTime ?? b.createdAt).getTime()
+			new Date(b.creationTime ?? b.createdAt).getTime() -
+			new Date(a.creationTime ?? a.createdAt).getTime()
 	);
 </script>
 

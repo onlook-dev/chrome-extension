@@ -21,10 +21,15 @@ interface PopupState {
 	activeRoute: PopupRoutes
 }
 
-interface VisbugState {
-	loadedTabs: Record<number, boolean>
-	injectedTabs: Record<number, boolean>
-	injectedProjects: Record<string, boolean>
+export interface VisbugState {
+	projectId: string
+	state: InjectState
+}
+
+export enum InjectState {
+	injected = 'injected',
+	loaded = 'loaded',
+	none = 'none'
 }
 
 // Objects
@@ -36,7 +41,7 @@ export const popupStateBucket = getBucket<PopupState>('POPUP_STATE')
 export const teamsMapBucket = getBucket<Map<string, Team>>('TEAMS_MAP')
 export const projectsMapBucket = getBucket<Map<string, Project>>('PROJECTS_MAP')
 export const usersMapBucket = getBucket<Map<string, User>>('USERS_MAP')
-export const visbugStateBucket = getBucket<VisbugState>('VISBUG_STATE')
+export const tabsMapBucket = getBucket<Map<string, VisbugState>>('TABS_MAP')
 
 export const getActiveUser = async (): Promise<User> => {
 	const { user } = await userBucket.get()
@@ -52,4 +57,18 @@ export const getActiveProject = async (): Promise<Project> => {
 export const getTeamById = async (teamId: string): Promise<Team> => {
 	const teamMap = new Map(Object.entries(await teamsMapBucket.get()))
 	return teamMap.get(teamId)
+}
+
+export async function getTabState(tabId: number): Promise<VisbugState> {
+	let stateMap: Map<string, VisbugState> = new Map(Object.entries(await tabsMapBucket.get()))
+	return (
+		stateMap.get(tabId.toString()) ?? {
+			projectId: '',
+			state: InjectState.none
+		}
+	)
+}
+
+export async function saveTabState(tabId: number, tabState: VisbugState) {
+	tabsMapBucket.set({ [tabId.toString()]: tabState })
 }
