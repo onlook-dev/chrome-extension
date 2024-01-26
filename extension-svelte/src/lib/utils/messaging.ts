@@ -75,6 +75,11 @@ export const [sendOpenUrlRequest, openUrlRequestStream] = getExtendedMessages<st
 	MessageReceiver.BACKGROUND
 )
 
+export const [sendSaveProject, saveProjectStream] = getExtendedMessages<Project>(
+	'SAVE_PROJECT',
+	MessageReceiver.BACKGROUND
+)
+
 export const [sendApplyProjectChanges, applyProjectChangesStream] = getExtendedMessages<void>(
 	'APPLY_PROJECT_CHANGES',
 	MessageReceiver.CONTENT

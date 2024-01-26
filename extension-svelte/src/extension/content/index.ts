@@ -5,11 +5,13 @@ import {
 	activityInspectStream,
 	activityRevertStream,
 	applyProjectChangesStream,
+	sendSaveProject,
 	sendStyleChange
 } from '$lib/utils/messaging'
 import type { Activity } from '$shared/models/activity'
 import type { VisbugStyleChange } from '$shared/models/visbug'
 import { baseUrl } from '$lib/utils/env'
+import type { Project } from '$shared/models/project'
 
 function simulateEventOnSelector(
 	selector: string,
@@ -42,6 +44,28 @@ function applyActivityChanges(activity: Activity): boolean {
 			// Apply style to element
 			element.style[style] = changeObject.newVal
 		})
+		if (activity.path !== element.dataset.onlookId) {
+			activity.path = element.dataset.onlookId
+			return true
+		}
+	}
+	return false
+}
+function syncProjectPaths(project: Project) {
+	let shouldSaveProject = false
+	Object.values(project.activities).forEach(activity => {
+		let activityMutated = syncActivityPath(activity)
+		if (activityMutated) {
+			project.activities[activity.id] = activity
+			shouldSaveProject = true
+		}
+	})
+	sendSaveProject(project)
+}
+
+function syncActivityPath(activity: Activity): boolean {
+	const element = document.querySelector(activity.selector) as any
+	if (element) {
 		if (activity.path !== element.dataset.onlookId) {
 			activity.path = element.dataset.onlookId
 			return true
@@ -108,7 +132,7 @@ export function setupListeners() {
 		})
 
 		if (shouldSaveProject) {
-			projectsMapBucket.set({ [activeProject.id]: activeProject })
+			sendSaveProject(activeProject)
 		}
 	})
 }

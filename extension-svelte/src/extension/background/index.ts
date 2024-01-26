@@ -12,7 +12,8 @@ import {
 	sendActivityRevert,
 	styleChangeStream,
 	activityApplyStream,
-	sendActivityApply
+	sendActivityApply,
+	saveProjectStream
 } from '$lib/utils/messaging'
 import { toggleProjectTab } from '$lib/visbug/visbug'
 import {
@@ -37,7 +38,7 @@ import type { Comment } from '$shared/models/comment'
 
 import { subscribeToUser } from '$lib/storage/user'
 import { subscribeToTeam } from '$lib/storage/team'
-import { subscribeToProject } from '$lib/storage/project'
+import { postProjectToFirebase, subscribeToProject } from '$lib/storage/project'
 import { sameTabHost, updateProjectTabHostWithDebounce } from './tabs'
 import { nanoid } from 'nanoid'
 import type { Project } from '$shared/models/project'
@@ -144,6 +145,11 @@ const setListeners = () => {
 		const authUrl = `${baseUrl}${DashboardRoutes.SIGNIN}`
 		chrome.tabs.create({ url: authUrl })
 		return
+	})
+
+	saveProjectStream.subscribe(async ([project, sender]) => {
+		postProjectToFirebase(project)
+		projectsMapBucket.set({ [project.id]: project })
 	})
 
 	// Start editing request from popip
