@@ -1,14 +1,19 @@
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from './firebase';
 import { setStoreUser } from '$lib/storage/user';
-import { userStore } from '$lib/utils/store';
+import { projectsMapStore, teamsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 
 export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged((user) => {
 		if (user) {
 			setStoreUser(user);
 		} else {
-			userStore.set(null);
+			console.log('User signed out');
+			// Clear data when signed out
+			userStore.set(undefined);
+			usersMapStore.set(new Map());
+			projectsMapStore.set(new Map());
+			teamsMapStore.set(new Map());
 		}
 	});
 }

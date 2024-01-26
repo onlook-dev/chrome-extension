@@ -28,6 +28,6 @@ export interface GithubPublish {
   id: string;
   userId: string;
   projectId: string;
-  text?: string;
   createdAt: string;
+  pullRequestUrl: string;
 }

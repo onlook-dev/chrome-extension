@@ -2,7 +2,14 @@ import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, type User } fr
 import { auth } from './firebase'
 import { UserImpl as FirebaseUserImpl } from '@firebase/auth/internal'
 import { setBucketUser } from '../storage/user'
-import { authUserBucket, userBucket } from '$lib/utils/localstorage'
+import {
+	authUserBucket,
+	popupStateBucket,
+	projectsMapBucket,
+	teamsMapBucket,
+	userBucket,
+	visbugStateBucket
+} from '$lib/utils/localstorage'
 
 // Use firebase user from dashboard
 export function signInUser(userJson: string) {
@@ -18,7 +25,14 @@ export function subscribeToFirebaseAuthChanges() {
 		if (user) {
 			setBucketUser(user)
 		} else {
+			console.log('User signed out')
+			// Clear data when signed out
 			userBucket.clear()
+			authUserBucket.clear()
+			popupStateBucket.clear()
+			projectsMapBucket.clear()
+			teamsMapBucket.clear()
+			visbugStateBucket.clear()
 		}
 	})
 }
