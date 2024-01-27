@@ -1,7 +1,13 @@
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from './firebase';
 import { setStoreUser } from '$lib/storage/user';
-import { projectsMapStore, teamsMapStore, userStore, usersMapStore } from '$lib/utils/store';
+import {
+	githubHistoryMapStore,
+	projectsMapStore,
+	teamsMapStore,
+	userStore,
+	usersMapStore
+} from '$lib/utils/store';
 
 export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged((user) => {
@@ -13,6 +19,7 @@ export function subscribeToFirebaseAuthChanges() {
 			userStore.set(undefined);
 			usersMapStore.set(new Map());
 			projectsMapStore.set(new Map());
+			githubHistoryMapStore.set(new Map());
 			teamsMapStore.set(new Map());
 		}
 	});

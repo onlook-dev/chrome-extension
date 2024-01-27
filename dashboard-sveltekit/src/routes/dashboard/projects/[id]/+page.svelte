@@ -42,6 +42,7 @@
 		if (!projectId) {
 			goto(DashboardRoutes.DASHBOARD);
 		}
+
 		if ($projectsMapStore.has(projectId)) {
 			project = $projectsMapStore.get(projectId);
 		} else {
