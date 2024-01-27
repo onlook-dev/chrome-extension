@@ -46,6 +46,7 @@
 				repositories = repos;
 				filteredRepositories = repos;
 				loadingRepos = false;
+				console.log('Successfully got user repositories');
 			})
 			.catch((error) => {
 				console.error('Error fetching GitHub data:', error);

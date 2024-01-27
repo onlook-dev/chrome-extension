@@ -60,7 +60,7 @@
 			comments: [],
 			hostData: {} as HostData,
 			createdAt: new Date().toISOString(),
-			githubHistory: []
+			githubHistoryIds: []
 		} as Project
 
 		// Add project to team

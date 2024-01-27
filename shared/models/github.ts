@@ -1,3 +1,5 @@
+import type { Activity } from "./activity";
+
 export interface GithubAuth {
   id: string;
   installationId: string;
@@ -24,7 +26,7 @@ export interface TreeItem {
   sha?: string | null;
 }
 
-export interface GithubPublish {
+export interface GithubHistory {
   id: string;
   title: string;
   description: string;
@@ -32,4 +34,5 @@ export interface GithubPublish {
   projectId: string;
   createdAt: string;
   pullRequestUrl: string;
+  activityHistory: Record<string, Activity>;
 }

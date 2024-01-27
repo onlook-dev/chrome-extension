@@ -5,19 +5,25 @@
 	import { MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
 
 	import type { Project } from '$shared/models/project';
-	import type { GithubPublish } from '$shared/models/github';
+	import type { GithubHistory } from '$shared/models/github';
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
 
 	import OpenLink from '~icons/gridicons/external';
 	import GitHub from '~icons/mdi/github';
+	import { nanoid } from 'nanoid';
+	import { getGithubHistoriesFromFirebase, postGithubHistoryToFirebase } from '$lib/storage/github';
 
 	export let project: Project;
 	export let userId: string;
 
+	let githubHistory: GithubHistory[] = [];
+
+	let githubConfigured = false;
+	let hasActivities = false;
+	let loadingRepos = false;
 	let isLoading = false;
 	let prLink: string | undefined;
-	let pathFound = false;
 
 	let titlePlaceholder = 'Design QA with onlook.dev';
 	let descriptionPlaceholder = 'Made UI adjustments using the onlook platform';
@@ -25,16 +31,33 @@
 	let description = '';
 
 	onMount(() => {
-		// Check each activities for a path
+		if (project?.activities && Object.keys(project.activities).length > 0) {
+			hasActivities = true;
+		}
 
 		Object.values(project.activities).forEach((activity) => {
 			console.log('activity', activity.path);
 			if (activity.path) {
 				// If a path is found, open the modal
-				pathFound = true;
+				githubConfigured = true;
 				return;
 			}
 		});
+
+		if (project?.githubHistoryIds?.length > 0) {
+			githubConfigured = true;
+			loadingRepos = true;
+			getGithubHistoriesFromFirebase(project.githubHistoryIds)
+				.then((histories) => {
+					githubHistory = histories;
+				})
+				.then(() => {
+					loadingRepos = false;
+				})
+				.catch((error) => {
+					console.error('Error loading github history:', error);
+				});
+		}
 	});
 
 	async function handlePublishClick() {
@@ -52,20 +75,23 @@
 				return;
 			}
 
-			// Add to history
-			project.githubHistory = [
-				...(project.githubHistory || []),
-				{
-					title,
-					description,
-					createdAt: new Date().toISOString(),
-					userId,
-					projectId: project.id,
-					pullRequestUrl: prLink
-				} as GithubPublish
-			];
+			const githubHistory: GithubHistory = {
+				id: nanoid(),
+				title,
+				description,
+				userId,
+				projectId: project.id,
+				createdAt: new Date().toISOString(),
+				pullRequestUrl: prLink,
+				activityHistory: project.activities
+			};
 
-			// Save project
+			// Reset activites, they are archived in github history
+			project.activities = {};
+			project.githubHistoryIds.push(githubHistory.id);
+
+			// Save project and github history
+			postGithubHistoryToFirebase(githubHistory);
 			postProjectToFirebase(project);
 			projectsMapStore.update((projectsMap) => {
 				projectsMap.set(project.id, project);
@@ -76,13 +102,13 @@
 </script>
 
 <div class="flex flex-col items-center justify-center h-full mt-4">
-	{#if pathFound}
+	{#if githubConfigured}
 		<label class="form-control w-full p-2">
 			<div class="label">
 				<span class="label-text">Title</span>
 			</div>
 			<input
-				disabled={isLoading}
+				disabled={!hasActivities || isLoading}
 				bind:value={title}
 				type="text"
 				placeholder={titlePlaceholder}
@@ -93,14 +119,18 @@
 				<span class="label-text">Description</span>
 			</div>
 			<textarea
-				disabled={isLoading}
+				disabled={!hasActivities || isLoading}
 				bind:value={description}
 				class="textarea textarea-bordered h-24"
 				placeholder={descriptionPlaceholder}
 				maxlength={MAX_DESCRIPTION_LENGTH}
 			></textarea>
 			<div class="mt-6 ml-auto">
-				<button class="btn btn-primary" on:click={handlePublishClick}>
+				<button
+					class="btn btn-primary"
+					disabled={!hasActivities || isLoading}
+					on:click={handlePublishClick}
+				>
 					{#if isLoading}
 						<div class="loading"></div>
 						Publishing
@@ -111,20 +141,17 @@
 			</div>
 		</label>
 
-		{#if project.githubHistory && project.githubHistory.length > 0}
+		{#if project.githubHistoryIds.length > 0}
 			<div class="collapse collapse-arrow border rounded-md mt-6">
 				<input type="checkbox" />
-				<div class="collapse-title">Publish history ({project.githubHistory.length})</div>
+				<div class="collapse-title">Publish history ({githubHistory.length})</div>
 				<div class="collapse-content space-y-2">
-					{#each project.githubHistory as githubPublish}
+					{#each githubHistory as history}
 						<div class="flex flex-row max-w-[100%]">
 							<p class="line-clamp-1 text-ellipsis max-w-[70%]">
-								{githubPublish.title}
+								{history.title}
 							</p>
-							<a
-								class="link font-semibold ml-auto"
-								href={githubPublish.pullRequestUrl}
-								target="_blank"
+							<a class="link font-semibold ml-auto" href={history.pullRequestUrl} target="_blank"
 								>Pull request <OpenLink class="inline-block w-4 h-4" />
 							</a>
 						</div>
