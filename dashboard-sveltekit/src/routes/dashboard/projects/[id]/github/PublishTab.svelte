@@ -26,9 +26,7 @@
 
 	onMount(() => {
 		// Check each activities for a path
-
 		Object.values(project.activities).forEach((activity) => {
-			console.log('activity', activity.path);
 			if (activity.path) {
 				// If a path is found, open the modal
 				pathFound = true;
@@ -42,7 +40,7 @@
 		description = description || descriptionPlaceholder;
 		isLoading = true;
 		try {
-			prLink = await exportToPRComments(userId, project?.id);
+			prLink = await exportToPRComments(userId, project?.id, title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
 			alert(`Error publishing changes. ${error}`);

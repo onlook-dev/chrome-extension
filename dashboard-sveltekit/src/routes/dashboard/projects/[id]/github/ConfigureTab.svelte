@@ -18,6 +18,7 @@
 	let filteredRepositories: GithubRepo[] = [];
 	let filterTerm = '';
 	let selectedRepo: GithubRepo | undefined;
+	let saved = false;
 
 	onMount(async () => {
 		if (project?.githubSettings) {
@@ -75,6 +76,7 @@
 	}
 
 	async function updateProject(project: Project) {
+		saved = true;
 		await postProjectToFirebase(project);
 		projectsMapStore.update((projectsMap) => {
 			projectsMap.set(project.id, project);
@@ -106,6 +108,7 @@
 						if (!project?.githubSettings) return;
 						// @ts-ignore - This value exists
 						project.githubSettings.baseBranch = e.target.value;
+						saved = false;
 					}}
 				/>
 			</div>
@@ -120,11 +123,16 @@
 						if (!project?.githubSettings) return;
 						// @ts-ignore - This value exists
 						project.githubSettings.rootPath = e.target.value;
+						saved = false;
 					}}
 				/>
 			</div>
 			<div class="ml-auto mt-4 space-x-2">
-				<button on:click={() => updateProject(project)} class="btn btn-outline btn-sm">Save</button>
+				<button
+					disabled={saved}
+					on:click={() => updateProject(project)}
+					class="btn btn-outline btn-sm">{saved ? 'Saved' : 'Save'}</button
+				>
 				<button
 					on:click={() => disconnectRepoFromProject()}
 					class="btn btn-outline btn-sm btn-error">Disconnect</button

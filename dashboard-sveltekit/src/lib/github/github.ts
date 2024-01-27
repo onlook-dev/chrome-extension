@@ -7,7 +7,16 @@ import type { Activity } from '$shared/models/activity';
 import { githubConfig } from '$lib/utils/env';
 import type { TreeItem } from '$shared/models/github';
 
-export async function exportToPRComments(userId: string, projectId: string): Promise<string> {
+// TODO: Should clean up if any steps fail
+// - Delete branch
+// - Delete PR
+
+export async function exportToPRComments(
+	userId: string,
+	projectId: string,
+	title: string,
+	description: string
+): Promise<string> {
 	const user = await getUserFromFirebase(userId);
 
 	if (!user) {
@@ -55,6 +64,7 @@ export async function exportToPRComments(userId: string, projectId: string): Pro
 		githubSettings.owner,
 		githubSettings.repositoryName,
 		branchName,
+		githubSettings.rootPath,
 		project.activities
 	);
 
@@ -75,6 +85,9 @@ export async function exportToPRComments(userId: string, projectId: string): Pro
 		githubSettings.owner,
 		githubSettings.repositoryName,
 		githubSettings.baseBranch,
+		githubSettings.rootPath,
+		title,
+		description,
 		branchName,
 		commitId,
 		octokit
@@ -122,6 +135,9 @@ export async function createPRWithComments(
 	owner: string,
 	repositoryName: string,
 	baseBranch: string,
+	rootPath: string,
+	title: string,
+	description: string,
 	newBranch: string,
 	commitId: string,
 	octokit: Octokit
@@ -129,8 +145,8 @@ export async function createPRWithComments(
 	const pullRequest = await octokit.request(`POST /repos/{owner}/{repo}/pulls`, {
 		owner,
 		repo: repositoryName,
-		title: 'Onlook Style Updates',
-		body: 'onlook style updates',
+		title,
+		body: description,
 		head: newBranch,
 		base: baseBranch,
 		headers: {
@@ -150,8 +166,8 @@ export async function createPRWithComments(
 			console.error('No path found for activity');
 			continue;
 		}
-		const [filePath, lineString] = activity.path.split(':');
-
+		const [initialPath, lineString] = activity.path.split(':');
+		const filePath = `${rootPath}/${initialPath}`;
 		const lineNumber = parseInt(lineString);
 
 		let commentBody = 'onlook changes:\n';
@@ -186,6 +202,7 @@ async function prepareCommit(
 	owner: string,
 	repo: string,
 	branch: string,
+	rootPath: string,
 	activities: Record<string, Activity>
 ): Promise<{ path: string; content: string; sha: string }[]> {
 	const fileEdits = new Map<string, number[]>();
@@ -196,7 +213,9 @@ async function prepareCommit(
 			console.error('No path found for activity');
 			continue;
 		}
-		const [filePath, lineNumberString] = path.split(':');
+		const [initialPath, lineNumberString] = path.split(':');
+		const filePath = `${rootPath}/${initialPath}`;
+
 		const lineNumber = parseInt(lineNumberString);
 		if (!fileEdits.has(filePath)) {
 			fileEdits.set(filePath, []);
@@ -283,7 +302,7 @@ async function createCommit(
 			parents: [latestCommitSha],
 			author: {
 				name: 'Onlook',
-				email: 'erik@onlook.dev',
+				email: 'erik@onlook.dev', // TODO: Add users' email here
 				date: new Date().toISOString()
 			},
 			headers: {
