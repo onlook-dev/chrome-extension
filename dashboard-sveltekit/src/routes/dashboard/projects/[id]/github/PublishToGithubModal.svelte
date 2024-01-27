@@ -68,9 +68,9 @@
 </script>
 
 <div>
-	<button class="flex flex-row justify-center" on:click={showModal}
-		><GitHub class="mr-2" /> Publish to Github</button
-	>
+	<button class="flex flex-row justify-center" on:click={showModal}>
+		<GitHub class="mr-2" /> Publish to Github
+	</button>
 	<dialog id={modalId} class="modal">
 		<div class="modal-box card w-full h-[60%] flex flex-col p-6">
 			<h2 class="text-xl font-semibold mb-3">Publish to Github</h2>
