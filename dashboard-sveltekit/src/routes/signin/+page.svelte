@@ -1,7 +1,8 @@
 <script>
 	import { LINK_DISCORD, DashboardRoutes } from '$shared/constants';
-	import { signInWithGoogle } from '$lib/firebase/auth';
+	import { signInWithGoogle, signInWithGithub } from '$lib/firebase/auth';
 	import Google from '~icons/devicon/google';
+	import GitHub from '~icons/mdi/github';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { userStore } from '$lib/utils/store';
@@ -31,6 +32,10 @@
 				<button class="btn btn-outline" on:click={signInWithGoogle}>
 					<Google class="w-4 h-4" />
 					Continue with Google</button
+				>
+				<button class="btn btn-outline" on:click={signInWithGithub}>
+					<GitHub class="w-4 h-4" />
+					Continue with GitHub</button
 				>
 			</div>
 		</div>
