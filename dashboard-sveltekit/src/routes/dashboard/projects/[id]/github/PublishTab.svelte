@@ -31,14 +31,10 @@
 	let description = '';
 
 	onMount(() => {
-<<<<<<< HEAD
 		// Check each activities for a path
-=======
 		if (project?.activities && Object.keys(project.activities).length > 0) {
 			hasActivities = true;
 		}
-
->>>>>>> d067941 (archive activities after publishing to github (#27))
 		Object.values(project.activities).forEach((activity) => {
 			if (activity.path) {
 				// If a path is found, open the modal
