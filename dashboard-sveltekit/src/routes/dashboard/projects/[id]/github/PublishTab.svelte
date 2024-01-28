@@ -31,12 +31,11 @@
 	let description = '';
 
 	onMount(() => {
+		// Check each activities for a path
 		if (project?.activities && Object.keys(project.activities).length > 0) {
 			hasActivities = true;
 		}
-
 		Object.values(project.activities).forEach((activity) => {
-			console.log('activity', activity.path);
 			if (activity.path) {
 				// If a path is found, open the modal
 				githubConfigured = true;
@@ -65,7 +64,7 @@
 		description = description || descriptionPlaceholder;
 		isLoading = true;
 		try {
-			prLink = await exportToPRComments(userId, project?.id);
+			prLink = await exportToPRComments(userId, project?.id, title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
 			alert(`Error publishing changes. ${error}`);
