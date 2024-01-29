@@ -17,7 +17,7 @@
 	export let project: Project;
 	export let userId: string;
 
-	let githubHistory: GithubHistory[] = [];
+	let githubHistories: GithubHistory[] = [];
 
 	let githubConfigured = false;
 	let hasActivities = false;
@@ -48,7 +48,7 @@
 			loadingRepos = true;
 			getGithubHistoriesFromFirebase(project.githubHistoryIds)
 				.then((histories) => {
-					githubHistory = histories;
+					githubHistories = histories;
 				})
 				.then(() => {
 					loadingRepos = false;
@@ -88,6 +88,7 @@
 			// Reset activites, they are archived in github history
 			project.activities = {};
 			project.githubHistoryIds.push(githubHistory.id);
+			githubHistories = [...githubHistories, githubHistory];
 
 			// Save project and github history
 			postGithubHistoryToFirebase(githubHistory);
@@ -140,12 +141,12 @@
 			</div>
 		</label>
 
-		{#if project.githubHistoryIds.length > 0}
+		{#if githubHistories.length > 0}
 			<div class="collapse collapse-arrow border rounded-md mt-6">
 				<input type="checkbox" />
-				<div class="collapse-title">Publish history ({githubHistory.length})</div>
+				<div class="collapse-title">Publish history ({githubHistories.length})</div>
 				<div class="collapse-content space-y-2">
-					{#each githubHistory as history}
+					{#each githubHistories as history}
 						<div class="flex flex-row max-w-[100%]">
 							<p class="line-clamp-1 text-ellipsis max-w-[70%]">
 								{history.title}
