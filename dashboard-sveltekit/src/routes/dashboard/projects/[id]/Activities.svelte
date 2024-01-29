@@ -5,6 +5,7 @@
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 	import { jsToCssProperty } from '$shared/helpers';
 	import { postProjectToFirebase } from '$lib/storage/project';
+	import GitHub from '~icons/mdi/github';
 
 	import ItemHeader from './ItemHeader.svelte';
 	import Trash from '~icons/material-symbols/delete';
@@ -80,6 +81,24 @@
 					userName={$usersMapStore.get(activity.userId)?.name}
 					createdAt={activity.creationTime ?? activity.createdAt}
 				>
+					{#if activity.path}
+						<div class="tooltip tooltip-left" data-tip="View in GitHub">
+							<button
+								class="btn btn-xs btn-square btn-ghost ml-auto"
+								on:click={() =>
+									window.open(
+										`https://github.com/${project?.githubSettings?.owner}/${
+											project?.githubSettings?.repositoryName
+										}/blob/${project?.githubSettings?.baseBranch}/${
+											activity?.path?.split(':')[0]
+										}#L${activity?.path?.split(':')[1]}`,
+										'_blank'
+									)}
+							>
+								<GitHub class="w-4 h-4" />
+							</button>
+						</div>
+					{/if}
 					<div class="tooltip tooltip-left" data-tip="Delete activity">
 						<button on:click={showModal} class="btn btn-sm btn-square btn-ghost">
 							<Trash />
