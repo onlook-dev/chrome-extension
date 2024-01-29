@@ -17,7 +17,6 @@ export const STYLE_CHANGE = "STYLE_CHANGE";
 
 // Links
 export const LINK_DISCORD = "mailto:support@onlook.dev";
-export const GITHUB_APP_URL = "https://github.com/apps/onlook-dev";
 
 // Dashboard routes
 export enum DashboardRoutes {

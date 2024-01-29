@@ -4,12 +4,13 @@
 	import { page } from '$app/stores';
 	import type { Project } from '$shared/models/project';
 	import type { User } from '$shared/models/user';
-	import { DashboardRoutes, GITHUB_APP_URL } from '$shared/constants';
+	import { DashboardRoutes } from '$shared/constants';
 	import { userStore } from '$lib/utils/store';
 
 	import GitHub from '~icons/mdi/github';
 	import ConfigureTab from './ConfigureTab.svelte';
 	import PublishTab from './PublishTab.svelte';
+	import { githubConfig } from '$lib/utils/env';
 
 	export let project: Project;
 
@@ -80,7 +81,10 @@
 					<button
 						class="btn btn-primary"
 						on:click={() => {
-							window.open(`${GITHUB_APP_URL}/installations/new?state=${project?.id}`, '_blank');
+							window.open(
+								`${githubConfig.appUrl}/installations/new?state=${project?.id}`,
+								'_blank'
+							);
 						}}><GitHub class="h-5 w-5" />Connect Github Repos</button
 					>
 				</div>

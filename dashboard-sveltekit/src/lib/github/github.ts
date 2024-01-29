@@ -169,20 +169,19 @@ export async function createPRWithComments(
 		}
 
 		const [initialPath, startLineString, endLineString] = activity.path.split(':');
-		const filePath = `${rootPath}/${initialPath}`;
-		const startLine = parseInt(startLineString);
+		const filePath =
+			rootPath === '.' || rootPath === '' ? `${initialPath}` : `${rootPath}/${initialPath}`;
 		// End line must be at least one line after the start line
-		const endLine = parseInt(endLineString) === startLine ? startLine + 1 : parseInt(endLineString);
+		console.log('filePath:', filePath);
+		const endLine = parseInt(endLineString);
 
-		let commentBody = 'onlook changes:\n```\n';
-		let wasBody = '\nwas:\n```\n';
+		let commentBody = 'onlook changes to line below:\n```\n';
 		for (const key in activity.styleChanges) {
 			const change = activity.styleChanges[key];
 			commentBody += `${jsToCssProperty(key)}: ${change.newVal};\n`;
-			wasBody += change.oldVal ? `${jsToCssProperty(key)}: ${change.oldVal};\n` : '';
 		}
-		wasBody += '```';
-		commentBody += '```' + wasBody;
+
+		commentBody += '```';
 
 		await octokit.request(`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments`, {
 			owner,

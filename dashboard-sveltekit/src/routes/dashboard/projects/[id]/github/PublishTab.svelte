@@ -93,6 +93,11 @@
 
 			// Save project and github history
 			postGithubHistoryToFirebase(githubHistory);
+			postProjectToFirebase(project);
+			projectsMapStore.update((projectsMap) => {
+				projectsMap.set(project.id, project);
+				return projectsMap;
+			});
 		}
 	}
 

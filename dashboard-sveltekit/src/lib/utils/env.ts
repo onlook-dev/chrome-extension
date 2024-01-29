@@ -25,8 +25,12 @@ import {
 	PUBLIC_PROD_STRIPE_WEBHOOK_ID,
 	PUBLIC_TEST_URL,
 	PUBLIC_PROD_URL,
-	PUBLIC_GITHUB_APP_ID,
-	PUBLIC_GITHUB_PRIVATE_KEY
+	PUBLIC_GITHUB_APP_ID_TEST,
+	PUBLIC_GITHUB_PRIVATE_KEY_TEST,
+	PUBLIC_GITHUB_APP_ID_PROD,
+	PUBLIC_GITHUB_PRIVATE_KEY_PROD,
+	PUBLIC_GITHUB_APP_URL_TEST,
+	PUBLIC_GITHUB_APP_URL_PROD
 } from '$env/static/public';
 import { Tier } from '$shared/models/team';
 
@@ -66,9 +70,16 @@ const prodStripeConfig = {
 	webhookSecret: PUBLIC_PROD_STRIPE_WEBHOOK_ID
 };
 
+const testGithubConfig = {
+	appUrl: PUBLIC_GITHUB_APP_URL_TEST,
+	appId: PUBLIC_GITHUB_APP_ID_TEST,
+	privateKey: PUBLIC_GITHUB_PRIVATE_KEY_TEST
+};
+
 const prodGithubConfig = {
-	appId: PUBLIC_GITHUB_APP_ID,
-	privateKey: PUBLIC_GITHUB_PRIVATE_KEY
+	appUrl: PUBLIC_GITHUB_APP_URL_PROD,
+	appId: PUBLIC_GITHUB_APP_ID_PROD,
+	privateKey: PUBLIC_GITHUB_PRIVATE_KEY_PROD
 };
 
 export const isDevelopment: boolean = import.meta.env.DEV;
@@ -76,7 +87,7 @@ export const isFirebaseEmulator: boolean = import.meta.env.VITE_FIREBASE_EMULATO
 export const firebaseConfig = isDevelopment ? testFirebaseConfig : prodFirebaseConfig;
 export const stripeConfig = isDevelopment ? testStripeConfig : prodStripeConfig;
 export const baseUrl = isDevelopment ? PUBLIC_TEST_URL : PUBLIC_PROD_URL;
-export const githubConfig = isDevelopment ? prodGithubConfig : prodGithubConfig;
+export const githubConfig = isDevelopment ? testGithubConfig : prodGithubConfig;
 
 export const priceIdMapping = {
 	[Tier.FREE]: isDevelopment ? 'free' : 'free',

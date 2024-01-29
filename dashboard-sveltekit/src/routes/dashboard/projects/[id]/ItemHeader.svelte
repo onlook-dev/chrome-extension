@@ -18,6 +18,6 @@
 		{timeSince(new Date(createdAt))}
 	</div>
 	<div class="ml-auto">
-		<button class="btn btn-square btn-ghost"> <Dots /> </button>
+		<slot />
 	</div>
 </div>
