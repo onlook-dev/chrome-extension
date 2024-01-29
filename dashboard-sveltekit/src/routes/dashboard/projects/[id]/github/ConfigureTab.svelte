@@ -8,7 +8,7 @@
 	import { getGithubAuthFromFirebase } from '$lib/storage/github';
 	import { getReposByInstallation } from '$lib/github/github';
 	import { onMount } from 'svelte';
-	import { GITHUB_APP_URL } from '$shared/constants';
+	import { githubConfig } from '$lib/utils/env';
 
 	export let project: Project;
 	export let user: User;
@@ -176,7 +176,7 @@
 	<button
 		class="btn btn-link mt-4"
 		on:click={() => {
-			window.open(`${GITHUB_APP_URL}/installations/new?state=${project?.id}`, '_blank');
+			window.open(`${githubConfig.appUrl}/installations/new?state=${project?.id}`, '_blank');
 		}}>Configure Github Account</button
 	>
 </div>

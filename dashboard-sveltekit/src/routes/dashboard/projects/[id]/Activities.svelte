@@ -2,22 +2,60 @@
 	import type { Project } from '$shared/models/project';
 	import type { Activity } from '$shared/models/activity';
 	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData';
-	import ItemHeader from './ItemHeader.svelte';
-	import { usersMapStore } from '$lib/utils/store';
+	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 	import { jsToCssProperty } from '$shared/helpers';
+	import { postProjectToFirebase } from '$lib/storage/project';
+
+	import ItemHeader from './ItemHeader.svelte';
+	import Trash from '~icons/material-symbols/delete';
 
 	export let project: Project;
-	let activities: Activity[];
 
-	let hoverActivity = (activity: Activity) => {};
-	let leaveActivity = (activity: Activity) => {};
-	let clickActivity = (activity: Activity) => {};
+	const modalId = 'delete-activity-modal';
+	let activities: Activity[];
 
 	$: activities = Object.values(project.activities).sort(
 		(a, b) =>
 			new Date(b.creationTime ?? b.createdAt).getTime() -
 			new Date(a.creationTime ?? a.createdAt).getTime()
 	);
+
+	let deleteActivity = (activity: Activity) => {
+		project.activities = Object.fromEntries(
+			Object.entries(project.activities).filter(([key, value]) => key !== activity.selector)
+		);
+
+		postProjectToFirebase(project);
+		projectsMapStore.update((projectsMap) => {
+			projectsMap.set(project.id, project);
+			return projectsMap;
+		});
+		project = { ...project };
+		closeModal();
+	};
+
+	function showModal() {
+		const modal = document.getElementById(modalId) as HTMLDialogElement;
+		if (modal) {
+			modal.showModal();
+			modal.addEventListener(
+				'click',
+				(event) => {
+					if (event.target === modal) {
+						closeModal();
+					}
+				},
+				{ once: true }
+			);
+		}
+	}
+
+	function closeModal() {
+		const modal = document.getElementById(modalId) as HTMLDialogElement;
+		if (modal) {
+			modal.close();
+		}
+	}
 </script>
 
 {#if activities.length === 0}
@@ -35,21 +73,43 @@
 					? 'opacity-60'
 					: ''}
 					"
-				on:mouseenter={() => hoverActivity(activity)}
-				on:mouseleave={() => leaveActivity(activity)}
-				on:click={() => clickActivity(activity)}
 			>
 				<!-- Item header -->
 				<ItemHeader
 					profileImageUrl={$usersMapStore.get(activity.userId)?.profileImage}
 					userName={$usersMapStore.get(activity.userId)?.name}
 					createdAt={activity.creationTime ?? activity.createdAt}
-				/>
-
+				>
+					<div class="tooltip tooltip-left" data-tip="Delete activity">
+						<button on:click={showModal} class="btn btn-sm btn-square btn-ghost">
+							<Trash />
+						</button>
+						<dialog id={modalId} class="modal">
+							<div class="modal-box">
+								<h3 class="font-bold text-lg">Delete activity?</h3>
+								<p class="py-4">Deleted activities can NOT be restored. Continue?</p>
+								<div class="modal-action space-x-2">
+									<button class="btn" on:click={closeModal}>Cancel</button>
+									<button class="btn btn-error" on:click={() => deleteActivity(activity)}
+										>Delete</button
+									>
+								</div>
+							</div>
+							<form method="dialog" class="modal-backdrop">
+								<button>close</button>
+							</form>
+						</dialog>
+					</div>
+				</ItemHeader>
 				<!-- Item body -->
-				<div class="mb-2 w-full text-start">
+				<div class="mb-2 w-full text-start flex flex-col">
 					Element:
 					<span class="text-orange-600 bg-gray-100 p-0.5 rounded border">{activity.selector}</span>
+					{#if activity.path}
+						Path: <span class="text-orange-600 bg-gray-100 p-0.5 rounded border"
+							>{activity.path}</span
+						>
+					{/if}
 				</div>
 
 				{#if getEventDataByType(activity.eventData, EventMetadataType.SOURCE_MAP_ID)}
