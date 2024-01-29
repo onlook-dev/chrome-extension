@@ -97,12 +97,17 @@
 	}
 
 	function restoreActivities(history: GithubHistory) {
+		if (!history.activityHistory || Object.keys(history.activityHistory).length === 0) {
+			return;
+		}
+
 		project.activities = history.activityHistory;
 		postProjectToFirebase(project);
 		projectsMapStore.update((projectsMap) => {
 			projectsMap.set(project.id, project);
 			return projectsMap;
 		});
+		hasActivities = true;
 	}
 </script>
 

@@ -174,12 +174,15 @@ export async function createPRWithComments(
 		// End line must be at least one line after the start line
 		const endLine = parseInt(endLineString) === startLine ? startLine + 1 : parseInt(endLineString);
 
-		let commentBody = 'onlook changes:\n';
+		let commentBody = 'onlook changes:\n```\n';
+		let wasBody = '\nwas:\n```\n';
 		for (const key in activity.styleChanges) {
 			const change = activity.styleChanges[key];
-			const oldValLine = change.oldVal ? `was \`${change.oldVal}\`` : '';
-			commentBody += `\`${jsToCssProperty(key)}: ${change.newVal} ${oldValLine};\n`;
+			commentBody += `${jsToCssProperty(key)}: ${change.newVal};\n`;
+			wasBody += change.oldVal ? `${jsToCssProperty(key)}: ${change.oldVal};\n` : '';
 		}
+		wasBody += '```';
+		commentBody += '```' + wasBody;
 
 		await octokit.request(`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments`, {
 			owner,
