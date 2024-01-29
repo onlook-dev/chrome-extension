@@ -6,6 +6,7 @@ import { getGithubAuthFromFirebase } from '$lib/storage/github';
 import type { Activity } from '$shared/models/activity';
 import { githubConfig } from '$lib/utils/env';
 import type { TreeItem } from '$shared/models/github';
+import { jsToCssProperty } from '$shared/helpers';
 
 // TODO: Should clean up if any steps fail
 // - Delete branch
@@ -176,7 +177,8 @@ export async function createPRWithComments(
 		let commentBody = 'onlook changes:\n';
 		for (const key in activity.styleChanges) {
 			const change = activity.styleChanges[key];
-			commentBody += `\`${key}: ${change.newVal};\` (was \`${change.oldVal}\`)\n`;
+			const oldValLine = change.oldVal ? `was \`${change.oldVal}\`` : '';
+			commentBody += `\`${jsToCssProperty(key)}: ${change.newVal} ${oldValLine};\n`;
 		}
 
 		await octokit.request(`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments`, {
@@ -186,7 +188,6 @@ export async function createPRWithComments(
 			body: commentBody,
 			commit_id: commitId,
 			path: filePath,
-			start_line: startLine,
 			start_side: 'RIGHT',
 			line: endLine,
 			side: 'RIGHT',

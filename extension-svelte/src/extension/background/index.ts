@@ -308,6 +308,7 @@ const setListeners = () => {
 			}
 		})
 
+		activity.path = visbugStyleChange.path ?? activity.path
 		activity.createdAt = new Date().toISOString()
 		activeProject.activities[visbugStyleChange.selector] = activity
 
