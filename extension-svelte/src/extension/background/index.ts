@@ -164,6 +164,8 @@ const setListeners = () => {
 				if (enable) chrome.tabs.update(tabs[0].id as number, { active: true })
 				updateTabActiveState(tabs[0], project, enable)
 			} else {
+				// If tab doesn't exist and command is disable, do nothing
+				if (!enable) return
 				chrome.tabs
 					.create({
 						url: project.hostUrl
@@ -306,6 +308,7 @@ const setListeners = () => {
 			}
 		})
 
+		activity.path = visbugStyleChange.path ?? activity.path
 		activity.createdAt = new Date().toISOString()
 		activeProject.activities[visbugStyleChange.selector] = activity
 

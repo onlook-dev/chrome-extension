@@ -1,23 +1,24 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { exportToPRComments } from '$lib/github/github';
-	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 	import { MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
+	import { postProjectToFirebase } from '$lib/storage/project';
+	import { projectsMapStore } from '$lib/utils/store';
+	import { nanoid } from 'nanoid';
+	import { getGithubHistoriesFromFirebase, postGithubHistoryToFirebase } from '$lib/storage/github';
 
 	import type { Project } from '$shared/models/project';
 	import type { GithubHistory } from '$shared/models/github';
-	import { postProjectToFirebase } from '$lib/storage/project';
-	import { projectsMapStore } from '$lib/utils/store';
 
-	import OpenLink from '~icons/gridicons/external';
+	import PullRequest from '~icons/ph/git-pull-request-bold';
 	import GitHub from '~icons/mdi/github';
-	import { nanoid } from 'nanoid';
-	import { getGithubHistoriesFromFirebase, postGithubHistoryToFirebase } from '$lib/storage/github';
+	import Restore from '~icons/ic/baseline-restore';
+	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 
 	export let project: Project;
 	export let userId: string;
 
-	let githubHistory: GithubHistory[] = [];
+	let githubHistories: GithubHistory[] = [];
 
 	let githubConfigured = false;
 	let hasActivities = false;
@@ -48,7 +49,7 @@
 			loadingRepos = true;
 			getGithubHistoriesFromFirebase(project.githubHistoryIds)
 				.then((histories) => {
-					githubHistory = histories;
+					githubHistories = histories;
 				})
 				.then(() => {
 					loadingRepos = false;
@@ -88,15 +89,25 @@
 			// Reset activites, they are archived in github history
 			project.activities = {};
 			project.githubHistoryIds.push(githubHistory.id);
+			githubHistories = [...githubHistories, githubHistory];
 
 			// Save project and github history
 			postGithubHistoryToFirebase(githubHistory);
-			postProjectToFirebase(project);
-			projectsMapStore.update((projectsMap) => {
-				projectsMap.set(project.id, project);
-				return projectsMap;
-			});
 		}
+	}
+
+	function restoreActivities(history: GithubHistory) {
+		if (!history.activityHistory || Object.keys(history.activityHistory).length === 0) {
+			return;
+		}
+
+		project.activities = history.activityHistory;
+		postProjectToFirebase(project);
+		projectsMapStore.update((projectsMap) => {
+			projectsMap.set(project.id, project);
+			return projectsMap;
+		});
+		hasActivities = true;
 	}
 </script>
 
@@ -140,19 +151,51 @@
 			</div>
 		</label>
 
-		{#if project.githubHistoryIds.length > 0}
-			<div class="collapse collapse-arrow border rounded-md mt-6">
+		{#if githubHistories.length > 0}
+			<div class="collapse collapse-arrow border rounded-md mt-6 collapse-open">
 				<input type="checkbox" />
-				<div class="collapse-title">Publish history ({githubHistory.length})</div>
+				<div class="collapse-title">Publish history ({githubHistories.length})</div>
 				<div class="collapse-content space-y-2">
-					{#each githubHistory as history}
-						<div class="flex flex-row max-w-[100%]">
+					{#each githubHistories as history}
+						<div class="flex flex-row max-w-[100%] items-center">
 							<p class="line-clamp-1 text-ellipsis max-w-[70%]">
 								{history.title}
 							</p>
-							<a class="link font-semibold ml-auto" href={history.pullRequestUrl} target="_blank"
-								>Pull request <OpenLink class="inline-block w-4 h-4" />
-							</a>
+							<div class="ml-auto">
+								<div class="tooltip tooltip-left" data-tip="View pull request">
+									<button
+										class="btn btn-xs btn-square btn-ghost ml-auto"
+										on:click={() => window.open(history.pullRequestUrl, '_blank')}
+										><PullRequest class="w-4 h-4" /></button
+									>
+								</div>
+								<div class="tooltip tooltip-left" data-tip="Restore changes">
+									<button
+										class="btn btn-xs btn-square btn-ghost"
+										on:click={() => {
+											// @ts-ignore
+											document.getElementById('confirm_restore_modal').showModal();
+										}}><Restore class="w-4 h-4" /></button
+									>
+								</div>
+
+								<dialog id="confirm_restore_modal" class="modal">
+									<div class="modal-box">
+										<h3 class="font-bold text-lg">Restore changes?</h3>
+										<p class="py-4">This will overwrite your current activities.</p>
+										<div class="modal-action">
+											<form method="dialog">
+												<!-- if there is a button in form, it will close the modal -->
+												<button class="btn">Cancel</button>
+												<button
+													class="btn btn-error ml-2"
+													on:click={() => restoreActivities(history)}>Restore</button
+												>
+											</form>
+										</div>
+									</div>
+								</dialog>
+							</div>
 						</div>
 					{/each}
 				</div>
