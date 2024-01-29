@@ -81,7 +81,7 @@
 						class="btn btn-primary"
 						on:click={() => {
 							window.open(`${GITHUB_APP_URL}/installations/new?state=${project?.id}`, '_blank');
-						}}><GitHub class="h-5 w-5" />Connect Github Account</button
+						}}><GitHub class="h-5 w-5" />Connect Github Repos</button
 					>
 				</div>
 			{:else}

@@ -166,9 +166,12 @@ export async function createPRWithComments(
 			console.error('No path found for activity');
 			continue;
 		}
-		const [initialPath, lineString] = activity.path.split(':');
+
+		const [initialPath, startLineString, endLineString] = activity.path.split(':');
 		const filePath = `${rootPath}/${initialPath}`;
-		const lineNumber = parseInt(lineString);
+		const startLine = parseInt(startLineString);
+		// End line must be at least one line after the start line
+		const endLine = parseInt(endLineString) === startLine ? startLine + 1 : parseInt(endLineString);
 
 		let commentBody = 'onlook changes:\n';
 		for (const key in activity.styleChanges) {
@@ -183,9 +186,9 @@ export async function createPRWithComments(
 			body: commentBody,
 			commit_id: commitId,
 			path: filePath,
-			start_line: lineNumber,
+			start_line: startLine,
 			start_side: 'RIGHT',
-			line: lineNumber + 1,
+			line: endLine,
 			side: 'RIGHT',
 			headers: {
 				'X-GitHub-Api-Version': '2022-11-28'
@@ -213,10 +216,12 @@ async function prepareCommit(
 			console.error('No path found for activity');
 			continue;
 		}
-		const [initialPath, lineNumberString] = path.split(':');
-		const filePath = `${rootPath}/${initialPath}`;
+		const [initialPath, startLineString, endLineString] = path.split(':');
 
-		const lineNumber = parseInt(lineNumberString);
+		const filePath =
+			rootPath === '.' || rootPath === '' ? `${initialPath}` : `${rootPath}/${initialPath}`;
+
+		const lineNumber = parseInt(startLineString);
 		if (!fileEdits.has(filePath)) {
 			fileEdits.set(filePath, []);
 		}
