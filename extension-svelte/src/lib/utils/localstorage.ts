@@ -29,8 +29,7 @@ export interface VisbugState {
 export enum InjectState {
 	injected = 'injected',
 	loaded = 'loaded',
-	none = 'none',
-	creating = 'creating'
+	none = 'none'
 }
 
 // Objects

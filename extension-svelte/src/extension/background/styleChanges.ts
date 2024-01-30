@@ -16,7 +16,6 @@ export async function processChangeQueue() {
 }
 
 async function processStyleChange(visbugStyleChange: VisbugStyleChange) {
-	console.log('Style change', visbugStyleChange)
 	const activeProject = await getActiveProject()
 	if (!activeProject) return
 
