@@ -10,12 +10,12 @@ export const toggleProjectTab = async (tabId: number, projectId: string, enable:
 
 	if (enable) {
 		// toggle in: it's loadedTabs and needs injectedTabs
-		if (tabState.state === InjectState.loaded) {
+		if (tabState.state && tabState.state === InjectState.loaded) {
 			platform.scripting.executeScript({
 				target: { tabId: tabId },
 				files: ['src/lib/visbug/toolbar/restore.js']
 			})
-		} else {
+		} else if (tabState.state === InjectState.none) {
 			// fresh start in tab. Load and inject.
 			platform.scripting.insertCSS({
 				target: { tabId: tabId },

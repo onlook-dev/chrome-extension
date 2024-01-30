@@ -41,7 +41,11 @@ function applyActivityChanges(activity: Activity): boolean {
 	if (element) {
 		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
 			// Apply style to element
-			element.style[style] = changeObject.newVal
+			if (style === 'text') {
+				element.innerText = changeObject.newVal
+			} else {
+				element.style[style] = changeObject.newVal
+			}
 		})
 		if (activity.path !== element.dataset.onlookId) {
 			activity.path = element.dataset.onlookId
@@ -56,7 +60,11 @@ function revertActivityChanges(activity: Activity) {
 	if (element) {
 		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
 			// Apply style to element
-			element.style[style] = changeObject.oldVal
+			if (style === 'text') {
+				element.innerText = changeObject.oldVal
+			} else {
+				element.style[style] = changeObject.oldVal
+			}
 		})
 	}
 }

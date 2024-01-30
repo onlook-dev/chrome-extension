@@ -31,16 +31,15 @@
 	)
 
 	let deleteActivity = (activity: Activity) => {
-		sendActivityRevert(activity)
 		project.activities = Object.fromEntries(
-			Object.entries(project.activities).filter(([key, value]) => key !== activity.selector)
+			Object.entries(project.activities).filter(([key]) => key !== activity.selector)
 		)
-		console.log(project.activities)
 
-		// postProjectToFirebase(project)
-		// projectsMapBucket.set({ [project.id]: project })
-		// project = { ...project }
-		// closeModal()
+		sendActivityRevert(activity)
+		postProjectToFirebase(project)
+		projectsMapBucket.set({ [project.id]: project })
+		project = { ...project }
+		closeModal()
 	}
 
 	let clickActivity = (activity: Activity) => {
@@ -170,11 +169,11 @@
 					>
 				</div>
 			{/if}
-			<div class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col">
+			<p class="bg-gray-50 rounded p-4 border text-start flex flex-col w-[23rem] overflow-auto">
 				{#each Object.values(activity.styleChanges) as styleChange}
-					<span class="">{jsToCssProperty(styleChange.key)}: {styleChange.newVal};</span>
+					<span>{jsToCssProperty(styleChange.key)}: {styleChange.newVal};</span>
 				{/each}
-			</div>
+			</p>
 		</div>
 	{/each}
 </div>
