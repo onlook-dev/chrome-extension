@@ -123,12 +123,22 @@ const setListeners = () => {
 		}
 	)
 
-	chrome.tabs.onRemoved.addListener((tabId: number) => {
-		// Remove tab info from state when it's refreshed
-		saveTabState(tabId, {
-			projectId: '',
-			state: InjectState.none
-		})
+	chrome.tabs.onRemoved.addListener(async (tabId: number) => {
+		// If tab includes active project, save its state
+		getTabState(tabId)
+			.then(tabState => {
+				if (!tabState) return
+				getActiveProject().then(activeProject => {
+					if (tabState.projectId == activeProject.id) postProjectToFirebase(activeProject)
+				})
+			})
+			.finally(() => {
+				// Remove tab info from state when it's refreshed
+				saveTabState(tabId, {
+					projectId: '',
+					state: InjectState.none
+				})
+			})
 	})
 
 	subscribeToFirebaseAuthChanges()
