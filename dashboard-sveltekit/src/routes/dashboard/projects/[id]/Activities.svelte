@@ -21,7 +21,7 @@
 			new Date(a.creationTime ?? a.createdAt).getTime()
 	);
 
-	let deleteActivity = (activity: Activity) => {
+	function deleteActivity(activity: Activity) {
 		project.activities = Object.fromEntries(
 			Object.entries(project.activities).filter(([key, value]) => key !== activity.selector)
 		);
@@ -33,7 +33,7 @@
 		});
 		project = { ...project };
 		closeModal();
-	};
+	}
 
 	function showModal() {
 		const modal = document.getElementById(modalId) as HTMLDialogElement;

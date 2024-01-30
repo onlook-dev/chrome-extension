@@ -11,7 +11,6 @@ import {
 import type { Activity } from '$shared/models/activity'
 import type { VisbugStyleChange } from '$shared/models/visbug'
 import { baseUrl } from '$lib/utils/env'
-import type { Project } from '$shared/models/project'
 
 function simulateEventOnSelector(
 	selector: string,
@@ -42,30 +41,12 @@ function applyActivityChanges(activity: Activity): boolean {
 	if (element) {
 		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
 			// Apply style to element
-			element.style[style] = changeObject.newVal
+			if (style === 'text') {
+				element.innerText = changeObject.newVal
+			} else {
+				element.style[style] = changeObject.newVal
+			}
 		})
-		if (activity.path !== element.dataset.onlookId) {
-			activity.path = element.dataset.onlookId
-			return true
-		}
-	}
-	return false
-}
-function syncProjectPaths(project: Project) {
-	let shouldSaveProject = false
-	Object.values(project.activities).forEach(activity => {
-		let activityMutated = syncActivityPath(activity)
-		if (activityMutated) {
-			project.activities[activity.id] = activity
-			shouldSaveProject = true
-		}
-	})
-	sendSaveProject(project)
-}
-
-function syncActivityPath(activity: Activity): boolean {
-	const element = document.querySelector(activity.selector) as any
-	if (element) {
 		if (activity.path !== element.dataset.onlookId) {
 			activity.path = element.dataset.onlookId
 			return true
@@ -79,7 +60,11 @@ function revertActivityChanges(activity: Activity) {
 	if (element) {
 		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
 			// Apply style to element
-			element.style[style] = changeObject.oldVal
+			if (style === 'text') {
+				element.innerText = changeObject.oldVal
+			} else {
+				element.style[style] = changeObject.oldVal
+			}
 		})
 	}
 }
@@ -126,7 +111,7 @@ export function setupListeners() {
 		Object.values(activeProject.activities).forEach(activity => {
 			let activityMutated = applyActivityChanges(activity)
 			if (activityMutated) {
-				activeProject.activities[activity.id] = activity
+				activeProject.activities[activity.selector] = activity
 				shouldSaveProject = true
 			}
 		})

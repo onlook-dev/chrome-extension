@@ -38,7 +38,6 @@ export function signInWithGoogle() {
 
 export function signInWithGithub() {
 	const provider = new GithubAuthProvider();
-	console.log('provider:', provider);
 	signInWithPopup(auth, provider).catch((error) => {
 		// Handle Errors here.
 		const errorCode = error.code;
