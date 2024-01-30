@@ -110,7 +110,7 @@
 								<div class="modal-action space-x-2">
 									<button class="btn" on:click={closeModal}>Cancel</button>
 									<button class="btn btn-error" on:click={() => deleteActivity(activity)}
-										>Delete Me</button
+										>Delete</button
 									>
 								</div>
 							</div>
