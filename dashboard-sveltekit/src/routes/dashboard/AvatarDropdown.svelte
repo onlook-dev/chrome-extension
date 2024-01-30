@@ -28,7 +28,9 @@
 		<ChevronDownIcon class="w-4 h-4" />
 	</div>
 	<ul class="dropdown-content z-[1] menu shadow bg-base-100 rounded-box w-52">
-		<li class="disabled"><button>Profile</button></li>
+		<li class="disabled">
+			<button>Profile</button>
+		</li>
 		<li class="disabled">
 			<button>Settings</button>
 		</li>
