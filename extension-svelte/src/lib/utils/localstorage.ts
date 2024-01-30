@@ -29,7 +29,8 @@ export interface VisbugState {
 export enum InjectState {
 	injected = 'injected',
 	loaded = 'loaded',
-	none = 'none'
+	none = 'none',
+	creating = 'creating'
 }
 
 // Objects
@@ -50,8 +51,12 @@ export const getActiveUser = async (): Promise<User> => {
 
 export const getActiveProject = async (): Promise<Project> => {
 	const { activeProjectId } = await popupStateBucket.get()
+	return getProjectById(activeProjectId)
+}
+
+export const getProjectById = async (projectId: string): Promise<Project> => {
 	const projectsMap = new Map(Object.entries(await projectsMapBucket.get()))
-	return projectsMap.get(activeProjectId)
+	return projectsMap.get(projectId)
 }
 
 export const getTeamById = async (teamId: string): Promise<Team> => {
@@ -70,5 +75,11 @@ export async function getTabState(tabId: number): Promise<VisbugState> {
 }
 
 export async function saveTabState(tabId: number, tabState: VisbugState) {
-	tabsMapBucket.set({ [tabId.toString()]: tabState })
+	if (tabState.state === InjectState.none) {
+		console.log('removing tab state', tabId)
+		tabsMapBucket.remove(tabId.toString())
+	} else {
+		console.log('saving tab state', tabId, tabState)
+		tabsMapBucket.set({ [tabId.toString()]: tabState })
+	}
 }

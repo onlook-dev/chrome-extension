@@ -28,7 +28,8 @@ import {
 	tabsMapBucket,
 	type VisbugState,
 	saveTabState,
-	getTabState
+	getTabState,
+	getProjectById
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 
@@ -112,33 +113,41 @@ const setListeners = () => {
 	})
 
 	chrome.tabs.onUpdated.addListener(
-		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
+		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
 			// Remove tab info from state when it's refreshed
 			if (changeInfo.status === 'complete') {
-				saveTabState(tabId, {
-					projectId: '',
-					state: InjectState.none
-				})
+				let tabState = await getTabState(tabId)
+				if (tabState.state === InjectState.injected) {
+					// If tab should be injected, reinject it
+					saveTabState(tabId, {
+						projectId: '',
+						state: InjectState.none
+					}).then(async () => {
+						const project = await getProjectById(tabState.projectId)
+						updateTabActiveState(tab, project, true)
+					})
+				} else {
+					saveTabState(tabId, {
+						projectId: '',
+						state: InjectState.none
+					})
+				}
 			}
 		}
 	)
 
 	chrome.tabs.onRemoved.addListener(async (tabId: number) => {
 		// If tab includes active project, save its state
-		getTabState(tabId)
-			.then(tabState => {
-				if (!tabState) return
-				getActiveProject().then(activeProject => {
-					if (tabState.projectId == activeProject.id) postProjectToFirebase(activeProject)
-				})
+		getTabState(tabId).then(tabState => {
+			if (!tabState) return
+			getActiveProject().then(activeProject => {
+				if (tabState.projectId == activeProject.id) postProjectToFirebase(activeProject)
 			})
-			.finally(() => {
-				// Remove tab info from state when it's refreshed
-				saveTabState(tabId, {
-					projectId: '',
-					state: InjectState.none
-				})
-			})
+		})
+		saveTabState(tabId, {
+			projectId: '',
+			state: InjectState.none
+		})
 	})
 
 	subscribeToFirebaseAuthChanges()

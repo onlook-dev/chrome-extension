@@ -44,6 +44,7 @@
 
 		tabsMapBucket.valueStream.subscribe(visbugMap => {
 			let tabStates: VisbugState[] = Object.values(visbugMap)
+			console.log('tabStates', tabStates)
 			projectInjected = tabStates.some(
 				tabState => tabState.projectId === project?.id && tabState.state === InjectState.injected
 			)

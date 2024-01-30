@@ -6,11 +6,10 @@ import { getColorScheme } from './contextmenu/colorscheme.js'
 var platform = typeof browser === 'undefined' ? chrome : browser
 
 export const toggleProjectTab = async (tabId: number, projectId: string, enable: boolean) => {
-	const tabState = await getTabState(tabId)
-
+	let tabState = await getTabState(tabId)
 	if (enable) {
 		// toggle in: it's loadedTabs and needs injectedTabs
-		if (tabState.state && tabState.state === InjectState.loaded) {
+		if (tabState.state === InjectState.loaded) {
 			platform.scripting.executeScript({
 				target: { tabId: tabId },
 				files: ['src/lib/visbug/toolbar/restore.js']
@@ -25,6 +24,8 @@ export const toggleProjectTab = async (tabId: number, projectId: string, enable:
 				target: { tabId: tabId },
 				files: ['src/lib/visbug/toolbar/inject.js']
 			})
+		} else {
+			// already injected
 		}
 		tabState.state = InjectState.injected
 		tabState.projectId = projectId
@@ -39,6 +40,5 @@ export const toggleProjectTab = async (tabId: number, projectId: string, enable:
 		tabState.state = InjectState.loaded
 		tabState.projectId = ''
 	}
-
 	saveTabState(tabId, tabState)
 }
