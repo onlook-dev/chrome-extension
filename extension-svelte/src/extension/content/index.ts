@@ -11,7 +11,6 @@ import {
 import type { Activity } from '$shared/models/activity'
 import type { VisbugStyleChange } from '$shared/models/visbug'
 import { baseUrl } from '$lib/utils/env'
-import type { Project } from '$shared/models/project'
 
 function simulateEventOnSelector(
 	selector: string,
@@ -51,28 +50,6 @@ function applyActivityChanges(activity: Activity): boolean {
 	}
 	return false
 }
-function syncProjectPaths(project: Project) {
-	let shouldSaveProject = false
-	Object.values(project.activities).forEach(activity => {
-		let activityMutated = syncActivityPath(activity)
-		if (activityMutated) {
-			project.activities[activity.id] = activity
-			shouldSaveProject = true
-		}
-	})
-	sendSaveProject(project)
-}
-
-function syncActivityPath(activity: Activity): boolean {
-	const element = document.querySelector(activity.selector) as any
-	if (element) {
-		if (activity.path !== element.dataset.onlookId) {
-			activity.path = element.dataset.onlookId
-			return true
-		}
-	}
-	return false
-}
 
 function revertActivityChanges(activity: Activity) {
 	const element = document.querySelector(activity.selector) as any
@@ -99,6 +76,7 @@ export function setupListeners() {
 		if (message.type === STYLE_CHANGE) {
 			const visbugStyleChange = message.detail as VisbugStyleChange
 			sendStyleChange(visbugStyleChange)
+			console.log('Style change', visbugStyleChange)
 			return
 		}
 	})

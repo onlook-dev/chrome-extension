@@ -6,7 +6,8 @@
 		popupStateBucket,
 		getActiveProject,
 		tabsMapBucket,
-		type VisbugState
+		type VisbugState,
+		InjectState
 	} from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { sendEditProjectRequest } from '$lib/utils/messaging'
@@ -43,7 +44,10 @@
 
 		tabsMapBucket.valueStream.subscribe(visbugMap => {
 			let tabStates: VisbugState[] = Object.values(visbugMap)
-			projectInjected = tabStates.some(tabState => tabState.projectId === project?.id)
+			projectInjected = tabStates.some(
+				tabState => tabState.projectId === project?.id && tabState.state === InjectState.injected
+			)
+			console.log('projectInjected', projectInjected)
 		})
 	})
 

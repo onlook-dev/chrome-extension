@@ -111,17 +111,14 @@ const setListeners = () => {
 		}
 	})
 
-	chrome.tabs.onUpdated.addListener(
-		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
-			// Remove tab info from state when it's refreshed
-			if (changeInfo.status === 'complete') {
-				saveTabState(tabId, {
-					projectId: '',
-					state: InjectState.none
-				})
-			}
-		}
-	)
+	chrome.tabs.onRemoved.addListener((tabId: number) => {
+		// Remove tab info from state when it's refreshed
+		console.log('Tab removed', tabId)
+		saveTabState(tabId, {
+			projectId: '',
+			state: InjectState.none
+		})
+	})
 
 	subscribeToFirebaseAuthChanges()
 
