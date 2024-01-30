@@ -84,6 +84,7 @@ export function setupListeners() {
 		if (message.type === STYLE_CHANGE) {
 			const visbugStyleChange = message.detail as VisbugStyleChange
 			sendStyleChange(visbugStyleChange)
+			console.log('Style change', visbugStyleChange)
 			return
 		}
 	})

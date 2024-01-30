@@ -9,7 +9,7 @@ export const toggleProjectTab = async (tabId: number, projectId: string, enable:
 	let tabState = await getTabState(tabId)
 	if (enable) {
 		// toggle in: it's loadedTabs and needs injectedTabs
-		if (tabState.state === InjectState.loaded) {
+		if (tabState.state && tabState.state === InjectState.loaded) {
 			platform.scripting.executeScript({
 				target: { tabId: tabId },
 				files: ['src/lib/visbug/toolbar/restore.js']
