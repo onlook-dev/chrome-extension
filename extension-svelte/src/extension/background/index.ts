@@ -114,7 +114,7 @@ const setListeners = () => {
 		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
 			// Remove tab info from state when it's refreshed
 			if (changeInfo.status === 'complete') {
-				let tabState = await getTabState(tabId)
+				const tabState = await getTabState(tabId)
 				if (tabState.state === InjectState.injected) {
 					// If tab should be injected, reinject it
 					saveTabState(tabId, {

@@ -6,7 +6,7 @@ import { getColorScheme } from './contextmenu/colorscheme.js'
 var platform = typeof browser === 'undefined' ? chrome : browser
 
 export const toggleProjectTab = async (tabId: number, projectId: string, enable: boolean) => {
-	let tabState = await getTabState(tabId)
+	const tabState = await getTabState(tabId)
 	if (enable) {
 		// toggle in: it's loadedTabs and needs injectedTabs
 		if (tabState.state && tabState.state === InjectState.loaded) {
