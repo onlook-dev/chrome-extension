@@ -33,10 +33,10 @@
 					<Google class="w-4 h-4" />
 					Continue with Google</button
 				>
-				<button class="btn btn-outline" on:click={signInWithGithub}>
+				<!-- <button class="btn btn-outline" on:click={signInWithGithub}>
 					<GitHub class="w-4 h-4" />
 					Continue with GitHub</button
-				>
+				> -->
 			</div>
 		</div>
 	</div>

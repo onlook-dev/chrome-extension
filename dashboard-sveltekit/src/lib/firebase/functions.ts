@@ -10,7 +10,3 @@ interface InstallationData {
 }
 
 export const storeImageUri = httpsCallable<StoreImageUriData, string>(functions, 'storeImageUri');
-export const getGithubReposByInstallationId = httpsCallable<InstallationData, string[]>(
-	functions,
-	'getReposByInstallation'
-);
