@@ -19,7 +19,6 @@ import { toggleProjectTab } from '$lib/visbug/visbug'
 import {
 	authUserBucket,
 	getActiveProject,
-	getActiveUser,
 	InjectState,
 	projectsMapBucket,
 	teamsMapBucket,
@@ -34,16 +33,15 @@ import {
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 
 import type { Team } from '$shared/models/team'
-import type { Activity, StyleChange } from '$shared/models/activity'
+import type { Activity } from '$shared/models/activity'
 import type { Comment } from '$shared/models/comment'
+import type { Project } from '$shared/models/project'
 
 import { subscribeToUser } from '$lib/storage/user'
 import { subscribeToTeam } from '$lib/storage/team'
 import { postProjectToFirebase, subscribeToProject } from '$lib/storage/project'
 import { sameTabHost, updateProjectTabHostWithDebounce } from './tabs'
-import { nanoid } from 'nanoid'
-import type { Project } from '$shared/models/project'
-import { convertVisbugToStyleChangeMap } from '$shared/helpers'
+import { changeQueue, processChangeQueue } from './styleChanges'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
@@ -296,51 +294,13 @@ const setListeners = () => {
 
 	// Style change from visbug and content script
 	styleChangeStream.subscribe(async ([visbugStyleChange]) => {
-		const activeProject = await getActiveProject()
-		if (!activeProject) return
+		changeQueue.push(visbugStyleChange)
 
-		let activity = activeProject.activities[visbugStyleChange.selector]
-
-		// Create activity if it doesn't exist
-		if (!activity) {
-			const user = await getActiveUser()
-			activity = {
-				id: nanoid(),
-				userId: user.id,
-				projectId: activeProject.id,
-				eventData: [],
-				createdAt: new Date().toISOString(),
-				selector: visbugStyleChange.selector,
-				// TODO: save path to file
-				path: visbugStyleChange.path,
-				styleChanges: {},
-				visible: true
-			} as Activity
+		// Process the queue
+		if (changeQueue.length === 1) {
+			// Only start processing if this is the only item in the queue
+			await processChangeQueue()
 		}
-
-		const mappedStyleChange = convertVisbugToStyleChangeMap(visbugStyleChange)
-
-		// For each key in mappedStyleChange,
-		// if key does not exist in activity, add the oldVal and newVal.
-		// if it does, only apply newVal
-		Object.entries(mappedStyleChange).forEach(([key, val]) => {
-			if (!activity.styleChanges[key]) {
-				activity.styleChanges[key] = {
-					key: key,
-					oldVal: val.oldVal ?? '',
-					newVal: val.newVal
-				} as StyleChange
-			} else {
-				activity.styleChanges[key].newVal = val.newVal
-			}
-		})
-
-		activity.path = visbugStyleChange.path ?? activity.path
-		activity.createdAt = new Date().toISOString()
-		activeProject.activities[visbugStyleChange.selector] = activity
-
-		// Update project
-		projectsMapBucket.set({ [activeProject.id]: activeProject })
 	})
 }
 
