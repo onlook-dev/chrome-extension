@@ -113,7 +113,6 @@ const setListeners = () => {
 
 	chrome.tabs.onRemoved.addListener((tabId: number) => {
 		// Remove tab info from state when it's refreshed
-		console.log('Tab removed', tabId)
 		saveTabState(tabId, {
 			projectId: '',
 			state: InjectState.none

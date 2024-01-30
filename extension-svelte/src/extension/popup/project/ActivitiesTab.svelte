@@ -12,6 +12,7 @@
 	import ItemHeader from './ItemHeader.svelte'
 	import Undo from '~icons/material-symbols/undo'
 	import Trash from '~icons/material-symbols/delete'
+	import { postProjectToFirebase } from '$lib/storage/project'
 
 	export let project: Project
 
@@ -30,14 +31,16 @@
 	)
 
 	let deleteActivity = (activity: Activity) => {
+		sendActivityRevert(activity)
 		project.activities = Object.fromEntries(
 			Object.entries(project.activities).filter(([key, value]) => key !== activity.selector)
 		)
+		console.log(project.activities)
 
-		projectsMapBucket.set({ [project.id]: project })
-		project = { ...project }
-		sendActivityRevert(activity)
-		closeModal()
+		// postProjectToFirebase(project)
+		// projectsMapBucket.set({ [project.id]: project })
+		// project = { ...project }
+		// closeModal()
 	}
 
 	let clickActivity = (activity: Activity) => {

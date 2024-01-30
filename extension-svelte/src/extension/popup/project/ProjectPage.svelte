@@ -47,7 +47,6 @@
 			projectInjected = tabStates.some(
 				tabState => tabState.projectId === project?.id && tabState.state === InjectState.injected
 			)
-			console.log('projectInjected', projectInjected)
 		})
 	})
 

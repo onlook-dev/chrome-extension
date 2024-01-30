@@ -104,7 +104,7 @@ export function setupListeners() {
 		Object.values(activeProject.activities).forEach(activity => {
 			let activityMutated = applyActivityChanges(activity)
 			if (activityMutated) {
-				activeProject.activities[activity.id] = activity
+				activeProject.activities[activity.selector] = activity
 				shouldSaveProject = true
 			}
 		})
