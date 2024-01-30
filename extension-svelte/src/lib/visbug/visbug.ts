@@ -24,8 +24,6 @@ export const toggleProjectTab = async (tabId: number, projectId: string, enable:
 				target: { tabId: tabId },
 				files: ['src/lib/visbug/toolbar/inject.js']
 			})
-		} else {
-			// already injected
 		}
 		tabState.state = InjectState.injected
 		tabState.projectId = projectId

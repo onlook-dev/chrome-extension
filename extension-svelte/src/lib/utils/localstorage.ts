@@ -75,10 +75,8 @@ export async function getTabState(tabId: number): Promise<VisbugState> {
 
 export async function saveTabState(tabId: number, tabState: VisbugState) {
 	if (tabState.state === InjectState.none) {
-		console.log('removing tab state', tabId)
 		tabsMapBucket.remove(tabId.toString())
 	} else {
-		console.log('saving tab state', tabId, tabState)
 		tabsMapBucket.set({ [tabId.toString()]: tabState })
 	}
 }
