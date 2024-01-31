@@ -10,7 +10,7 @@
 		InjectState
 	} from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
-	import { sendEditProjectRequest } from '$lib/utils/messaging'
+	import { sendEditProjectRequest, sendOpenUrlRequest } from '$lib/utils/messaging'
 
 	import ArrowLeft from '~icons/formkit/arrowleft'
 	import Pencil from '~icons/mdi/pencil'
@@ -21,6 +21,8 @@
 	import CommentsTab from './CommentsTab.svelte'
 	import { postProjectToFirebase } from '$lib/storage/project'
 	import { truncateString } from '$shared/helpers'
+	import { baseUrl } from '$lib/utils/env'
+	import { DashboardRoutes } from '$shared/constants'
 
 	const tabsName = 'project-tabs-id'
 	let saved = false
@@ -34,7 +36,10 @@
 	}
 
 	function returnToDashboard() {
-		project && sendEditProjectRequest({ project, enable: false })
+		if (project) {
+			sendEditProjectRequest({ project, enable: false })
+			postProjectToFirebase(project)
+		}
 		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
 	}
 
@@ -42,7 +47,7 @@
 		// Get active team's projects
 		project = await getActiveProject()
 
-		tabsMapBucket.valueStream.subscribe(visbugMap => {
+		tabsMapBucket.valueStream.subscribe((visbugMap: Map<string, VisbugState>) => {
 			let tabStates: VisbugState[] = Object.values(visbugMap)
 			projectInjected = tabStates.some(
 				tabState => tabState.projectId === project?.id && tabState.state === InjectState.injected
@@ -51,7 +56,10 @@
 	})
 
 	function toggleEditing() {
-		project && sendEditProjectRequest({ project, enable: !projectInjected })
+		if (project) {
+			sendEditProjectRequest({ project, enable: !projectInjected })
+			postProjectToFirebase(project)
+		}
 	}
 </script>
 
@@ -72,16 +80,15 @@
 			{/if}
 		</button>
 		{#if projectEdited}
-			<button
-				disabled={saved}
-				on:click={() => {
-					if (project && !saved) {
-						postProjectToFirebase(project)
-						saved = true
-					}
-				}}
-				class="ml-2 btn btn-sm btn-primary">{saved ? 'Saved' : 'Save'}</button
-			>
+			<div class="ml-2">
+				<button
+					class="btn btn-sm btn-primary"
+					on:click={() =>
+						sendOpenUrlRequest(
+							project ? `${baseUrl}${DashboardRoutes.PROJECTS}/${project.id}` : baseUrl
+						)}>Publish</button
+				>
+			</div>
 		{/if}
 	</div>
 </div>
