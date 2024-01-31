@@ -85,8 +85,9 @@
 					class="btn btn-sm btn-primary"
 					on:click={() => {
 						if (project) {
-							postProjectToFirebase(project)
-							sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project.id}`)
+							postProjectToFirebase(project).then(() => {
+								sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project?.id}`)
+							})
 						}
 					}}>Publish</button
 				>
