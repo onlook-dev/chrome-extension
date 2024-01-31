@@ -97,3 +97,8 @@ export const [sendActivityRevert, activityRevertStream] = getExtendedMessages<Ac
 	'ACTIVITY_REVERT',
 	MessageReceiver.CONTENT
 )
+
+export const [sendGetScreenshotRequest, getScreenshotStream] = getExtendedMessages<Activity>(
+	'ACTIVITY_SCREENSHOT',
+	MessageReceiver.CONTENT
+)

@@ -4,6 +4,8 @@ import type { Activity, StyleChange } from '$shared/models/activity'
 import { convertVisbugToStyleChangeMap } from '$shared/helpers'
 import { nanoid } from 'nanoid'
 import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
+import { sendGetScreenshotRequest } from '$lib/utils/messaging'
+import { forwardToActiveProjectTab } from '.'
 
 export let changeQueue: VisbugStyleChange[] = []
 
@@ -60,4 +62,7 @@ async function processStyleChange(visbugStyleChange: VisbugStyleChange) {
 
 	// Update project
 	projectsMapBucket.set({ [activeProject.id]: activeProject })
+
+	// Send to content script
+	forwardToActiveProjectTab(activity, sendGetScreenshotRequest)
 }

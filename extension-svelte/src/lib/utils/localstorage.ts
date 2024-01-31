@@ -80,3 +80,12 @@ export async function saveTabState(tabId: number, tabState: VisbugState) {
 		tabsMapBucket.set({ [tabId.toString()]: tabState })
 	}
 }
+
+export async function removeProjectFromTabs(projectId: string) {
+	let stateMap: Map<string, VisbugState> = new Map(Object.entries(await tabsMapBucket.get()))
+	for (let [tabId, tabState] of stateMap) {
+		if (tabState.projectId === projectId) {
+			tabsMapBucket.remove(tabId)
+		}
+	}
+}
