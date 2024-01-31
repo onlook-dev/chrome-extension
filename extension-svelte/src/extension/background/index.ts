@@ -17,6 +17,7 @@ import {
 } from '$lib/utils/messaging'
 import { toggleProjectTab } from '$lib/visbug/visbug'
 import {
+	type VisbugState,
 	authUserBucket,
 	getActiveProject,
 	InjectState,
@@ -25,23 +26,21 @@ import {
 	userBucket,
 	usersMapBucket,
 	tabsMapBucket,
-	type VisbugState,
 	saveTabState,
 	getTabState,
 	getProjectById
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
-
-import type { Team } from '$shared/models/team'
-import type { Activity } from '$shared/models/activity'
-import type { Comment } from '$shared/models/comment'
-import type { Project } from '$shared/models/project'
-
 import { subscribeToUser } from '$lib/storage/user'
 import { subscribeToTeam } from '$lib/storage/team'
 import { postProjectToFirebase, subscribeToProject } from '$lib/storage/project'
 import { sameTabHost, updateProjectTabHostWithDebounce } from './tabs'
 import { changeQueue, processChangeQueue } from './styleChanges'
+
+import type { Team } from '$shared/models/team'
+import type { Activity } from '$shared/models/activity'
+import type { Comment } from '$shared/models/comment'
+import type { Project } from '$shared/models/project'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
@@ -134,7 +133,7 @@ const setListeners = () => {
 		}
 	)
 
-	chrome.tabs.onRemoved.addListener(async (tabId: number) => {
+	chrome.tabs.onRemoved.addListener((tabId: number) => {
 		// If tab includes active project, save its state
 		getTabState(tabId).then(tabState => {
 			if (!tabState) return
