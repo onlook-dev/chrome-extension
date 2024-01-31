@@ -1,16 +1,18 @@
 import { DASHBOARD_AUTH, STYLE_CHANGE } from '$shared/constants'
-import { authUserBucket, getActiveProject, projectsMapBucket } from '$lib/utils/localstorage'
+import { authUserBucket, getActiveProject, getProjectById } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
 	activityInspectStream,
 	activityRevertStream,
 	applyProjectChangesStream,
+	getScreenshotStream,
 	sendSaveProject,
 	sendStyleChange
 } from '$lib/utils/messaging'
 import type { Activity } from '$shared/models/activity'
 import type { VisbugStyleChange } from '$shared/models/visbug'
 import { baseUrl } from '$lib/utils/env'
+import { takeActivityScreenshot } from './screenshot'
 
 function simulateEventOnSelector(
 	selector: string,
@@ -119,6 +121,10 @@ export function setupListeners() {
 		if (shouldSaveProject) {
 			sendSaveProject(activeProject)
 		}
+	})
+
+	getScreenshotStream.subscribe(async ([activity]) => {
+		takeActivityScreenshot(activity)
 	})
 }
 

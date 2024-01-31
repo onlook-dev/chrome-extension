@@ -10,7 +10,7 @@
 	import { jsToCssProperty } from '$shared/helpers'
 
 	import ItemHeader from './ItemHeader.svelte'
-	import Undo from '~icons/material-symbols/undo'
+	import ClockArrow from '~icons/mdi/clock-arrow'
 	import Trash from '~icons/material-symbols/delete'
 	import { postProjectToFirebase } from '$lib/storage/project'
 
@@ -123,7 +123,7 @@
 						}}
 						class="btn btn-sm btn-square btn-ghost"
 					>
-						<Undo />
+						<ClockArrow />
 					</button>
 				</div>
 
@@ -174,6 +174,12 @@
 					<span>{jsToCssProperty(styleChange.key)}: {styleChange.newVal};</span>
 				{/each}
 			</p>
+
+			{#if activity.previewImage}
+				<div class="mt-4">
+					<img src={activity.previewImage} alt="Preview" class="w-full rounded" />
+				</div>
+			{/if}
 		</div>
 	{/each}
 </div>
