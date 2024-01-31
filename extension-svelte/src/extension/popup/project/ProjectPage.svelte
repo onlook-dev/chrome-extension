@@ -83,10 +83,12 @@
 			<div class="ml-2">
 				<button
 					class="btn btn-sm btn-primary"
-					on:click={() =>
-						sendOpenUrlRequest(
-							project ? `${baseUrl}${DashboardRoutes.PROJECTS}/${project.id}` : baseUrl
-						)}>Publish</button
+					on:click={() => {
+						if (project) {
+							postProjectToFirebase(project)
+							sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project.id}`)
+						}
+					}}>Publish</button
 				>
 			</div>
 		{/if}
