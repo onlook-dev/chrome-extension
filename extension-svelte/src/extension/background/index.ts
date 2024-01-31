@@ -28,7 +28,8 @@ import {
 	tabsMapBucket,
 	saveTabState,
 	getTabState,
-	getProjectById
+	getProjectById,
+	removeProjectFromTabs
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { subscribeToUser } from '$lib/storage/user'
@@ -184,19 +185,23 @@ const setListeners = () => {
 		chrome.tabs.query({ url: searchUrl }, tabs => {
 			// Check if tab with same url exists
 			if (tabs?.length) {
-				// Make sure tab is active
+				// If tab exists and command is enable, also make it active
 				if (enable) chrome.tabs.update(tabs[0].id as number, { active: true })
 				updateTabActiveState(tabs[0], project, enable)
 			} else {
-				// If tab doesn't exist and command is disable, do nothing
-				if (!enable) return
-				chrome.tabs
-					.create({
-						url: project.hostUrl
-					})
-					.then((tab: chrome.tabs.Tab) => {
-						updateTabActiveState(tab, project, enable)
-					})
+				if (enable) {
+					// If tab doesn't exist and command is enable, create tab
+					chrome.tabs
+						.create({
+							url: project.hostUrl
+						})
+						.then((tab: chrome.tabs.Tab) => {
+							updateTabActiveState(tab, project, enable)
+						})
+				} else {
+					// If tab doesn't exist and command is disable, remove instances of project
+					removeProjectFromTabs(project.id)
+				}
 			}
 		})
 	})
