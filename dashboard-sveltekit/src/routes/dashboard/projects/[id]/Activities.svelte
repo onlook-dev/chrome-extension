@@ -81,7 +81,7 @@
 					userName={$usersMapStore.get(activity.userId)?.name}
 					createdAt={activity.creationTime ?? activity.createdAt}
 				>
-					{#if activity.path}
+					{#if project?.githubSettings}
 						<div class="tooltip tooltip-left" data-tip="View in GitHub">
 							<button
 								class="btn btn-xs btn-square btn-ghost ml-auto"

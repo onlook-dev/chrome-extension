@@ -4,13 +4,18 @@
 	import { Role, type Team } from '$shared/models/team';
 	import { nanoid } from 'nanoid';
 	import { postTeamToFirebase } from '$lib/storage/team';
+	import { MAX_TITLE_LENGTH } from '$shared/constants';
 
 	let plan = Tier.FREE;
 	const modalId = 'new-team-modal';
 	let teamName = '';
+	let nameError = false;
 
 	function createTeam() {
 		if (!$userStore) return;
+		nameError = !teamName || teamName.length === 0 || teamName.length > MAX_TITLE_LENGTH;
+		if (nameError) return;
+
 		const newTeam: Team = {
 			id: nanoid(),
 			name: teamName,
@@ -19,6 +24,9 @@
 			projectIds: [],
 			createdAt: new Date().toISOString()
 		};
+
+		teamName = '';
+		closeModal();
 
 		teamsMapStore.update((map) => map.set(newTeam.id, newTeam));
 		userStore.update((user) => {
@@ -68,15 +76,20 @@
 					bind:value={teamName}
 					type="text"
 					placeholder="Team name"
-					class="input input-bordered w-full"
+					class="input input-bordered w-full {nameError && 'input-error'}"
+					maxlength={MAX_TITLE_LENGTH}
 				/>
+
+				{#if nameError}
+					<p class="text-xs text-error">Team name is required</p>
+				{/if}
 			</div>
 
 			<div class="modal-action">
 				<form method="dialog">
 					<!-- if there is a button in form, it will close the modal -->
 					<button class="btn" on:click={closeModal}>Cancel</button>
-					<button class="btn btn-primary" on:click={createTeam}>Create</button>
+					<button class="btn btn-primary" on:click|preventDefault={createTeam}>Create</button>
 				</form>
 			</div>
 		</div>

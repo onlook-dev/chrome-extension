@@ -24,6 +24,8 @@
 	let hasActivities = false;
 	let loadingRepos = false;
 	let isLoading = false;
+	let publishError = false;
+	let errorMessage = '';
 	let prLink: string | undefined;
 
 	let titlePlaceholder = 'Design QA with onlook.dev';
@@ -68,10 +70,11 @@
 			prLink = await exportToPRComments(userId, project?.id, title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
-			alert(`Error publishing changes. ${error}`);
+			publishError = true;
 		} finally {
 			isLoading = false;
 			if (!prLink) {
+				publishError = true;
 				return;
 			}
 
@@ -114,6 +117,19 @@
 		});
 		hasActivities = true;
 	}
+
+	function displayError(message: string) {
+		errorMessage = message;
+		setTimeout(() => {
+			errorMessage = '';
+		}, 10000);
+	}
+
+	$: if (publishError) {
+		displayError(
+			'GitHub publish failed: Check your Github settings. If this issue persists, contact contact@onlook.dev'
+		);
+	}
 </script>
 
 <div class="flex flex-col items-center justify-center h-full mt-4">
@@ -141,18 +157,22 @@
 				maxlength={MAX_DESCRIPTION_LENGTH}
 			></textarea>
 			<div class="mt-6 ml-auto">
-				<button
-					class="btn btn-primary"
-					disabled={!hasActivities || isLoading}
-					on:click={handlePublishClick}
-				>
-					{#if isLoading}
-						<div class="loading"></div>
-						Publishing
-					{:else}
-						<GitHub class="w-5 h-5" /> Publish
-					{/if}
-				</button>
+				{#if errorMessage}
+					<p class="text-xs text-error">{errorMessage}</p>
+				{:else}
+					<button
+						class="btn btn-primary"
+						disabled={!hasActivities || isLoading}
+						on:click={handlePublishClick}
+					>
+						{#if isLoading}
+							<div class="loading"></div>
+							Publishing
+						{:else}
+							<GitHub class="w-5 h-5" /> Publish
+						{/if}
+					</button>
+				{/if}
 			</div>
 		</label>
 

@@ -54,7 +54,7 @@
 			});
 	}
 
-	function connectRepoToProject(repo: any) {
+	function connectRepoToProject(repo: GithubRepo) {
 		if (!project) return;
 
 		project.githubSettings = {
