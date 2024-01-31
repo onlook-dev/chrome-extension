@@ -1,5 +1,5 @@
 import { DASHBOARD_AUTH, STYLE_CHANGE } from '$shared/constants'
-import { authUserBucket, getActiveProject, getProjectById } from '$lib/utils/localstorage'
+import { authUserBucket, getActiveProject } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
 	activityInspectStream,
@@ -12,7 +12,7 @@ import {
 import type { Activity } from '$shared/models/activity'
 import type { VisbugStyleChange } from '$shared/models/visbug'
 import { baseUrl } from '$lib/utils/env'
-import { takeActivityScreenshot } from './screenshot'
+import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
 
 function simulateEventOnSelector(
 	selector: string,
@@ -124,7 +124,13 @@ export function setupListeners() {
 	})
 
 	getScreenshotStream.subscribe(async ([activity]) => {
-		takeActivityScreenshot(activity)
+		activityScreenshotQueue.push(activity)
+
+		// Process the queue
+		if (activityScreenshotQueue.length === 1) {
+			// Only start processing if this is the only item in the queue
+			await processScreenshotQueue()
+		}
 	})
 }
 

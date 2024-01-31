@@ -5,8 +5,7 @@
 	import type { User } from '$shared/models/user'
 	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData'
 	import { usersMapBucket, projectsMapBucket } from '$lib/utils/localstorage'
-	import { sendActivityInspect, sendActivityRevert, sendActivityApply } from '$lib/utils/messaging'
-	import { MouseEvent } from '$shared/constants'
+	import { sendActivityRevert, sendActivityApply } from '$lib/utils/messaging'
 	import { jsToCssProperty } from '$shared/helpers'
 
 	import ItemHeader from './ItemHeader.svelte'
@@ -43,11 +42,11 @@
 	}
 
 	let clickActivity = (activity: Activity) => {
-		sendActivityInspect({
-			selector: activity.selector,
-			event: MouseEvent.CLICK,
-			scrollToElement: true
-		})
+		// sendActivityInspect({
+		// 	selector: activity.selector,
+		// 	event: MouseEvent.CLICK,
+		// 	scrollToElement: true
+		// })
 	}
 
 	let hoverActivity = (activity: Activity) => {

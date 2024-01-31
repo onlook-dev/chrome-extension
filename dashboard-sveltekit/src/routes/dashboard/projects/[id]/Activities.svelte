@@ -141,11 +141,17 @@
 						>
 					</div>
 				{/if}
-				<div class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col">
+				<p class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col">
 					{#each Object.values(activity.styleChanges) as styleChange}
 						<span class="">{jsToCssProperty(styleChange.key)}: {styleChange.newVal};</span>
 					{/each}
-				</div>
+				</p>
+
+				{#if activity.previewImage}
+					<div class="mt-4">
+						<img src={activity.previewImage} alt="Preview" class="w-full rounded" />
+					</div>
+				{/if}
 			</button>
 		{/if}
 	{/each}
