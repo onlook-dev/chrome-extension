@@ -172,7 +172,6 @@ export async function createPRWithComments(
 		const filePath =
 			rootPath === '.' || rootPath === '' ? `${initialPath}` : `${rootPath}/${initialPath}`;
 		// End line must be at least one line after the start line
-		console.log('filePath:', filePath);
 		const endLine = parseInt(endLineString);
 
 		let commentBody = 'onlook changes to line below:\n```\n';

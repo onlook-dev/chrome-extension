@@ -9,6 +9,7 @@ export interface Activity {
   projectId: string;
   eventData: EventMetadata[];
   visible: boolean;
+  previewImage?: string;
 
   creationTime?: string; // Old, migrating
   createdAt: string; // New, migrating

@@ -28,7 +28,8 @@ import {
 	tabsMapBucket,
 	saveTabState,
 	getTabState,
-	getProjectById
+	getProjectById,
+	removeProjectFromTabs
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { subscribeToUser } from '$lib/storage/user'
@@ -71,7 +72,7 @@ const updateTabActiveState = (tab: chrome.tabs.Tab, project: Project, enable: bo
 	})
 }
 
-function forwardToActiveProjectTab(detail: any, callback: any) {
+export function forwardToActiveProjectTab(detail: any, callback: any) {
 	chrome.tabs.query({ active: true, currentWindow: true }, async tabs => {
 		// If tab is not active, don't send message
 		const activeTab = tabs[0]
@@ -150,17 +151,17 @@ const setListeners = () => {
 	subscribeToFirebaseAuthChanges()
 
 	// Forward messages to content script
-	activityInspectStream.subscribe(async ([detail, sender]) => {
+	activityInspectStream.subscribe(([detail, sender]) => {
 		forwardToActiveProjectTab(detail, sendActivityInspect)
 	})
 
 	// Forward messages to content script
-	activityRevertStream.subscribe(async ([detail, sender]) => {
+	activityRevertStream.subscribe(([detail, sender]) => {
 		forwardToActiveProjectTab(detail, sendActivityRevert)
 	})
 
 	// Forward messages to content script
-	activityApplyStream.subscribe(async ([detail, sender]) => {
+	activityApplyStream.subscribe(([detail, sender]) => {
 		forwardToActiveProjectTab(detail, sendActivityApply)
 	})
 
@@ -171,7 +172,7 @@ const setListeners = () => {
 		return
 	})
 
-	saveProjectStream.subscribe(async ([project, sender]) => {
+	saveProjectStream.subscribe(([project, sender]) => {
 		postProjectToFirebase(project)
 		projectsMapBucket.set({ [project.id]: project })
 	})
@@ -184,19 +185,23 @@ const setListeners = () => {
 		chrome.tabs.query({ url: searchUrl }, tabs => {
 			// Check if tab with same url exists
 			if (tabs?.length) {
-				// Make sure tab is active
+				// If tab exists and command is enable, also make it active
 				if (enable) chrome.tabs.update(tabs[0].id as number, { active: true })
 				updateTabActiveState(tabs[0], project, enable)
 			} else {
-				// If tab doesn't exist and command is disable, do nothing
-				if (!enable) return
-				chrome.tabs
-					.create({
-						url: project.hostUrl
-					})
-					.then((tab: chrome.tabs.Tab) => {
-						updateTabActiveState(tab, project, enable)
-					})
+				if (enable) {
+					// If tab doesn't exist and command is enable, create tab
+					chrome.tabs
+						.create({
+							url: project.hostUrl
+						})
+						.then((tab: chrome.tabs.Tab) => {
+							updateTabActiveState(tab, project, enable)
+						})
+				} else {
+					// If tab doesn't exist and command is disable, remove instances of project
+					removeProjectFromTabs(project.id)
+				}
 			}
 		})
 	})
