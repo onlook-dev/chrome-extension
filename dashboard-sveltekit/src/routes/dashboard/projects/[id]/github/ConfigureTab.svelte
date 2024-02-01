@@ -6,7 +6,7 @@
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { getGithubAuthFromFirebase } from '$lib/storage/github';
-	import { getReposByInstallation } from '$lib/github/github';
+	import { getRepoDefaults, getReposByInstallation } from '$lib/github/github';
 	import { onMount } from 'svelte';
 	import { githubConfig } from '$lib/utils/env';
 
@@ -54,15 +54,19 @@
 			});
 	}
 
-	function connectRepoToProject(repo: GithubRepo) {
+	async function connectRepoToProject(repo: GithubRepo) {
 		if (!project) return;
+
+		const githubAuth = await getGithubAuthFromFirebase(user?.githubAuthId as string);
+		const installationId = githubAuth.installationId;
+		const defaultBranch = await getRepoDefaults(installationId, repo);
 
 		project.githubSettings = {
 			auth: user?.githubAuthId,
 			repositoryName: repo.name,
 			owner: repo.owner,
-			rootPath: '.',
-			baseBranch: 'main'
+			rootPath: '/',
+			baseBranch: defaultBranch ?? 'main'
 		} as GithubSettings;
 
 		selectedRepo = repo;

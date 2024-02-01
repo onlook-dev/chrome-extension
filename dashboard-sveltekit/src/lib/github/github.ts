@@ -5,7 +5,7 @@ import { createAppAuth } from '@octokit/auth-app';
 import { getGithubAuthFromFirebase } from '$lib/storage/github';
 import type { Activity } from '$shared/models/activity';
 import { githubConfig } from '$lib/utils/env';
-import type { TreeItem } from '$shared/models/github';
+import type { GithubRepo, TreeItem } from '$shared/models/github';
 import { jsToCssProperty } from '$shared/helpers';
 
 // TODO: Should clean up if any steps fail
@@ -170,7 +170,9 @@ export async function createPRWithComments(
 
 		const [initialPath, startLineString, endLineString] = activity.path.split(':');
 		const filePath =
-			rootPath === '.' || rootPath === '' ? `${initialPath}` : `${rootPath}/${initialPath}`;
+			rootPath === '.' || rootPath === '' || rootPath === '/'
+				? `${initialPath}`
+				: `${rootPath}/${initialPath}`;
 		// End line must be at least one line after the start line
 		const endLine = parseInt(endLineString);
 
@@ -221,7 +223,9 @@ async function prepareCommit(
 		const [initialPath, startLineString, endLineString] = path.split(':');
 
 		const filePath =
-			rootPath === '.' || rootPath === '' ? `${initialPath}` : `${rootPath}/${initialPath}`;
+			rootPath === '.' || rootPath === '' || rootPath === '/'
+				? `${initialPath}`
+				: `${rootPath}/${initialPath}`;
 
 		const lineNumber = parseInt(startLineString);
 		if (!fileEdits.has(filePath)) {
@@ -366,4 +370,30 @@ async function getInstallationOctokit(installationId: string) {
 	});
 
 	return installationOctokit;
+}
+
+export async function getRepoDefaults(
+	installationId: string,
+	repo: GithubRepo
+): Promise<string | null> {
+	const octokit = await getInstallationOctokit(installationId);
+
+	try {
+		const repoSettings = await octokit.request('GET /repos/{owner}/{repo}', {
+			owner: repo.owner,
+			repo: repo.name
+		});
+
+		const defaultBranch = repoSettings.data.default_branch;
+		console.log('defaultBranch:', defaultBranch);
+
+		if (!defaultBranch) {
+			return null;
+		}
+
+		return defaultBranch;
+	} catch (error) {
+		console.error('Error fetching repository details:', error);
+		return null;
+	}
 }
