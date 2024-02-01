@@ -1,15 +1,7 @@
 <script lang="ts">
-	import type { Project } from '$shared/models/project';
 	import NextjsCodeblock from './NextjsCodeblock.svelte';
 	import SvelteCodeblock from './SvelteCodeblock.svelte';
-
-	export let project: Project;
 </script>
-
-<p class="text-md text-center">
-	<b>{new URL(project.hostUrl).host}</b> is not configured with Onlook. <br />Follow instructions
-	below.
-</p>
 
 <div class="text-start max-w-[100%] space-y-4 my-4">
 	<div>

@@ -177,7 +177,7 @@
 		</label>
 
 		{#if githubHistories.length > 0}
-			<div class="collapse collapse-arrow border rounded-md mt-6 collapse-open">
+			<div class="collapse collapse-arrow border rounded-md mt-6">
 				<input type="checkbox" />
 				<div class="collapse-title">Publish history ({githubHistories.length})</div>
 				<div class="collapse-content space-y-2">
@@ -227,6 +227,6 @@
 			</div>
 		{/if}
 	{:else}
-		<ConfigureProjectInstructions {project} />
+		<ConfigureProjectInstructions />
 	{/if}
 </div>
