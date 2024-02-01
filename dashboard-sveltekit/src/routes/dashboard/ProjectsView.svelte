@@ -6,6 +6,9 @@
 	import { projectsMapStore } from '$lib/utils/store';
 	import type { Team } from '$shared/models/team';
 
+	import ArrowUp from '~icons/mingcute/arrow-up-fill';
+	import PinImage from '$lib/assets/tip-pin.png';
+
 	export let team: Team | undefined;
 	let unsubs: any[] = [];
 
@@ -63,7 +66,18 @@
 	{:else}
 		<!-- TODO: Add call to action -->
 		<div class="col-span-full mt-10">
-			<p class="text-center">No projects yet <br /> Use extension to create project</p>
+			<div class="absolute top-0 right-0 m-2">
+				<!-- Arrow container for absolute positioning -->
+				<div class="flex flex-col space-y-8">
+					<ArrowUp class="h-6 w-6 absolute top-0 right-[7.5rem] m-2" />
+					<span class="font-bold"> Click on extension icon </span>
+				</div>
+			</div>
+			<p class="text-center">No projects yet<br /> Use extension to create project</p>
+			<p class="mt-10 text-center"><b>Tip:</b> Pin the extension for easy access</p>
+			<div class="flex justify-center">
+				<img class="mt-4 h-auto max-w-lg rounded-lg" src={PinImage} alt="Pin extension tip" />
+			</div>
 		</div>
 	{/if}
 </div>
