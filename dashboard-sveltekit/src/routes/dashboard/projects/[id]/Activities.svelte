@@ -90,8 +90,8 @@
 	{#each activities as activity}
 		<!-- TODO: Add helper -->
 		{#if Object.keys(activity.styleChanges).length > 0}
-			<button
-				class="w-full p-4 flex flex-col pb-6 hover:bg-gray-50 transition duration-200 ease-in-out {!activity.visible
+			<div
+				class="w-full p-4 flex flex-col pb-6 transition duration-200 ease-in-out {!activity.visible
 					? 'opacity-60'
 					: ''}
 					"
@@ -142,13 +142,28 @@
 					</div>
 				</ItemHeader>
 				<!-- Item body -->
-				<div class="mb-2 w-full text-start flex flex-col">
-					Element:
-					<span class="text-orange-600 bg-gray-100 p-0.5 rounded border">{activity.selector}</span>
+
+				<div class="flex flex-col space-y-3 w-full">
+					<p>Selector:</p>
+					<span class="text-orange-600 bg-gray-50 p-4 rounded border">{activity.selector}</span>
+
 					{#if activity.path}
-						Path: <span class="text-orange-600 bg-gray-100 p-0.5 rounded border"
-							>{activity.path}</span
-						>
+						<p>Path:</p>
+						<span class="text-orange-600 bg-gray-50 p-4 rounded border">{activity.path}</span>
+					{/if}
+
+					{#if Object.keys(activity.styleChanges)}
+						<p>Code change:</p>
+						<p class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col">
+							{#each Object.values(activity.styleChanges) as styleChange}
+								<span class="">{jsToCssProperty(styleChange.key)}: {styleChange.newVal};</span>
+							{/each}
+						</p>
+					{/if}
+
+					{#if activity.previewImage}
+						<p>Preview image:</p>
+						<img src={activity.previewImage} alt="Preview" class="w-full rounded border" />
 					{/if}
 				</div>
 
@@ -175,7 +190,7 @@
 						<img src={activity.previewImage} alt="Preview" class="w-full rounded" />
 					</div>
 				{/if}
-			</button>
+			</div>
 		{/if}
 	{/each}
 </div>

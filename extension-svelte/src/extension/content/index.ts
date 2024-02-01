@@ -1,4 +1,9 @@
-import { DASHBOARD_AUTH, STYLE_CHANGE } from '$shared/constants'
+import {
+	DASHBOARD_AUTH,
+	REDO_STYLE_CHANGE,
+	STYLE_CHANGE,
+	UNDO_STYLE_CHANGE
+} from '$shared/constants'
 import { authUserBucket, getActiveProject } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
@@ -13,6 +18,7 @@ import type { Activity } from '$shared/models/activity'
 import type { VisbugStyleChange } from '$shared/models/visbug'
 import { baseUrl } from '$lib/utils/env'
 import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
+import { convertVisbugToStyleChangeMap } from '$shared/helpers'
 
 function simulateEventOnSelector(
 	selector: string,
@@ -71,6 +77,19 @@ function revertActivityChanges(activity: Activity) {
 	}
 }
 
+export function applyVisbugStyleChange(visbugStyleChange: VisbugStyleChange) {
+	const element = document.querySelector(visbugStyleChange.selector) as any
+	const styleChanges = convertVisbugToStyleChangeMap(visbugStyleChange)
+	Object.entries(styleChanges).forEach(([style, changeObject]) => {
+		// Apply style to element
+		if (style === 'text') {
+			element.innerText = changeObject.newVal
+		} else {
+			element.style[style] = changeObject.newVal
+		}
+	})
+}
+
 export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
 	window.addEventListener('message', event => {
@@ -85,6 +104,20 @@ export function setupListeners() {
 
 		if (message.type === STYLE_CHANGE) {
 			const visbugStyleChange = message.detail as VisbugStyleChange
+			sendStyleChange(visbugStyleChange)
+			return
+		}
+
+		if (message.type === UNDO_STYLE_CHANGE) {
+			const visbugStyleChange = message.detail as VisbugStyleChange
+			applyVisbugStyleChange(visbugStyleChange)
+			sendStyleChange(visbugStyleChange)
+			return
+		}
+
+		if (message.type === REDO_STYLE_CHANGE) {
+			const visbugStyleChange = message.detail as VisbugStyleChange
+			applyVisbugStyleChange(visbugStyleChange)
 			sendStyleChange(visbugStyleChange)
 			return
 		}

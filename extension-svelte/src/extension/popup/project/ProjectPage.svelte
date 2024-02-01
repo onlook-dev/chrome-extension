@@ -28,6 +28,7 @@
 	let saved = false
 	let project: Project | undefined
 	let projectInjected: boolean = false
+	let publishing = false
 
 	$: projectEdited = Object.keys(project?.activities ?? {}).length > 0
 
@@ -83,9 +84,13 @@
 			<div class="ml-2">
 				<button
 					class="btn btn-sm btn-primary"
+					disabled={publishing}
 					on:click={() => {
+						publishing = true
 						if (project) {
+							sendEditProjectRequest({ project, enable: false })
 							postProjectToFirebase(project).then(() => {
+								publishing = false
 								sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project?.id}`)
 							})
 						}

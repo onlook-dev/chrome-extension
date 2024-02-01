@@ -1,4 +1,4 @@
-import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image'
+import { toJpeg } from 'html-to-image'
 import type { Activity } from '$shared/models/activity'
 import { getProjectById, projectsMapBucket } from '$lib/utils/localstorage'
 
@@ -14,7 +14,9 @@ export async function processScreenshotQueue() {
 }
 
 function takeElementScreenshot(element: HTMLElement) {
-	return toJpeg(element, { quality: 0 }).then(function (dataUrl) {
+	return toJpeg(element, {
+		quality: 0
+	}).then(function (dataUrl) {
 		return dataUrl
 	})
 }
