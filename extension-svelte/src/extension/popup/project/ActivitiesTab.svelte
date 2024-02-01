@@ -176,7 +176,7 @@
 
 			{#if activity.previewImage}
 				<div class="mt-4">
-					<img src={activity.previewImage} alt="Preview" class="w-full rounded" />
+					<img src={activity.previewImage} alt="Preview" class="w-full rounded border" />
 				</div>
 			{/if}
 		</div>

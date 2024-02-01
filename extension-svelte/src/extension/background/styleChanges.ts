@@ -56,6 +56,20 @@ async function processStyleChange(visbugStyleChange: VisbugStyleChange) {
 		}
 	})
 
+	// Remove the style change in activity if the newVal is empty
+	Object.entries(activity.styleChanges).forEach(([key, val]) => {
+		if (!val.newVal) {
+			delete activity.styleChanges[key]
+		}
+	})
+
+	// If no style changes, remove activity
+	if (Object.keys(activity.styleChanges).length === 0) {
+		delete activeProject.activities[visbugStyleChange.selector]
+		projectsMapBucket.set({ [activeProject.id]: activeProject })
+		return
+	}
+
 	activity.path = visbugStyleChange.path ?? activity.path
 	activity.createdAt = new Date().toISOString()
 	activeProject.activities[visbugStyleChange.selector] = activity

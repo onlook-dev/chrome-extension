@@ -14,6 +14,8 @@ export const MAX_DESCRIPTION_LENGTH = 250;
 // Messaging
 export const DASHBOARD_AUTH = "DASHBOARD_AUTH";
 export const STYLE_CHANGE = "STYLE_CHANGE";
+export const UNDO_STYLE_CHANGE = "UNDO_STYLE_CHANGE";
+export const REDO_STYLE_CHANGE = "REDO_STYLE_CHANGE";
 
 // Links
 export const LINK_DISCORD = "mailto:support@onlook.dev";
