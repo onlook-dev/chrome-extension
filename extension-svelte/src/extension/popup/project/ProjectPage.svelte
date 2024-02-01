@@ -103,7 +103,7 @@
 			<ActivitiesTab {project} />
 		</div>
 
-		<input type="radio" name={tabsName} role="tab" class="tab" aria-label="Comments" />
+		<input type="radio" name={tabsName} role="tab" class="tab hidden" aria-label="Comments" />
 		<div role="tabpanel" class="tab-content">
 			<CommentsTab {project} />
 		</div>

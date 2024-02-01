@@ -121,11 +121,8 @@
 			</div>
 			<!-- Sidebar/ comments + activities -->
 			<div class="flex flex-col w-full sm:max-w-96 h-full text-sm">
-				<div class="border h-1/2 w-full overflow-auto">
+				<div class="border h-full w-full overflow-auto">
 					<Activities {project} />
-				</div>
-				<div class="border h-1/2 w-full overflow-auto">
-					<Comments {project} />
 				</div>
 			</div>
 		</div>
