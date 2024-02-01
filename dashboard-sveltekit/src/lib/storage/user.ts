@@ -35,8 +35,6 @@ export async function setStoreUser(authUser: FirebaseUser) {
 		},
 		window.location.origin
 	);
-	// Set default user while waiting for remote update
-	setDefaultUser(authUser);
 
 	// Listen and update user from remote
 	subscribeToUser(authUser.uid, (user) => {
