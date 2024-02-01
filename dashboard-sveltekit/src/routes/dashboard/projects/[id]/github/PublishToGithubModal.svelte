@@ -11,6 +11,7 @@
 	import ConfigureTab from './ConfigureTab.svelte';
 	import PublishTab from './PublishTab.svelte';
 	import { githubConfig } from '$lib/utils/env';
+	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 
 	export let project: Project;
 
@@ -115,6 +116,13 @@
 					/>
 					<div role="tabpanel" class="tab-content py-4">
 						<ConfigureTab bind:project bind:user />
+						<div class="collapse collapse-arrow border rounded-md mt-6">
+							<input type="checkbox" />
+							<div class="collapse-title">How to setup your repository</div>
+							<div class="collapse-content">
+								<ConfigureProjectInstructions {project} />
+							</div>
+						</div>
 					</div>
 				</div>
 			{/if}

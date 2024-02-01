@@ -41,15 +41,3 @@ export async function setStoreUser(authUser: FirebaseUser) {
 		userStore.set(user);
 	});
 }
-
-export function setDefaultUser(authUser: FirebaseUser) {
-	const user = {
-		id: authUser.uid,
-		name: authUser.displayName ?? authUser.providerData[0].displayName ?? '',
-		email: authUser.email ?? '',
-		profileImage: authUser.photoURL,
-		teamIds: [],
-		createdAt: new Date().toISOString()
-	} as User;
-	userStore.set(user);
-}

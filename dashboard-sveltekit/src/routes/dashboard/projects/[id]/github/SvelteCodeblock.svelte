@@ -13,7 +13,10 @@
 	});
 </script>
 
-<CodeBlock class="border p-2 rounded overflow-auto" language="shell" code={`npm i @onlook/svelte`}
+<CodeBlock
+	class="border p-2 rounded overflow-auto"
+	language="shell"
+	code={`npm i -D @onlook/svelte`}
 ></CodeBlock>
 
 <p class="my-4">Add the following code to your <b>svelte.config.js</b> file:</p>

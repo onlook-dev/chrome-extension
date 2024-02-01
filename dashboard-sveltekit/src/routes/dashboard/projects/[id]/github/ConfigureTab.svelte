@@ -181,6 +181,6 @@
 		class="btn btn-link mt-4"
 		on:click={() => {
 			window.open(`${githubConfig.appUrl}/installations/new?state=${project?.id}`, '_blank');
-		}}>Configure Github Account</button
+		}}>Github Permissions</button
 	>
 </div>

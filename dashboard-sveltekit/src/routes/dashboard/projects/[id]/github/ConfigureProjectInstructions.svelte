@@ -6,11 +6,6 @@
 	export let project: Project;
 </script>
 
-<p class="text-md text-center">
-	<b>{new URL(project.hostUrl).host}</b> is not configured with Onlook. <br />Follow instructions
-	below.
-</p>
-
 <div class="text-start max-w-[100%] space-y-4 my-4">
 	<div>
 		<p class="mt-3 font-semibold">1. Install the onlook library:</p>
