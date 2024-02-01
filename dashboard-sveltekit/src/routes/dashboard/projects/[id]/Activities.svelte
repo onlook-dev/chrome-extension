@@ -145,51 +145,27 @@
 
 				<div class="flex flex-col space-y-3 w-full">
 					<p>Selector:</p>
-					<span class="text-orange-600 bg-gray-50 p-4 rounded border">{activity.selector}</span>
+					<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.selector}</span>
 
 					{#if activity.path}
 						<p>Path:</p>
-						<span class="text-orange-600 bg-gray-50 p-4 rounded border">{activity.path}</span>
+						<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.path}</span>
 					{/if}
 
-					{#if Object.keys(activity.styleChanges)}
-						<p>Code change:</p>
-						<p class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col">
-							{#each Object.values(activity.styleChanges) as styleChange}
-								<span class="">{jsToCssProperty(styleChange.key)}: {styleChange.newVal};</span>
-							{/each}
-						</p>
-					{/if}
+					<p>Code Change:</p>
+					<CodeBlock
+						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col"
+						language="css"
+						code={formatStyleChanges(activity.styleChanges)}
+						color="text-gray-800"
+						text="text-sm"
+					/>
 
 					{#if activity.previewImage}
 						<p>Preview image:</p>
 						<img src={activity.previewImage} alt="Preview" class="w-full rounded border" />
 					{/if}
 				</div>
-
-				{#if getEventDataByType(activity.eventData, EventMetadataType.SOURCE_MAP_ID)}
-					<div class="mb-2 w-full text-start">
-						Source:
-						<button
-							on:click={() => {}}
-							class="btn btn-link text-orange-600 bg-gray-100 p-0.5 rounded border hover:underline"
-							>{getEventDataByType(activity.eventData, EventMetadataType.SOURCE_MAP_ID)}</button
-						>
-					</div>
-				{/if}
-				<CodeBlock
-					class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col"
-					language="css"
-					code={formatStyleChanges(activity.styleChanges)}
-					color="text-gray-800"
-					text="text-sm"
-				/>
-
-				{#if activity.previewImage}
-					<div class="mt-4">
-						<img src={activity.previewImage} alt="Preview" class="w-full rounded" />
-					</div>
-				{/if}
 			</div>
 		{/if}
 	{/each}

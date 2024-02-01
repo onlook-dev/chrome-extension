@@ -227,6 +227,6 @@
 			</div>
 		{/if}
 	{:else}
-		<ConfigureProjectInstructions {project} />
+		<ConfigureProjectInstructions />
 	{/if}
 </div>

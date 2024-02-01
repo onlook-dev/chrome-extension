@@ -120,7 +120,7 @@
 							<input type="checkbox" />
 							<div class="collapse-title">How to setup your repository</div>
 							<div class="collapse-content">
-								<ConfigureProjectInstructions {project} />
+								<ConfigureProjectInstructions />
 							</div>
 						</div>
 					</div>
