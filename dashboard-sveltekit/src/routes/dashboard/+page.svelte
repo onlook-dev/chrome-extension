@@ -63,6 +63,7 @@
 		<label for={dashboardDrawerId} class="btn drawer-button lg:hidden"><SideBarLine /></label>
 
 		<!-- TODO: Change based on folder -->
+// onlook edits
 		<h1 class="text-2xl font-bold mb-4">
 			{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 		</h1>
