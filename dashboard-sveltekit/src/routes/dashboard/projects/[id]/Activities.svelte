@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { Project } from '$shared/models/project';
-	import type { Activity } from '$shared/models/activity';
+	import type { Activity, StyleChange } from '$shared/models/activity';
 	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 	import { jsToCssProperty } from '$shared/helpers';
@@ -9,6 +10,19 @@
 
 	import ItemHeader from './ItemHeader.svelte';
 	import Trash from '~icons/material-symbols/delete';
+	import { CodeBlock, storeHighlightJs } from '@skeletonlabs/skeleton';
+	import hljs from 'highlight.js/lib/core';
+	import css from 'highlight.js/lib/languages/css';
+	import javascript from 'highlight.js/lib/languages/javascript';
+	import shell from 'highlight.js/lib/languages/shell';
+	import 'highlight.js/styles/github.css';
+
+	onMount(() => {
+		storeHighlightJs.set(hljs);
+		hljs.registerLanguage('css', css);
+		hljs.registerLanguage('javascript', javascript);
+		hljs.registerLanguage('shell', shell);
+	});
 
 	export let project: Project;
 
@@ -56,6 +70,13 @@
 		if (modal) {
 			modal.close();
 		}
+	}
+
+	// Format style changes for an activity
+	function formatStyleChanges(styleChanges: Record<string, StyleChange>): string {
+		return Object.values(styleChanges)
+			.map(({ key, newVal }) => `${jsToCssProperty(key)}: ${newVal};`)
+			.join('\n');
 	}
 </script>
 
@@ -124,21 +145,21 @@
 
 				<div class="flex flex-col space-y-3 w-full">
 					<p>Selector:</p>
-					<span class="text-orange-600 bg-gray-50 p-4 rounded border">{activity.selector}</span>
+					<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.selector}</span>
 
 					{#if activity.path}
 						<p>Path:</p>
-						<span class="text-orange-600 bg-gray-50 p-4 rounded border">{activity.path}</span>
+						<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.path}</span>
 					{/if}
 
-					{#if Object.keys(activity.styleChanges)}
-						<p>Code change:</p>
-						<p class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col">
-							{#each Object.values(activity.styleChanges) as styleChange}
-								<span class="">{jsToCssProperty(styleChange.key)}: {styleChange.newVal};</span>
-							{/each}
-						</p>
-					{/if}
+					<p>Code Change:</p>
+					<CodeBlock
+						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col"
+						language="css"
+						code={formatStyleChanges(activity.styleChanges)}
+						color="text-gray-800"
+						text="text-sm"
+					/>
 
 					{#if activity.previewImage}
 						<p>Preview image:</p>

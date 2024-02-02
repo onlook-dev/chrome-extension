@@ -13,7 +13,10 @@
 	});
 </script>
 
-<CodeBlock class="border p-2 rounded overflow-auto" language="shell" code={`npm i @onlook/nextjs`}
+<CodeBlock
+	class="border p-2 rounded overflow-auto"
+	language="shell"
+	code={`npm i -D @onlook/nextjs`}
 ></CodeBlock>
 
 <p class="my-4">Add the following code to your <b>next.config.mjs</b> file:</p>
