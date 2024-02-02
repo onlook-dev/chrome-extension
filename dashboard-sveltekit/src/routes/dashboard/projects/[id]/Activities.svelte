@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import type { Project } from '$shared/models/project';
 	import type { Activity, StyleChange } from '$shared/models/activity';
-	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 	import { jsToCssProperty } from '$shared/helpers';
 	import { postProjectToFirebase } from '$lib/storage/project';

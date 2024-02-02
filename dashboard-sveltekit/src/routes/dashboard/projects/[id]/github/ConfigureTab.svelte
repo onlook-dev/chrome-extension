@@ -9,6 +9,7 @@
 	import { getRepoDefaults, getReposByInstallation } from '$lib/github/github';
 	import { onMount } from 'svelte';
 	import { githubConfig } from '$lib/utils/env';
+	import Info from '~icons/akar-icons/info';
 
 	export let project: Project;
 	export let user: User;
@@ -102,8 +103,16 @@
 				</div>
 			</div>
 
-			<div class="flex flex-row">
+			<div class="flex flex-row items-center">
 				<p class="label w-28">Base branch</p>
+				<div
+					class="tooltip tooltip-bottom tooltip-info before:w-[10rem] before:content-[attr(data-tip)]"
+					data-tip="Branch your changes will be pushed to. Default is your base branch"
+				>
+					<button class="label mr-2">
+						<Info class="h-4 w-4 text-gray-500" />
+					</button>
+				</div>
 				<input
 					class="input input-bordered input-sm"
 					type="text"
@@ -117,12 +126,20 @@
 					}}
 				/>
 			</div>
-			<div class="flex flex-row">
+			<div class="flex flex-row items-center">
 				<p class="label w-28">Root directory</p>
+				<div
+					class="tooltip tooltip-bottom tooltip-info before:w-[10rem] before:content-[attr(data-tip)]"
+					data-tip="Folder that contains your src file. If it's at root you can leave this empty"
+				>
+					<button class="label mr-2">
+						<Info class="h-4 w-4 text-gray-500" />
+					</button>
+				</div>
 				<input
 					class="input input-bordered input-sm"
 					type="text"
-					placeholder="."
+					placeholder=""
 					value={project?.githubSettings?.rootPath}
 					on:input={(e) => {
 						if (!project?.githubSettings) return;
