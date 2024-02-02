@@ -153,7 +153,7 @@
 
 					<p>Code Change:</p>
 					<CodeBlock
-						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col"
+						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
 						language="css"
 						code={formatStyleChanges(activity.styleChanges)}
 						color="text-gray-800"
