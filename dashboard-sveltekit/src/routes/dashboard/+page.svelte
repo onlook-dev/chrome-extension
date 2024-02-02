@@ -58,11 +58,13 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
+// onlook edits
 	<div class="bg-base-200 drawer-content px-4 py-6 overflow-auto h-screen">
 		<!-- Page content here -->
 		<label for={dashboardDrawerId} class="btn drawer-button lg:hidden"><SideBarLine /></label>
 
 		<!-- TODO: Change based on folder -->
+// onlook edits
 		<h1 class="text-2xl font-bold mb-4">
 			{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 		</h1>
