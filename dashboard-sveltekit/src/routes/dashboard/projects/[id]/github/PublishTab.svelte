@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { exportToPRComments } from '$lib/github/github';
-	import { MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
+	import { DashboardRoutes, MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
@@ -14,6 +14,7 @@
 	import GitHub from '~icons/mdi/github';
 	import Restore from '~icons/ic/baseline-restore';
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import { baseUrl } from '$lib/utils/env';
 
 	export let project: Project;
 	export let userId: string;
@@ -65,6 +66,7 @@
 	async function handlePublishClick() {
 		title = title || titlePlaceholder;
 		description = description || descriptionPlaceholder;
+		description += `\n\n[View on onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
 			prLink = await exportToPRComments(userId, project?.id, title, description);
