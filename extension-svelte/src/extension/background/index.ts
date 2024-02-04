@@ -208,6 +208,7 @@ const setListeners = () => {
 		projectSubs.forEach(unsubscribe => unsubscribe())
 
 		for (const projectId of projectsNotInMap) {
+			console.log('Subscribing to project', projectId)
 			subscribeToProject(projectId, async project => {
 				if (!project) return
 				projectsMapBucket.set({ [project.id]: project })
@@ -217,7 +218,7 @@ const setListeners = () => {
 		}
 	})
 
-	// Project changes from team
+	// Project changes in map
 	projectsMapBucket.valueStream.subscribe(async projectsMap => {
 		if (!projectsMap) return
 

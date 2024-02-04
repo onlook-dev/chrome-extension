@@ -15,6 +15,7 @@
 	import Restore from '~icons/ic/baseline-restore';
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 	import { baseUrl } from '$lib/utils/env';
+	import { toast } from '@zerodevx/svelte-toast';
 
 	export let project: Project;
 	export let userId: string;
@@ -23,9 +24,9 @@
 
 	let githubConfigured = false;
 	let hasActivities = false;
-	let loadingRepos = false;
 	let isLoading = false;
 	let publishError = false;
+	let historyOpen = true;
 	let errorMessage = '';
 	let prLink: string | undefined;
 
@@ -49,13 +50,9 @@
 
 		if (project?.githubHistoryIds?.length > 0) {
 			githubConfigured = true;
-			loadingRepos = true;
 			getGithubHistoriesFromFirebase(project.githubHistoryIds)
 				.then((histories) => {
 					githubHistories = histories;
-				})
-				.then(() => {
-					loadingRepos = false;
 				})
 				.catch((error) => {
 					console.error('Error loading github history:', error);
@@ -92,9 +89,12 @@
 			};
 
 			// Reset activites, they are archived in github history
+			title = '';
+			description = '';
 			project.activities = {};
 			project.githubHistoryIds.push(githubHistory.id);
 			githubHistories = [...githubHistories, githubHistory];
+			toast.push('Changes published to GitHub!');
 
 			// Save project and github history
 			postGithubHistoryToFirebase(githubHistory);
@@ -179,8 +179,12 @@
 		</label>
 
 		{#if githubHistories.length > 0}
-			<div class="collapse collapse-arrow border rounded-md mt-6">
-				<input type="checkbox" />
+			<div
+				class="collapse collapse-arrow border rounded-md mt-6 {historyOpen
+					? 'collapse-open'
+					: 'collapse-close'}"
+			>
+				<input type="checkbox" on:click={() => (historyOpen = !historyOpen)} />
 				<div class="collapse-title">Publish history ({githubHistories.length})</div>
 				<div class="collapse-content space-y-2">
 					{#each githubHistories as history}
