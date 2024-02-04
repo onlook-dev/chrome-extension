@@ -1,8 +1,17 @@
 import { storeImageUri } from '$lib/firebase/functions'
 import { postProjectToFirebase } from '$lib/storage/project'
 import { debounce } from '$shared/helpers'
-import { getActiveProject, projectsMapBucket } from '$lib/utils/localstorage'
+import {
+	getActiveProject,
+	getTabState,
+	InjectState,
+	projectsMapBucket,
+	type VisbugState
+} from '$lib/utils/localstorage'
+import { toggleProjectTab } from '$lib/visbug/visbug'
 import type { HostData } from '$shared/models/hostData'
+import type { Project } from '$shared/models/project'
+import { MessageReceiver, sendApplyProjectChanges } from '$lib/utils/messaging'
 
 export const updateProjectTabHostWithDebounce = debounce((tab: chrome.tabs.Tab) => {
 	updateProjectTabHostData(tab)
@@ -67,4 +76,46 @@ export function sameTabHost(url1: string, url2: string) {
 	} catch (e) {
 		return false
 	}
+}
+
+export function updateTabActiveState(tab: chrome.tabs.Tab, project: Project, enable: boolean) {
+	updateProjectTabHostWithDebounce(tab)
+	toggleProjectTab(tab.id as number, project.id, enable)
+
+	// Forward message
+	chrome.tabs.sendMessage(tab.id as number, {
+		greeting: 'APPLY_PROJECT_CHANGES',
+		payload: {
+			data: {},
+			to: MessageReceiver.CONTENT
+		}
+	})
+
+	sendApplyProjectChanges(undefined, {
+		tabId: tab.id
+	})
+}
+
+export function forwardToActiveProjectTab(detail: any, callback: any) {
+	chrome.tabs.query({ active: true, currentWindow: true }, async tabs => {
+		// If tab is not active, don't send message
+		const activeTab = tabs[0]
+		if (!activeTab) return
+		const project = await getActiveProject()
+
+		// If active tab is not project tab
+		if (!sameTabHost(activeTab.url ?? '', project.hostUrl)) return
+
+		let tabState: VisbugState = await getTabState(activeTab.id as number)
+
+		// If tab is not injected, inject it
+		if (tabState.state !== InjectState.injected) {
+			toggleProjectTab(activeTab.id as number, project.id, true)
+		}
+
+		// Forward to callback
+		callback(detail, {
+			tabId: activeTab.id
+		})
+	})
 }

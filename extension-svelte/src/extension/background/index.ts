@@ -1,23 +1,19 @@
 import { DashboardRoutes } from '$shared/constants'
 import { baseUrl } from '$lib/utils/env'
 import {
-	MessageReceiver,
 	activityInspectStream,
 	activityRevertStream,
 	authRequestStream,
 	editProjectRequestStream,
 	openUrlRequestStream,
 	sendActivityInspect,
-	sendApplyProjectChanges,
 	sendActivityRevert,
 	styleChangeStream,
 	activityApplyStream,
 	sendActivityApply,
 	saveProjectStream
 } from '$lib/utils/messaging'
-import { toggleProjectTab } from '$lib/visbug/visbug'
 import {
-	type VisbugState,
 	authUserBucket,
 	getActiveProject,
 	InjectState,
@@ -35,13 +31,12 @@ import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { subscribeToUser } from '$lib/storage/user'
 import { subscribeToTeam } from '$lib/storage/team'
 import { postProjectToFirebase, subscribeToProject } from '$lib/storage/project'
-import { sameTabHost, updateProjectTabHostWithDebounce } from './tabs'
+import { forwardToActiveProjectTab, updateTabActiveState } from './tabs'
 import { changeQueue, processChangeQueue } from './styleChanges'
 
 import type { Team } from '$shared/models/team'
 import type { Activity } from '$shared/models/activity'
 import type { Comment } from '$shared/models/comment'
-import type { Project } from '$shared/models/project'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
@@ -52,48 +47,6 @@ function setDefaultMaps() {
 	projectsMapBucket.set({})
 	usersMapBucket.set({})
 	tabsMapBucket.set({})
-}
-
-const updateTabActiveState = (tab: chrome.tabs.Tab, project: Project, enable: boolean) => {
-	updateProjectTabHostWithDebounce(tab)
-	toggleProjectTab(tab.id as number, project.id, enable)
-
-	// Forward message
-	chrome.tabs.sendMessage(tab.id as number, {
-		greeting: 'APPLY_PROJECT_CHANGES',
-		payload: {
-			data: {},
-			to: MessageReceiver.CONTENT
-		}
-	})
-
-	sendApplyProjectChanges(undefined, {
-		tabId: tab.id
-	})
-}
-
-export function forwardToActiveProjectTab(detail: any, callback: any) {
-	chrome.tabs.query({ active: true, currentWindow: true }, async tabs => {
-		// If tab is not active, don't send message
-		const activeTab = tabs[0]
-		if (!activeTab) return
-		const project = await getActiveProject()
-
-		// If active tab is not project tab
-		if (!sameTabHost(activeTab.url ?? '', project.hostUrl)) return
-
-		let tabState: VisbugState = await getTabState(activeTab.id as number)
-
-		// If tab is not injected, inject it
-		if (tabState.state !== InjectState.injected) {
-			toggleProjectTab(activeTab.id as number, project.id, true)
-		}
-
-		// Forward to callback
-		callback(detail, {
-			tabId: activeTab.id
-		})
-	})
 }
 
 const setListeners = () => {

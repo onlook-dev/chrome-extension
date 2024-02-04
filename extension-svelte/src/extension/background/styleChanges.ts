@@ -1,11 +1,10 @@
 import type { VisbugStyleChange } from '$shared/models/visbug'
 import type { Activity, StyleChange } from '$shared/models/activity'
-
 import { convertVisbugToStyleChangeMap } from '$shared/helpers'
-import { nanoid } from 'nanoid'
 import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { sendGetScreenshotRequest } from '$lib/utils/messaging'
-import { forwardToActiveProjectTab } from '.'
+import { forwardToActiveProjectTab } from './tabs'
+import { nanoid } from 'nanoid'
 
 export let changeQueue: VisbugStyleChange[] = []
 
