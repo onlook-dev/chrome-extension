@@ -130,7 +130,7 @@ const setListeners = () => {
 		projectsMapBucket.set({ [project.id]: project })
 	})
 
-	// Start editing request from popip
+	// Start editing request from popup
 	editProjectRequestStream.subscribe(([{ project, enable }]) => {
 		// Get tab if same host using pattern matching
 		const searchUrl = new URL(project.hostUrl).origin + '/*'
@@ -139,8 +139,13 @@ const setListeners = () => {
 			// Check if tab with same url exists
 			if (tabs?.length) {
 				// If tab exists and command is enable, also make it active
-				if (enable) chrome.tabs.update(tabs[0].id as number, { active: true })
-				updateTabActiveState(tabs[0], project, enable)
+				for (let i = 0; i < tabs.length; i++) {
+					// Make first tab active
+					if (enable && i === 0) {
+						chrome.tabs.update(tabs[i].id as number, { active: true })
+					}
+					updateTabActiveState(tabs[i], project, enable)
+				}
 			} else {
 				if (enable) {
 					// If tab doesn't exist and command is enable, create tab
@@ -152,7 +157,7 @@ const setListeners = () => {
 							updateTabActiveState(tab, project, enable)
 						})
 				} else {
-					// If tab doesn't exist and command is disable, remove instances of project
+					// If tabs don't exist and command is disable, remove instances of project
 					removeProjectFromTabs(project.id)
 				}
 			}
