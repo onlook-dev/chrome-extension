@@ -1,12 +1,16 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import type { Project } from '$shared/models/project'
-	import type { Activity } from '$shared/models/activity'
+	import type { Activity, StyleChange } from '$shared/models/activity'
 	import type { User } from '$shared/models/user'
-	import { EventMetadataType, getEventDataByType } from '$shared/models/eventData'
 	import { usersMapBucket, projectsMapBucket } from '$lib/utils/localstorage'
 	import { sendActivityRevert, sendActivityApply } from '$lib/utils/messaging'
 	import { jsToCssProperty } from '$shared/helpers'
+
+	import { CodeBlock, storeHighlightJs } from '@skeletonlabs/skeleton'
+	import hljs from 'highlight.js/lib/core'
+	import css from 'highlight.js/lib/languages/css'
+	import 'highlight.js/styles/github.css'
 
 	import ItemHeader from './ItemHeader.svelte'
 	import ClockArrow from '~icons/mdi/clock-arrow'
@@ -21,6 +25,8 @@
 
 	onMount(async () => {
 		usersMap = new Map(Object.entries(await usersMapBucket.get()))
+		storeHighlightJs.set(hljs)
+		hljs.registerLanguage('css', css)
 	})
 
 	$: activities = Object.values(project.activities).sort(
@@ -86,6 +92,12 @@
 			modal.close()
 		}
 	}
+
+	function formatStyleChanges(styleChanges: Record<string, StyleChange>): string {
+		return Object.values(styleChanges)
+			.map(({ key, newVal }) => `${jsToCssProperty(key)}: ${newVal};`)
+			.join('\n')
+	}
 </script>
 
 {#if activities.length === 0}
@@ -149,36 +161,31 @@
 			</ItemHeader>
 
 			<!-- Item body -->
-			<div class="mb-2 w-full text-start flex flex-col">
-				Element:
-				<span class="text-orange-600 bg-gray-100 p-0.5 rounded border">{activity.selector}</span>
+
+			<div class="flex flex-col space-y-3 w-full">
+				<p>Selector:</p>
+				<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.selector}</span>
+
 				{#if activity.path}
-					Path: <span class="text-orange-600 bg-gray-100 p-0.5 rounded border">{activity.path}</span
-					>
+					<p>Path:</p>
+					<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.path}</span>
+				{/if}
+
+				<p>Code Change:</p>
+				<CodeBlock
+					class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-auto "
+					language="css"
+					code={formatStyleChanges(activity.styleChanges)}
+					color="text-gray-800"
+					text="text-xs"
+					button="btn btn-xs ml-auto rounded-sm"
+				/>
+
+				{#if activity.previewImage}
+					<p>Preview image:</p>
+					<img src={activity.previewImage} alt="Preview" class="w-full rounded border" />
 				{/if}
 			</div>
-
-			{#if getEventDataByType(activity.eventData, EventMetadataType.SOURCE_MAP_ID)}
-				<div class="mb-2 w-full text-start">
-					Source:
-					<button
-						on:click={() => {}}
-						class="btn btn-link text-orange-600 bg-gray-100 p-0.5 rounded border hover:underline"
-						>{getEventDataByType(activity.eventData, EventMetadataType.SOURCE_MAP_ID)}</button
-					>
-				</div>
-			{/if}
-			<p class="bg-gray-50 rounded p-4 border text-start flex flex-col w-[23rem] overflow-auto">
-				{#each Object.values(activity.styleChanges) as styleChange}
-					<span>{jsToCssProperty(styleChange.key)}: {styleChange.newVal};</span>
-				{/each}
-			</p>
-
-			{#if activity.previewImage}
-				<div class="mt-4">
-					<img src={activity.previewImage} alt="Preview" class="w-full rounded border" />
-				</div>
-			{/if}
 		</div>
 	{/each}
 </div>
