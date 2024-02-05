@@ -25,7 +25,8 @@ import {
 	saveTabState,
 	getTabState,
 	getProjectById,
-	removeProjectFromTabs
+	removeProjectFromTabs,
+	popupStateBucket
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { subscribeToUser } from '$lib/storage/user'
@@ -41,6 +42,7 @@ import type { Comment } from '$shared/models/comment'
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
 let userSubs: (() => void)[] = []
+let activeProjectSub: (() => void) | null = null
 
 function setDefaultMaps() {
 	teamsMapBucket.set({})
@@ -248,6 +250,21 @@ const setListeners = () => {
 				userSubs.push(unsubscribe)
 			})
 		}
+	})
+
+	popupStateBucket.valueStream.subscribe(async ({ activeProjectId }) => {
+		if (!activeProjectId) return
+		if (activeProjectSub) {
+			activeProjectSub()
+			activeProjectSub = null
+		}
+
+		subscribeToProject(activeProjectId, async project => {
+			if (!project) return
+			projectsMapBucket.set({ [project.id]: project })
+		}).then(unsubscribe => {
+			activeProjectSub = unsubscribe
+		})
 	})
 
 	// Open url from popup

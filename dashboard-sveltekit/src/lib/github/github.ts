@@ -6,8 +6,7 @@ import { getGithubAuthFromFirebase } from '$lib/storage/github';
 import type { Activity } from '$shared/models/activity';
 import { githubConfig } from '$lib/utils/env';
 import type { GithubRepo, TreeItem } from '$shared/models/github';
-import { isBase64ImageString, jsToCssProperty } from '$shared/helpers';
-import { storeImageUri } from '$lib/firebase/functions';
+import { jsToCssProperty } from '$shared/helpers';
 
 // TODO: Should clean up if any steps fail
 // - Delete branch
