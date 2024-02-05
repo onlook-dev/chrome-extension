@@ -51,7 +51,7 @@
 				})
 			})
 			.finally(() => {
-				popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
+				popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD, activeProjectId: '' })
 			})
 	}
 </script>

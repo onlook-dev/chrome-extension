@@ -36,7 +36,7 @@
 	}
 
 	function returnToDashboard() {
-		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
+		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD, activeProjectId: '' })
 	}
 
 	async function createProject() {
