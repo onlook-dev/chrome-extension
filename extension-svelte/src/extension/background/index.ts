@@ -1,23 +1,19 @@
 import { DashboardRoutes } from '$shared/constants'
 import { baseUrl } from '$lib/utils/env'
 import {
-	MessageReceiver,
 	activityInspectStream,
 	activityRevertStream,
 	authRequestStream,
 	editProjectRequestStream,
 	openUrlRequestStream,
 	sendActivityInspect,
-	sendApplyProjectChanges,
 	sendActivityRevert,
 	styleChangeStream,
 	activityApplyStream,
 	sendActivityApply,
 	saveProjectStream
 } from '$lib/utils/messaging'
-import { toggleProjectTab } from '$lib/visbug/visbug'
 import {
-	type VisbugState,
 	authUserBucket,
 	getActiveProject,
 	InjectState,
@@ -29,71 +25,30 @@ import {
 	saveTabState,
 	getTabState,
 	getProjectById,
-	removeProjectFromTabs
+	removeProjectFromTabs,
+	popupStateBucket
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { subscribeToUser } from '$lib/storage/user'
 import { subscribeToTeam } from '$lib/storage/team'
 import { postProjectToFirebase, subscribeToProject } from '$lib/storage/project'
-import { sameTabHost, updateProjectTabHostWithDebounce } from './tabs'
+import { forwardToActiveProjectTab, updateTabActiveState } from './tabs'
 import { changeQueue, processChangeQueue } from './styleChanges'
 
 import type { Team } from '$shared/models/team'
 import type { Activity } from '$shared/models/activity'
 import type { Comment } from '$shared/models/comment'
-import type { Project } from '$shared/models/project'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
 let userSubs: (() => void)[] = []
+let activeProjectSub: (() => void) | null = null
 
 function setDefaultMaps() {
 	teamsMapBucket.set({})
 	projectsMapBucket.set({})
 	usersMapBucket.set({})
 	tabsMapBucket.set({})
-}
-
-const updateTabActiveState = (tab: chrome.tabs.Tab, project: Project, enable: boolean) => {
-	updateProjectTabHostWithDebounce(tab)
-	toggleProjectTab(tab.id as number, project.id, enable)
-
-	// Forward message
-	chrome.tabs.sendMessage(tab.id as number, {
-		greeting: 'APPLY_PROJECT_CHANGES',
-		payload: {
-			data: {},
-			to: MessageReceiver.CONTENT
-		}
-	})
-
-	sendApplyProjectChanges(undefined, {
-		tabId: tab.id
-	})
-}
-
-export function forwardToActiveProjectTab(detail: any, callback: any) {
-	chrome.tabs.query({ active: true, currentWindow: true }, async tabs => {
-		// If tab is not active, don't send message
-		const activeTab = tabs[0]
-		if (!activeTab) return
-		const project = await getActiveProject()
-
-		// If active tab is not project tab
-		if (!sameTabHost(activeTab.url ?? '', project.hostUrl)) return
-
-		let tabState: VisbugState = await getTabState(activeTab.id as number)
-
-		// If tab is not injected, inject it
-		if (tabState.state !== InjectState.injected) {
-			toggleProjectTab(activeTab.id as number, project.id, true)
-		}
-
-		// Forward to callback
-		callback(detail, {
-			tabId: activeTab.id
-		})
-	})
 }
 
 const setListeners = () => {
@@ -177,7 +132,7 @@ const setListeners = () => {
 		projectsMapBucket.set({ [project.id]: project })
 	})
 
-	// Start editing request from popip
+	// Start editing request from popup
 	editProjectRequestStream.subscribe(([{ project, enable }]) => {
 		// Get tab if same host using pattern matching
 		const searchUrl = new URL(project.hostUrl).origin + '/*'
@@ -186,8 +141,13 @@ const setListeners = () => {
 			// Check if tab with same url exists
 			if (tabs?.length) {
 				// If tab exists and command is enable, also make it active
-				if (enable) chrome.tabs.update(tabs[0].id as number, { active: true })
-				updateTabActiveState(tabs[0], project, enable)
+				for (let i = 0; i < tabs.length; i++) {
+					// Make first tab active
+					if (enable && i === 0) {
+						chrome.tabs.update(tabs[i].id as number, { active: true })
+					}
+					updateTabActiveState(tabs[i], project, enable)
+				}
 			} else {
 				if (enable) {
 					// If tab doesn't exist and command is enable, create tab
@@ -199,7 +159,7 @@ const setListeners = () => {
 							updateTabActiveState(tab, project, enable)
 						})
 				} else {
-					// If tab doesn't exist and command is disable, remove instances of project
+					// If tabs don't exist and command is disable, remove instances of project
 					removeProjectFromTabs(project.id)
 				}
 			}
@@ -250,6 +210,7 @@ const setListeners = () => {
 		projectSubs.forEach(unsubscribe => unsubscribe())
 
 		for (const projectId of projectsNotInMap) {
+			console.log('Subscribing to project', projectId)
 			subscribeToProject(projectId, async project => {
 				if (!project) return
 				projectsMapBucket.set({ [project.id]: project })
@@ -259,7 +220,7 @@ const setListeners = () => {
 		}
 	})
 
-	// Project changes from team
+	// Project changes in map
 	projectsMapBucket.valueStream.subscribe(async projectsMap => {
 		if (!projectsMap) return
 
@@ -289,6 +250,22 @@ const setListeners = () => {
 				userSubs.push(unsubscribe)
 			})
 		}
+	})
+
+	// Listen for active project changing
+	popupStateBucket.valueStream.subscribe(async ({ activeProjectId }) => {
+		if (!activeProjectId) return
+		if (activeProjectSub) {
+			activeProjectSub()
+			activeProjectSub = null
+		}
+
+		subscribeToProject(activeProjectId, async project => {
+			if (!project) return
+			projectsMapBucket.set({ [project.id]: project })
+		}).then(unsubscribe => {
+			activeProjectSub = unsubscribe
+		})
 	})
 
 	// Open url from popup

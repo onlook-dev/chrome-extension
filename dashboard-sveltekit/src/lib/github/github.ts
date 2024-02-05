@@ -184,6 +184,22 @@ export async function createPRWithComments(
 
 		commentBody += '```';
 
+		// TODO: Add preview image but this currently takes too long to run
+		// try {
+		// 	if (activity.previewImage) {
+		// 		// Check if base64 image vs url
+		// 		let previewImageUrl = activity.previewImage;
+		// 		if (isBase64ImageString(activity.previewImage)) {
+		// 			const result = await storeImageUri({ dataUri: activity.previewImage });
+		// 			previewImageUrl = result.data;
+		// 		}
+
+		// 		commentBody += `\n![preview image](${previewImageUrl})`;
+		// 	}
+		// } catch (error) {
+		// 	console.error('Failed to add preview image:', error);
+		// }
+
 		await octokit.request(`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments`, {
 			owner,
 			repo: repositoryName,

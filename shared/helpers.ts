@@ -44,3 +44,8 @@ export function truncateString(str: string, num: number) {
   }
   return str.slice(0, num) + "...";
 }
+
+export function isBase64ImageString(str: string) {
+  const base64ImageRegex = /^data:image\/[a-zA-Z]+;base64,/;
+  return base64ImageRegex.test(str);
+}

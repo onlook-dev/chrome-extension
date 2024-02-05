@@ -1,6 +1,7 @@
 import { toJpeg } from 'html-to-image'
 import type { Activity } from '$shared/models/activity'
 import { getProjectById, projectsMapBucket } from '$lib/utils/localstorage'
+import { isBase64ImageString } from '$shared/helpers'
 
 export let activityScreenshotQueue: Activity[] = []
 const elementRequestCount = new Map()
@@ -14,8 +15,12 @@ export async function processScreenshotQueue() {
 }
 
 function takeElementScreenshot(element: HTMLElement) {
+	if (element.tagName === 'CODE' && element.parentElement) {
+		element = element.parentElement
+	}
 	return toJpeg(element, {
-		quality: 0
+		quality: 0,
+		backgroundColor: element.style.backgroundColor || '#fafafa'
 	}).then(function (dataUrl) {
 		return dataUrl
 	})
@@ -36,7 +41,9 @@ async function takeActivityScreenshot(activity: Activity) {
 
 	// Get screenshot
 	const dataUrl = await takeElementScreenshot(element)
-	activity.previewImage = dataUrl
+	if (isBase64ImageString(dataUrl)) {
+		activity.previewImage = dataUrl
+	}
 
 	// Update project
 	const project = await getProjectById(activity.projectId)

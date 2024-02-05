@@ -6,9 +6,9 @@
 	import { jsToCssProperty } from '$shared/helpers';
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import GitHub from '~icons/mdi/github';
-
 	import ItemHeader from './ItemHeader.svelte';
 	import Trash from '~icons/material-symbols/delete';
+
 	import { CodeBlock, storeHighlightJs } from '@skeletonlabs/skeleton';
 	import hljs from 'highlight.js/lib/core';
 	import css from 'highlight.js/lib/languages/css';

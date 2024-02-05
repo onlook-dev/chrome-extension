@@ -41,7 +41,7 @@
 			sendEditProjectRequest({ project, enable: false })
 			postProjectToFirebase(project)
 		}
-		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD })
+		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD, activeProjectId: '' })
 	}
 
 	onMount(async () => {

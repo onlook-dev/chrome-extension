@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { exportToPRComments } from '$lib/github/github';
-	import { MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
+	import { DashboardRoutes, MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
@@ -14,6 +14,8 @@
 	import GitHub from '~icons/mdi/github';
 	import Restore from '~icons/ic/baseline-restore';
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import { baseUrl } from '$lib/utils/env';
+	import { toast } from '@zerodevx/svelte-toast';
 
 	export let project: Project;
 	export let userId: string;
@@ -22,9 +24,9 @@
 
 	let githubConfigured = false;
 	let hasActivities = false;
-	let loadingRepos = false;
 	let isLoading = false;
 	let publishError = false;
+	let historyOpen = true;
 	let errorMessage = '';
 	let prLink: string | undefined;
 
@@ -48,13 +50,9 @@
 
 		if (project?.githubHistoryIds?.length > 0) {
 			githubConfigured = true;
-			loadingRepos = true;
 			getGithubHistoriesFromFirebase(project.githubHistoryIds)
 				.then((histories) => {
 					githubHistories = histories;
-				})
-				.then(() => {
-					loadingRepos = false;
 				})
 				.catch((error) => {
 					console.error('Error loading github history:', error);
@@ -65,6 +63,7 @@
 	async function handlePublishClick() {
 		title = title || titlePlaceholder;
 		description = description || descriptionPlaceholder;
+		description += `\n\n[View on onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
 			prLink = await exportToPRComments(userId, project?.id, title, description);
@@ -90,9 +89,12 @@
 			};
 
 			// Reset activites, they are archived in github history
+			title = '';
+			description = '';
 			project.activities = {};
 			project.githubHistoryIds.push(githubHistory.id);
 			githubHistories = [...githubHistories, githubHistory];
+			toast.push('Changes published to GitHub!');
 
 			// Save project and github history
 			postGithubHistoryToFirebase(githubHistory);
@@ -177,8 +179,12 @@
 		</label>
 
 		{#if githubHistories.length > 0}
-			<div class="collapse collapse-arrow border rounded-md mt-6">
-				<input type="checkbox" />
+			<div
+				class="collapse collapse-arrow border rounded-md mt-6 {historyOpen
+					? 'collapse-open'
+					: 'collapse-close'}"
+			>
+				<input type="checkbox" on:click={() => (historyOpen = !historyOpen)} />
 				<div class="collapse-title">Publish history ({githubHistories.length})</div>
 				<div class="collapse-content space-y-2">
 					{#each githubHistories as history}
