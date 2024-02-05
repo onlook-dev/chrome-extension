@@ -1,6 +1,7 @@
 import { baseUrl } from '$lib/utils/env';
 import { stripe } from '$lib/stripe/stripe';
 import type { RequestHandler } from '@sveltejs/kit';
+import { DashboardRoutes } from '$shared/constants';
 
 export const POST: RequestHandler = async ({ request }) => {
 	const data = await request.json();
@@ -14,8 +15,8 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		],
 		mode: 'subscription',
-		success_url: `${baseUrl}/dashboard`,
-		cancel_url: `${baseUrl}/dashboard`
+		success_url: `${baseUrl}${DashboardRoutes.DASHBOARD}`,
+		cancel_url: `${baseUrl}${DashboardRoutes.DASHBOARD}`
 	});
 
 	return new Response(

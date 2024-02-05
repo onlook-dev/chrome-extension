@@ -4,7 +4,7 @@ import { Octokit } from '@octokit/core';
 import { createAppAuth } from '@octokit/auth-app';
 import { getGithubAuthFromFirebase } from '$lib/storage/github';
 import type { Activity } from '$shared/models/activity';
-import { githubConfig } from '$lib/utils/env';
+import { baseUrl, githubConfig } from '$lib/utils/env';
 import type { GithubRepo, TreeItem } from '$shared/models/github';
 import { jsToCssProperty } from '$shared/helpers';
 import { DashboardRoutes, DashboardSearchParams } from '$shared/constants';
@@ -187,7 +187,7 @@ export async function createPRWithComments(
 
 		commentBody += '```';
 
-		commentBody += `\n\n[View in onlook.dev](${DashboardRoutes.PROJECTS}/${projectId}?${DashboardSearchParams.ACTIVITY}=${activity.id})`;
+		commentBody += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${projectId}?${DashboardSearchParams.ACTIVITY}=${activity.id})`;
 
 		// TODO: Add preview image but this currently takes too long to run
 		// try {

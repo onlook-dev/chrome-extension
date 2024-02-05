@@ -91,10 +91,16 @@
 			// Reset activites, they are archived in github history
 			title = '';
 			description = '';
-			project.activities = {};
+
 			project.githubHistoryIds.push(githubHistory.id);
 			githubHistories = [...githubHistories, githubHistory];
-			toast.push('Changes published to GitHub!');
+			toast.push('Changes published to GitHub! 🎉', {
+				theme: {
+					'--toastColor': 'mintcream',
+					'--toastBackground': 'rgba(72,187,120,0.9)',
+					'--toastBarBackground': '#2F855A'
+				}
+			});
 
 			// Save project and github history
 			postGithubHistoryToFirebase(githubHistory);

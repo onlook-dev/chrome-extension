@@ -19,7 +19,7 @@ function takeElementScreenshot(element: HTMLElement) {
 		element = element.parentElement
 	}
 	return toJpeg(element, {
-		quality: 0,
+		quality: 0.1,
 		backgroundColor: element.style.backgroundColor || '#fafafa'
 	}).then(function (dataUrl) {
 		return dataUrl

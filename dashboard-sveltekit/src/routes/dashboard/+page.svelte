@@ -34,7 +34,9 @@
 		userStore.subscribe((storeUser) => {
 			if (!storeUser) return;
 			user = storeUser;
-			activeTeamId = activeTeamId ?? user?.teamIds[0];
+			if (activeTeamId === '' && user?.teamIds.length > 0) {
+				activeTeamId = user?.teamIds[0];
+			}
 
 			// Unsubscribe from previous teams
 			unsubs.forEach((unsub: any) => unsub());
@@ -64,12 +66,17 @@
 	<!-- Drawer content -->
 	<div class="bg-[#e6e6e6] drawer-content px-4 py-6 overflow-auto h-screen">
 		<!-- Page content here -->
-		<label for={dashboardDrawerId} class="btn drawer-button lg:hidden"><SideBarLine /></label>
+		<div class="flex flex-row gap-2 mb-4 items-center">
+			<label for={dashboardDrawerId} class="btn btn-square btn-ghost drawer-button lg:hidden"
+				><SideBarLine /></label
+			>
 
-		<!-- TODO: Change based on folder -->
-		<h1 class="text-2xl font-bold mb-4" style="font-size: 20px; text-align: left;">
-			{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
-		</h1>
+			<!-- TODO: Change based on folder -->
+			<h1 class="text-2xl font-bold">
+				{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
+			</h1>
+		</div>
+
 		<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
 	</div>
 
