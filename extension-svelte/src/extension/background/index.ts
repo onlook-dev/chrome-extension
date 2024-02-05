@@ -252,6 +252,7 @@ const setListeners = () => {
 		}
 	})
 
+	// Listen for active project changing
 	popupStateBucket.valueStream.subscribe(async ({ activeProjectId }) => {
 		if (!activeProjectId) return
 		if (activeProjectSub) {
