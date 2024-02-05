@@ -106,12 +106,15 @@
 							<button
 								class="btn btn-xs btn-square btn-ghost ml-auto"
 								on:click={() =>
+									// Root path may be empty
 									window.open(
 										`https://github.com/${project?.githubSettings?.owner}/${
 											project?.githubSettings?.repositoryName
 										}/blob/${project?.githubSettings?.baseBranch}/${
-											activity?.path?.split(':')[0]
-										}#L${activity?.path?.split(':')[1]}`,
+											project?.githubSettings?.rootPath
+												? `${project?.githubSettings?.rootPath}/`
+												: ''
+										}${activity?.path?.split(':')[0]}#L${activity?.path?.split(':')[1]}`,
 										'_blank'
 									)}
 							>
