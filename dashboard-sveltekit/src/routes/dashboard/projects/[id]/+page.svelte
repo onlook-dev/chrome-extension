@@ -13,17 +13,25 @@
 	import type { User } from '$shared/models/user';
 	import { auth } from '$lib/firebase/firebase';
 
-	import Comments from './Comments.svelte';
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';
 	import Slack from '~icons/devicon/slack';
 	import Jira from '~icons/logos/jira';
 	import Linear from '~icons/logos/linear-icon';
 	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
+	import type { Activity } from '$shared/models/activity';
 
 	let project: Project | undefined;
 	let user: User | null;
 	let unsubs: any[] = [];
+	let activeActivityId: string = '';
+	let activeActivity: Activity | undefined;
+
+	$: if (project) {
+		activeActivity = Object.values(project.activities).find(
+			(activity) => activity.id === activeActivityId
+		);
+	}
 
 	onMount(async () => {
 		auth.onAuthStateChanged((user) => {
@@ -107,7 +115,13 @@
 		<div class="bg-base-200 flex flex-col sm:flex-row flex-grow overflow-auto">
 			<!-- Screenshot -->
 			<div class="sm:w-full flex flex-grow h-full border items-center justify-center">
-				{#if project.hostData?.previewImage}
+				{#if activeActivity && activeActivity.previewImage}
+					<img
+						src={activeActivity.previewImage}
+						alt="Screenshot"
+						class="shadow max-w-[80%] mx-auto my-auto"
+					/>
+				{:else if project.hostData?.previewImage}
 					<img
 						src={project.hostData?.previewImage}
 						alt="Screenshot"
@@ -122,7 +136,7 @@
 			<!-- Sidebar/ comments + activities -->
 			<div class="flex flex-col w-full sm:max-w-96 h-full text-sm">
 				<div class="border h-full w-full overflow-auto">
-					<Activities {project} />
+					<Activities {project} bind:activeActivityId />
 				</div>
 			</div>
 		</div>

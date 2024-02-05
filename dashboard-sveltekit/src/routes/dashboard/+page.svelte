@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
 	import { auth } from '$lib/firebase/firebase';
-	import { DashboardRoutes } from '$shared/constants';
+	import { DashboardRoutes, DashboardSearchParams } from '$shared/constants';
 	import { paymentsMapStore, teamsMapStore, userStore } from '$lib/utils/store';
 	import { subscribeToTeam } from '$lib/storage/team';
 	import type { User } from '$shared/models/user';
@@ -17,10 +18,13 @@
 
 	const dashboardDrawerId = 'dashboard-drawer';
 	let user: User | null;
-	let activeTeamId = '';
+	let activeTeamId: string = '';
 	let unsubs: any[] = [];
 
 	onMount(async () => {
+		// Get active team from params
+		activeTeamId = $page.url.searchParams.get(DashboardSearchParams.TEAM) ?? '';
+
 		auth.onAuthStateChanged((user) => {
 			if (!user) {
 				goto(DashboardRoutes.SIGNIN);
@@ -30,7 +34,7 @@
 		userStore.subscribe((storeUser) => {
 			if (!storeUser) return;
 			user = storeUser;
-			activeTeamId = user?.teamIds[0] ?? '';
+			activeTeamId = activeTeamId ?? user?.teamIds[0];
 
 			// Unsubscribe from previous teams
 			unsubs.forEach((unsub: any) => unsub());
@@ -86,7 +90,12 @@
 						<li>
 							<button
 								class="grid grid-cols-3 items-center w-full"
-								on:click={() => (activeTeamId = teamId)}
+								on:click={() => {
+									activeTeamId = teamId;
+									goto(`${DashboardRoutes.DASHBOARD}?${DashboardSearchParams.TEAM}=` + teamId, {
+										replaceState: true
+									});
+								}}
 							>
 								<p
 									class="{activeTeamId === teamId

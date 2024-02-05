@@ -63,7 +63,7 @@
 	async function handlePublishClick() {
 		title = title || titlePlaceholder;
 		description = description || descriptionPlaceholder;
-		description += `\n\n[View on onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
+		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
 			prLink = await exportToPRComments(userId, project?.id, title, description);

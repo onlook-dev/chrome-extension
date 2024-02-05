@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 	import type { Project } from '$shared/models/project';
 	import type { Activity, StyleChange } from '$shared/models/activity';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
@@ -8,6 +9,7 @@
 	import GitHub from '~icons/mdi/github';
 	import ItemHeader from './ItemHeader.svelte';
 	import Trash from '~icons/material-symbols/delete';
+	import { DashboardRoutes, DashboardSearchParams } from '$shared/constants';
 
 	import { CodeBlock, storeHighlightJs } from '@skeletonlabs/skeleton';
 	import hljs from 'highlight.js/lib/core';
@@ -15,18 +17,23 @@
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import shell from 'highlight.js/lib/languages/shell';
 	import 'highlight.js/styles/github.css';
+	import { goto } from '$app/navigation';
+
+	export let project: Project;
+	export let activeActivityId: string;
+
+	const modalId = 'delete-activity-modal';
+	let activities: Activity[];
 
 	onMount(() => {
+		// Get active activity from params
+		activeActivityId = $page.url.searchParams.get(DashboardSearchParams.ACTIVITY) ?? '';
+
 		storeHighlightJs.set(hljs);
 		hljs.registerLanguage('css', css);
 		hljs.registerLanguage('javascript', javascript);
 		hljs.registerLanguage('shell', shell);
 	});
-
-	export let project: Project;
-
-	const modalId = 'delete-activity-modal';
-	let activities: Activity[];
 
 	$: activities = Object.values(project.activities).sort(
 		(a, b) =>
@@ -89,11 +96,31 @@
 	{#each activities as activity}
 		<!-- TODO: Add helper -->
 		{#if Object.keys(activity.styleChanges).length > 0}
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<div
-				class="w-full p-4 flex flex-col pb-6 transition duration-200 ease-in-out {!activity.visible
-					? 'opacity-60'
+				class="w-full p-4 flex flex-col pb-6 transition duration-200 ease-in-out {activeActivityId ==
+				activity.id
+					? 'bg-sky-100 shadow-lg'
 					: ''}
 					"
+				on:click={() => {
+					if (activeActivityId === activity.id) {
+						activeActivityId = '';
+						goto(`${DashboardRoutes.PROJECTS}/${project.id}`, {
+							replaceState: true
+						});
+					} else {
+						activeActivityId = activity.id;
+						goto(
+							`${DashboardRoutes.PROJECTS}/${project.id}?${DashboardSearchParams.ACTIVITY}=` +
+								activity.id,
+							{
+								replaceState: true
+							}
+						);
+					}
+				}}
 			>
 				<!-- Item header -->
 				<ItemHeader
