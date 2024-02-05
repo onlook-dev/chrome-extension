@@ -31,6 +31,12 @@ export enum DashboardRoutes {
   GITHUB = "/github",
 }
 
+export enum DashboardSearchParams {
+  PROJECT = "project",
+  TEAM = "team",
+  ACTIVITY = "activity",
+}
+
 export enum MouseEvent {
   CLICK = "click",
   MOUSEMOVE = "mousemove",

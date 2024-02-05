@@ -4,9 +4,10 @@ import { Octokit } from '@octokit/core';
 import { createAppAuth } from '@octokit/auth-app';
 import { getGithubAuthFromFirebase } from '$lib/storage/github';
 import type { Activity } from '$shared/models/activity';
-import { githubConfig } from '$lib/utils/env';
+import { baseUrl, githubConfig } from '$lib/utils/env';
 import type { GithubRepo, TreeItem } from '$shared/models/github';
 import { jsToCssProperty } from '$shared/helpers';
+import { DashboardRoutes, DashboardSearchParams } from '$shared/constants';
 
 // TODO: Should clean up if any steps fail
 // - Delete branch
@@ -83,6 +84,7 @@ export async function exportToPRComments(
 
 	const prLink = await createPRWithComments(
 		project.activities,
+		projectId,
 		githubSettings.owner,
 		githubSettings.repositoryName,
 		githubSettings.baseBranch,
@@ -133,6 +135,7 @@ export async function createBranch(
 
 export async function createPRWithComments(
 	activities: Record<string, Activity>,
+	projectId: string,
 	owner: string,
 	repositoryName: string,
 	baseBranch: string,
@@ -183,6 +186,8 @@ export async function createPRWithComments(
 		}
 
 		commentBody += '```';
+
+		commentBody += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${projectId}?${DashboardSearchParams.ACTIVITY}=${activity.id})`;
 
 		// TODO: Add preview image but this currently takes too long to run
 		// try {

@@ -63,7 +63,7 @@
 	async function handlePublishClick() {
 		title = title || titlePlaceholder;
 		description = description || descriptionPlaceholder;
-		description += `\n\n[View on onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
+		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
 			prLink = await exportToPRComments(userId, project?.id, title, description);
@@ -91,10 +91,16 @@
 			// Reset activites, they are archived in github history
 			title = '';
 			description = '';
-			project.activities = {};
+
 			project.githubHistoryIds.push(githubHistory.id);
 			githubHistories = [...githubHistories, githubHistory];
-			toast.push('Changes published to GitHub!');
+			toast.push('Changes published to GitHub! 🎉', {
+				theme: {
+					'--toastColor': 'mintcream',
+					'--toastBackground': 'rgba(72,187,120,0.9)',
+					'--toastBarBackground': '#2F855A'
+				}
+			});
 
 			// Save project and github history
 			postGithubHistoryToFirebase(githubHistory);

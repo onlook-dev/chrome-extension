@@ -6,24 +6,32 @@
 	import type { Project } from '$shared/models/project';
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
-	import { DashboardRoutes, MAX_TITLE_LENGTH } from '$shared/constants';
+	import { DashboardRoutes, DashboardSearchParams, MAX_TITLE_LENGTH } from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 
 	import { truncateString } from '$shared/helpers';
 	import type { User } from '$shared/models/user';
 	import { auth } from '$lib/firebase/firebase';
 
-	import Comments from './Comments.svelte';
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';
 	import Slack from '~icons/devicon/slack';
 	import Jira from '~icons/logos/jira';
 	import Linear from '~icons/logos/linear-icon';
 	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
+	import type { Activity } from '$shared/models/activity';
 
 	let project: Project | undefined;
 	let user: User | null;
 	let unsubs: any[] = [];
+	let activeActivityId: string = '';
+	let activeActivity: Activity | undefined;
+
+	$: if (project) {
+		activeActivity = Object.values(project.activities).find(
+			(activity) => activity.id === activeActivityId
+		);
+	}
 
 	onMount(async () => {
 		auth.onAuthStateChanged((user) => {
@@ -78,7 +86,11 @@
 		<!-- Header -->
 		<div class="navbar bg-base-100">
 			<div class="navbar-start flex flex-row">
-				<a class="btn btn-ghost text-sm" href={DashboardRoutes.DASHBOARD}>Onlook</a>
+				<a
+					class="btn btn-ghost text-sm"
+					href="{DashboardRoutes.DASHBOARD}?{DashboardSearchParams.TEAM}={project?.teamId}"
+					>Onlook</a
+				>
 				<p class="text-sm mr-4">/</p>
 				<p class="truncate">
 					{truncateString(project?.name || 'Dashboard', MAX_TITLE_LENGTH)}
@@ -107,7 +119,13 @@
 		<div class="bg-base-200 flex flex-col sm:flex-row flex-grow overflow-auto">
 			<!-- Screenshot -->
 			<div class="sm:w-full flex flex-grow h-full border items-center justify-center">
-				{#if project.hostData?.previewImage}
+				{#if activeActivity && activeActivity.previewImage}
+					<img
+						src={activeActivity.previewImage}
+						alt="Screenshot"
+						class="shadow max-w-[80%] mx-auto my-auto"
+					/>
+				{:else if project.hostData?.previewImage}
 					<img
 						src={project.hostData?.previewImage}
 						alt="Screenshot"
@@ -122,7 +140,7 @@
 			<!-- Sidebar/ comments + activities -->
 			<div class="flex flex-col w-full sm:max-w-96 h-full text-sm">
 				<div class="border h-full w-full overflow-auto">
-					<Activities {project} />
+					<Activities {project} bind:activeActivityId />
 				</div>
 			</div>
 		</div>
