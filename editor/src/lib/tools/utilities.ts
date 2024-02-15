@@ -18,6 +18,6 @@ export const deepElementFromPoint = (x, y) => {
 }
 
 
-export const isOffBounds = node => node?.closest && (node.closest('onlook-toolbar'))
+export const isOffBounds = node => node?.closest && (node.closest('onlook-toolbar') || node.closest('#onlook-toolbar'))
 
 export const getDataOnlookId = node => node?.getAttribute('data-onlook-id')

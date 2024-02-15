@@ -1,6 +1,9 @@
 <script lang="ts">
   import "./app.pcss";
   import Toolbar from "./lib/components/toolbar/Toolbar.svelte";
+  import { ONLOOK_TOOLBAR } from "./lib/constants";
 </script>
 
-<Toolbar />
+<div id={ONLOOK_TOOLBAR}>
+  <Toolbar />
+</div>

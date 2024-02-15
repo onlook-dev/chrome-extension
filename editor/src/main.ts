@@ -8,10 +8,8 @@ class OnlookToolbar extends HTMLElement {
 	constructor() {
 		super();
 
-		this.style.position = 'fixed';
-		this.style.zIndex = '2147483647';
 		// Attaches a shadow DOM
-		const shadowRoot = this.attachShadow({ mode: 'closed' });
+		const shadowRoot = this.attachShadow({ mode: 'open' });
 
 		// Add twind styles
 		const sheet = cssom(new CSSStyleSheet());
@@ -24,8 +22,10 @@ class OnlookToolbar extends HTMLElement {
 		});
 	}
 
-	connectedCallback() { }
-
+	connectedCallback() {
+		this.style.position = 'fixed';
+		this.style.zIndex = '2147483647';
+	}
 }
 
 // Define the new element
