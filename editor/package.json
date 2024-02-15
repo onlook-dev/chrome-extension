@@ -9,9 +9,9 @@
   ],
   "scripts": {
     "dev": "rollup -c -w",
-    "dev:cpy:sveltekit-demo": "rollup -c -w & nodemon --watch public/build/bundle.min.js --exec 'cp public/build/bundle.min.js ../demos/sveltekit-demo/src'",
+    "dev:cpy": "npm run dev & nodemon --watch public/build/bundle.min.js --exec 'cp public/build/bundle.min.js ../demos/sveltekit-demo/src'",
     "build": "rollup -c",
-    "build:cpy:sveltekit-demo": "rollup -c && cp public/build/bundle.min.js ../demos/sveltekit-demo/src",
+    "build:cpy": "npm run build && cp public/build/bundle.min.js ../demos/sveltekit-demo/src",
     "start": "sirv public --no-clear",
     "check": "svelte-check",
     "pub": "npm run build && cp public/build/bundle.min.js umd && npm publish"
