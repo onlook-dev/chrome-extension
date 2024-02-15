@@ -1,0 +1,59 @@
+<script lang="ts">
+	import {
+		ElementStyle,
+		ElementStyleType,
+		getElementComputedStylesData,
+		groupElementStylesByGroup
+	} from "$lib/tools/selection/styles";
+	import * as Accordion from "$lib/components/ui/accordion";
+	import SelectInput from "./inputs/SelectInput.svelte";
+	import { Input } from "$lib/components/ui/input";
+	import ColorInput from "./inputs/ColorInput.svelte";
+
+	export let el: HTMLElement;
+	let groupedStyles: Record<string, ElementStyle[]> = {};
+
+	$: if (el) {
+		const elementStyles: ElementStyle[] = getElementComputedStylesData(el);
+		groupedStyles = groupElementStylesByGroup(elementStyles);
+	}
+	function capitalizeFirstLetter(str: string) {
+		return str.charAt(0).toUpperCase() + str.slice(1);
+	}
+
+	function updateElementStyle(key, value) {
+		el.style[key] = value;
+	}
+</script>
+
+<Accordion.Root class="w-full" multiple value={Object.keys(groupedStyles)}>
+	{#each Object.entries(groupedStyles) as [groupKey, elementStyles]}
+		<Accordion.Item data-state="open" value={groupKey}>
+			<Accordion.Trigger><h2 class="py-5">{capitalizeFirstLetter(groupKey)}</h2></Accordion.Trigger>
+			<Accordion.Content>
+				{#each elementStyles as elementStyle}
+					<div class="flex flex-row items-center pb-2">
+						<p class="text-sm w-24 mr-2 text-left">{elementStyle.displayName}</p>
+						<div class="mr-auto w-52">
+							{#if elementStyle.type === ElementStyleType.Select}
+								<SelectInput {elementStyle} {updateElementStyle} />
+							{:else if elementStyle.type === ElementStyleType.Color}
+								<ColorInput {elementStyle} {updateElementStyle} />
+							{:else}
+								<Input
+									type="text"
+									placeholder={elementStyle.type}
+									class="w-52"
+									value={elementStyle.value}
+									on:input={(event) => {
+										updateElementStyle(elementStyle.key, event.target.value);
+									}}
+								/>
+							{/if}
+						</div>
+					</div>
+				{/each}
+			</Accordion.Content>
+		</Accordion.Item>
+	{/each}
+</Accordion.Root>
