@@ -50,15 +50,15 @@ export default {
 			'process.env.SERVER_URL': JSON.stringify(process.env.SERVER_URL),
 			'process.env.NGROK_SERVER_URL': JSON.stringify(process.env.NGROK_SERVER_URL),
 		}),
+		typescript({
+			sourceMap: false,
+			inlineSources: !production
+		}),
 		svelte({
 			preprocess: sveltePreprocess({ sourceMap: false, postcss: true, typescript: true }),
 			compilerOptions: {
 				dev: !production
 			}
-		}),
-		typescript({
-			sourceMap: false,
-			inlineSources: !production
 		}),
 		postcss({
 			plugins: []

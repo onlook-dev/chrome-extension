@@ -2,25 +2,32 @@ import App from './App.svelte';
 import config from '../twind.config';
 import 'construct-style-sheets-polyfill';
 import { twind, cssom, observe } from '@twind/core';
+import { ONLOOK_TOOLBAR } from './lib/constants';
+class OnlookToolbar extends HTMLElement {
+	constructor() {
+		super();
+		this.init();
+	}
 
-document.addEventListener('DOMContentLoaded', () => {
-	const element = document.createElement('div');
-	element.classList.add('dark');
-	element.style.position = 'fixed';
-	element.style.zIndex = '2147483647';
-	document.body.appendChild(element);
+	connectedCallback() { }
 
-	// Attaches a shadow dom
-	const shadowRoot = element.attachShadow({ mode: 'open' });
+	init() {
+		this.style.position = 'fixed';
+		this.style.zIndex = '2147483647';
+		// Attaches a shadow DOM
+		const shadowRoot = this.attachShadow({ mode: 'open' });
 
-	// Add twind styles
-	const sheet = cssom(new CSSStyleSheet());
-	// element.styleSheets = [sheet.target];
-	shadowRoot.adoptedStyleSheets = [sheet.target];
-	observe(twind(config, sheet), shadowRoot);
+		// Add twind styles
+		const sheet = cssom(new CSSStyleSheet());
+		shadowRoot.adoptedStyleSheets = [sheet.target];
+		observe(twind(config, sheet), shadowRoot);
 
-	// Initialize Svelte app in the shadow root
-	new App({
-		target: shadowRoot
-	});
-});
+		// Initialize Svelte app in the shadow root
+		new App({
+			target: shadowRoot
+		});
+	}
+}
+
+// Define the new element
+customElements.define(ONLOOK_TOOLBAR, OnlookToolbar);

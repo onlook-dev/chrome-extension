@@ -8,7 +8,6 @@
   <title>Svelte app</title>
 
   <link rel="icon" type="image/png" href="/favicon.png" />
-  <script defer src="/build/bundle.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -44,7 +43,7 @@
     .form-group input[type="text"],
     .form-group input[type="email"],
     .form-group input[type="password"] {
-      width: 100%;
+      width: 95%;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
@@ -66,6 +65,7 @@
 </head>
 
 <body>
+  <onlook-toolbar></onlook-toolbar>
   <div class="container">
     <h1>Registration Form</h1>
     <form id="registrationForm">
@@ -84,7 +84,6 @@
       <button type="submit">Register</button>
     </form>
   </div>
-
   <script>
     document.getElementById('registrationForm').addEventListener('submit', function (event) {
       event.preventDefault();
@@ -92,6 +91,7 @@
       alert('Registration successful!');
     });
   </script>
+  <script defer src="/build/bundle.min.js"></script>
 </body>
 
 </html>

@@ -12,5 +12,5 @@ twPreset.preflight["*"] = {
 export default defineConfig({
   presets: [twPreset],
   darkMode: "class",
-  ...config,
+  ...config
 });
