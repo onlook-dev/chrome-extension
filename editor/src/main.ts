@@ -3,6 +3,7 @@ import config from '../twind.config';
 import 'construct-style-sheets-polyfill';
 import { twind, cssom, observe } from '@twind/core';
 import { ONLOOK_TOOLBAR } from './lib/constants';
+
 class OnlookToolbar extends HTMLElement {
 	constructor() {
 		super();
@@ -15,7 +16,7 @@ class OnlookToolbar extends HTMLElement {
 		this.style.position = 'fixed';
 		this.style.zIndex = '2147483647';
 		// Attaches a shadow DOM
-		const shadowRoot = this.attachShadow({ mode: 'open' });
+		const shadowRoot = this.attachShadow({ mode: 'closed' });
 
 		// Add twind styles
 		const sheet = cssom(new CSSStyleSheet());

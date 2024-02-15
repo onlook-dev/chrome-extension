@@ -1,5 +1,5 @@
 <script lang="ts">
-  import "./app.css";
+  import "./app.pcss";
   import { ONLOOK_TOOLBAR } from "./lib/constants";
   import Toolbar from "./lib/components/toolbar/Toolbar.svelte";
 </script>
