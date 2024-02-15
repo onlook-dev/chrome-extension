@@ -7,12 +7,7 @@ import { ONLOOK_TOOLBAR } from './lib/constants';
 class OnlookToolbar extends HTMLElement {
 	constructor() {
 		super();
-		this.init();
-	}
 
-	connectedCallback() { }
-
-	init() {
 		this.style.position = 'fixed';
 		this.style.zIndex = '2147483647';
 		// Attaches a shadow DOM
@@ -28,6 +23,9 @@ class OnlookToolbar extends HTMLElement {
 			target: shadowRoot
 		});
 	}
+
+	connectedCallback() { }
+
 }
 
 // Define the new element

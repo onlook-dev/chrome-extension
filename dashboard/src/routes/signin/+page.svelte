@@ -1,11 +1,11 @@
 <script>
-	import { LINK_DISCORD, DashboardRoutes } from '$shared/constants';
-	import { signInWithGoogle, signInWithGithub } from '$lib/firebase/auth';
-	import Google from '~icons/devicon/google';
-	import GitHub from '~icons/mdi/github';
+	import { SUPPORT_LINK, DashboardRoutes } from '$shared/constants';
+	import { signInWithGoogle } from '$lib/firebase/auth';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { userStore } from '$lib/utils/store';
+	import Google from '~icons/devicon/google';
+	// import GitHub from '~icons/mdi/github';
 
 	onMount(() => {
 		userStore.subscribe((user) => {
@@ -41,7 +41,7 @@
 		</div>
 	</div>
 	<div class="flex justify-between p-4 space-x-4">
-		<a href={LINK_DISCORD} target="_blank" class="link link-hover text-sm">Support</a>
+		<a href={SUPPORT_LINK} target="_blank" class="link link-hover text-sm">Support</a>
 		<a href={DashboardRoutes.PRIVACY} target="_blank" class="link link-hover text-sm">Privacy</a>
 	</div>
 </div>

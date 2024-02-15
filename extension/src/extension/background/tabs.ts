@@ -8,7 +8,7 @@ import {
 	projectsMapBucket,
 	type VisbugState
 } from '$lib/utils/localstorage'
-import { toggleProjectTab } from '$lib/visbug/visbug'
+import { toggleProjectTab } from '$lib/editor'
 import type { HostData } from '$shared/models/hostData'
 import type { Project } from '$shared/models/project'
 import { MessageReceiver, sendApplyProjectChanges } from '$lib/utils/messaging'

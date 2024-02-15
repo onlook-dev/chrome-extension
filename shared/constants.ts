@@ -18,7 +18,10 @@ export const UNDO_STYLE_CHANGE = "UNDO_STYLE_CHANGE";
 export const REDO_STYLE_CHANGE = "REDO_STYLE_CHANGE";
 
 // Links
-export const LINK_DISCORD = "mailto:support@onlook.dev";
+export const SUPPORT_LINK = "mailto:support@onlook.dev";
+
+// Editor
+export const ONLOOK_TOOLBAR = "onlook-toolbar";
 
 // Dashboard routes
 export enum DashboardRoutes {

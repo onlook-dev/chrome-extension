@@ -4,7 +4,7 @@
   "description": "Onlook monorepo",
   "scripts": {
     "dev": "concurrently --kill-others \"npm run editor\" \"npm run dashboard\" \"npm run extension\"",
-    "editor": "cd editor && npm run dev",
+    "editor": "cd editor && npm run dev:cpy",
     "dashboard": "cd dashboard && npm run dev",
     "extension": "cd extension && npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1",
