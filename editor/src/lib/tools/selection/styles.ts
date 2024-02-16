@@ -275,27 +275,93 @@ export const elementStyles: ElementStyle[] = [
   ),
   new ElementStyle(
     'textAlign',
-    'left',
+    'start',
     'Text Alignment',
     ElementStyleType.Select,
     ElementStyleGroup.Text,
-    ['left', 'center', 'right',]
+    ['start', 'center', 'end',]
   ),
 
   // Spacing
   new ElementStyle(
-    'margin',
-    '0px',
-    'Margin',
-    ElementStyleType.Text,
-    ElementStyleGroup.Spacing
+    'marginTop',
+    '',
+    'Margin Top',
+    ElementStyleType.Number,
+    ElementStyleGroup.Spacing,
+    [],
+    elementStyleUnits,
+    1000
   ),
   new ElementStyle(
-    'padding',
-    '0px',
-    'Padding',
-    ElementStyleType.Text,
-    ElementStyleGroup.Spacing
+    'marginRight',
+    '',
+    'Margin Right',
+    ElementStyleType.Number,
+    ElementStyleGroup.Spacing,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'marginBottom',
+    '',
+    'Margin Bottom',
+    ElementStyleType.Number,
+    ElementStyleGroup.Spacing,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'marginLeft',
+    '',
+    'Margin Left',
+    ElementStyleType.Number,
+    ElementStyleGroup.Spacing,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'paddingTop',
+    '',
+    'Padding Top',
+    ElementStyleType.Number,
+    ElementStyleGroup.Spacing,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'paddingRight',
+    '',
+    'Padding Right',
+    ElementStyleType.Number,
+    ElementStyleGroup.Spacing,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'paddingBottom',
+    '',
+    'Padding Bottom',
+    ElementStyleType.Number,
+    ElementStyleGroup.Spacing,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'paddingLeft',
+    '',
+    'Padding Left',
+    ElementStyleType.Number,
+    ElementStyleGroup.Spacing,
+    [],
+    elementStyleUnits,
+    1000
   ),
 
   // Effects
@@ -321,7 +387,7 @@ export function sortGroupsByCustomOrder(groups: Record<string, ElementStyle[]>):
   return sortedGroups;
 }
 
-export function groupElementStylesByGroup(elementStyles: ElementStyle[]): Record<string, ElementStyle[]> {
+export function groupElementStylesByGroup(elementStyles: ElementStyle[]): Record<ElementStyleGroup, ElementStyle[]> {
   return elementStyles.reduce((groups: any, style) => {
     // Initialize the group if it doesn't exist
     if (!groups[style.group]) {

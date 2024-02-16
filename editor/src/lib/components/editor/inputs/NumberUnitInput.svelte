@@ -3,6 +3,9 @@
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
   export let unitEnd: boolean = false;
+  export let inputWidth: string = "w-8";
+  export let unitWidth: string = "w-8";
+
   let parsedNumber: number = 0;
   let parsedUnit: string = "";
   const auto = "auto";
@@ -39,7 +42,7 @@
   <div class="flex flex-row gap-1 justify-end">
     <input
       type="number"
-      class="text-xs w-8 border-none text-text bg-background text-end focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+      class="{inputWidth} text-xs border-none text-text bg-background text-end focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       placeholder="--"
       value={isEmpty() ? "" : parsedNumber}
       on:input={(e) => {
@@ -53,7 +56,7 @@
     <select
       name={elementStyle.displayName}
       placeholder="auto"
-      class="text-xs w-fit border-none text-text bg-background appearance-none {unitEnd
+      class="text-xs {unitWidth} border-none text-text bg-background appearance-none {unitEnd
         ? 'text-end'
         : 'text-start'} focus:outline-none focus:ring-0"
       on:input={(e) => {

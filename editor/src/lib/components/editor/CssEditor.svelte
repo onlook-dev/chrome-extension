@@ -7,15 +7,17 @@
     groupElementStylesByGroup,
   } from "$lib/tools/selection/styles";
   import * as Accordion from "$lib/components/ui/accordion";
-  import SelectInput from "./inputs/SelectInput.svelte";
   import { Input } from "$lib/components/ui/input";
+  import Separator from "../ui/separator/separator.svelte";
+  import SelectInput from "./inputs/SelectInput.svelte";
   import ColorInput from "./inputs/ColorInput.svelte";
   import NumberUnitInput from "./inputs/NumberUnitInput.svelte";
-  import Separator from "../ui/separator/separator.svelte";
   import TagInfo from "./inputs/TagInfo.svelte";
+  import SizeSection from "./inputs/SizeSection.svelte";
+  import SpacingInput from "./inputs/SpacingInput.svelte";
 
   export let el: HTMLElement;
-  let groupedStyles: Record<string, ElementStyle[]> = {};
+  let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {};
 
   $: if (el) {
     const elementStyles: ElementStyle[] = getElementComputedStylesData(el);
@@ -30,19 +32,19 @@
 <Accordion.Root class="w-full" multiple value={Object.keys(groupedStyles)}>
   {#each Object.entries(groupedStyles) as [groupKey, elementStyles]}
     {#if groupKey == ElementStyleGroup.Size}
-      <div class="mt-4 grid grid-cols-2 gap-x-4">
-        <h2 class="pb-2 text-xs">Fixed Width</h2>
-        <h2 class="pb-2 text-xs">Fixed Height</h2>
-        {#each elementStyles as elementStyle}
-          <div class="flex flex-row items-center pb-2">
-            <p class="text-xs w-24 text-left opacity-60">
-              {elementStyle.displayName}
-            </p>
-            <NumberUnitInput {elementStyle} {updateElementStyle} />
-          </div>
-        {/each}
-      </div>
+      <SizeSection {elementStyles} {updateElementStyle} />
       <Separator class="mt-4" />
+    {:else if groupKey == ElementStyleGroup.Spacing}
+      <Accordion.Item data-state="open" value={groupKey}>
+        <Accordion.Trigger
+          ><h2 class="text-xs">
+            {groupKey}
+          </h2></Accordion.Trigger
+        >
+        <Accordion.Content>
+          <SpacingInput {elementStyles} {updateElementStyle} />
+        </Accordion.Content>
+      </Accordion.Item>
     {:else}
       <Accordion.Item data-state="open" value={groupKey}>
         <Accordion.Trigger
@@ -52,7 +54,6 @@
         >
         <Accordion.Content>
           {#if groupKey == ElementStyleGroup.Text}
-            <!-- Add tag name field -->
             <TagInfo {el} />
           {/if}
           {#each elementStyles as elementStyle, i}
@@ -67,6 +68,7 @@
                   <ColorInput {elementStyle} {updateElementStyle} />
                 {:else if elementStyle.type === ElementStyleType.Number}
                   <NumberUnitInput
+                    unitWidth="w-6"
                     unitEnd={true}
                     {elementStyle}
                     {updateElementStyle}
