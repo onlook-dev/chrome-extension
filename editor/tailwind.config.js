@@ -53,8 +53,12 @@ const config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      preflight: {
+        // Import Inter font
+        '@import': `url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap')`,
+      },
       fontFamily: {
-        sans: [...fontFamily.sans],
+        sans: ["Inter", "InterVariable", ...fontFamily.sans],
       },
     },
   },

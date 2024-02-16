@@ -24,7 +24,7 @@ class OnlookToolbar extends HTMLElement {
 
 	connectedCallback() {
 		this.style.position = 'fixed';
-		this.style.zIndex = '2147483647';
+		this.style.zIndex = '9999';
 	}
 }
 

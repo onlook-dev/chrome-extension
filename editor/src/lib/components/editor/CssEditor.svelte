@@ -12,6 +12,7 @@
   import ColorInput from "./inputs/ColorInput.svelte";
   import NumberUnitInput from "./inputs/NumberUnitInput.svelte";
   import Separator from "../ui/separator/separator.svelte";
+  import TagInfo from "./inputs/TagInfo.svelte";
 
   export let el: HTMLElement;
   let groupedStyles: Record<string, ElementStyle[]> = {};
@@ -50,8 +51,12 @@
           </h2></Accordion.Trigger
         >
         <Accordion.Content>
+          {#if groupKey == ElementStyleGroup.Text}
+            <!-- Add tag name field -->
+            <TagInfo {el} />
+          {/if}
           {#each elementStyles as elementStyle}
-            <div class="flex flex-row items-center py-1">
+            <div class="flex flex-row items-center my-3">
               <p class="text-xs font-light w-24 mr-2 text-start opacity-60">
                 {elementStyle.displayName}
               </p>

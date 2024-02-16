@@ -18,7 +18,7 @@
 </script>
 
 <div
-  class="flex flex-row gap-2 justify-end items-center rounded-lg cursor-pointer"
+  class="flex flex-row gap-1 justify-end items-center rounded-lg cursor-pointer"
 >
   <div
     class="overflow-hidden rounded-full w-5 h-5 border border-border relative"

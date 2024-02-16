@@ -32,11 +32,11 @@
     <Card.Content>
       <Tabs.Root value={TabValue.CSS} class="w-full">
         <Tabs.List class="bg-transparent p-0 gap-4">
-          <Tabs.Trigger class="bg-transparent p-0" value={TabValue.CSS}
-            >Appearance</Tabs.Trigger
+          <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CSS}
+            >Element Appearance</Tabs.Trigger
           >
         </Tabs.List>
-        <Separator class="mt-3" />
+        <Separator class="mt-1" />
         <Tabs.Content value={TabValue.CSS}><CssEditor {el} /></Tabs.Content>
         <Tabs.Content value={TabValue.OTHER}>Others</Tabs.Content>
         <Card.Footer class="flex justify-between"></Card.Footer>
