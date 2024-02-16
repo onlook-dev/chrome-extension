@@ -26,7 +26,7 @@
   use:draggable={{ bounds: "body" }}
   class="fixed top-10 right-2 transform -translate-y-1/2 -translate-x-1/2 {visible
     ? 'visible'
-    : 'visible'}"
+    : 'invisible'}"
 >
   <Card.Root class="w-[232px] h-[80vh] opacity-[98%] overflow-auto pt-2">
     <Card.Content>

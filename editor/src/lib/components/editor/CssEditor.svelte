@@ -48,7 +48,7 @@
     {:else}
       <Accordion.Item data-state="open" value={groupKey}>
         <Accordion.Trigger
-          ><h2 class="text-xs">
+          ><h2 class="text-xs font-semibold">
             {groupKey}
           </h2></Accordion.Trigger
         >
@@ -58,7 +58,7 @@
           {/if}
           {#each elementStyles as elementStyle, i}
             <div class="flex flex-row items-center {i === 0 ? '' : 'mt-4'}">
-              <p class="text-xs font-light w-24 mr-2 text-start opacity-60">
+              <p class="text-xs w-24 mr-2 text-start opacity-60">
                 {elementStyle.displayName}
               </p>
               <div class="text-end ml-auto">
