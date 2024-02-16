@@ -45,7 +45,7 @@ export default defineManifest(async env => ({
 	},
 	web_accessible_resources: [
 		{
-			resources: ['src/lib/visbug/tuts/*.gif', 'src/lib/visbug/toolbar/*'],
+			resources: ['src/lib/editor/*'],
 			matches: ['<all_urls>']
 		}
 	],

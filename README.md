@@ -1,6 +1,6 @@
-# onlook.monorepo
+# Onlook monorepo
 
-The monorepo for onlook.dev
+The monorepo for Onlook.dev
 
 ## Setting up env variables
 

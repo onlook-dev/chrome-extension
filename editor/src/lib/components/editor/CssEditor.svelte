@@ -1,0 +1,94 @@
+<script lang="ts">
+  import {
+    ElementStyle,
+    ElementStyleGroup,
+    ElementStyleType,
+    getElementComputedStylesData,
+    groupElementStylesByGroup,
+  } from "$lib/tools/selection/styles";
+  import * as Accordion from "$lib/components/ui/accordion";
+  import { Input } from "$lib/components/ui/input";
+  import Separator from "../ui/separator/separator.svelte";
+  import SelectInput from "./inputs/SelectInput.svelte";
+  import ColorInput from "./inputs/ColorInput.svelte";
+  import NumberUnitInput from "./inputs/NumberUnitInput.svelte";
+  import TagInfo from "./inputs/TagInfo.svelte";
+  import SizeSection from "./inputs/SizeSection.svelte";
+  import SpacingInput from "./inputs/SpacingInput.svelte";
+
+  export let el: HTMLElement;
+  let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {};
+
+  $: if (el) {
+    const elementStyles: ElementStyle[] = getElementComputedStylesData(el);
+    groupedStyles = groupElementStylesByGroup(elementStyles);
+  }
+
+  function updateElementStyle(key, value) {
+    el.style[key] = value;
+  }
+</script>
+
+<Accordion.Root class="w-full" multiple value={Object.keys(groupedStyles)}>
+  {#each Object.entries(groupedStyles) as [groupKey, elementStyles]}
+    {#if groupKey == ElementStyleGroup.Size}
+      <SizeSection {elementStyles} {updateElementStyle} />
+      <Separator class="mt-4" />
+    {:else if groupKey == ElementStyleGroup.Spacing}
+      <Accordion.Item data-state="open" value={groupKey}>
+        <Accordion.Trigger
+          ><h2 class="text-xs">
+            {groupKey}
+          </h2></Accordion.Trigger
+        >
+        <Accordion.Content>
+          <SpacingInput {elementStyles} {updateElementStyle} />
+        </Accordion.Content>
+      </Accordion.Item>
+    {:else}
+      <Accordion.Item data-state="open" value={groupKey}>
+        <Accordion.Trigger
+          ><h2 class="text-xs font-semibold">
+            {groupKey}
+          </h2></Accordion.Trigger
+        >
+        <Accordion.Content>
+          {#if groupKey == ElementStyleGroup.Text}
+            <TagInfo {el} />
+          {/if}
+          {#each elementStyles as elementStyle, i}
+            <div class="flex flex-row items-center {i === 0 ? '' : 'mt-4'}">
+              <p class="text-xs w-24 mr-2 text-start opacity-60">
+                {elementStyle.displayName}
+              </p>
+              <div class="text-end ml-auto">
+                {#if elementStyle.type === ElementStyleType.Select}
+                  <SelectInput {elementStyle} {updateElementStyle} />
+                {:else if elementStyle.type === ElementStyleType.Color}
+                  <ColorInput {elementStyle} {updateElementStyle} />
+                {:else if elementStyle.type === ElementStyleType.Number}
+                  <NumberUnitInput
+                    unitWidth="w-6"
+                    unitEnd={true}
+                    {elementStyle}
+                    {updateElementStyle}
+                  />
+                {:else}
+                  <Input
+                    type="text"
+                    placeholder={elementStyle.type}
+                    class="w-24 text-xs"
+                    value={elementStyle.value}
+                    on:input={(event) => {
+                      updateElementStyle(elementStyle.key, event.target.value);
+                    }}
+                  />
+                {/if}
+              </div>
+            </div>
+          {/each}
+        </Accordion.Content>
+      </Accordion.Item>
+    {/if}
+  {/each}
+</Accordion.Root>

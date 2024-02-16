@@ -1,10 +1,9 @@
 <script lang="ts">
-	import "./app.pcss";
-	import "./tailwind.css";
-
-	import Toolbar from "./lib/components/toolbar/Toolbar.svelte";
+  import "./app.pcss";
+  import Toolbar from "./lib/components/toolbar/Toolbar.svelte";
+  import { ONLOOK_TOOLBAR } from "./lib/constants";
 </script>
 
-<main id="onlook-toolbar">
-	<Toolbar />
-</main>
+<div id={ONLOOK_TOOLBAR}>
+  <Toolbar />
+</div>

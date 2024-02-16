@@ -23,7 +23,7 @@ export class HoverRect implements Rect {
         this.svgElement.appendChild(this.rectElement)
         this.element.style.position = 'absolute'
         this.element.style.pointerEvents = 'none' // Ensure it doesn't interfere with other interactions
-        this.element.style.zIndex = '9999'
+        this.element.style.zIndex = '999'
         this.element.appendChild(this.svgElement)
     }
 
@@ -34,7 +34,7 @@ export class HoverRect implements Rect {
         this.rectElement.setAttribute('width', width)
         this.rectElement.setAttribute('height', height)
         this.element.style.top = `${top + window.scrollY}px`
-        this.element.style.left = `${left}px`
+        this.element.style.left = `${left + window.scrollX}px`
     }
 }
 
@@ -57,7 +57,7 @@ class ClickRect implements Rect {
         this.svgElement.appendChild(this.rectElement)
         this.element.style.position = 'absolute'
         this.element.style.pointerEvents = 'none'
-        this.element.style.zIndex = '9999'
+        this.element.style.zIndex = '999'
         this.element.appendChild(this.svgElement)
     }
 
@@ -68,7 +68,7 @@ class ClickRect implements Rect {
         this.rectElement.setAttribute('width', width)
         this.rectElement.setAttribute('height', height)
         this.element.style.top = `${top + window.scrollY}px`
-        this.element.style.left = `${left}px`
+        this.element.style.left = `${left + window.scrollX}px`
     }
 }
 
@@ -90,7 +90,7 @@ export class ParentRect implements Rect {
         this.svgElement.appendChild(this.rectElement)
         this.element.style.position = 'absolute'
         this.element.style.pointerEvents = 'none'
-        this.element.style.zIndex = '9999'
+        this.element.style.zIndex = '999'
         this.element.appendChild(this.svgElement)
     }
 
@@ -101,7 +101,7 @@ export class ParentRect implements Rect {
         this.rectElement.setAttribute('width', width)
         this.rectElement.setAttribute('height', height)
         this.element.style.top = `${top + window.scrollY}px`
-        this.element.style.left = `${left}px`
+        this.element.style.left = `${left + window.scrollX}px`
     }
 }
 

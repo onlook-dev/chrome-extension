@@ -1,4 +1,4 @@
-import type EditorPanel from "$lib/components/codeEditor/EditorPanel.svelte";
+import type EditorPanel from "$lib/components/editor/EditorPanel.svelte";
 import { EditTool } from "./edit";
 import type { Tool } from "./tool";
 import { isOffBounds, deepElementFromPoint } from "./utilities";

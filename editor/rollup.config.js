@@ -11,6 +11,7 @@ import postcss from 'rollup-plugin-postcss';
 import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
+import url from 'rollup-plugin-url'
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -44,21 +45,28 @@ export default {
 		file: 'public/build/bundle.min.js'
 	},
 	plugins: [
+		url({
+			// by default, rollup-plugin-url will not handle font files
+			include: ['**/*.ttf'],
+			// setting infinite limit will ensure that the files 
+			// are always bundled with the code, not copied to /dist
+			limit: Infinity,
+		}),
 		replace({
 			preventAssignment: true,
 			'process.env.NODE_ENV': JSON.stringify('production'),
 			'process.env.SERVER_URL': JSON.stringify(process.env.SERVER_URL),
 			'process.env.NGROK_SERVER_URL': JSON.stringify(process.env.NGROK_SERVER_URL),
 		}),
+		typescript({
+			sourceMap: false,
+			inlineSources: !production
+		}),
 		svelte({
 			preprocess: sveltePreprocess({ sourceMap: false, postcss: true, typescript: true }),
 			compilerOptions: {
 				dev: !production
 			}
-		}),
-		typescript({
-			sourceMap: false,
-			inlineSources: !production
 		}),
 		postcss({
 			plugins: []

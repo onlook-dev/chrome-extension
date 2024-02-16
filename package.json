@@ -1,0 +1,25 @@
+{
+  "name": "@onlook/monorepo",
+  "version": "1.0.0",
+  "description": "Onlook monorepo",
+  "scripts": {
+    "dev": "concurrently --kill-others \"npm run editor\" \"npm run dashboard\" \"npm run extension\"",
+    "editor": "cd editor && npm run dev:cpy",
+    "dashboard": "cd dashboard && npm run dev",
+    "extension": "cd extension && npm run dev",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "cd dashboard && npm install && cd ../editor && npm install && cd ../extension && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onlook-dev/monorepo.git"
+  },
+  "author": "onlook.dev",
+  "bugs": {
+    "url": "https://github.com/onlook-dev/monorepo/issues"
+  },
+  "homepage": "https://github.com/onlook-dev/monorepo#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

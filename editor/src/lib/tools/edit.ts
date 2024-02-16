@@ -5,14 +5,12 @@ import {
 	removeClickedRect,
 	removeHoverRect
 } from './selection/rect';
-import { getDataOnlookId } from './utilities';
-import { getElementComputedStylesData } from './selection/styles';
-import type EditorPanel from '$lib/components/codeEditor/EditorPanel.svelte';
+import type EditorPanel from '$lib/components/editor/EditorPanel.svelte';
 
 export class EditTool implements Tool {
 	editorPanel: EditorPanel;
-	clickedElement: Element;
-	hoveredElement: Element;
+	clickedElement: HTMLElement;
+	hoveredElement: HTMLElement;
 	resizeObserver: ResizeObserver;
 
 	constructor(editorPanel) {
@@ -29,24 +27,23 @@ export class EditTool implements Tool {
 		this.hoveredElement = null;
 	}
 
-	onMouseOver(el: Element): void {
+	onMouseOver(el: HTMLElement): void {
 		this.hoveredElement = el;
 		updateHoverRect(el);
 	}
 
-	onMouseOut(e: Element): void {
+	onMouseOut(e: HTMLElement): void {
 		this.hoveredElement = null;
 		removeHoverRect();
 	}
 
-	onClick(el: Element): void {
+	onClick(el: HTMLElement): void {
 		this.clickedElement = el;
 		this.editorPanel.setVisible(true);
 		this.editorPanel.setElement(el);
 		removeClickedRect();
 		updateClickRect(el);
-		// 		const onlookId = getDataOnlookId(el);
-
+		// const onlookId = getDataOnlookId(el);
 
 		// ResizeObserver to watch size changes
 		if (this.resizeObserver) this.resizeObserver.disconnect();
