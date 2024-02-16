@@ -138,7 +138,7 @@ export const elementStyles: ElementStyle[] = [
   new ElementStyle(
     'rotate',
     '',
-    'Ro',
+    'Rot',
     ElementStyleType.Number,
     ElementStyleGroup.Size,
     [],
@@ -169,12 +169,12 @@ export const elementStyles: ElementStyle[] = [
   // Style
   new ElementStyle(
     'opacity',
-    '1',
+    '100',
     'Opacity',
     ElementStyleType.Number,
     ElementStyleGroup.Style,
     [],
-    [],
+    ['%'],
     1
   ),
   new ElementStyle(
@@ -202,6 +202,7 @@ export const elementStyles: ElementStyle[] = [
     ElementStyleType.Select,
     ElementStyleGroup.Text,
     [
+      'inherit',
       'system-ui',
       'serif',
       'sans-serif',
@@ -216,7 +217,7 @@ export const elementStyles: ElementStyle[] = [
   new ElementStyle(
     'fontSize',
     '16px',
-    'Size',
+    'Font Size',
     ElementStyleType.Number,
     ElementStyleGroup.Text,
     [],
@@ -265,7 +266,7 @@ export const elementStyles: ElementStyle[] = [
   new ElementStyle(
     'lineHeight',
     '100%',
-    'Height',
+    'Line Height',
     ElementStyleType.Number,
     ElementStyleGroup.Text,
     [],
@@ -275,7 +276,7 @@ export const elementStyles: ElementStyle[] = [
   new ElementStyle(
     'textAlign',
     'left',
-    'Alignment',
+    'Text Alignment',
     ElementStyleType.Select,
     ElementStyleGroup.Text,
     ['left', 'center', 'right',]
@@ -340,7 +341,7 @@ export function getElementComputedStylesData(target: HTMLElement) {
     const inlineStyle = target.style[style.key]
     const computedStyle = computedStyles[style.key]
     if (style.type === ElementStyleType.Number) {
-      style.value = (inlineStyle && inlineStyle !== '') ? inlineStyle : style.value
+      style.value = (inlineStyle && inlineStyle !== '') ? inlineStyle : computedStyle
     } else if (style.type === ElementStyleType.Color) {
       style.value = inlineStyle && inlineStyle !== '' ? inlineStyle : computedStyle
     } else {

@@ -55,8 +55,8 @@
             <!-- Add tag name field -->
             <TagInfo {el} />
           {/if}
-          {#each elementStyles as elementStyle}
-            <div class="flex flex-row items-center my-3">
+          {#each elementStyles as elementStyle, i}
+            <div class="flex flex-row items-center {i === 0 ? '' : 'mt-4'}">
               <p class="text-xs font-light w-24 mr-2 text-start opacity-60">
                 {elementStyle.displayName}
               </p>

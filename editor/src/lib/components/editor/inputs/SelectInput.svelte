@@ -8,11 +8,15 @@
 {#if elementStyle}
   <select
     name={elementStyle.displayName}
-    class="border-none text-xs text-text bg-background appearance-none text-end focus:outline-none focus:ring-0"
+    value={elementStyle.value}
+    class="border-none text-xs text-text bg-background appearance-none text-end focus:outline-none focus:ring-0 capitalize"
     on:input={(event) => {
       updateElementStyle(elementStyle.key, event.target.value);
     }}
   >
+    {#if !elementStyle.options.includes(elementStyle.value)}
+      <option value={elementStyle.value}>{elementStyle.value}</option>
+    {/if}
     {#each elementStyle.options ?? [] as option}
       <option value={option}>{option}</option>
     {/each}

@@ -3,18 +3,14 @@
   import { slide } from "svelte/transition";
   export let el: HTMLElement;
   let showMore = false;
-
-  function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
 </script>
 
 <button
-  class="text-start w-full p-2 mb-3 bg-stone-800 rounded text-xs cursor-pointer"
+  class="font-light text-start w-full p-2 mb-3 bg-stone-800 rounded text-xs cursor-pointer"
   on:click={() => (showMore = !showMore)}
 >
   <p class="space-x-1">
-    <span>{capitalizeFirstLetter(el.tagName.toLowerCase())}</span>
+    <span class="capitalize">{el.tagName.toLowerCase()}</span>
     <span
       >{TagMap[el.tagName.toLowerCase()].title.toLowerCase() ==
       el.tagName.toLowerCase()
@@ -24,7 +20,7 @@
   </p>
   {#if showMore}
     <div transition:slide>
-      <p class="pt-2">
+      <p class="pt-2 whitespace-pre-line">
         {TagMap[el.tagName.toLowerCase()].description}
       </p>
       <p class="pt-2 text-xs underline">

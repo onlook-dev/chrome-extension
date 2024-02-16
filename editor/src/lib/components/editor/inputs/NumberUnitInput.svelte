@@ -3,6 +3,36 @@
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
   export let unitEnd: boolean = false;
+  let parsedNumber: number = 0;
+  let parsedUnit: string = "";
+  const auto = "auto";
+
+  $: [parsedNumber, parsedUnit] = stringToParsedValue(elementStyle.value);
+
+  const stringToParsedValue = (val: string): [number, string] => {
+    const matches = val.match(/([-+]?[0-9]*\.?[0-9]+)([a-zA-Z%]*)/);
+
+    let num = matches ? parseFloat(matches[1]) : 0;
+    let unit = matches && matches[2] ? matches[2] : "";
+
+    // Handle opacity, if no parsed unit, convert to percentage
+    if (elementStyle.key === "opacity" && unit === "") {
+      unit = "%";
+      num = num <= 1 ? num * 100 : num;
+    }
+
+    return [num, unit];
+  };
+
+  const parsedValueToString = (floatValue: number, unit: string): string => {
+    return `${floatValue}${unit}`;
+  };
+
+  function isEmpty() {
+    const numberIsEmpty = isNaN(parsedNumber) || parsedNumber === 0;
+    const unitIsEmpty = parsedUnit === "";
+    return numberIsEmpty && unitIsEmpty;
+  }
 </script>
 
 {#if elementStyle}
@@ -11,18 +41,38 @@
       type="number"
       class="text-xs w-8 border-none text-text bg-background text-end focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       placeholder="--"
-      value={elementStyle.value}
+      value={isEmpty() ? "" : parsedNumber}
+      on:input={(e) => {
+        const stringValue = parsedValueToString(e.target?.value, parsedUnit);
+        if (stringValue !== elementStyle.value) {
+          updateElementStyle(elementStyle.key, stringValue);
+        }
+      }}
     />
 
     <select
       name={elementStyle.displayName}
-      class="text-xs min-w-fit w-6 border-none text-text bg-background appearance-none {unitEnd
+      placeholder="auto"
+      class="text-xs w-fit border-none text-text bg-background appearance-none {unitEnd
         ? 'text-end'
         : 'text-start'} focus:outline-none focus:ring-0"
-      on:input={(event) => {
-        updateElementStyle(elementStyle.key, event.target.value);
+      on:input={(e) => {
+        if (e.target?.value === auto) {
+          updateElementStyle(elementStyle.key, "inherit");
+          return;
+        }
+
+        const stringValue = parsedValueToString(parsedNumber, e.target?.value);
+        if (stringValue !== elementStyle.value) {
+          updateElementStyle(elementStyle.key, stringValue);
+        }
       }}
+      value={isEmpty() ? auto : parsedUnit}
     >
+      <option value={auto}>{auto}</option>
+      {#if parsedUnit !== "" && !elementStyle.units.includes(parsedUnit)}
+        <option value={parsedUnit}>{parsedUnit}</option>
+      {/if}
       {#each elementStyle.units ?? [] as option}
         <option value={option}>{option}</option>
       {/each}
