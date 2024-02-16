@@ -29,12 +29,12 @@
 <Accordion.Root class="w-full" multiple value={Object.keys(groupedStyles)}>
   {#each Object.entries(groupedStyles) as [groupKey, elementStyles]}
     {#if groupKey == ElementStyleGroup.Size}
-      <div class="mt-4 grid grid-cols-2">
+      <div class="mt-4 grid grid-cols-2 gap-x-4">
         <h2 class="pb-2 text-xs">Fixed Width</h2>
         <h2 class="pb-2 text-xs">Fixed Height</h2>
         {#each elementStyles as elementStyle}
           <div class="flex flex-row items-center pb-2">
-            <p class="text-xs font-light w-24 text-left opacity-60">
+            <p class="text-xs w-24 text-left opacity-60">
               {elementStyle.displayName}
             </p>
             <NumberUnitInput {elementStyle} {updateElementStyle} />

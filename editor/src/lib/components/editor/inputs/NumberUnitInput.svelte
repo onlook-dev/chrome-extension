@@ -16,7 +16,7 @@
 
     <select
       name={elementStyle.displayName}
-      class="text-xs min-w-fit w-8 border-none text-text bg-background appearance-none {unitEnd
+      class="text-xs min-w-fit w-6 border-none text-text bg-background appearance-none {unitEnd
         ? 'text-end'
         : 'text-start'} focus:outline-none focus:ring-0"
       on:input={(event) => {
