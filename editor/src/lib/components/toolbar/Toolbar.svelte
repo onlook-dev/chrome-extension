@@ -6,7 +6,7 @@
   import { onMount } from "svelte";
   import { Editor, ToolName } from "$lib/tools";
   import { Pencil2 } from "radix-icons-svelte";
-  import EditorPanel from "../codeEditor/EditorPanel.svelte";
+  import EditorPanel from "../editor/EditorPanel.svelte";
 
   let editorPanel: EditorPanel;
   let editor;

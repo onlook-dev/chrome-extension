@@ -1,5 +1,3 @@
-import Color from 'colorjs.io'
-
 export interface ElementStyle {
   key: string
   value: string
@@ -21,10 +19,23 @@ export enum ElementStyleType {
 }
 
 export enum ElementStyleGroup {
-  Layout = 'layout',
-  Spacing = 'spacing',
-  Text = 'text'
+  Size = 'Size',
+  Position = 'Position',
+  Style = 'Style',
+  Text = 'Text',
+  Spacing = 'Padding & Margin',
+  Effects = 'Effects',
 }
+
+// Custom order for the groups
+const groupOrder: ElementStyleGroup[] = [
+  ElementStyleGroup.Size,
+  ElementStyleGroup.Position,
+  ElementStyleGroup.Style,
+  ElementStyleGroup.Text,
+  ElementStyleGroup.Spacing,
+  ElementStyleGroup.Effects,
+];
 
 export class ElementStyle implements ElementStyle {
   constructor(
@@ -53,89 +64,134 @@ export class ElementStyle implements ElementStyle {
 // https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units
 export const elementStyleUnits = ['px', '%', 'em', 'rem', 'vh', 'vw', 'vmin', 'vmax']
 
-// Layout: backgroundColor position display direction width height borderRadius boxShadow
+// Size: height, width, minHeight, minWidth, maxWidth, maxHeight, rotate, borderRadius
+// Position: position
+// Style: opacity, overflow, backgroundColor
+// Text: fontFamily fontSize fontWeight color letterSpacing lineHeight textAlign 
+
+// Layout: backgroundColor position display direction width height borderRadius boxShadow 
 // Spacing: marign padding
-// Text: fontFamily fontWeight color fontSize lineHeight letterSpacing textAlign textTransform textDecoration textShadow
 
 export const elementStyles: ElementStyle[] = [
-  // Layout
-  new ElementStyle(
-    'backgroundColor',
-    'bga(0,0,0,0)',
-    'Background',
-    ElementStyleType.Color,
-    ElementStyleGroup.Layout
-  ),
-  new ElementStyle(
-    'position',
-    'relative',
-    'Position',
-    ElementStyleType.Select,
-    ElementStyleGroup.Layout,
-    ['relative', 'absolute', 'fixed', 'sticky', 'static']
-  ),
-  new ElementStyle(
-    'display',
-    'block',
-    'Display',
-    ElementStyleType.Select,
-    ElementStyleGroup.Layout,
-    ['block', 'inline-block', 'inline', 'flex', 'grid', 'table', 'inherit', 'none']
-  ),
-  new ElementStyle(
-    'direction',
-    'ltr',
-    'Direction',
-    ElementStyleType.Select,
-    ElementStyleGroup.Layout,
-    ['ltr', 'rtl']
-  ),
+  // Size
   new ElementStyle(
     'width',
-    '100%',
-    'Width',
+    '',
+    'W',
     ElementStyleType.Number,
-    ElementStyleGroup.Layout,
+    ElementStyleGroup.Size,
     [],
     elementStyleUnits,
     1000
   ),
   new ElementStyle(
     'height',
-    '100%',
-    'Height',
+    '',
+    'H',
     ElementStyleType.Number,
-    ElementStyleGroup.Layout,
+    ElementStyleGroup.Size,
     [],
     elementStyleUnits,
     1000
   ),
   new ElementStyle(
-    'borderRadius',
-    '0px',
-    'Radius',
+    'minWidth',
+    '',
+    'mW',
     ElementStyleType.Number,
-    ElementStyleGroup.Layout,
+    ElementStyleGroup.Size,
     [],
     elementStyleUnits,
-    100
+    1000
   ),
-  new ElementStyle('boxShadow', 'none', 'Shadow', ElementStyleType.Text, ElementStyleGroup.Layout),
+  new ElementStyle(
+    'minHeight',
+    '',
+    'mH',
+    ElementStyleType.Number,
+    ElementStyleGroup.Size,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'maxWidth',
+    '',
+    'MW',
+    ElementStyleType.Number,
+    ElementStyleGroup.Size,
+    [],
+    elementStyleUnits,
+    1000
+  ),
 
-  // Spacing
   new ElementStyle(
-    'margin',
-    '0px 0px 0px 0px',
-    'Margin',
-    ElementStyleType.Text,
-    ElementStyleGroup.Spacing
+    'maxHeight',
+    '',
+    'MH',
+    ElementStyleType.Number,
+    ElementStyleGroup.Size,
+    [],
+    elementStyleUnits,
+    1000
   ),
   new ElementStyle(
-    'padding',
-    '0px 0px 0px 0px',
-    'Padding',
-    ElementStyleType.Text,
-    ElementStyleGroup.Spacing
+    'rotate',
+    '',
+    'Ro',
+    ElementStyleType.Number,
+    ElementStyleGroup.Size,
+    [],
+    ['deg', 'rad', 'grad', 'turn'],
+    1000
+  ),
+  new ElementStyle(
+    'borderRadius',
+    '',
+    'Rad',
+    ElementStyleType.Number,
+    ElementStyleGroup.Size,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+
+  // Position
+  new ElementStyle(
+    'position',
+    'relative',
+    'Type',
+    ElementStyleType.Select,
+    ElementStyleGroup.Position,
+    ['relative', 'absolute', 'fixed', 'sticky', 'static']
+  ),
+
+  // Style
+  new ElementStyle(
+    'opacity',
+    '1',
+    'Opacity',
+    ElementStyleType.Number,
+    ElementStyleGroup.Style,
+    [],
+    [],
+    1
+  ),
+  new ElementStyle(
+    'overflow',
+    'visible',
+    'Overflow',
+    ElementStyleType.Select,
+    ElementStyleGroup.Style,
+    ['visible', 'hidden', 'scroll', 'auto']
+  ),
+
+  new ElementStyle(
+    'backgroundColor',
+    '',
+    'Background',
+    ElementStyleType.Color,
+    ElementStyleGroup.Style
   ),
 
   // Text
@@ -156,6 +212,16 @@ export const elementStyles: ElementStyle[] = [
       'math',
       'fangsong'
     ]
+  ),
+  new ElementStyle(
+    'fontSize',
+    '16px',
+    'Size',
+    ElementStyleType.Number,
+    ElementStyleGroup.Text,
+    [],
+    elementStyleUnits,
+    100
   ),
   new ElementStyle(
     'fontWeight',
@@ -187,9 +253,9 @@ export const elementStyles: ElementStyle[] = [
     ElementStyleGroup.Text
   ),
   new ElementStyle(
-    'fontSize',
-    '16px',
-    'Size',
+    'letterSpacing',
+    '0px',
+    'Letter',
     ElementStyleType.Number,
     ElementStyleGroup.Text,
     [],
@@ -198,18 +264,8 @@ export const elementStyles: ElementStyle[] = [
   ),
   new ElementStyle(
     'lineHeight',
-    '1.5',
+    '100%',
     'Height',
-    ElementStyleType.Number,
-    ElementStyleGroup.Text,
-    [],
-    elementStyleUnits,
-    100
-  ),
-  new ElementStyle(
-    'letterSpacing',
-    '0px',
-    'Letter',
     ElementStyleType.Number,
     ElementStyleGroup.Text,
     [],
@@ -222,27 +278,47 @@ export const elementStyles: ElementStyle[] = [
     'Alignment',
     ElementStyleType.Select,
     ElementStyleGroup.Text,
-    ['left', 'center', 'right', 'justify', 'justify-all', 'match-parent']
+    ['left', 'center', 'right',]
   ),
 
+  // Spacing
   new ElementStyle(
-    'textTransform',
-    'none',
-    'Capitalize',
-    ElementStyleType.Select,
-    ElementStyleGroup.Text,
-    ['none', 'capitalize', 'uppercase', 'lowercase']
+    'margin',
+    '0px',
+    'Margin',
+    ElementStyleType.Text,
+    ElementStyleGroup.Spacing
   ),
   new ElementStyle(
-    'textDecoration',
-    'none',
-    'Decoration',
-    ElementStyleType.Select,
-    ElementStyleGroup.Text,
-    ['none', 'underline', 'overline', 'line-through', 'blink']
+    'padding',
+    '0px',
+    'Padding',
+    ElementStyleType.Text,
+    ElementStyleGroup.Spacing
   ),
-  new ElementStyle('textShadow', 'none', 'Shadow', ElementStyleType.Text, ElementStyleGroup.Text)
+
+  // Effects
+  new ElementStyle(
+    'boxShadow',
+    '',
+    'Drop-shadow',
+    ElementStyleType.Text,
+    ElementStyleGroup.Effects
+  ),
 ]
+
+export function sortGroupsByCustomOrder(groups: Record<string, ElementStyle[]>): Record<string, ElementStyle[]> {
+  const sortedGroups: Record<string, ElementStyle[]> = {};
+
+  // Iterate through the groupOrder array to ensure custom order
+  groupOrder.forEach(group => {
+    if (groups[group]) { // Check if the group exists in the input groups
+      sortedGroups[group] = groups[group];
+    }
+  });
+
+  return sortedGroups;
+}
 
 export function groupElementStylesByGroup(elementStyles: ElementStyle[]): Record<string, ElementStyle[]> {
   return elementStyles.reduce((groups: any, style) => {
@@ -252,7 +328,7 @@ export function groupElementStylesByGroup(elementStyles: ElementStyle[]): Record
     }
     // Add the current style to the correct group
     groups[style.group].push(style)
-    return groups
+    return sortGroupsByCustomOrder(groups)
   }, {})
 }
 
@@ -264,9 +340,9 @@ export function getElementComputedStylesData(target: HTMLElement) {
     const inlineStyle = target.style[style.key]
     const computedStyle = computedStyles[style.key]
     if (style.type === ElementStyleType.Number) {
-      style.value = (inlineStyle && inlineStyle !== '') ? inlineStyle : 'auto'
+      style.value = (inlineStyle && inlineStyle !== '') ? inlineStyle : style.value
     } else if (style.type === ElementStyleType.Color) {
-      style.value = inlineStyle && inlineStyle !== '' ? (new Color(inlineStyle)).toString({ format: 'hex' }) : ''
+      style.value = inlineStyle && inlineStyle !== '' ? inlineStyle : computedStyle
     } else {
       style.value = inlineStyle && inlineStyle !== '' ? inlineStyle : computedStyle
     }

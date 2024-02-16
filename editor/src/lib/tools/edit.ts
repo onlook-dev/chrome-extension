@@ -5,7 +5,7 @@ import {
 	removeClickedRect,
 	removeHoverRect
 } from './selection/rect';
-import type EditorPanel from '$lib/components/codeEditor/EditorPanel.svelte';
+import type EditorPanel from '$lib/components/editor/EditorPanel.svelte';
 
 export class EditTool implements Tool {
 	editorPanel: EditorPanel;

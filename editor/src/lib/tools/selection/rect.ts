@@ -34,7 +34,7 @@ export class HoverRect implements Rect {
         this.rectElement.setAttribute('width', width)
         this.rectElement.setAttribute('height', height)
         this.element.style.top = `${top + window.scrollY}px`
-        this.element.style.left = `${left}px`
+        this.element.style.left = `${left + window.scrollX}px`
     }
 }
 
@@ -68,7 +68,7 @@ class ClickRect implements Rect {
         this.rectElement.setAttribute('width', width)
         this.rectElement.setAttribute('height', height)
         this.element.style.top = `${top + window.scrollY}px`
-        this.element.style.left = `${left}px`
+        this.element.style.left = `${left + window.scrollX}px`
     }
 }
 
@@ -101,7 +101,7 @@ export class ParentRect implements Rect {
         this.rectElement.setAttribute('width', width)
         this.rectElement.setAttribute('height', height)
         this.element.style.top = `${top + window.scrollY}px`
-        this.element.style.left = `${left}px`
+        this.element.style.left = `${left + window.scrollX}px`
     }
 }
 
