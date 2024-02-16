@@ -68,9 +68,8 @@ export const elementStyleUnits = ['px', '%', 'rem', 'vh', 'vw',]
 // Position: position
 // Style: opacity, overflow, backgroundColor
 // Text: fontFamily fontSize fontWeight color letterSpacing lineHeight textAlign 
-
-// Layout: backgroundColor position display direction width height borderRadius boxShadow 
 // Spacing: marign padding
+// Effect: shadow border
 
 export const elementStyles: ElementStyle[] = [
   // Size
@@ -363,15 +362,8 @@ export const elementStyles: ElementStyle[] = [
     elementStyleUnits,
     1000
   ),
-
   // Effects
-  new ElementStyle(
-    'boxShadow',
-    '',
-    'Drop-shadow',
-    ElementStyleType.Text,
-    ElementStyleGroup.Effects
-  ),
+  // TODO: Add effects
 ]
 
 export function sortGroupsByCustomOrder(groups: Record<string, ElementStyle[]>): Record<string, ElementStyle[]> {

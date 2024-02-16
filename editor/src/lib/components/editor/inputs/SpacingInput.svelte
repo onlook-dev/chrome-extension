@@ -18,7 +18,7 @@
   ></div>
 
   <div
-    class="w-[195px] h-[160px] grid grid-cols-5 grid-rows-5 space-y-3 py-2 text-xs bg-background border border-border rounded"
+    class="w-[198px] h-fit grid grid-cols-5 grid-rows-5 space-y-3 py-2 text-xs bg-background border border-border rounded"
   >
     <div class="col-start-1 col-end-6 flex justify-center">
       <NumberUnitInput
