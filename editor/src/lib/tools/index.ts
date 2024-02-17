@@ -1,11 +1,17 @@
 import type EditorPanel from "$lib/components/editor/EditorPanel.svelte";
 import { EditTool } from "./edit";
-import type { Tool } from "./tool";
 import { isOffBounds, deepElementFromPoint } from "./utilities";
 
 export enum ToolName {
   EDIT = 'edit',
-  COMMENT = 'comment',
+}
+
+export interface Tool {
+  onInit(): void;
+  onDestroy(): void;
+  onMouseOver(el: Element): void;
+  onMouseOut(el: Element): void;
+  onClick(el: Element): void;
 }
 
 export class Editor {
@@ -26,7 +32,6 @@ export class Editor {
     this.editorPanel = editorPanel;
     this.toolMap = {
       [ToolName.EDIT]: new EditTool(editorPanel),
-      [ToolName.COMMENT]: new EditTool(editorPanel),
     }
     // Set up tools
     this.setListeners();

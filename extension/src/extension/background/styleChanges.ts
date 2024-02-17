@@ -1,12 +1,12 @@
-import type { VisbugStyleChange } from '$shared/models/visbug'
+import type { EditorStyleChange } from '$shared/models/visbug'
 import type { Activity, StyleChange } from '$shared/models/activity'
-import { convertVisbugToStyleChangeMap } from '$shared/helpers'
+import { convertEditorToStyleChangeMap } from '$shared/helpers'
 import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { sendGetScreenshotRequest } from '$lib/utils/messaging'
 import { forwardToActiveProjectTab } from './tabs'
 import { nanoid } from 'nanoid'
 
-export let changeQueue: VisbugStyleChange[] = []
+export let changeQueue: EditorStyleChange[] = []
 
 export async function processChangeQueue() {
 	while (changeQueue.length > 0) {
@@ -16,7 +16,7 @@ export async function processChangeQueue() {
 	}
 }
 
-async function processStyleChange(visbugStyleChange: VisbugStyleChange) {
+async function processStyleChange(visbugStyleChange: EditorStyleChange) {
 	const activeProject = await getActiveProject()
 	if (!activeProject) return
 
@@ -38,7 +38,7 @@ async function processStyleChange(visbugStyleChange: VisbugStyleChange) {
 		} as Activity
 	}
 
-	const mappedStyleChange = convertVisbugToStyleChangeMap(visbugStyleChange)
+	const mappedStyleChange = convertEditorToStyleChangeMap(visbugStyleChange)
 
 	// For each key in mappedStyleChange,
 	// if key does not exist in activity, add the oldVal and newVal.

@@ -6,6 +6,7 @@
     getElementComputedStylesData,
     groupElementStylesByGroup,
   } from "$lib/tools/selection/styles";
+  import { emitStyleChangeEvent } from "$lib/tools/edit/emit";
   import * as Accordion from "$lib/components/ui/accordion";
   import { Input } from "$lib/components/ui/input";
   import Separator from "../ui/separator/separator.svelte";
@@ -25,7 +26,10 @@
   }
 
   function updateElementStyle(key, value) {
+    const oldStyle = el.style[key];
     el.style[key] = value;
+    // Emit event
+    emitStyleChangeEvent(el, key, { [key]: value }, { [key]: oldStyle });
   }
 </script>
 

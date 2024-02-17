@@ -7,6 +7,7 @@
   import EditorPanel from "../editor/EditorPanel.svelte";
   import Button from "../ui/button/button.svelte";
   import { slide } from "svelte/transition";
+  import { emitOpenProjectMessage } from "$lib/tools/edit/emit";
 
   let editorPanel: EditorPanel;
   let editor;
@@ -24,12 +25,12 @@
     <Card.Root
       class="opacity-[98%] border p-1 space-x-2 rounded-full flex flex-row {selected ===
       ToolName.EDIT
-        ? 'bg-red-600 border-red-600'
+        ? 'bg-red border-red'
         : ''}"
     >
       <Button
         class={selected === ToolName.EDIT
-          ? "rounded-full bg-red-600 hover:bg-red-600 border-none"
+          ? "rounded-full bg-red hover:bg-red border-none"
           : "rounded-full border-none"}
         variant={selected === ToolName.EDIT ? "destructive" : "outline"}
         on:click={() =>
@@ -73,7 +74,10 @@
 
       {#if selected !== ToolName.EDIT}
         <div transition:slide={{ axis: "x" }}>
-          <Button class="rounded-full border-none" variant="outline"
+          <Button
+            class="rounded-full border-none"
+            variant="outline"
+            on:click={emitOpenProjectMessage}
             ><ExternalLink class="h-4 w-4 mr-2" />
             Open Project</Button
           >
