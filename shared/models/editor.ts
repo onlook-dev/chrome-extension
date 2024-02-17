@@ -1,4 +1,4 @@
-export interface VisbugStyleChange {
+export interface EditorStyleChange {
   selector: string;
   styleType: string;
   newVal: Record<string, string>;

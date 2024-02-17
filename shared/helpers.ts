@@ -1,5 +1,5 @@
 import type { StyleChange } from "./models/activity";
-import type { VisbugStyleChange } from "./models/visbug";
+import type { EditorStyleChange } from "./models/editor";
 
 export function jsToCssProperty(key: string) {
   if (!key) return "";
@@ -27,12 +27,12 @@ export function debounce(func: any, wait: number) {
   };
 }
 
-export function convertVisbugToStyleChangeMap(
-  visbugStyleChange: VisbugStyleChange
+export function convertEditorToStyleChangeMap(
+  editorStyleChange: EditorStyleChange
 ): Record<string, StyleChange> {
   const styleChangeMap: Record<string, StyleChange> = {};
-  Object.entries(visbugStyleChange.newVal).forEach(([style, newVal]) => {
-    const oldVal = visbugStyleChange.oldVal[style];
+  Object.entries(editorStyleChange.newVal).forEach(([style, newVal]) => {
+    const oldVal = editorStyleChange.oldVal[style];
     styleChangeMap[style] = { key: style, oldVal, newVal };
   });
   return styleChangeMap;

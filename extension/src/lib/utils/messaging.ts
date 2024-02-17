@@ -1,7 +1,7 @@
 import type { MouseEvent } from '$shared/constants'
 import type { Activity } from '$shared/models/activity'
 import type { Project } from '$shared/models/project'
-import type { VisbugStyleChange } from '$shared/models/visbug'
+import type { EditorStyleChange } from '$shared/models/visbug'
 import { getMessage } from '@extend-chrome/messages'
 import type { SendOptions } from '@extend-chrome/messages/types/types'
 import { Observable } from 'rxjs'
@@ -22,11 +22,11 @@ function getExtendedMessages<T>(
 	greeting: string,
 	to: MessageReceiver
 ): [
-	((data: T, options?: SendOptions | undefined) => Promise<void>) & {
-		toTab: (options?: SendOptions | undefined) => Promise<void>
-	},
-	Observable<[T, chrome.runtime.MessageSender]>
-] {
+		((data: T, options?: SendOptions | undefined) => Promise<void>) & {
+			toTab: (options?: SendOptions | undefined) => Promise<void>
+		},
+		Observable<[T, chrome.runtime.MessageSender]>
+	] {
 	// Strip the Message wrapper on the observer and the sender.
 	// This preserve getMessage behavior while allowing background script to verify receiver.
 
@@ -65,7 +65,7 @@ export const [sendAuthRequest, authRequestStream] = getExtendedMessages<void>(
 export const [sendEditProjectRequest, editProjectRequestStream] =
 	getExtendedMessages<EditProjectRequest>('REQUEST_EDIT_PROJECT', MessageReceiver.BACKGROUND)
 
-export const [sendStyleChange, styleChangeStream] = getExtendedMessages<VisbugStyleChange>(
+export const [sendStyleChange, styleChangeStream] = getExtendedMessages<EditorStyleChange>(
 	'STYLE_CHANGE',
 	MessageReceiver.BACKGROUND
 )

@@ -1,5 +1,7 @@
 import {
 	DASHBOARD_AUTH,
+	DashboardRoutes,
+	OPEN_PROJECT,
 	REDO_STYLE_CHANGE,
 	STYLE_CHANGE,
 	UNDO_STYLE_CHANGE
@@ -11,14 +13,15 @@ import {
 	activityRevertStream,
 	applyProjectChangesStream,
 	getScreenshotStream,
+	sendOpenUrlRequest,
 	sendSaveProject,
 	sendStyleChange
 } from '$lib/utils/messaging'
 import type { Activity } from '$shared/models/activity'
-import type { VisbugStyleChange } from '$shared/models/visbug'
+import type { EditorStyleChange } from '$shared/models/visbug'
 import { baseUrl } from '$lib/utils/env'
 import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
-import { convertVisbugToStyleChangeMap } from '$shared/helpers'
+import { convertEditorToStyleChangeMap } from '$shared/helpers'
 
 function simulateEventOnSelector(
 	selector: string,
@@ -77,9 +80,9 @@ function revertActivityChanges(activity: Activity) {
 	}
 }
 
-export function applyVisbugStyleChange(visbugStyleChange: VisbugStyleChange) {
+export function applyVisbugStyleChange(visbugStyleChange: EditorStyleChange) {
 	const element = document.querySelector(visbugStyleChange.selector) as any
-	const styleChanges = convertVisbugToStyleChangeMap(visbugStyleChange)
+	const styleChanges = convertEditorToStyleChangeMap(visbugStyleChange)
 	Object.entries(styleChanges).forEach(([style, changeObject]) => {
 		// Apply style to element
 		if (style === 'text') {
@@ -103,23 +106,29 @@ export function setupListeners() {
 		}
 
 		if (message.type === STYLE_CHANGE) {
-			const visbugStyleChange = message.detail as VisbugStyleChange
-			sendStyleChange(visbugStyleChange)
+			const editorStyleChange = message.detail as EditorStyleChange
+			sendStyleChange(editorStyleChange)
 			return
 		}
 
 		if (message.type === UNDO_STYLE_CHANGE) {
-			const visbugStyleChange = message.detail as VisbugStyleChange
+			const editorStyleChange = message.detail as EditorStyleChange
+			applyVisbugStyleChange(editorStyleChange)
+			sendStyleChange(editorStyleChange)
+			return
+		}
+
+		if (message.type === REDO_STYLE_CHANGE) {
+			const visbugStyleChange = message.detail as EditorStyleChange
 			applyVisbugStyleChange(visbugStyleChange)
 			sendStyleChange(visbugStyleChange)
 			return
 		}
 
-		if (message.type === REDO_STYLE_CHANGE) {
-			const visbugStyleChange = message.detail as VisbugStyleChange
-			applyVisbugStyleChange(visbugStyleChange)
-			sendStyleChange(visbugStyleChange)
-			return
+		if (message.type === OPEN_PROJECT) {
+			getActiveProject().then(project => {
+				sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project?.id}`)
+			})
 		}
 	})
 

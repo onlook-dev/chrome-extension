@@ -2,6 +2,7 @@ import { finder } from "@medv/finder";
 import { addToHistory } from "./history";
 
 const STYLE_CHANGE: string = "STYLE_CHANGE";
+const OPEN_PROJECT: string = "OPEN_PROJECT";
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
 
 function debounce(func, wait) {
@@ -60,3 +61,7 @@ let debouncedPostMessage = debounce(postMessage, 1000);
 export function emitStyleChangeEvent(el: HTMLElement, styleType: string, newValue: Record<string, string>, oldValue: Record<string, string>) {
   debouncedPostMessage(el, styleType, newValue, oldValue);
 }
+
+export function emitOpenProjectMessage() {
+  window.postMessage({ type: OPEN_PROJECT }, window.location.origin);
+};
