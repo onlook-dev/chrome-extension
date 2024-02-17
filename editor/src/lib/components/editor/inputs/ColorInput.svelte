@@ -37,6 +37,7 @@
     class="w-[3.5rem] text-xs border-none text-text bg-background text-end focus:outline-none focus:ring-0"
     type="text"
     value={inputString}
+    placeholder="--"
     on:input={(event) => {
       updateElementStyle(elementStyle.key, event.target.value);
     }}
