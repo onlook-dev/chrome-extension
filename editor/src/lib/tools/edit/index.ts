@@ -1,10 +1,10 @@
-import type { Tool } from './tool';
+import type { Tool } from '../index';
 import {
 	updateClickRect,
 	updateHoverRect,
 	removeClickedRect,
 	removeHoverRect
-} from './selection/rect';
+} from '../selection/rect';
 import type EditorPanel from '$lib/components/editor/EditorPanel.svelte';
 
 export class EditTool implements Tool {

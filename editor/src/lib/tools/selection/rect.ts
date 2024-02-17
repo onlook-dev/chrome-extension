@@ -18,7 +18,7 @@ export class HoverRect implements Rect {
         this.svgElement = document.createElementNS(this.svgNamespace, 'svg')
         this.rectElement = document.createElementNS(this.svgNamespace, 'rect')
         this.rectElement.setAttribute('fill', 'none')
-        this.rectElement.setAttribute('stroke', '#FF0000') // Blue outline
+        this.rectElement.setAttribute('stroke', '#FF0E48')
         this.rectElement.setAttribute('stroke-width', '2')
         this.svgElement.appendChild(this.rectElement)
         this.element.style.position = 'absolute'
@@ -50,7 +50,7 @@ class ClickRect implements Rect {
         this.svgElement = document.createElementNS(this.svgNamespace, 'svg')
         this.rectElement = document.createElementNS(this.svgNamespace, 'rect')
         this.rectElement.setAttribute('fill', 'none')
-        this.rectElement.setAttribute('stroke', '#FF0000')
+        this.rectElement.setAttribute('stroke', '#FF0E48')
         this.rectElement.setAttribute('stroke-width', '4')
         this.rectElement.setAttribute('stroke-linecap', 'round')
         this.rectElement.setAttribute('stroke-linejoin', 'round')
@@ -84,8 +84,8 @@ export class ParentRect implements Rect {
         this.svgElement = document.createElementNS(this.svgNamespace, 'svg')
         this.rectElement = document.createElementNS(this.svgNamespace, 'rect')
         this.rectElement.setAttribute('fill', 'none')
-        this.rectElement.setAttribute('stroke', '#FF0000')
-        this.rectElement.setAttribute('stroke-width', '1')
+        this.rectElement.setAttribute('stroke', '#FF0E48')
+        this.rectElement.setAttribute('stroke-width', '2')
         this.rectElement.setAttribute('stroke-dasharray', '5')
         this.svgElement.appendChild(this.rectElement)
         this.element.style.position = 'absolute'
@@ -141,5 +141,8 @@ export function removeHoverRect() {
 export function removeClickedRect() {
     if (clickRect) {
         clickRect.render({ width: 0, height: 0, top: 0, left: 0 })
+    }
+    if (parentRect) {
+        parentRect.render({ width: 0, height: 0, top: 0, left: 0 })
     }
 }

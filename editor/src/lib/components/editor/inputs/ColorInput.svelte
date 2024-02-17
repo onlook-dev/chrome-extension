@@ -34,7 +34,7 @@
   </div>
 
   <input
-    class="w-14 text-xs border-none text-text bg-background text-end focus:outline-none focus:ring-0"
+    class="w-[3.5rem] text-xs border-none text-text bg-background text-end focus:outline-none focus:ring-0"
     type="text"
     value={inputString}
     on:input={(event) => {

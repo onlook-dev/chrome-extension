@@ -24,12 +24,12 @@
     <Card.Root
       class="opacity-[98%] border p-1 space-x-2 rounded-full flex flex-row {selected ===
       ToolName.EDIT
-        ? 'bg-red-600 border-red-600'
+        ? 'bg-red border-red'
         : ''}"
     >
       <Button
         class={selected === ToolName.EDIT
-          ? "rounded-full bg-red-600 hover:bg-red-600 border-none"
+          ? "rounded-full bg-red hover:bg-red border-none"
           : "rounded-full border-none"}
         variant={selected === ToolName.EDIT ? "destructive" : "outline"}
         on:click={() =>
