@@ -41,7 +41,10 @@ export class HotKeys {
   }
 
   unbindAllKeys = () => {
-    const allKeys: string[] = Object.keys(Object.values(this.toolKeyMaps))
+    const allKeys = Object.values(this.toolKeyMaps).reduce((acc, toolKeyMap) => {
+      return acc.concat(Object.keys(toolKeyMap));
+    }, []);
+
     allKeys.forEach(key => {
       try {
         hotkeys.unbind(key);

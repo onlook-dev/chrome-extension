@@ -43,13 +43,13 @@ export class Editor {
 
   selectTool = (toolName?: ToolName) => {
     if (this.selectedTool) this.selectedTool.onDestroy();
+    this.hotKeys.bindKeys(toolName);
     if (!toolName) {
       this.selectedTool = undefined;
       return;
     };
     this.selectedTool = this.toolMap[toolName];
     this.selectedTool.onInit();
-    this.hotKeys.bindKeys(toolName);
   }
 
   handleMouseOver = (e) => {
