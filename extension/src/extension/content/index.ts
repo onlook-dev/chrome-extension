@@ -127,6 +127,7 @@ export function setupListeners() {
 
 		if (message.type === OPEN_PROJECT) {
 			getActiveProject().then(project => {
+				sendSaveProject(project)
 				sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project?.id}`)
 			})
 		}

@@ -17,7 +17,9 @@ export class EditTool implements Tool {
 		this.editorPanel = editorPanel;
 	}
 
-	onInit() { }
+	onInit() {
+
+	}
 
 	onDestroy() {
 		this.editorPanel.setVisible(false);
