@@ -17,14 +17,29 @@
   import SizeSection from "./inputs/SizeSection.svelte";
   import SpacingInput from "./inputs/SpacingInput.svelte";
   import type { EditTool } from "$lib/tools/edit";
+  import { onDestroy, onMount } from "svelte";
 
   export let editTool: EditTool;
   let el: HTMLElement | undefined = undefined;
   let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {};
+  let unsubs: (() => void)[] = [];
 
-  $: if (el) {
-    const elementStyles: ElementStyle[] = getElementComputedStylesData(el);
-    groupedStyles = groupElementStylesByGroup(elementStyles);
+  onMount(() => {
+    unsubs.push(
+      editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged)
+    );
+  });
+
+  onDestroy(() => {
+    unsubs.forEach((unsub) => unsub());
+  });
+
+  function selectedElementsChanged(selected: HTMLElement[]) {
+    el = selected[0];
+    if (el) {
+      const computedStyles = getElementComputedStylesData(el);
+      groupedStyles = groupElementStylesByGroup(computedStyles);
+    }
   }
 
   function updateElementStyle(key, value) {

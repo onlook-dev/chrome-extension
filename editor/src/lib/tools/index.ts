@@ -1,8 +1,5 @@
 import { EditTool } from "./edit";
 import { HotKeys } from "./edit/hotkeys";
-import { SelectorEngine } from "./selection/selector";
-import { isOffBounds, deepElementFromPoint } from "./utilities";
-
 export enum ToolName {
   EDIT = 'edit',
 }

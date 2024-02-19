@@ -9,12 +9,8 @@
   import { slide } from "svelte/transition";
   import { emitOpenProjectMessage } from "$lib/tools/edit/emit";
 
-  let toolManager: ToolManager | undefined;
   let activeToolName: ToolName | undefined = ToolName.EDIT;
-
-  onMount(() => {
-    toolManager = new ToolManager(activeToolName);
-  });
+  let toolManager: ToolManager = new ToolManager(activeToolName);
 
   $: toolManager?.selectTool(activeToolName);
 </script>

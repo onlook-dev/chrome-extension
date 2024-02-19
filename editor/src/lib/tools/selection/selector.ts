@@ -1,22 +1,29 @@
+import { get, writable, type Writable } from "svelte/store";
 import { deepElementFromPoint, isOffBounds } from "../utilities";
 
 export class SelectorEngine {
   page = document.body
-  selected: HTMLElement[] = []
-  hovered: HTMLElement | undefined = undefined
+  selectedStore: Writable<HTMLElement[]> = writable([]);
+  hoveredStore: Writable<HTMLElement | undefined> = writable(undefined);
 
-  constructor() {
-    this.selected = [];
+  constructor() { }
+
+  get selected() {
+    return get(this.selectedStore);
+  }
+
+  get hovered() {
+    return get(this.hoveredStore);
   }
 
   handleMouseOver = (e) => {
     const target = deepElementFromPoint(e.clientX, e.clientY);
     if (isOffBounds(target)) return;
-    this.hovered = target;
+    this.hoveredStore.set(target);
   }
 
   handleMouseOut = (e) => {
-    this.hovered = null;
+    this.hoveredStore.set(undefined);
   }
 
   handleClick = (e: MouseEvent) => {
@@ -27,9 +34,9 @@ export class SelectorEngine {
     e.stopPropagation();
 
     if (!e.shiftKey) {
-      this.selected = [target];
+      this.selectedStore.set([target])
     } else {
-      if (this.selected.includes(target)) {
+      if (get(this.selectedStore).includes(target)) {
         this.unselect(target);
       } else {
         this.select(target);
@@ -38,14 +45,14 @@ export class SelectorEngine {
   }
 
   select(item) {
-    this.selected.push(item);
+    this.selectedStore.update((s) => [...s, item])
   }
 
   unselect(item) {
-    this.selected = this.selected.filter((i) => i !== item);
+    this.selectedStore.update((s) => s.filter((i) => i !== item))
   }
 
   clear() {
-    this.selected = [];
+    this.selectedStore.set([]);
   }
 }

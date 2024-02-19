@@ -1,4 +1,5 @@
 import { editorPanelVisible } from '$lib/states/editor';
+import { get } from 'svelte/store';
 import type { Tool } from '../index';
 import {
 	updateClickRect,
@@ -27,7 +28,7 @@ export class EditTool implements Tool {
 
 	onMouseOver(e: MouseEvent): void {
 		this.selectorEngine.handleMouseOver(e);
-		updateHoverRect(this.selectorEngine.hovered);
+		updateHoverRect((this.selectorEngine.hovered));
 	}
 
 	onMouseOut(e: MouseEvent): void {
@@ -40,13 +41,15 @@ export class EditTool implements Tool {
 		this.selectorEngine.handleClick(e);
 		editorPanelVisible.set(true);
 		removeClickedRect();
+
+		if (!this.selectorEngine.selected[0]) return;
 		updateClickRect(this.selectorEngine.selected[0]);
 
 		// ResizeObserver to watch size changes for element
 		if (this.resizeObserver) this.resizeObserver.disconnect();
 		this.resizeObserver = new ResizeObserver(entries => {
 			for (let entry of entries) {
-				updateClickRect(entry.target);
+				updateClickRect(entry.target as HTMLElement);
 			}
 		});
 		this.resizeObserver.observe(this.selectorEngine.selected[0]);
