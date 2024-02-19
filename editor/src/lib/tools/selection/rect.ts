@@ -113,20 +113,20 @@ document.body.appendChild(hoverRect.element)
 document.body.appendChild(clickRect.element)
 document.body.appendChild(parentRect.element)
 
-export function updateHoverRect(element: Element) {
-    if (hoverRect) {
-        const rect = element.getBoundingClientRect()
+export function updateHoverRect(el: HTMLElement) {
+    if (el && hoverRect) {
+        const rect = el.getBoundingClientRect()
         hoverRect.render(rect)
     }
 }
 
-export function updateClickRect(element: Element) {
+export function updateClickRect(el: HTMLElement) {
     if (clickRect) {
-        const rect = element.getBoundingClientRect()
+        const rect = el.getBoundingClientRect()
         clickRect.render(rect)
     }
     if (parentRect) {
-        const rect = element.parentElement.getBoundingClientRect()
+        const rect = el.parentElement.getBoundingClientRect()
         parentRect.render(rect)
     }
     removeHoverRect()

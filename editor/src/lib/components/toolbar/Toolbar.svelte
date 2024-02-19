@@ -9,14 +9,14 @@
   import { slide } from "svelte/transition";
   import { emitOpenProjectMessage } from "$lib/tools/edit/emit";
 
-  let editor;
+  let toolManager: ToolManager | undefined;
   let activeToolName: ToolName | undefined = ToolName.EDIT;
 
   onMount(() => {
-    editor = new ToolManager(activeToolName);
+    toolManager = new ToolManager(activeToolName);
   });
 
-  $: editor?.selectTool(activeToolName);
+  $: toolManager?.selectTool(activeToolName);
 </script>
 
 <div class="fixed bottom-3 left-0 right-0 flex justify-center">
@@ -87,4 +87,4 @@
   </ToolBarAnimation>
 </div>
 
-<EditorPanel />
+<EditorPanel editTool={toolManager?.editTool} />

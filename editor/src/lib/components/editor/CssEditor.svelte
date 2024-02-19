@@ -16,16 +16,11 @@
   import TagInfo from "./inputs/TagInfo.svelte";
   import SizeSection from "./inputs/SizeSection.svelte";
   import SpacingInput from "./inputs/SpacingInput.svelte";
+  import type { EditTool } from "$lib/tools/edit";
 
+  export let editTool: EditTool;
   let el: HTMLElement | undefined = undefined;
-  let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {
-    [ElementStyleGroup.Size]: [],
-    [ElementStyleGroup.Position]: [],
-    [ElementStyleGroup.Style]: [],
-    [ElementStyleGroup.Text]: [],
-    [ElementStyleGroup.Spacing]: [],
-    [ElementStyleGroup.Effects]: [],
-  };
+  let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {};
 
   $: if (el) {
     const elementStyles: ElementStyle[] = getElementComputedStylesData(el);

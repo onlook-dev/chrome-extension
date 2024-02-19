@@ -26,34 +26,35 @@ export class EditTool implements Tool {
 	}
 
 	onMouseOver(e: MouseEvent): void {
-		// this.hoveredElement = el;
-		// updateHoverRect(el);
+		this.selectorEngine.handleMouseOver(e);
+		updateHoverRect(this.selectorEngine.hovered);
 	}
 
 	onMouseOut(e: MouseEvent): void {
-		// this.hoveredElement = null;
-		// removeHoverRect();
+		this.selectorEngine.handleMouseOut(e);
+		removeHoverRect();
 	}
 
-	onClick(el: MouseEvent): void {
-		// this.clickedElement = el;
-		// editorPanelVisible.set(true);
-		// removeClickedRect();
-		// updateClickRect(el);
+	onClick(e: MouseEvent): void {
 
-		// // ResizeObserver to watch size changes for element
-		// if (this.resizeObserver) this.resizeObserver.disconnect();
-		// this.resizeObserver = new ResizeObserver(entries => {
-		// 	for (let entry of entries) {
-		// 		updateClickRect(entry.target);
-		// 	}
-		// });
-		// this.resizeObserver.observe(el);
+		this.selectorEngine.handleClick(e);
+		editorPanelVisible.set(true);
+		removeClickedRect();
+		updateClickRect(this.selectorEngine.selected[0]);
+
+		// ResizeObserver to watch size changes for element
+		if (this.resizeObserver) this.resizeObserver.disconnect();
+		this.resizeObserver = new ResizeObserver(entries => {
+			for (let entry of entries) {
+				updateClickRect(entry.target);
+			}
+		});
+		this.resizeObserver.observe(this.selectorEngine.selected[0]);
 	}
 
 	onScreenResize(e: MouseEvent): void {
-		// if (this.clickedElement) {
-		// 	updateClickRect(this.clickedElement);
-		// }
+		if (this.selectorEngine.selected[0]) {
+			updateClickRect(this.selectorEngine.selected[0]);
+		}
 	}
 }

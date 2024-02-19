@@ -20,6 +20,7 @@ export class ToolManager {
   selectedTool?: Tool | undefined;
   toolMap: Record<ToolName, Tool>
   hotKeys: HotKeys;
+  editTool: EditTool;
 
   eventsMap = {
     'mouseover': (e) => this.handleMouseOver(e),
@@ -30,8 +31,9 @@ export class ToolManager {
 
   constructor(toolName: ToolName,) {
     this.hotKeys = new HotKeys();
+    this.editTool = new EditTool();
     this.toolMap = {
-      [ToolName.EDIT]: new EditTool(),
+      [ToolName.EDIT]: this.editTool,
     }
     // Set up tools
     this.setListeners();

@@ -5,6 +5,9 @@
   import CssEditor from "./CssEditor.svelte";
   import { Separator } from "$lib/components/ui/separator";
   import { editorPanelVisible } from "$lib/states/editor";
+  import type { EditTool } from "$lib/tools/edit";
+
+  export let editTool: EditTool;
 
   enum TabValue {
     CSS = "css",
@@ -27,7 +30,9 @@
           >
         </Tabs.List>
         <Separator class="mt-1" />
-        <Tabs.Content value={TabValue.CSS}><CssEditor /></Tabs.Content>
+        <Tabs.Content value={TabValue.CSS}
+          ><CssEditor {editTool} /></Tabs.Content
+        >
         <Tabs.Content value={TabValue.OTHER}>Others</Tabs.Content>
         <Card.Footer class="flex justify-between"></Card.Footer>
       </Tabs.Root>
