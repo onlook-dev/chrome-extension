@@ -1,3 +1,5 @@
+import { DATA_ONLOOK_IGNORE } from "$lib/constants";
+
 interface Rect {
     element: HTMLElement;
     svgNamespace: string;
@@ -6,7 +8,7 @@ interface Rect {
     render: (rect: { width: number, height: number, top: number, left: number }) => void;
 }
 
-class HoverRect implements Rect {
+class RectImpl implements Rect {
     element: HTMLElement;
     svgNamespace: string;
     svgElement: Element;
@@ -20,44 +22,13 @@ class HoverRect implements Rect {
         this.rectElement.setAttribute('fill', 'none')
         this.rectElement.setAttribute('stroke', '#FF0E48')
         this.rectElement.setAttribute('stroke-width', '2')
-        this.svgElement.appendChild(this.rectElement)
-        this.element.style.position = 'absolute'
-        this.element.style.pointerEvents = 'none' // Ensure it doesn't interfere with other interactions
-        this.element.style.zIndex = '999'
-        this.element.appendChild(this.svgElement)
-    }
-
-    render({ width, height, top, left }) {
-        this.svgElement.setAttribute('width', width)
-        this.svgElement.setAttribute('height', height)
-        this.svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`)
-        this.rectElement.setAttribute('width', width)
-        this.rectElement.setAttribute('height', height)
-        this.element.style.top = `${top + window.scrollY}px`
-        this.element.style.left = `${left + window.scrollX}px`
-    }
-}
-
-class ClickRect implements Rect {
-    element: HTMLElement;
-    svgNamespace: string;
-    svgElement: Element;
-    rectElement: Element;
-
-    constructor() {
-        this.element = document.createElement('div')
-        this.svgNamespace = 'http://www.w3.org/2000/svg'
-        this.svgElement = document.createElementNS(this.svgNamespace, 'svg')
-        this.rectElement = document.createElementNS(this.svgNamespace, 'rect')
-        this.rectElement.setAttribute('fill', 'none')
-        this.rectElement.setAttribute('stroke', '#FF0E48')
-        this.rectElement.setAttribute('stroke-width', '4')
         this.rectElement.setAttribute('stroke-linecap', 'round')
         this.rectElement.setAttribute('stroke-linejoin', 'round')
         this.svgElement.appendChild(this.rectElement)
         this.element.style.position = 'absolute'
-        this.element.style.pointerEvents = 'none'
+        this.element.style.pointerEvents = 'none' // Ensure it doesn't interfere with other interactions
         this.element.style.zIndex = '999'
+        this.element.setAttribute(DATA_ONLOOK_IGNORE, 'true');
         this.element.appendChild(this.svgElement)
     }
 
@@ -72,36 +43,53 @@ class ClickRect implements Rect {
     }
 }
 
-class ParentRect implements Rect {
+class HoverRect extends RectImpl {
     element: HTMLElement;
     svgNamespace: string;
     svgElement: Element;
     rectElement: Element;
 
     constructor() {
-        this.element = document.createElement('div')
-        this.svgNamespace = 'http://www.w3.org/2000/svg'
-        this.svgElement = document.createElementNS(this.svgNamespace, 'svg')
-        this.rectElement = document.createElementNS(this.svgNamespace, 'rect')
-        this.rectElement.setAttribute('fill', 'none')
-        this.rectElement.setAttribute('stroke', '#FF0E48')
+        super()
         this.rectElement.setAttribute('stroke-width', '2')
-        this.rectElement.setAttribute('stroke-dasharray', '5')
-        this.svgElement.appendChild(this.rectElement)
-        this.element.style.position = 'absolute'
-        this.element.style.pointerEvents = 'none'
-        this.element.style.zIndex = '999'
-        this.element.appendChild(this.svgElement)
     }
 
     render({ width, height, top, left }) {
-        this.svgElement.setAttribute('width', width)
-        this.svgElement.setAttribute('height', height)
-        this.svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`)
-        this.rectElement.setAttribute('width', width)
-        this.rectElement.setAttribute('height', height)
-        this.element.style.top = `${top + window.scrollY}px`
-        this.element.style.left = `${left + window.scrollX}px`
+        super.render({ width, height, top, left })
+    }
+}
+
+class ClickRect extends RectImpl {
+    element: HTMLElement;
+    svgNamespace: string;
+    svgElement: Element;
+    rectElement: Element;
+
+    constructor() {
+        super()
+        this.rectElement.setAttribute('stroke-width', '4')
+
+    }
+
+    render({ width, height, top, left }) {
+        super.render({ width, height, top, left })
+    }
+}
+
+class ParentRect extends RectImpl {
+    element: HTMLElement;
+    svgNamespace: string;
+    svgElement: Element;
+    rectElement: Element;
+
+    constructor() {
+        super()
+        this.rectElement.setAttribute('stroke-width', '2')
+        this.rectElement.setAttribute('stroke-dasharray', '5')
+    }
+
+    render({ width, height, top, left }) {
+        super.render({ width, height, top, left })
     }
 }
 
