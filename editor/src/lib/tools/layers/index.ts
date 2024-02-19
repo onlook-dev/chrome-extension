@@ -1,5 +1,6 @@
-import { DATA_ONLOOK_IGNORE } from '$lib/constants';
+import { DATA_ONLOOK_IGNORE, DATA_ONLOOK_SELECTOR } from '$lib/constants';
 import DOMPurify from 'dompurify'
+import { getUniqueSelector } from '../utilities';
 
 export class LayersManager {
   domTree: any
@@ -9,13 +10,19 @@ export class LayersManager {
 
   getDomTree = () => {
     DOMPurify.addHook('beforeSanitizeElements', (node, data, config) => {
-      if (node.nodeType === 1 && node.hasAttribute(DATA_ONLOOK_IGNORE)) {
-        node.remove();
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        if (node.hasAttribute(DATA_ONLOOK_IGNORE)) {
+          node.remove();
+          return;
+        }
+        let selector = getUniqueSelector(node) // Make sure the unique function is defined and returns a string
+        node.setAttribute(DATA_ONLOOK_SELECTOR, selector)
       }
       return node;
     });
 
     this.domTree = DOMPurify.sanitize(document.body.innerHTML, {
+      ALLOWED_ATTR: [DATA_ONLOOK_SELECTOR],
       FORBID_TAGS: ['style', 'script', 'head'],
     })
   }
