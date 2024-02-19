@@ -19,8 +19,7 @@ export class EditTool implements Tool {
 
 	onDestroy() {
 		editorPanelVisible.set(false);
-		this.overlayManager.clearClickedRects();
-		this.overlayManager.removeHoverRect();
+		this.overlayManager.clear();
 		this.selectorEngine.clear();
 	}
 
@@ -38,7 +37,7 @@ export class EditTool implements Tool {
 		editorPanelVisible.set(true);
 		this.selectorEngine.handleClick(e);
 		this.overlayManager.removeHoverRect();
-		this.overlayManager.clearClickedRects();
+		this.overlayManager.removeClickedRects();
 
 		this.selectorEngine.selected.forEach((el) => {
 			this.overlayManager.addClickRect(el);
@@ -54,7 +53,7 @@ export class EditTool implements Tool {
 	}
 
 	onScreenResize(e: MouseEvent): void {
-		this.overlayManager.clearClickedRects();
+		this.overlayManager.removeClickedRects();
 		this.selectorEngine.selected.forEach((el) => {
 			this.overlayManager.addClickRect(el);
 		})

@@ -119,6 +119,12 @@ export class OverlayManager {
         document.body.appendChild(this.parentRect.element)
     }
 
+    clear = () => {
+        this.removeParentRect()
+        this.removeHoverRect()
+        this.removeClickedRects()
+    }
+
     addClickRect = (el: HTMLElement) => {
         const clickRect = new ClickRect()
         this.clickedRects.push(clickRect)
@@ -147,7 +153,7 @@ export class OverlayManager {
         this.hoverRect.render({ width: 0, height: 0, top: 0, left: 0 })
     }
 
-    clearClickedRects = () => {
+    removeClickedRects = () => {
         this.clickedRects.forEach(clickRect => {
             clickRect.element.remove()
         })
