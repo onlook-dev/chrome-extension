@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ElementStyle } from "$lib/tools/selection/styles";
+
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
   export let unitEnd: boolean = false;

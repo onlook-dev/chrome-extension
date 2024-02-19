@@ -6,7 +6,7 @@ interface Rect {
     render: (rect: { width: number, height: number, top: number, left: number }) => void;
 }
 
-export class HoverRect implements Rect {
+class HoverRect implements Rect {
     element: HTMLElement;
     svgNamespace: string;
     svgElement: Element;
@@ -72,7 +72,7 @@ class ClickRect implements Rect {
     }
 }
 
-export class ParentRect implements Rect {
+class ParentRect implements Rect {
     element: HTMLElement;
     svgNamespace: string;
     svgElement: Element;
@@ -105,44 +105,58 @@ export class ParentRect implements Rect {
     }
 }
 
-let hoverRect: HoverRect = new HoverRect()
-let clickRect: ClickRect = new ClickRect()
-let parentRect: ParentRect = new ParentRect()
+export class OverlayManager {
+    hoverRect: HoverRect
+    parentRect: ParentRect
+    clickedRects: ClickRect[]
 
-document.body.appendChild(hoverRect.element)
-document.body.appendChild(clickRect.element)
-document.body.appendChild(parentRect.element)
+    constructor() {
+        this.hoverRect = new HoverRect();
+        this.clickedRects = [];
+        this.parentRect = new ParentRect();
 
-export function updateHoverRect(element: Element) {
-    if (hoverRect) {
-        const rect = element.getBoundingClientRect()
-        hoverRect.render(rect)
+        document.body.appendChild(this.hoverRect.element)
+        document.body.appendChild(this.parentRect.element)
     }
-}
 
-export function updateClickRect(element: Element) {
-    if (clickRect) {
-        const rect = element.getBoundingClientRect()
+    clear = () => {
+        this.removeParentRect()
+        this.removeHoverRect()
+        this.removeClickedRects()
+    }
+
+    addClickRect = (el: HTMLElement) => {
+        const clickRect = new ClickRect()
+        this.clickedRects.push(clickRect)
+        const rect = el.getBoundingClientRect()
         clickRect.render(rect)
+        document.body.appendChild(clickRect.element)
     }
-    if (parentRect) {
-        const rect = element.parentElement.getBoundingClientRect()
-        parentRect.render(rect)
-    }
-    removeHoverRect()
-}
 
-export function removeHoverRect() {
-    if (hoverRect) {
-        hoverRect.render({ width: 0, height: 0, top: 0, left: 0 })
+    updateParentRect = (el: HTMLElement) => {
+        const rect = el.getBoundingClientRect()
+        this.parentRect.render(rect)
     }
-}
 
-export function removeClickedRect() {
-    if (clickRect) {
-        clickRect.render({ width: 0, height: 0, top: 0, left: 0 })
+    updateHoverRect = (el: HTMLElement) => {
+        if (el && this.hoverRect) {
+            const rect = el.getBoundingClientRect()
+            this.hoverRect.render(rect)
+        }
     }
-    if (parentRect) {
-        parentRect.render({ width: 0, height: 0, top: 0, left: 0 })
+
+    removeParentRect = () => {
+        this.parentRect.render({ width: 0, height: 0, top: 0, left: 0 })
+    }
+
+    removeHoverRect = () => {
+        this.hoverRect.render({ width: 0, height: 0, top: 0, left: 0 })
+    }
+
+    removeClickedRects = () => {
+        this.clickedRects.forEach(clickRect => {
+            clickRect.element.remove()
+        })
+        this.clickedRects = []
     }
 }

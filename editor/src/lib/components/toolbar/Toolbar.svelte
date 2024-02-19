@@ -3,40 +3,36 @@
   import { ExternalLink, Pencil1, Stop } from "radix-icons-svelte";
   import ToolBarAnimation from "./ToolbarAnimation.svelte";
   import { onMount } from "svelte";
-  import { Editor, ToolName } from "$lib/tools";
+  import { ToolManager, ToolName } from "$lib/tools";
   import EditorPanel from "../editor/EditorPanel.svelte";
   import Button from "../ui/button/button.svelte";
   import { slide } from "svelte/transition";
   import { emitOpenProjectMessage } from "$lib/tools/edit/emit";
 
-  let editorPanel: EditorPanel;
-  let editor;
-  let selected: ToolName | undefined = ToolName.EDIT;
+  let activeToolName: ToolName | undefined = ToolName.EDIT;
+  let toolManager: ToolManager = new ToolManager(activeToolName);
 
-  onMount(() => {
-    editor = new Editor(selected, editorPanel);
-  });
-
-  $: editor?.selectTool(selected);
+  $: toolManager?.selectTool(activeToolName);
 </script>
 
 <div class="fixed bottom-3 left-0 right-0 flex justify-center">
   <ToolBarAnimation>
     <Card.Root
-      class="opacity-[98%] border p-1 space-x-2 rounded-full flex flex-row {selected ===
+      class="opacity-[98%] border p-1 space-x-2 rounded-full flex flex-row {activeToolName ===
       ToolName.EDIT
         ? 'bg-red border-red'
         : ''}"
     >
       <Button
-        class={selected === ToolName.EDIT
+        class={activeToolName === ToolName.EDIT
           ? "rounded-full bg-red hover:bg-red border-none"
           : "rounded-full border-none"}
-        variant={selected === ToolName.EDIT ? "destructive" : "outline"}
+        variant={activeToolName === ToolName.EDIT ? "destructive" : "outline"}
         on:click={() =>
-          (selected = selected === ToolName.EDIT ? undefined : ToolName.EDIT)}
+          (activeToolName =
+            activeToolName === ToolName.EDIT ? undefined : ToolName.EDIT)}
       >
-        {#if selected === ToolName.EDIT}
+        {#if activeToolName === ToolName.EDIT}
           <svg
             class="mr-2"
             width="20"
@@ -72,7 +68,7 @@
         {/if}
       </Button>
 
-      {#if selected !== ToolName.EDIT}
+      {#if activeToolName !== ToolName.EDIT}
         <div transition:slide={{ axis: "x" }}>
           <Button
             class="rounded-full border-none"
@@ -87,4 +83,4 @@
   </ToolBarAnimation>
 </div>
 
-<EditorPanel bind:this={editorPanel} />
+<EditorPanel editTool={toolManager?.editTool} />

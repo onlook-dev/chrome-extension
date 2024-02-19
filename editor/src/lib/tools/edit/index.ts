@@ -1,57 +1,61 @@
+import { editorPanelVisible } from '$lib/states/editor';
 import type { Tool } from '../index';
-import {
-	updateClickRect,
-	updateHoverRect,
-	removeClickedRect,
-	removeHoverRect
-} from '../selection/rect';
-import type EditorPanel from '$lib/components/editor/EditorPanel.svelte';
+import { OverlayManager } from '../selection/overlay';
+
+import { SelectorEngine } from '../selection/selector';
+import { findCommonParent } from '../utilities';
 
 export class EditTool implements Tool {
-	editorPanel: EditorPanel;
-	clickedElement: HTMLElement;
-	hoveredElement: HTMLElement;
 	resizeObserver: ResizeObserver;
+	selectorEngine: SelectorEngine;
+	overlayManager: OverlayManager;
 
-	constructor(editorPanel) {
-		this.editorPanel = editorPanel;
+	constructor() {
+		this.selectorEngine = new SelectorEngine();
+		this.overlayManager = new OverlayManager();
 	}
 
 	onInit() { }
 
 	onDestroy() {
-		this.editorPanel.setVisible(false);
-		removeClickedRect();
-		removeHoverRect();
-		this.clickedElement = null;
-		this.hoveredElement = null;
+		editorPanelVisible.set(false);
+		this.overlayManager.clear();
+		this.selectorEngine.clear();
 	}
 
-	onMouseOver(el: HTMLElement): void {
-		this.hoveredElement = el;
-		updateHoverRect(el);
+	onMouseOver(e: MouseEvent): void {
+		this.selectorEngine.handleMouseOver(e);
+		this.overlayManager.updateHoverRect((this.selectorEngine.hovered));
 	}
 
-	onMouseOut(e: HTMLElement): void {
-		this.hoveredElement = null;
-		removeHoverRect();
+	onMouseOut(e: MouseEvent): void {
+		this.selectorEngine.handleMouseOut(e);
+		this.overlayManager.removeHoverRect();
 	}
 
-	onClick(el: HTMLElement): void {
-		this.clickedElement = el;
-		this.editorPanel.setVisible(true);
-		this.editorPanel.setElement(el);
-		removeClickedRect();
-		updateClickRect(el);
-		// const onlookId = getDataOnlookId(el);
+	onClick(e: MouseEvent): void {
+		editorPanelVisible.set(true);
+		this.selectorEngine.handleClick(e);
+		this.overlayManager.removeHoverRect();
+		this.overlayManager.removeClickedRects();
 
-		// ResizeObserver to watch size changes
-		if (this.resizeObserver) this.resizeObserver.disconnect();
-		this.resizeObserver = new ResizeObserver(entries => {
-			for (let entry of entries) {
-				updateClickRect(entry.target);
-			}
+		this.selectorEngine.selected.forEach((el) => {
+			this.overlayManager.addClickRect(el);
 		});
-		this.resizeObserver.observe(el);
+
+		if (this.selectorEngine.selected.length > 0) {
+			const parent = findCommonParent(...this.selectorEngine.selected);
+			this.overlayManager.updateParentRect(parent);
+
+		} else {
+			this.overlayManager.removeParentRect();
+		}
+	}
+
+	onScreenResize(e: MouseEvent): void {
+		this.overlayManager.removeClickedRects();
+		this.selectorEngine.selected.forEach((el) => {
+			this.overlayManager.addClickRect(el);
+		})
 	}
 }

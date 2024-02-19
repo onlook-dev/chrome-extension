@@ -1,8 +1,5 @@
-import type EditorPanel from "$lib/components/editor/EditorPanel.svelte";
 import { EditTool } from "./edit";
 import { HotKeys } from "./edit/hotkeys";
-import { isOffBounds, deepElementFromPoint } from "./utilities";
-
 export enum ToolName {
   EDIT = 'edit',
 }
@@ -10,31 +7,30 @@ export enum ToolName {
 export interface Tool {
   onInit(): void;
   onDestroy(): void;
-  onMouseOver(el: Element): void;
-  onMouseOut(el: Element): void;
-  onClick(el: Element): void;
+  onMouseOver(el: MouseEvent): void;
+  onMouseOut(el: MouseEvent): void;
+  onClick(el: MouseEvent): void;
+  onScreenResize(el: MouseEvent): void;
 }
 
-export class Editor {
+export class ToolManager {
   selectedTool?: Tool | undefined;
-  hoveredElement: Element;
-  clickedElement: Element;
-  editorPanel: EditorPanel;
   toolMap: Record<ToolName, Tool>
   hotKeys: HotKeys;
+  editTool: EditTool;
 
   eventsMap = {
     'mouseover': (e) => this.handleMouseOver(e),
     'mouseout': (e) => this.handleMouseOut(e),
     'click': (e) => this.handleClick(e),
-    'resize': (e) => this.handleResize(e)
+    'resize': (e) => this.handleScreenResize(e)
   };
 
-  constructor(toolName: ToolName, editorPanel: EditorPanel) {
-    this.editorPanel = editorPanel;
+  constructor(toolName: ToolName,) {
     this.hotKeys = new HotKeys();
+    this.editTool = new EditTool();
     this.toolMap = {
-      [ToolName.EDIT]: new EditTool(editorPanel),
+      [ToolName.EDIT]: this.editTool,
     }
     // Set up tools
     this.setListeners();
@@ -52,48 +48,24 @@ export class Editor {
     this.selectedTool.onInit();
   }
 
-  handleMouseOver = (e) => {
+  handleMouseOver = (e: MouseEvent) => {
     if (!this.selectedTool) return;
-
-    // Select and filter for non-onlook
-    const target = deepElementFromPoint(e.clientX, e.clientY);
-    if (isOffBounds(target)) return;
-    this.selectedTool.onMouseOver(target);
-    this.hoveredElement = target;
+    this.selectedTool.onMouseOver(e);
   }
 
-  handleMouseOut = (e) => {
+  handleMouseOut = (e: MouseEvent) => {
     if (!this.selectedTool) return;
-
-    const target = deepElementFromPoint(e.clientX, e.clientY);
-    if (isOffBounds(target)) return;
-    this.selectedTool.onMouseOut(target);
-    this.hoveredElement = null;
+    this.selectedTool.onMouseOut(e);
   }
 
-  handleClick = (e) => {
+  handleClick = (e: MouseEvent) => {
     if (!this.selectedTool) return;
-
-    // Select and filter for non-onlook
-    const target = deepElementFromPoint(e.clientX, e.clientY);
-    if (isOffBounds(target)) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    this.selectedTool.onClick(target);
-    this.clickedElement = target;
+    this.selectedTool.onClick(e);
   }
 
-  handleResize = (e) => {
+  handleScreenResize = (e) => {
     if (!this.selectedTool) return;
-
-    if (this.clickedElement) {
-      this.selectedTool.onClick(this.clickedElement);
-    }
-    if (this.hoveredElement) {
-      this.selectedTool.onMouseOver(this.hoveredElement);
-    }
+    this.selectedTool.onScreenResize(e);
   }
 
   setListeners = () => {
