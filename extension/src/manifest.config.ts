@@ -65,7 +65,6 @@ export default defineManifest(async env => ({
 		'tabs',
 		'storage',
 		'activeTab',
-		'contextMenus',
 		'scripting'
 	] as chrome.runtime.ManifestPermissions[]
 }))

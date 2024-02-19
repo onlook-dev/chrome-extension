@@ -1,5 +1,6 @@
 import type EditorPanel from "$lib/components/editor/EditorPanel.svelte";
 import { EditTool } from "./edit";
+import { HotKeys } from "./edit/hotkeys";
 import { isOffBounds, deepElementFromPoint } from "./utilities";
 
 export enum ToolName {
@@ -20,6 +21,7 @@ export class Editor {
   clickedElement: Element;
   editorPanel: EditorPanel;
   toolMap: Record<ToolName, Tool>
+  hotKeys: HotKeys;
 
   eventsMap = {
     'mouseover': (e) => this.handleMouseOver(e),
@@ -30,6 +32,7 @@ export class Editor {
 
   constructor(toolName: ToolName, editorPanel: EditorPanel) {
     this.editorPanel = editorPanel;
+    this.hotKeys = new HotKeys();
     this.toolMap = {
       [ToolName.EDIT]: new EditTool(editorPanel),
     }
@@ -40,6 +43,7 @@ export class Editor {
 
   selectTool = (toolName?: ToolName) => {
     if (this.selectedTool) this.selectedTool.onDestroy();
+    this.hotKeys.bindKeys(toolName);
     if (!toolName) {
       this.selectedTool = undefined;
       return;
