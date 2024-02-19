@@ -22,9 +22,10 @@ export const isOffBounds = node => node?.closest && (node.closest('onlook-toolba
 
 export const getDataOnlookId = node => node?.getAttribute('data-onlook-id')
 
-export function findCommonParent(...nodes) {
+export function findCommonParent(...nodes): HTMLElement {
   // Early exit if there's only one node or no nodes
-  if (nodes.length <= 1) return nodes[0] || null;
+  if (nodes.length === 0) return document.body;
+  if (nodes.length === 1) return nodes[0].parentNode || document.body;
 
   // Function to calculate the depth of a node in the DOM tree
   function getNodeDepth(node) {
