@@ -4,27 +4,17 @@
   import * as Tabs from "$lib/components/ui/tabs";
   import CssEditor from "./CssEditor.svelte";
   import { Separator } from "$lib/components/ui/separator";
-
-  let el: HTMLElement;
-  let visible = false;
+  import { editorPanelVisible } from "$lib/states/editor";
 
   enum TabValue {
     CSS = "css",
     OTHER = "other",
   }
-
-  export function setVisible(value: boolean) {
-    visible = value;
-  }
-
-  export function setElement(element: HTMLElement) {
-    el = element;
-  }
 </script>
 
 <div
   use:draggable={{ bounds: "body" }}
-  class="fixed top-10 right-2 transform -translate-y-1/2 -translate-x-1/2 {visible
+  class="fixed top-10 right-2 transform -translate-y-1/2 -translate-x-1/2 {editorPanelVisible
     ? 'visible'
     : 'invisible'}"
 >
@@ -37,7 +27,7 @@
           >
         </Tabs.List>
         <Separator class="mt-1" />
-        <Tabs.Content value={TabValue.CSS}><CssEditor {el} /></Tabs.Content>
+        <Tabs.Content value={TabValue.CSS}><CssEditor /></Tabs.Content>
         <Tabs.Content value={TabValue.OTHER}>Others</Tabs.Content>
         <Card.Footer class="flex justify-between"></Card.Footer>
       </Tabs.Root>

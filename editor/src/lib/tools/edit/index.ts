@@ -1,3 +1,4 @@
+import { editorPanelVisible } from '$lib/states/editor';
 import type { Tool } from '../index';
 import {
 	updateClickRect,
@@ -5,53 +6,54 @@ import {
 	removeClickedRect,
 	removeHoverRect
 } from '../selection/rect';
-import type EditorPanel from '$lib/components/editor/EditorPanel.svelte';
+import { SelectorEngine } from '../selection/selector';
 
 export class EditTool implements Tool {
-	editorPanel: EditorPanel;
-	clickedElement: HTMLElement;
-	hoveredElement: HTMLElement;
 	resizeObserver: ResizeObserver;
+	selectorEngine: SelectorEngine;
 
-	constructor(editorPanel) {
-		this.editorPanel = editorPanel;
+	constructor() {
+		this.selectorEngine = new SelectorEngine();
 	}
 
 	onInit() { }
 
 	onDestroy() {
-		this.editorPanel.setVisible(false);
+		editorPanelVisible.set(false);
 		removeClickedRect();
 		removeHoverRect();
-		this.clickedElement = null;
-		this.hoveredElement = null;
+		this.selectorEngine.clear();
 	}
 
-	onMouseOver(el: HTMLElement): void {
-		this.hoveredElement = el;
-		updateHoverRect(el);
+	onMouseOver(e: MouseEvent): void {
+		// this.hoveredElement = el;
+		// updateHoverRect(el);
 	}
 
-	onMouseOut(e: HTMLElement): void {
-		this.hoveredElement = null;
-		removeHoverRect();
+	onMouseOut(e: MouseEvent): void {
+		// this.hoveredElement = null;
+		// removeHoverRect();
 	}
 
-	onClick(el: HTMLElement): void {
-		this.clickedElement = el;
-		this.editorPanel.setVisible(true);
-		this.editorPanel.setElement(el);
-		removeClickedRect();
-		updateClickRect(el);
-		// const onlookId = getDataOnlookId(el);
+	onClick(el: MouseEvent): void {
+		// this.clickedElement = el;
+		// editorPanelVisible.set(true);
+		// removeClickedRect();
+		// updateClickRect(el);
 
-		// ResizeObserver to watch size changes
-		if (this.resizeObserver) this.resizeObserver.disconnect();
-		this.resizeObserver = new ResizeObserver(entries => {
-			for (let entry of entries) {
-				updateClickRect(entry.target);
-			}
-		});
-		this.resizeObserver.observe(el);
+		// // ResizeObserver to watch size changes for element
+		// if (this.resizeObserver) this.resizeObserver.disconnect();
+		// this.resizeObserver = new ResizeObserver(entries => {
+		// 	for (let entry of entries) {
+		// 		updateClickRect(entry.target);
+		// 	}
+		// });
+		// this.resizeObserver.observe(el);
+	}
+
+	onScreenResize(e: MouseEvent): void {
+		// if (this.clickedElement) {
+		// 	updateClickRect(this.clickedElement);
+		// }
 	}
 }

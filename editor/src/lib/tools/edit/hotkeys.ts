@@ -45,12 +45,6 @@ export class HotKeys {
       return acc.concat(Object.keys(toolKeyMap));
     }, []);
 
-    allKeys.forEach(key => {
-      try {
-        hotkeys.unbind(key);
-      } catch (e) {
-        console.error(e);
-      }
-    })
+    hotkeys.unbind(allKeys.join(','));
   }
 }
