@@ -43,10 +43,12 @@
   }
 
   function updateElementStyle(key, value) {
-    const oldStyle = el.style[key];
-    el.style[key] = value;
-    // Emit event
-    emitStyleChangeEvent(el, key, { [key]: value }, { [key]: oldStyle });
+    editTool.selectorEngine.selected.forEach((element) => {
+      const oldStyle = element.style[key];
+      element.style[key] = value;
+      // Emit event
+      emitStyleChangeEvent(element, key, { [key]: value }, { [key]: oldStyle });
+    });
   }
 </script>
 
