@@ -83,6 +83,7 @@ export function updateTabActiveState(tab: chrome.tabs.Tab, project: Project, ena
 	toggleProjectTab(tab.id as number, project.id, enable)
 
 	// Forward message after a delay
+	// TODO: This is to ensure that content scripts are injected 
 	setTimeout(() => {
 		chrome.tabs.sendMessage(tab.id as number, {
 			greeting: 'APPLY_PROJECT_CHANGES',

@@ -5,6 +5,7 @@ export class SelectorEngine {
   page = document.body
   selectedStore: Writable<HTMLElement[]> = writable([]);
   hoveredStore: Writable<HTMLElement | undefined> = writable(undefined);
+  observer: MutationObserver;
 
   constructor() { }
 

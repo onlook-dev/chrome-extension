@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { updateValueToUnit } from "$lib/tools/edit/units";
   import type { ElementStyle } from "$lib/tools/selection/styles";
 
   export let elementStyle: ElementStyle;
@@ -63,13 +64,21 @@
       on:input={(e) => {
         if (e.target?.value === auto) {
           updateElementStyle(elementStyle.key, "inherit");
+          parsedUnit = "";
+          parsedNumber = 0;
           return;
         }
 
-        const stringValue = parsedValueToString(parsedNumber, e.target?.value);
+        let newNumber = updateValueToUnit(
+          parsedNumber,
+          parsedUnit,
+          e.target?.value
+        );
+        const stringValue = parsedValueToString(newNumber, e.target?.value);
         if (stringValue !== elementStyle.value) {
           updateElementStyle(elementStyle.key, stringValue);
         }
+        parsedNumber = newNumber;
       }}
       value={isEmpty() ? auto : parsedUnit}
     >

@@ -35,6 +35,7 @@
   });
 
   function selectedElementsChanged(selected: HTMLElement[]) {
+    // TODO: Handle multiple elements. Show similar values and leave non-similar ones blank
     el = selected[0];
     if (el) {
       const computedStyles = getElementComputedStylesData(el);

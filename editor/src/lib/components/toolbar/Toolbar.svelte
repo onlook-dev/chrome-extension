@@ -85,4 +85,4 @@
 </div>
 
 <EditorPanel editTool={toolManager?.editTool} />
-<!-- <LayersPanel editTool={toolManager?.editTool} /> -->
+<LayersPanel editTool={toolManager?.editTool} />

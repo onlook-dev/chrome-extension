@@ -1,3 +1,5 @@
+import { elementStyleUnits } from "../edit/units"
+
 export interface ElementStyle {
   key: string
   value: string
@@ -62,7 +64,6 @@ export class ElementStyle implements ElementStyle {
 }
 
 // https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units
-export const elementStyleUnits = ['px', '%', 'rem', 'vh', 'vw',]
 
 // Size: height, width, minHeight, minWidth, maxWidth, maxHeight, rotate, borderRadius
 // Position: position
