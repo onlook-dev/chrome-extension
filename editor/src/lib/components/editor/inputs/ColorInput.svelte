@@ -13,6 +13,7 @@
       );
     } catch (e) {
       console.error("Error parsing color", e);
+      inputString = "#000000";
     }
   }
 
@@ -42,7 +43,7 @@
   </div>
 
   <input
-    class="w-[3.5rem] text-xs border-none text-text bg-background text-end focus:outline-none focus:ring-0"
+    class="w-[3.5rem] text-xs border-none text-text bg-transparent text-end focus:outline-none focus:ring-0"
     type="text"
     value={inputString}
     placeholder="--"

@@ -21,7 +21,7 @@
     ? 'visible'
     : 'invisible'}"
 >
-  <Card.Root class="w-[260px] h-[60vh] opacity-[98%] pt-2">
+  <Card.Root class="w-[260px] h-[60vh] backdrop-blur bg-background/90 pt-2">
     <Card.Content>
       <Tabs.Root value={TabValue.LAYERS} class="w-full h-full">
         <Tabs.List class="bg-transparent p-0 gap-4">

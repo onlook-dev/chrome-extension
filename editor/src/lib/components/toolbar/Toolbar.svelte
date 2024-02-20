@@ -19,15 +19,15 @@
 <div class="fixed bottom-3 left-0 right-0 flex justify-center">
   <ToolBarAnimation>
     <Card.Root
-      class="opacity-[98%] border p-1 space-x-2 rounded-full flex flex-row {activeToolName ===
+      class="bg-background opacity-[98%] border p-1 space-x-2 rounded-full flex flex-row {activeToolName ===
       ToolName.EDIT
         ? 'bg-red border-red'
         : ''}"
     >
       <Button
-        class={activeToolName === ToolName.EDIT
-          ? "rounded-full bg-red hover:bg-red border-none"
-          : "rounded-full border-none"}
+        class="rounded-full border-none  {activeToolName === ToolName.EDIT
+          ? 'bg-red hover:bg-red'
+          : ''}"
         variant={activeToolName === ToolName.EDIT ? "destructive" : "outline"}
         on:click={() =>
           (activeToolName =

@@ -248,7 +248,7 @@ export const elementStyles: ElementStyle[] = [
   ),
   new ElementStyle(
     'color',
-    'rgba(0,0,0,1)',
+    '#000000',
     'Color',
     ElementStyleType.Color,
     ElementStyleGroup.Text
@@ -402,7 +402,7 @@ export function getElementComputedStylesData(target: HTMLElement) {
     if (style.type === ElementStyleType.Number) {
       style.value = (inlineStyle && inlineStyle !== '') ? inlineStyle : computedStyle
     } else if (style.type === ElementStyleType.Color) {
-      style.value = inlineStyle && inlineStyle !== '' ? inlineStyle : computedStyle
+      style.value = computedStyle
     } else {
       style.value = inlineStyle && inlineStyle !== '' ? inlineStyle : computedStyle
     }
