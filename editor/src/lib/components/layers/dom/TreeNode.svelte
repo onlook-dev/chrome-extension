@@ -1,5 +1,6 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <script lang="ts">
+  import { TagMap } from "$lib/tools/selection/tag";
   import { ChevronDown } from "radix-icons-svelte";
   export let node: HTMLElement | undefined;
   export let selected: HTMLElement | undefined;
@@ -19,9 +20,18 @@
     node &&
     node.childNodes.length == 1 &&
     node?.firstChild?.nodeType == Node.TEXT_NODE;
-  let name = node && node.tagName && node.tagName.toLowerCase();
+
+  let name =
+    node &&
+    node.tagName &&
+    (TagMap[node.tagName.toLowerCase()].title ||
+      capitalizeFirstLetter(node.tagName.toLowerCase()));
   let isOpen = true;
   let selfSelected = false;
+
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
   $: isSelected = node == selected;
   $: isHovered = node == hovered;
@@ -37,8 +47,16 @@
       }
     }
   }
-  $: selectedClass = isSelected ? "bg-red rounded" : "";
+  $: selectedClass = isSelected
+    ? "bg-red rounded text-white font-semibold"
+    : "";
   $: hoverClass = isHovered ? "bg-red/20 rounded" : "";
+
+  $: childrenSelectedClass = isSelected
+    ? "bg-[#38040c] rounded-b rounded-t-none font-normal text-white/60"
+    : "";
+
+  const marginTop = "py-1";
 </script>
 
 <div bind:this={nodeRef}>
@@ -51,7 +69,8 @@
     <div
       on:click={(e) => select(e, node)}
       on:mouseover={(e) => mouseEnter(e, node)}
-      class="pl-[{offset * (depth + 1)}px] {hoverClass} {selectedClass}"
+      class="pl-[{offset *
+        (depth + 1)}px] {hoverClass} {selectedClass} {marginTop}"
     >
       {'"' + node.nodeValue + '"'}
     </div>
@@ -61,7 +80,8 @@
     <div
       on:click={(e) => select(e, node)}
       on:mouseover={(e) => mouseEnter(e, node)}
-      class="pl-[{offset * (depth + 1)}px] {hoverClass} {selectedClass}"
+      class="pl-[{offset *
+        (depth + 1)}px] {hoverClass} {selectedClass} {marginTop}"
     >
       {name + " "}
     </div>
@@ -71,7 +91,8 @@
     <div
       on:click={(e) => select(e, node)}
       on:mouseover={(e) => mouseEnter(e, node)}
-      class="pl-[{offset * (depth + 1)}px] {hoverClass} {selectedClass}"
+      class="pl-[{offset *
+        (depth + 1)}px] {hoverClass} {selectedClass} {marginTop}"
     >
       {name + " "}<span>{node.firstChild.nodeValue}</span>
     </div>
@@ -87,7 +108,7 @@
       <summary
         class="ml-[calc({offset *
           (depth +
-            1)}px-0.75rem)] list-none cursor-pointer flex flex-row items-center"
+            1)}px-0.75rem)] list-none cursor-pointer flex flex-row items-center {marginTop}"
         on:mouseover={(e) => mouseEnter(e, node)}
         tabIndex="-1"
       >
@@ -101,18 +122,20 @@
           {name}
         </p>
       </summary>
-      {#if isOpen}
-        {#each node.childNodes as child}
-          <svelte:self
-            node={child}
-            depth={depth + 1}
-            {selected}
-            {hovered}
-            {select}
-            {mouseEnter}
-          />
-        {/each}
-      {/if}
+      <div class={childrenSelectedClass}>
+        {#if isOpen}
+          {#each node.childNodes as child}
+            <svelte:self
+              node={child}
+              depth={depth + 1}
+              {selected}
+              {hovered}
+              {select}
+              {mouseEnter}
+            />
+          {/each}
+        {/if}
+      </div>
     </details>
   {/if}
 </div>

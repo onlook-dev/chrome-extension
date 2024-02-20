@@ -12,7 +12,10 @@
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="select-none" on:mouseleave|preventDefault={mouseLeave}>
+<div
+  class="select-none text-xs text-white/60"
+  on:mouseleave|preventDefault={mouseLeave}
+>
   {#if node}
     <DOMTreeNode bind:node {selected} {hovered} {select} {mouseEnter} />
   {/if}

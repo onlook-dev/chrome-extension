@@ -63,6 +63,10 @@
       return;
     }
     const selector = getUniqueSelector(els[0]);
+    if (selector == "body") {
+      selected = tree;
+      return;
+    }
     const selectedEl = htmlDoc?.querySelector(
       `[${DATA_ONLOOK_SELECTOR}="${selector}"]`
     );
@@ -73,14 +77,12 @@
 </script>
 
 {#if tree}
-  <div class="text-xs">
-    <TreeRoot
-      node={tree}
-      {hovered}
-      {selected}
-      {select}
-      {mouseEnter}
-      {mouseLeave}
-    />
-  </div>
+  <TreeRoot
+    node={tree}
+    {hovered}
+    {selected}
+    {select}
+    {mouseEnter}
+    {mouseLeave}
+  />
 {/if}
