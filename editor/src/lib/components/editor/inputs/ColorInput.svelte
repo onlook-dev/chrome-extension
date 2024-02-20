@@ -4,10 +4,17 @@
 
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
+  let inputString = "#000000";
 
-  $: inputString = expandShorthandHex(
-    new Color(elementStyle.value).toString({ format: "hex" })
-  );
+  $: if (elementStyle.value) {
+    try {
+      inputString = expandShorthandHex(
+        new Color(elementStyle.value).toString({ format: "hex" })
+      );
+    } catch (e) {
+      console.error("Error parsing color", e);
+    }
+  }
 
   function expandShorthandHex(hex: string) {
     if (hex.length <= 5) {

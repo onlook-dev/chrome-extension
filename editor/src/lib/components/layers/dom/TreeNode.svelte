@@ -1,13 +1,15 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <script lang="ts">
-  import DomAttrib from "./NodeAttr.svelte";
-
-  const offset = 11;
-
+  import { ChevronDown } from "radix-icons-svelte";
   export let node: HTMLElement | undefined;
   export let selected: HTMLElement | undefined;
   export let hovered: HTMLElement | undefined;
   export let depth = 0;
+
+  export let select: (e: Event, node: HTMLElement) => void;
+  export let mouseEnter: (e: Event, node: HTMLElement) => void;
+
+  const offset = 11;
 
   let nodeRef: HTMLDivElement;
   let isText = node && node.nodeType == Node.TEXT_NODE;
@@ -35,16 +37,8 @@
       }
     }
   }
-
-  let select = (e: any) => {
-    if (selected == node) return;
-    selfSelected = true;
-    selected = node;
-  };
-  let mouseEnter = (e: any) => {
-    if (hovered == node) return;
-    hovered = node;
-  };
+  $: selectedClass = isSelected ? "bg-red rounded" : "";
+  $: hoverClass = isHovered ? "bg-red/20 rounded" : "";
 </script>
 
 <div bind:this={nodeRef}>
@@ -55,11 +49,9 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
-      on:click={select}
-      on:mouseover={mouseEnter}
-      class="pl-[{offset * (depth + 1)}px] {isSelected
-        ? 'bg-red'
-        : ''} {isHovered ? 'bg-red-800' : ''}"
+      on:click={(e) => select(e, node)}
+      on:mouseover={(e) => mouseEnter(e, node)}
+      class="pl-[{offset * (depth + 1)}px] {hoverClass} {selectedClass}"
     >
       {'"' + node.nodeValue + '"'}
     </div>
@@ -67,57 +59,57 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
-      on:click={select}
-      on:mouseover={mouseEnter}
-      class="pl-[{offset * (depth + 1)}px] {isSelected
-        ? 'bg-red'
-        : ''} {isHovered ? 'bg-red-800' : ''}"
+      on:click={(e) => select(e, node)}
+      on:mouseover={(e) => mouseEnter(e, node)}
+      class="pl-[{offset * (depth + 1)}px] {hoverClass} {selectedClass}"
     >
-      {name + " "}<DomAttrib {node} />
+      {name + " "}
     </div>
   {:else if hasOnlyChild}
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
-      on:click={select}
-      on:mouseover={mouseEnter}
-      class="pl-[{offset * (depth + 1)}px] {isSelected
-        ? 'bg-red'
-        : ''} {isHovered ? 'bg-red-800' : ''}"
+      on:click={(e) => select(e, node)}
+      on:mouseover={(e) => mouseEnter(e, node)}
+      class="pl-[{offset * (depth + 1)}px] {hoverClass} {selectedClass}"
     >
-      {name + " "}<DomAttrib {node} /><span class="text_text"
-        >{node.firstChild.nodeValue}</span
-      >
+      {name + " "}<span>{node.firstChild.nodeValue}</span>
     </div>
   {:else}
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
     <details
       bind:open={isOpen}
-      on:click|self={select}
-      class="{isSelected ? 'bg-red' : ''} {isHovered ? 'bg-red-800' : ''}"
-      on:mouseover|self={mouseEnter}
+      on:click|self={(e) => select(e, node)}
+      on:mouseover|self={(e) => mouseEnter(e, node)}
+      class="{hoverClass} {selectedClass}"
     >
       <summary
-        class="ml-[{offset * (depth + 1)}px]"
-        on:mouseover={mouseEnter}
+        class="ml-[calc({offset *
+          (depth +
+            1)}px-0.75rem)] list-none cursor-pointer flex flex-row items-center"
+        on:mouseover={(e) => mouseEnter(e, node)}
         tabIndex="-1"
       >
+        <ChevronDown
+          class="w-3 h-3 inline-block {isOpen
+            ? 'transform rotate-0'
+            : 'transform -rotate-90'}"
+        ></ChevronDown>
         <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <span class="text_tag summary_span" on:click|preventDefault={select}>
-          {name}<DomAttrib {node} />
-          {#if !isOpen}
-            <span class="text_text">…</span>
-          {/if}
-        </span>
+        <p class="w-full" on:click|preventDefault={(e) => select(e, node)}>
+          {name}
+        </p>
       </summary>
       {#if isOpen}
         {#each node.childNodes as child}
           <svelte:self
             node={child}
             depth={depth + 1}
-            bind:selected
-            bind:hovered
+            {selected}
+            {hovered}
+            {select}
+            {mouseEnter}
           />
         {/each}
       {/if}

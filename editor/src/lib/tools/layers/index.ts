@@ -15,8 +15,12 @@ export class LayersManager {
           node.remove();
           return;
         }
-        let selector = getUniqueSelector(node) // Make sure the unique function is defined and returns a string
-        node.setAttribute(DATA_ONLOOK_SELECTOR, selector)
+        try {
+          let selector = getUniqueSelector(node) // Make sure the unique function is defined and returns a string
+          node.setAttribute(DATA_ONLOOK_SELECTOR, selector)
+        } catch (e) {
+          console.error(e)
+        }
       }
       return node;
     });

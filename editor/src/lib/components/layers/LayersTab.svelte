@@ -26,6 +26,20 @@
     editTool.selectorEngine.hoveredStore.subscribe(handleNewHover);
   });
 
+  function select(e: Event, node: HTMLElement) {
+    if (selected == node) return;
+    selected = node;
+  }
+
+  function mouseEnter(e: Event, node: HTMLElement) {
+    if (hovered == node) return;
+    hovered = node;
+  }
+
+  function mouseLeave(e: Event) {
+    hovered = undefined;
+  }
+
   function handleNewHover(el: HTMLElement) {
     if (!el) {
       hovered = undefined;
@@ -57,6 +71,13 @@
 
 {#if tree}
   <div class="text-xs">
-    <TreeRoot node={tree} bind:hovered bind:selected />
+    <TreeRoot
+      node={tree}
+      {hovered}
+      {selected}
+      {select}
+      {mouseEnter}
+      {mouseLeave}
+    />
   </div>
 {/if}

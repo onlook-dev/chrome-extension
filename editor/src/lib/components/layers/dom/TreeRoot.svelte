@@ -6,14 +6,14 @@
   export let selected: HTMLElement | undefined;
   export let hovered: HTMLElement | undefined;
 
-  let mouseLeave = (e: any) => {
-    hovered = undefined;
-  };
+  export let select: (e: Event, node: HTMLElement) => void;
+  export let mouseEnter: (e: Event, node: HTMLElement) => void;
+  export let mouseLeave: (e: Event) => void;
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="select-none" on:mouseleave|preventDefault={mouseLeave}>
   {#if node}
-    <DOMTreeNode bind:node bind:selected bind:hovered />
+    <DOMTreeNode bind:node {selected} {hovered} {select} {mouseEnter} />
   {/if}
 </div>

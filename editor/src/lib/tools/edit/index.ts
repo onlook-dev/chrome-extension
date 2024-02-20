@@ -19,7 +19,9 @@ export class EditTool implements Tool {
 		});
 	}
 
-	onInit() { }
+	onInit() {
+
+	}
 
 	onDestroy() {
 		editorPanelVisible.set(false);
@@ -50,7 +52,25 @@ export class EditTool implements Tool {
 			this.overlayManager.addClickRect(el);
 			this.elResizeObserver.observe(el);
 		});
+	}
 
+	onScreenResize(e: Event): void {
+		this.updateClickedRects(this.selectorEngine.selected);
+	}
+
+	onElementResize(els: Element[]): void {
+		this.updateClickedRects(els);
+	}
+
+	updateClickedRects(els: Element[]) {
+		this.overlayManager.removeClickedRects();
+		els.forEach((el) => {
+			this.overlayManager.addClickRect(el as HTMLElement);
+		})
+		this.updateParentRect();
+	}
+
+	updateParentRect() {
 		if (this.selectorEngine.selected.length > 0) {
 			const parent = findCommonParent(...this.selectorEngine.selected);
 			this.overlayManager.updateParentRect(parent);
@@ -59,17 +79,27 @@ export class EditTool implements Tool {
 		}
 	}
 
-	onScreenResize(e: Event): void {
-		this.overlayManager.removeClickedRects();
-		this.selectorEngine.selected.forEach((el) => {
-			this.overlayManager.addClickRect(el);
-		})
+	simulateClick(selector: string) {
+		const el = document.querySelector(selector);
+		if (el) {
+			const event = new MouseEvent('click', {
+				bubbles: true,
+				cancelable: true,
+				view: window
+			});
+			el.dispatchEvent(event);
+		}
 	}
 
-	onElementResize(els: Element[]): void {
-		this.overlayManager.removeClickedRects();
-		els.forEach((el) => {
-			this.overlayManager.addClickRect(el as HTMLElement);
-		})
+	simulateHover(selector: string) {
+		const el = document.querySelector(selector);
+		if (el) {
+			const event = new MouseEvent('mouseover', {
+				bubbles: true,
+				cancelable: true,
+				view: window
+			});
+			el.dispatchEvent(event);
+		}
 	}
 }
