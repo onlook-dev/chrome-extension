@@ -82,24 +82,25 @@ export class EditTool implements Tool {
 	simulateClick(selector: string) {
 		const el = document.querySelector(selector);
 		if (el) {
-			const event = new MouseEvent('click', {
-				bubbles: true,
-				cancelable: true,
-				view: window
-			});
-			el.dispatchEvent(event);
+			this.selectorEngine.selectedStore.set([el as HTMLElement]);
+			this.overlayManager.removeClickedRects();
+			this.overlayManager.addClickRect(el as HTMLElement);
 		}
 	}
 
-	simulateHover(selector: string) {
+	simulateHover = (selector: string) => {
 		const el = document.querySelector(selector);
 		if (el) {
-			const event = new MouseEvent('mouseover', {
-				bubbles: true,
-				cancelable: true,
-				view: window
-			});
-			el.dispatchEvent(event);
+			this.selectorEngine.hoveredStore.set(el as HTMLElement);
+			this.overlayManager.updateHoverRect(el as HTMLElement);
+		}
+	}
+
+	simulateOut = () => {
+		const el = this.selectorEngine.hovered;
+		if (el) {
+			this.selectorEngine.hoveredStore.set(undefined);
+			this.overlayManager.removeHoverRect();
 		}
 	}
 }

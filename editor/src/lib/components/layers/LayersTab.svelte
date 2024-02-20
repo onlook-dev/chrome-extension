@@ -29,15 +29,18 @@
   function select(e: Event, node: HTMLElement) {
     if (selected == node) return;
     selected = node;
+    editTool.simulateClick(node.getAttribute(DATA_ONLOOK_SELECTOR));
   }
 
   function mouseEnter(e: Event, node: HTMLElement) {
     if (hovered == node) return;
     hovered = node;
+    editTool.simulateHover(node.getAttribute(DATA_ONLOOK_SELECTOR));
   }
 
   function mouseLeave(e: Event) {
     hovered = undefined;
+    editTool.simulateOut();
   }
 
   function handleNewHover(el: HTMLElement) {
