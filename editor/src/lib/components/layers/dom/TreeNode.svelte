@@ -43,6 +43,18 @@
     ? "bg-[#38040c] rounded-b rounded-t-none font-normal text-white/60"
     : "";
   $: iconClass = `h-3 w-3 ml-1 mr-2 ${isSelected ? "text-white" : "text-red"}`;
+  $: {
+    if (isSelected) {
+      if (!selfSelected) {
+        nodeRef.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "start",
+        });
+        selfSelected = false;
+      }
+    }
+  }
   const paddingY = "py-1";
 </script>
 
@@ -54,7 +66,10 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
-      on:click={(e) => select(e, node)}
+      on:click={(e) => {
+        select(e, node);
+        selfSelected = true;
+      }}
       on:mouseover={(e) => mouseEnter(e, node)}
       class="{hoverClass} {selectedClass} {paddingY}"
     >
@@ -64,7 +79,10 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
-      on:click={(e) => select(e, node)}
+      on:click={(e) => {
+        select(e, node);
+        selfSelected = true;
+      }}
       on:mouseover={(e) => mouseEnter(e, node)}
       class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
     >
@@ -75,7 +93,10 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div
-      on:click={(e) => select(e, node)}
+      on:click={(e) => {
+        select(e, node);
+        selfSelected = true;
+      }}
       on:mouseover={(e) => mouseEnter(e, node)}
       class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
     >
@@ -87,7 +108,10 @@
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
     <details
       bind:open={isOpen}
-      on:click|self={(e) => select(e, node)}
+      on:click|self={(e) => {
+        select(e, node);
+        selfSelected = true;
+      }}
       on:mouseover|self={(e) => mouseEnter(e, node)}
       class="{hoverClass} {selectedClass}"
     >
@@ -103,7 +127,13 @@
         ></ChevronDown>
         <BoxModel class={iconClass} />
         <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <p class="flex-grow" on:click|preventDefault={(e) => select(e, node)}>
+        <p
+          class="flex-grow"
+          on:click|preventDefault={(e) => {
+            select(e, node);
+            selfSelected = true;
+          }}
+        >
           {name}
         </p>
       </summary>

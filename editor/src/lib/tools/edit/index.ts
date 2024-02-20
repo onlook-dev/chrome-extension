@@ -84,6 +84,9 @@ export class EditTool implements Tool {
 			this.selectorEngine.selectedStore.set([el as HTMLElement]);
 			this.overlayManager.removeClickedRects();
 			this.overlayManager.addClickRect(el as HTMLElement);
+
+			// Scroll to if not in view
+			el.scrollIntoView({ behavior: 'smooth', block: "start", inline: "nearest" })
 		}
 	}
 

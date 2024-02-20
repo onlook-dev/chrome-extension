@@ -59,7 +59,6 @@ export class LayersManager {
     const clonedRoot = this.cloneDOMWithReferences(document.body);
     this.clonedDocument = document.implementation.createHTMLDocument("New Document");
     this.clonedDocument.body = clonedRoot
-
   }
 
   getSanitizedNode = (node: Node) => this.originalToCloneMap.get(node);
