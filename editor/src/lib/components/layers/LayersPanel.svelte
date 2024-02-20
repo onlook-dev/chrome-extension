@@ -21,9 +21,9 @@
     ? 'visible'
     : 'invisible'}"
 >
-  <Card.Root class="w-[260px] h-[60vh] opacity-[98%] overflow-auto pt-2">
+  <Card.Root class="w-[260px] h-[60vh] opacity-[98%] pt-2">
     <Card.Content>
-      <Tabs.Root value={TabValue.LAYERS} class="w-full">
+      <Tabs.Root value={TabValue.LAYERS} class="w-full h-full">
         <Tabs.List class="bg-transparent p-0 gap-4">
           <Tabs.Trigger
             class="bg-transparent p-0 text-xs"
@@ -31,9 +31,11 @@
           >
         </Tabs.List>
         <Separator class="mt-1" />
-        <Tabs.Content value={TabValue.LAYERS}
-          ><LayersTab {editTool} /></Tabs.Content
-        >
+        <div class="h-[53vh] overflow-auto">
+          <Tabs.Content value={TabValue.LAYERS}
+            ><LayersTab {editTool} /></Tabs.Content
+          >
+        </div>
         <Card.Footer class="flex justify-between"></Card.Footer>
       </Tabs.Root>
     </Card.Content>

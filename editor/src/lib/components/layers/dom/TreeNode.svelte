@@ -8,6 +8,7 @@
   export let selected: HTMLElement | undefined;
   export let hovered: HTMLElement | undefined;
   export let depth = 0;
+  export let internalHover = false;
 
   export let select: (e: Event, node: HTMLElement) => void;
   export let mouseEnter: (e: Event, node: HTMLElement) => void;
@@ -123,7 +124,7 @@
         <ChevronDown
           class="w-3 h-3 {isOpen
             ? 'transform rotate-0'
-            : 'transform -rotate-90'} {hovered ? 'visible' : 'invisible'}"
+            : 'transform -rotate-90'} {internalHover ? 'visible' : 'invisible'}"
         ></ChevronDown>
         <BoxModel class={iconClass} />
         <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -147,6 +148,7 @@
               {hovered}
               {select}
               {mouseEnter}
+              {internalHover}
             />
           {/each}
         {/if}

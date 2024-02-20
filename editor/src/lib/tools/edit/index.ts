@@ -105,7 +105,6 @@ export class EditTool implements Tool {
 	}
 
 	scrollElementIntoView(el: HTMLElement) {
-		// Check if element is not in view
 		const rect = el.getBoundingClientRect();
 		const isVisible = (
 			rect.top >= 0 &&
@@ -114,9 +113,16 @@ export class EditTool implements Tool {
 			rect.right <= (window.innerWidth || document.documentElement.clientWidth)
 		);
 
-		// Scroll to if not in view
 		if (!isVisible) {
-			el.scrollIntoView({ behavior: 'smooth', block: "start", inline: "nearest" });
+			// Calculate the position to scroll to with 1/3vh padding
+			const viewportPadding = window.innerHeight / 3;
+			const topPositionToScroll = rect.top + window.scrollY - viewportPadding;
+
+			window.scrollTo({
+				top: topPositionToScroll,
+				behavior: "smooth"
+			});
 		}
 	}
+
 }
