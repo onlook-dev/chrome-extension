@@ -56,7 +56,6 @@
     "codemirror": "^6.0.1",
     "colorjs.io": "^0.4.5",
     "construct-style-sheets-polyfill": "^3.1.0",
-    "css-selector-generator": "^3.6.6",
     "dompurify": "^3.0.8",
     "dotenv": "^16.4.2",
     "hotkeys-js": "^3.13.7",

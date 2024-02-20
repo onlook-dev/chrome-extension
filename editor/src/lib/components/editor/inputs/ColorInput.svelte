@@ -35,6 +35,7 @@
       class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full h-10 w-10 cursor-pointer"
       value={inputString}
       on:input={(event) => {
+        inputString = event.target.value;
         updateElementStyle(elementStyle.key, event.target.value);
       }}
     />
@@ -46,6 +47,7 @@
     value={inputString}
     placeholder="--"
     on:input={(event) => {
+      inputString = event.target.value;
       updateElementStyle(elementStyle.key, event.target.value);
     }}
   />

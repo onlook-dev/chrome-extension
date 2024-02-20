@@ -8,7 +8,8 @@
     "dashboard": "cd dashboard && npm run dev",
     "extension": "cd extension && npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "cd dashboard && npm install && cd ../editor && npm install && cd ../extension && npm install"
+    "install": "cd dashboard && npm install && cd ../editor && npm install && cd ../extension && npm install",
+    "build": "cd editor && npm run build:cpy && cd ../extension && npm run build && cd ../dashboard && npm run build "
   },
   "repository": {
     "type": "git",

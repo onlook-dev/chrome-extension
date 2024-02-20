@@ -85,8 +85,7 @@ export class EditTool implements Tool {
 			this.overlayManager.removeClickedRects();
 			this.overlayManager.addClickRect(el as HTMLElement);
 
-			// Scroll to if not in view
-			el.scrollIntoView({ behavior: 'smooth', block: "start", inline: "nearest" })
+			this.scrollElementIntoView(el);
 		}
 	}
 
@@ -102,6 +101,22 @@ export class EditTool implements Tool {
 		if (el) {
 			this.selectorEngine.hoveredStore.set(undefined);
 			this.overlayManager.removeHoverRect();
+		}
+	}
+
+	scrollElementIntoView(el: HTMLElement) {
+		// Check if element is not in view
+		const rect = el.getBoundingClientRect();
+		const isVisible = (
+			rect.top >= 0 &&
+			rect.left >= 0 &&
+			rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+			rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+		);
+
+		// Scroll to if not in view
+		if (!isVisible) {
+			el.scrollIntoView({ behavior: 'smooth', block: "start", inline: "nearest" });
 		}
 	}
 }

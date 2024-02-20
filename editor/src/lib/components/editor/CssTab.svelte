@@ -93,6 +93,7 @@
                     <ColorInput {elementStyle} {updateElementStyle} />
                   {:else if elementStyle.type === ElementStyleType.Number}
                     <NumberUnitInput
+                      inputWidth="w-12"
                       unitWidth="w-6"
                       unitEnd={true}
                       {elementStyle}
