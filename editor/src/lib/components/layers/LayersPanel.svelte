@@ -3,7 +3,7 @@
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
   import { Separator } from "$lib/components/ui/separator";
-  import { layersPanelVisible } from "$lib/states/editor";
+  import { editorPanelVisible, layersPanelVisible } from "$lib/states/editor";
   import type { EditTool } from "$lib/tools/edit";
   import LayersTab from "./LayersTab.svelte";
 
@@ -17,9 +17,9 @@
 
 <div
   use:draggable={{ bounds: "body" }}
-  class="fixed top-10 left-2 transform -translate-y-1/2 -translate-x-1/2 {$layersPanelVisible
+  class="fixed top-10 left-2 transform -translate-y-1/2 -translate-x-1/2 {$editorPanelVisible
     ? 'visible'
-    : 'visible'}"
+    : 'invisible'}"
 >
   <Card.Root class="w-[260px] h-[60vh] opacity-[98%] overflow-auto pt-2">
     <Card.Content>

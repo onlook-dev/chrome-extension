@@ -3,8 +3,8 @@
   import { LayersManager } from "$lib/tools/layers";
   import { onMount } from "svelte";
   import TreeRoot from "./dom/TreeRoot.svelte";
-  import { DATA_ONLOOK_SELECTOR } from "$lib/constants";
   import { getUniqueSelector } from "$lib/tools/utilities";
+  import { DATA_ONLOOK_SELECTOR } from "$lib/constants";
 
   export let editTool: EditTool;
 
@@ -19,7 +19,7 @@
   onMount(() => {
     layersManager = new LayersManager();
     parser = new DOMParser();
-    htmlDoc = parser.parseFromString(layersManager?.domTree, "text/html");
+    htmlDoc = layersManager.clonedDocument;
     tree = htmlDoc.body;
 
     editTool.selectorEngine.selectedStore.subscribe(handleNewSelections);
@@ -28,14 +28,14 @@
 
   function select(e: Event, node: HTMLElement) {
     if (selected == node) return;
-    selected = node;
-    editTool.simulateClick(node.getAttribute(DATA_ONLOOK_SELECTOR));
+    selected = layersManager?.getOriginalNode(node) as HTMLElement;
+    editTool.simulateClick(selected);
   }
 
   function mouseEnter(e: Event, node: HTMLElement) {
     if (hovered == node) return;
-    hovered = node;
-    editTool.simulateHover(node.getAttribute(DATA_ONLOOK_SELECTOR));
+    hovered = layersManager?.getOriginalNode(node) as HTMLElement;
+    editTool.simulateHover(hovered);
   }
 
   function mouseLeave(e: Event) {
@@ -48,10 +48,7 @@
       hovered = undefined;
       return;
     }
-    const selector = getUniqueSelector(el);
-    const hoveredEl = htmlDoc?.querySelector(
-      `[${DATA_ONLOOK_SELECTOR}="${selector}"]`
-    );
+    const hoveredEl = layersManager?.getSanitizedNode(el);
     if (hoveredEl) {
       hovered = hoveredEl as HTMLElement;
     }
@@ -62,14 +59,7 @@
       selected = undefined;
       return;
     }
-    const selector = getUniqueSelector(els[0]);
-    if (selector == "body") {
-      selected = tree;
-      return;
-    }
-    const selectedEl = htmlDoc?.querySelector(
-      `[${DATA_ONLOOK_SELECTOR}="${selector}"]`
-    );
+    const selectedEl = layersManager?.getSanitizedNode(els[0]);
     if (selectedEl) {
       selected = selectedEl as HTMLElement;
     }

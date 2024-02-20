@@ -79,8 +79,7 @@ export class EditTool implements Tool {
 		}
 	}
 
-	simulateClick(selector: string) {
-		const el = document.querySelector(selector);
+	simulateClick(el: HTMLElement) {
 		if (el) {
 			this.selectorEngine.selectedStore.set([el as HTMLElement]);
 			this.overlayManager.removeClickedRects();
@@ -88,8 +87,7 @@ export class EditTool implements Tool {
 		}
 	}
 
-	simulateHover = (selector: string) => {
-		const el = document.querySelector(selector);
+	simulateHover = (el: HTMLElement) => {
 		if (el) {
 			this.selectorEngine.hoveredStore.set(el as HTMLElement);
 			this.overlayManager.updateHoverRect(el as HTMLElement);

@@ -2,6 +2,8 @@
 <script lang="ts">
   import { TagMap } from "$lib/tools/selection/tag";
   import { ChevronDown } from "radix-icons-svelte";
+  import { Component1, Text, BoxModel } from "radix-icons-svelte";
+
   export let node: HTMLElement | undefined;
   export let selected: HTMLElement | undefined;
   export let hovered: HTMLElement | undefined;
@@ -9,8 +11,6 @@
 
   export let select: (e: Event, node: HTMLElement) => void;
   export let mouseEnter: (e: Event, node: HTMLElement) => void;
-
-  const offset = 11;
 
   let nodeRef: HTMLDivElement;
   let isText = node && node.nodeType == Node.TEXT_NODE;
@@ -24,7 +24,7 @@
   let name =
     node &&
     node.tagName &&
-    (TagMap[node.tagName.toLowerCase()].title ||
+    (TagMap[node.tagName.toLowerCase()]?.title ||
       capitalizeFirstLetter(node.tagName.toLowerCase()));
   let isOpen = true;
   let selfSelected = false;
@@ -35,31 +35,18 @@
 
   $: isSelected = node == selected;
   $: isHovered = node == hovered;
-  $: {
-    if (isSelected) {
-      if (!selfSelected && nodeRef) {
-        nodeRef.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "start",
-        });
-        selfSelected = false;
-      }
-    }
-  }
   $: selectedClass = isSelected
     ? "bg-red rounded text-white font-semibold"
     : "";
   $: hoverClass = isHovered ? "bg-red/20 rounded" : "";
-
   $: childrenSelectedClass = isSelected
     ? "bg-[#38040c] rounded-b rounded-t-none font-normal text-white/60"
     : "";
-
-  const marginTop = "py-1";
+  $: iconClass = `h-3 w-3 ml-1 mr-2 ${isSelected ? "text-white" : "text-red"}`;
+  const paddingY = "py-1";
 </script>
 
-<div bind:this={nodeRef}>
+<div bind:this={nodeRef} class={depth > 0 ? "pl-2" : ""}>
   {#if isEmptyText}
     <!-- Nothing -->
   {:else if isText}
@@ -69,8 +56,7 @@
     <div
       on:click={(e) => select(e, node)}
       on:mouseover={(e) => mouseEnter(e, node)}
-      class="pl-[{offset *
-        (depth + 1)}px] {hoverClass} {selectedClass} {marginTop}"
+      class="{hoverClass} {selectedClass} {paddingY}"
     >
       {'"' + node.nodeValue + '"'}
     </div>
@@ -80,10 +66,10 @@
     <div
       on:click={(e) => select(e, node)}
       on:mouseover={(e) => mouseEnter(e, node)}
-      class="pl-[{offset *
-        (depth + 1)}px] {hoverClass} {selectedClass} {marginTop}"
+      class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
     >
-      {name + " "}
+      <Component1 class={iconClass} />
+      {name}
     </div>
   {:else if hasOnlyChild}
     <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -91,10 +77,10 @@
     <div
       on:click={(e) => select(e, node)}
       on:mouseover={(e) => mouseEnter(e, node)}
-      class="pl-[{offset *
-        (depth + 1)}px] {hoverClass} {selectedClass} {marginTop}"
+      class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
     >
-      {name + " "}<span>{node.firstChild.nodeValue}</span>
+      <Text class={iconClass} />
+      {node.firstChild.nodeValue || name}
     </div>
   {:else}
     <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -106,19 +92,18 @@
       class="{hoverClass} {selectedClass}"
     >
       <summary
-        class="ml-[calc({offset *
-          (depth +
-            1)}px-0.75rem)] list-none cursor-pointer flex flex-row items-center {marginTop}"
+        class="list-none cursor-pointer flex flex-row items-center {paddingY}"
         on:mouseover={(e) => mouseEnter(e, node)}
         tabIndex="-1"
       >
         <ChevronDown
-          class="w-3 h-3 inline-block {isOpen
+          class="w-3 h-3 {isOpen
             ? 'transform rotate-0'
-            : 'transform -rotate-90'}"
+            : 'transform -rotate-90'} {hovered ? 'visible' : 'invisible'}"
         ></ChevronDown>
+        <BoxModel class={iconClass} />
         <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <p class="w-full" on:click|preventDefault={(e) => select(e, node)}>
+        <p class="flex-grow" on:click|preventDefault={(e) => select(e, node)}>
           {name}
         </p>
       </summary>

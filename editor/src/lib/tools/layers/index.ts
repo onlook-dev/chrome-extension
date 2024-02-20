@@ -1,33 +1,64 @@
-import { DATA_ONLOOK_IGNORE, DATA_ONLOOK_SELECTOR } from '$lib/constants';
-import DOMPurify from 'dompurify'
-import { getUniqueSelector } from '../utilities';
+import { DATA_ONLOOK_IGNORE, ONLOOK_TOOLBAR } from '$lib/constants';
+
+
+const IGNORE_TAGS = ['SCRIPT', 'STYLE', ONLOOK_TOOLBAR.toUpperCase()]; // Example tags to ignore
 
 export class LayersManager {
-  domTree: any
+  clonedDocument: Document;
+  originalToCloneMap: WeakMap<Node, Node>;
+  cloneToOriginalMap: WeakMap<Node, Node>;
+
   constructor() {
-    this.getDomTree()
+    this.originalToCloneMap = new WeakMap();
+    this.cloneToOriginalMap = new WeakMap();
+    this.getDomTree();
+  }
+
+  cloneDOMWithReferences = (originalNode) => {
+    // Base case for recursion: if the node is null or not a node, return it directly
+    if (!originalNode || !(originalNode instanceof Node)) {
+      return originalNode;
+    }
+
+    // Skip non-element nodes (like text or comment nodes) and specific tags
+    if (originalNode.nodeType !== Node.ELEMENT_NODE || IGNORE_TAGS.includes(originalNode.nodeName) || originalNode.hasAttribute(DATA_ONLOOK_IGNORE)) {
+      return null;
+    }
+
+    // Check if this node has already been cloned to avoid circular references
+    if (this.originalToCloneMap.has(originalNode)) {
+      return this.originalToCloneMap.get(originalNode);
+    }
+
+    // Create a shallow clone of the node
+    const clonedNode = originalNode.cloneNode(false);
+
+    // Save the reference in both maps
+    this.originalToCloneMap.set(originalNode, clonedNode);
+    this.cloneToOriginalMap.set(clonedNode, originalNode);
+
+    // Recursively clone and append child nodes
+    originalNode.childNodes.forEach((childNode) => {
+      const clonedChildNode = this.cloneDOMWithReferences(childNode,);
+      if (clonedChildNode) {
+        clonedNode.appendChild(clonedChildNode);
+      }
+    });
+
+    return clonedNode;
   }
 
   getDomTree = () => {
-    DOMPurify.addHook('beforeSanitizeElements', (node, data, config) => {
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        if (node.hasAttribute(DATA_ONLOOK_IGNORE)) {
-          node.remove();
-          return;
-        }
-        try {
-          let selector = getUniqueSelector(node) // Make sure the unique function is defined and returns a string
-          node.setAttribute(DATA_ONLOOK_SELECTOR, selector)
-        } catch (e) {
-          console.error(e)
-        }
-      }
-      return node;
-    });
+    this.originalToCloneMap = new WeakMap();
+    this.cloneToOriginalMap = new WeakMap();
 
-    this.domTree = DOMPurify.sanitize(document.body.innerHTML, {
-      ALLOWED_ATTR: [DATA_ONLOOK_SELECTOR],
-      FORBID_TAGS: ['style', 'script', 'head'],
-    })
+    const clonedRoot = this.cloneDOMWithReferences(document.body);
+    this.clonedDocument = document.implementation.createHTMLDocument("New Document");
+    this.clonedDocument.createElement('body');
+    this.clonedDocument.body.appendChild(clonedRoot);
+    console.log(this.originalToCloneMap)
   }
+
+  getSanitizedNode = (node: Node) => this.originalToCloneMap.get(node);
+  getOriginalNode = (node: Node) => this.cloneToOriginalMap.get(node);
 }

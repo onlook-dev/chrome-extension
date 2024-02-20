@@ -1,4 +1,4 @@
-import { finder } from "@medv/finder"
+import { finder } from '$lib/tools/selection/uniqueSelector'
 
 export const deepElementFromPoint = (x, y) => {
   const el = document.elementFromPoint(x, y)
@@ -65,4 +65,13 @@ export const findCommonParent = (...nodes): HTMLElement => {
   return commonParent;
 }
 
-export const getUniqueSelector = (el: HTMLElement) => finder(el, { className: () => false })
+export const getUniqueSelector = (el: HTMLElement): string => {
+  let selector = el.tagName.toLowerCase()
+  try {
+    if (el.nodeType !== Node.ELEMENT_NODE) { return selector }
+    selector = finder(el, { className: () => false })
+  } catch (e) {
+    console.error("Error creating selector ", e);
+  }
+  return selector
+}
