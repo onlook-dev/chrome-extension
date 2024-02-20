@@ -25,6 +25,10 @@ export class LayersManager {
       return null;
     }
 
+    if (originalNode.hasAttribute && originalNode.hasAttribute(DATA_ONLOOK_IGNORE)) {
+      return null;
+    }
+
     // Check if this node has already been cloned to avoid circular references
     if (this.originalToCloneMap.has(originalNode)) {
       return this.originalToCloneMap.get(originalNode);
@@ -54,9 +58,8 @@ export class LayersManager {
 
     const clonedRoot = this.cloneDOMWithReferences(document.body);
     this.clonedDocument = document.implementation.createHTMLDocument("New Document");
-    this.clonedDocument.createElement('body');
-    this.clonedDocument.body.appendChild(clonedRoot);
-    console.log(this.originalToCloneMap)
+    this.clonedDocument.body = clonedRoot
+
   }
 
   getSanitizedNode = (node: Node) => this.originalToCloneMap.get(node);
