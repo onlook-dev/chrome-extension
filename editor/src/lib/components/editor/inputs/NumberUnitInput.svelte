@@ -10,6 +10,8 @@
 
   let parsedNumber: number = 0;
   let parsedUnit: string = "";
+  let step = 1;
+
   const auto = "auto";
 
   $: [parsedNumber, parsedUnit] = stringToParsedValue(elementStyle.value);
@@ -29,7 +31,10 @@
     return [num, unit];
   };
 
-  const parsedValueToString = (floatValue: number, unit: string): string => {
+  const parsedValueToString = (
+    floatValue: number | string,
+    unit: string
+  ): string => {
     return `${floatValue}${unit}`;
   };
 
@@ -47,8 +52,18 @@
       class="{inputWidth} text-xs border-none text-text bg-transparent text-end focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       placeholder="--"
       value={isEmpty() ? "" : parsedNumber}
+      {step}
+      on:keydown={(e) => {
+        if (e.shiftKey) step = 10;
+      }}
+      on:keyup={(e) => {
+        if (!e.shiftKey) step = 1;
+      }}
       on:input={(e) => {
-        const stringValue = parsedValueToString(e.target?.value, parsedUnit);
+        const stringValue = parsedValueToString(
+          e.currentTarget.value,
+          parsedUnit
+        );
         if (stringValue !== elementStyle.value) {
           updateElementStyle(elementStyle.key, stringValue);
         }
@@ -62,7 +77,7 @@
         ? 'text-end'
         : 'text-start'} focus:outline-none focus:ring-0"
       on:input={(e) => {
-        if (e.target?.value === auto) {
+        if (e.currentTarget.value === auto) {
           updateElementStyle(elementStyle.key, "inherit");
           parsedUnit = "";
           parsedNumber = 0;
@@ -72,9 +87,12 @@
         let newNumber = updateValueToUnit(
           parsedNumber,
           parsedUnit,
-          e.target?.value
+          e.currentTarget.value
         );
-        const stringValue = parsedValueToString(newNumber, e.target?.value);
+        const stringValue = parsedValueToString(
+          newNumber,
+          e.currentTarget.value
+        );
         if (stringValue !== elementStyle.value) {
           updateElementStyle(elementStyle.key, stringValue);
         }

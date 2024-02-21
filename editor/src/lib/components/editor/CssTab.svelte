@@ -21,7 +21,14 @@
 
   export let editTool: EditTool;
   let el: HTMLElement | undefined = undefined;
-  let groupedStyles: Record<ElementStyleGroup, ElementStyle[]>;
+  let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {
+    [ElementStyleGroup.Size]: [],
+    [ElementStyleGroup.Position]: [],
+    [ElementStyleGroup.Style]: [],
+    [ElementStyleGroup.Text]: [],
+    [ElementStyleGroup.Spacing]: [],
+    [ElementStyleGroup.Effects]: [],
+  };
   let unsubs: (() => void)[] = [];
 
   onMount(() => {
@@ -104,7 +111,7 @@
                       class="w-24 text-xs"
                       value={elementStyle.value}
                       on:input={(event) => {
-                        updateElementStyle(elementStyle.key, event.target.value);
+                        updateElementStyle(elementStyle.key, event.currentTarget.value);
                       }}
                     />
                   {/if}
