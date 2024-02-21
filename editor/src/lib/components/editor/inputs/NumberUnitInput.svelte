@@ -10,6 +10,8 @@
 
   let parsedNumber: number = 0;
   let parsedUnit: string = "";
+  let step = 1;
+
   const auto = "auto";
 
   $: [parsedNumber, parsedUnit] = stringToParsedValue(elementStyle.value);
@@ -47,6 +49,13 @@
       class="{inputWidth} text-xs border-none text-text bg-transparent text-end focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       placeholder="--"
       value={isEmpty() ? "" : parsedNumber}
+      {step}
+      on:keydown={(e) => {
+        if (e.shiftKey) step = 10;
+      }}
+      on:keyup={(e) => {
+        if (!e.shiftKey) step = 1;
+      }}
       on:input={(e) => {
         const stringValue = parsedValueToString(e.target?.value, parsedUnit);
         if (stringValue !== elementStyle.value) {

@@ -3,7 +3,7 @@
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
   import { Separator } from "$lib/components/ui/separator";
-  import { editorPanelVisible, layersPanelVisible } from "$lib/states/editor";
+  import { editorPanelVisible } from "$lib/states/editor";
   import type { EditTool } from "$lib/tools/edit";
   import LayersTab from "./LayersTab.svelte";
 
