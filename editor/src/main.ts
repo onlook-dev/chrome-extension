@@ -2,7 +2,7 @@ import App from './App.svelte';
 import config from '../twind.config';
 import 'construct-style-sheets-polyfill';
 import { twind, cssom, observe } from '@twind/core';
-import { DATA_ONLOOK_IGNORE, ONLOOK_TOOLBAR } from './lib/constants';
+import { DATA_ONLOOK_IGNORE, ONLOOK_EDITABLE, ONLOOK_TOOLBAR } from './lib/constants';
 
 class OnlookToolbar extends HTMLElement {
 	constructor() {
@@ -27,5 +27,18 @@ class OnlookToolbar extends HTMLElement {
 	connectedCallback() { }
 }
 
+function injectGlobalStyles() {
+	const style = document.createElement('style');
+	style.textContent = `
+            .${ONLOOK_EDITABLE} {
+                outline: 2px solid #00ff94;
+            }
+        `;
+	document.head.appendChild(style);
+}
+
 // Define the new element
 customElements.define(ONLOOK_TOOLBAR, OnlookToolbar);
+
+// Inject global styles
+injectGlobalStyles();

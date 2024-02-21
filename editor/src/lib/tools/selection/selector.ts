@@ -5,6 +5,8 @@ export class SelectorEngine {
   page = document.body
   selectedStore: Writable<HTMLElement[]> = writable([]);
   hoveredStore: Writable<HTMLElement | undefined> = writable(undefined);
+  editingStore: Writable<HTMLElement | undefined> = writable(undefined);
+
   observer: MutationObserver;
 
   constructor() { }
@@ -15,6 +17,10 @@ export class SelectorEngine {
 
   get hovered() {
     return get(this.hoveredStore);
+  }
+
+  get editing() {
+    return get(this.editingStore);
   }
 
   handleMouseOver = (e) => {
@@ -43,6 +49,14 @@ export class SelectorEngine {
         this.select(target);
       }
     }
+  }
+
+  handleDoubleClick = (e: MouseEvent) => {
+    const target = deepElementFromPoint(e.clientX, e.clientY);
+    if (isOffBounds(target)) return;
+    this.selectedStore.set([]);
+    this.hoveredStore.set(undefined);
+    this.editingStore.set(target);
   }
 
   select(item) {

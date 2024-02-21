@@ -1,8 +1,10 @@
+import { ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible } from '$lib/states/editor';
 import type { Tool } from '../index';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent } from '../utilities';
+import { emitStyleChangeEvent } from './emit';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
@@ -12,16 +14,15 @@ export class EditTool implements Tool {
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
 		this.overlayManager = new OverlayManager();
-		// Initialize ResizeObserver with a callback
+
+		// Initialize resize observer for click element resize
 		this.elResizeObserver = new ResizeObserver(entries => {
 			const observedElements = entries.map(entry => entry.target);
 			this.onElementResize(observedElements);
 		});
 	}
 
-	onInit() {
-
-	}
+	onInit() { }
 
 	onDestroy() {
 		editorPanelVisible.set(false);
@@ -31,6 +32,8 @@ export class EditTool implements Tool {
 	}
 
 	onMouseOver(e: MouseEvent): void {
+		if (this.selectorEngine.editing) return;
+
 		this.selectorEngine.handleMouseOver(e);
 		this.overlayManager.updateHoverRect((this.selectorEngine.hovered));
 	}
@@ -41,10 +44,11 @@ export class EditTool implements Tool {
 	}
 
 	onClick(e: MouseEvent): void {
+		if (this.selectorEngine.editing) return;
+
 		editorPanelVisible.set(true);
 		this.selectorEngine.handleClick(e);
-		this.overlayManager.removeHoverRect();
-		this.overlayManager.removeClickedRects();
+		this.overlayManager.clear();
 
 		this.elResizeObserver.disconnect();
 
@@ -52,6 +56,14 @@ export class EditTool implements Tool {
 			this.overlayManager.addClickRect(el);
 			this.elResizeObserver.observe(el);
 		});
+	}
+
+	onDoubleClick(e: MouseEvent): void {
+		editorPanelVisible.set(true);
+		this.overlayManager.clear()
+		this.elResizeObserver.disconnect();
+		this.selectorEngine.handleDoubleClick(e);
+		this.addEditability(this.selectorEngine.editing);
 	}
 
 	onScreenResize(e: Event): void {
@@ -125,4 +137,37 @@ export class EditTool implements Tool {
 		}
 	}
 
+	addEditability = (el: HTMLElement) => {
+		const oldText = el.textContent;
+		const oldOutline = el.style.outline;
+		el.setAttribute("contenteditable", "true");
+		el.setAttribute("spellcheck", "true");
+		el.classList.add(ONLOOK_EDITABLE);
+		el.focus();
+
+		const stopBubbling = (e) => e.key != "Escape" && e.stopPropagation();
+		const removeEditability = ({ target }) => {
+			target.classList.remove(ONLOOK_EDITABLE);
+			target.removeAttribute("contenteditable");
+			target.removeAttribute("spellcheck");
+			target.removeEventListener("blur", removeEditability);
+			target.removeEventListener("keydown", stopBubbling);
+			target.removeEventListener("input", handleInput);
+			this.selectorEngine.editingStore.set(undefined);
+		};
+
+		const handleInput = () => {
+			const newText = el.textContent
+			emitStyleChangeEvent(
+				el,
+				"text",
+				{ text: newText },
+				{ text: oldText }
+			);
+		}
+
+		el.addEventListener("keydown", stopBubbling);
+		el.addEventListener("blur", removeEditability);
+		el.addEventListener("input", handleInput);
+	}
 }

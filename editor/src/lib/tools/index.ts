@@ -10,6 +10,7 @@ export interface Tool {
   onMouseOver(el: MouseEvent): void;
   onMouseOut(el: MouseEvent): void;
   onClick(el: MouseEvent): void;
+  onDoubleClick(el: MouseEvent): void;
   onScreenResize(el: Event): void;
 }
 
@@ -23,7 +24,8 @@ export class ToolManager {
     'mouseover': (e) => this.handleMouseOver(e),
     'mouseout': (e) => this.handleMouseOut(e),
     'click': (e) => this.handleClick(e),
-    'resize': (e) => this.handleScreenResize(e)
+    'resize': (e) => this.handleScreenResize(e),
+    'dblclick': (e) => this.handleDoubleClick(e),
   };
 
   constructor(toolName: ToolName,) {
@@ -61,6 +63,11 @@ export class ToolManager {
   handleClick = (e: MouseEvent) => {
     if (!this.selectedTool) return;
     this.selectedTool.onClick(e);
+  }
+
+  handleDoubleClick = (e: MouseEvent) => {
+    if (!this.selectedTool) return;
+    this.selectedTool.onDoubleClick(e);
   }
 
   handleScreenResize = (e: Event) => {

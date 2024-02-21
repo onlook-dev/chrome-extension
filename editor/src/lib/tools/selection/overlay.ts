@@ -96,8 +96,8 @@ class ParentRect extends RectImpl {
 
 export class OverlayManager {
     hoverRect: HoverRect
-    parentRect: ParentRect
     clickedRects: ClickRect[]
+    parentRect: ParentRect
 
     constructor() {
         this.hoverRect = new HoverRect();
@@ -134,10 +134,6 @@ export class OverlayManager {
         }
     }
 
-    removeParentRect = () => {
-        this.parentRect.render({ width: 0, height: 0, top: 0, left: 0 })
-    }
-
     removeHoverRect = () => {
         this.hoverRect.render({ width: 0, height: 0, top: 0, left: 0 })
     }
@@ -147,5 +143,9 @@ export class OverlayManager {
             clickRect.element.remove()
         })
         this.clickedRects = []
+    }
+
+    removeParentRect = () => {
+        this.parentRect.render({ width: 0, height: 0, top: 0, left: 0 })
     }
 }
