@@ -1,26 +1,33 @@
 import { editorPanelVisible } from '$lib/states/editor';
 import type { Tool } from '../index';
 import { OverlayManager } from '../selection/overlay';
-
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent } from '../utilities';
 
 export class EditTool implements Tool {
-	resizeObserver: ResizeObserver;
 	selectorEngine: SelectorEngine;
 	overlayManager: OverlayManager;
+	elResizeObserver: ResizeObserver;
 
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
 		this.overlayManager = new OverlayManager();
+		// Initialize ResizeObserver with a callback
+		this.elResizeObserver = new ResizeObserver(entries => {
+			const observedElements = entries.map(entry => entry.target);
+			this.onElementResize(observedElements);
+		});
 	}
 
-	onInit() { }
+	onInit() {
+
+	}
 
 	onDestroy() {
 		editorPanelVisible.set(false);
 		this.overlayManager.clear();
 		this.selectorEngine.clear();
+		this.elResizeObserver.disconnect();
 	}
 
 	onMouseOver(e: MouseEvent): void {
@@ -39,23 +46,83 @@ export class EditTool implements Tool {
 		this.overlayManager.removeHoverRect();
 		this.overlayManager.removeClickedRects();
 
+		this.elResizeObserver.disconnect();
+
 		this.selectorEngine.selected.forEach((el) => {
 			this.overlayManager.addClickRect(el);
+			this.elResizeObserver.observe(el);
 		});
+	}
 
+	onScreenResize(e: Event): void {
+		this.updateClickedRects(this.selectorEngine.selected);
+	}
+
+	onElementResize(els: Element[]): void {
+		this.updateClickedRects(els);
+	}
+
+	updateClickedRects(els: Element[]) {
+		this.overlayManager.removeClickedRects();
+		els.forEach((el) => {
+			this.overlayManager.addClickRect(el as HTMLElement);
+		})
+		this.updateParentRect();
+	}
+
+	updateParentRect() {
 		if (this.selectorEngine.selected.length > 0) {
 			const parent = findCommonParent(...this.selectorEngine.selected);
 			this.overlayManager.updateParentRect(parent);
-
 		} else {
 			this.overlayManager.removeParentRect();
 		}
 	}
 
-	onScreenResize(e: MouseEvent): void {
-		this.overlayManager.removeClickedRects();
-		this.selectorEngine.selected.forEach((el) => {
-			this.overlayManager.addClickRect(el);
-		})
+	simulateClick(el: HTMLElement) {
+		if (el) {
+			this.selectorEngine.selectedStore.set([el as HTMLElement]);
+			this.overlayManager.removeClickedRects();
+			this.overlayManager.addClickRect(el as HTMLElement);
+
+			this.scrollElementIntoView(el);
+		}
 	}
+
+	simulateHover = (el: HTMLElement) => {
+		if (el) {
+			this.selectorEngine.hoveredStore.set(el as HTMLElement);
+			this.overlayManager.updateHoverRect(el as HTMLElement);
+		}
+	}
+
+	simulateOut = () => {
+		const el = this.selectorEngine.hovered;
+		if (el) {
+			this.selectorEngine.hoveredStore.set(undefined);
+			this.overlayManager.removeHoverRect();
+		}
+	}
+
+	scrollElementIntoView(el: HTMLElement) {
+		const rect = el.getBoundingClientRect();
+		const isVisible = (
+			rect.top >= 0 &&
+			rect.left >= 0 &&
+			rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+			rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+		);
+
+		if (!isVisible) {
+			// Calculate the position to scroll to with 1/3vh padding
+			const viewportPadding = window.innerHeight / 3;
+			const topPositionToScroll = rect.top + window.scrollY - viewportPadding;
+
+			window.scrollTo({
+				top: topPositionToScroll,
+				behavior: "smooth"
+			});
+		}
+	}
+
 }

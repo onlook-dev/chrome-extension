@@ -87,7 +87,7 @@
     <select
       name={elementStyle.displayName}
       value={elementStyle.value}
-      class="border-none text-xs text-text bg-background appearance-none text-end focus:outline-none focus:ring-0 capitalize"
+      class="border-none text-xs text-text bg-transparent appearance-none text-end focus:outline-none focus:ring-0 capitalize"
       on:input={(event) => {
         updateElementStyle(elementStyle.key, event.target.value);
       }}

@@ -3,6 +3,11 @@
   import { slide } from "svelte/transition";
   export let el: HTMLElement;
   let showMore = false;
+
+  $: tagInfo = TagMap[el.tagName.toLowerCase()] ?? {
+    title: el.tagName,
+    description: "",
+  };
 </script>
 
 <button
@@ -12,8 +17,7 @@
   <p class="space-x-1">
     <span class="capitalize">{el.tagName.toLowerCase()}</span>
     <span
-      >{TagMap[el.tagName.toLowerCase()].title.toLowerCase() ==
-      el.tagName.toLowerCase()
+      >{tagInfo.title.toLowerCase() == el.tagName.toLowerCase()
         ? ""
         : `${TagMap[el.tagName.toLowerCase()].title}`}</span
     >
@@ -21,7 +25,7 @@
   {#if showMore}
     <div transition:slide>
       <p class="pt-2 whitespace-pre-line">
-        {TagMap[el.tagName.toLowerCase()].description}
+        {tagInfo.description}
       </p>
       <p class="pt-2 text-xs underline">
         <a

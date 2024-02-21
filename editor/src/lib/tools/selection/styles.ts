@@ -1,3 +1,5 @@
+import { elementStyleUnits } from "../edit/units"
+
 export interface ElementStyle {
   key: string
   value: string
@@ -62,7 +64,6 @@ export class ElementStyle implements ElementStyle {
 }
 
 // https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units
-export const elementStyleUnits = ['px', '%', 'rem', 'vh', 'vw',]
 
 // Size: height, width, minHeight, minWidth, maxWidth, maxHeight, rotate, borderRadius
 // Position: position
@@ -247,7 +248,7 @@ export const elementStyles: ElementStyle[] = [
   ),
   new ElementStyle(
     'color',
-    'rgba(0,0,0,1)',
+    '#000000',
     'Color',
     ElementStyleType.Color,
     ElementStyleGroup.Text
@@ -401,7 +402,7 @@ export function getElementComputedStylesData(target: HTMLElement) {
     if (style.type === ElementStyleType.Number) {
       style.value = (inlineStyle && inlineStyle !== '') ? inlineStyle : computedStyle
     } else if (style.type === ElementStyleType.Color) {
-      style.value = inlineStyle && inlineStyle !== '' ? inlineStyle : computedStyle
+      style.value = computedStyle
     } else {
       style.value = inlineStyle && inlineStyle !== '' ? inlineStyle : computedStyle
     }

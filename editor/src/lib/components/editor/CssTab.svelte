@@ -33,6 +33,7 @@
   });
 
   function selectedElementsChanged(selected: HTMLElement[]) {
+    // TODO: Handle multiple elements. Show similar values and leave non-similar ones blank
     el = selected[0];
     if (el) {
       const computedStyles = getElementComputedStylesData(el);
@@ -89,7 +90,13 @@
                   {:else if elementStyle.type === ElementStyleType.Color}
                     <ColorInput {elementStyle} {updateElementStyle} />
                   {:else if elementStyle.type === ElementStyleType.Number}
-                    <NumberUnitInput unitWidth="w-6" unitEnd={true} {elementStyle} {updateElementStyle} />
+                    <NumberUnitInput
+                      inputWidth="w-12"
+                      unitWidth="w-6"
+                      unitEnd={true}
+                      {elementStyle}
+                      {updateElementStyle}
+                    />
                   {:else}
                     <Input
                       type="text"

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { updateValueToUnit } from "$lib/tools/edit/units";
   import type { ElementStyle } from "$lib/tools/selection/styles";
 
   export let elementStyle: ElementStyle;
@@ -43,7 +44,7 @@
   <div class="flex flex-row gap-1 justify-end">
     <input
       type="number"
-      class="{inputWidth} text-xs border-none text-text bg-background text-end focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+      class="{inputWidth} text-xs border-none text-text bg-transparent text-end focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       placeholder="--"
       value={isEmpty() ? "" : parsedNumber}
       on:input={(e) => {
@@ -57,19 +58,27 @@
     <select
       name={elementStyle.displayName}
       placeholder="auto"
-      class="text-xs {unitWidth} border-none text-text bg-background appearance-none {unitEnd
+      class="text-xs {unitWidth} border-none text-text bg-transparent appearance-none {unitEnd
         ? 'text-end'
         : 'text-start'} focus:outline-none focus:ring-0"
       on:input={(e) => {
         if (e.target?.value === auto) {
           updateElementStyle(elementStyle.key, "inherit");
+          parsedUnit = "";
+          parsedNumber = 0;
           return;
         }
 
-        const stringValue = parsedValueToString(parsedNumber, e.target?.value);
+        let newNumber = updateValueToUnit(
+          parsedNumber,
+          parsedUnit,
+          e.target?.value
+        );
+        const stringValue = parsedValueToString(newNumber, e.target?.value);
         if (stringValue !== elementStyle.value) {
           updateElementStyle(elementStyle.key, stringValue);
         }
+        parsedNumber = newNumber;
       }}
       value={isEmpty() ? auto : parsedUnit}
     >

@@ -10,7 +10,7 @@ export interface Tool {
   onMouseOver(el: MouseEvent): void;
   onMouseOut(el: MouseEvent): void;
   onClick(el: MouseEvent): void;
-  onScreenResize(el: MouseEvent): void;
+  onScreenResize(el: Event): void;
 }
 
 export class ToolManager {
@@ -63,7 +63,7 @@ export class ToolManager {
     this.selectedTool.onClick(e);
   }
 
-  handleScreenResize = (e) => {
+  handleScreenResize = (e: Event) => {
     if (!this.selectedTool) return;
     this.selectedTool.onScreenResize(e);
   }
