@@ -82,18 +82,22 @@ export function updateTabActiveState(tab: chrome.tabs.Tab, project: Project, ena
 	updateProjectTabHostWithDebounce(tab)
 	toggleProjectTab(tab.id as number, project.id, enable)
 
-	// Forward message
-	chrome.tabs.sendMessage(tab.id as number, {
-		greeting: 'APPLY_PROJECT_CHANGES',
-		payload: {
-			data: {},
-			to: MessageReceiver.CONTENT
-		}
-	})
+	// Forward message after a delay
+	// TODO: This is to ensure that content scripts are injected 
+	setTimeout(() => {
+		chrome.tabs.sendMessage(tab.id as number, {
+			greeting: 'APPLY_PROJECT_CHANGES',
+			payload: {
+				data: {},
+				to: MessageReceiver.CONTENT
+			}
+		});
 
-	sendApplyProjectChanges(undefined, {
-		tabId: tab.id
-	})
+		sendApplyProjectChanges(undefined, {
+			tabId: tab.id
+		})
+	}, 100)
+
 }
 
 export function forwardToActiveProjectTab(detail: any, callback: any) {

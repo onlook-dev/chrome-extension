@@ -1,3 +1,5 @@
+import { finder } from '$lib/tools/selection/uniqueSelector'
+
 export const deepElementFromPoint = (x, y) => {
   const el = document.elementFromPoint(x, y)
 
@@ -22,7 +24,7 @@ export const isOffBounds = node => node?.closest && (node.closest('onlook-toolba
 
 export const getDataOnlookId = node => node?.getAttribute('data-onlook-id')
 
-export function findCommonParent(...nodes): HTMLElement {
+export const findCommonParent = (...nodes): HTMLElement => {
   // Early exit if there's only one node or no nodes
   if (nodes.length === 0) return document.body;
   if (nodes.length === 1) return nodes[0].parentNode || document.body;
@@ -61,4 +63,15 @@ export function findCommonParent(...nodes): HTMLElement {
   }
 
   return commonParent;
+}
+
+export const getUniqueSelector = (el: HTMLElement): string => {
+  let selector = el.tagName.toLowerCase()
+  try {
+    if (el.nodeType !== Node.ELEMENT_NODE) { return selector }
+    selector = finder(el, { className: () => false })
+  } catch (e) {
+    console.error("Error creating selector ", e);
+  }
+  return selector
 }

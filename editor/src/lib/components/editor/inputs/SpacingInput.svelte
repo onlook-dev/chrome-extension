@@ -14,11 +14,11 @@
 
 <div class="relative">
   <div
-    class="absolute rounded bg-stone-300 opacity-10 w-[100px] h-[90px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-[40px] pointer-events-none"
+    class="absolute rounded bg-stone-300/50 opacity-10 w-[100px] h-[90px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-[40px] pointer-events-none"
   ></div>
 
   <div
-    class="w-[198px] h-fit grid grid-cols-5 grid-rows-5 space-y-3 py-2 text-xs bg-background border border-border rounded"
+    class="w-[198px] h-fit grid grid-cols-5 grid-rows-5 space-y-3 py-2 text-xs bg-background/50 border border-border rounded"
   >
     <div class="col-start-1 col-end-6 flex justify-center">
       <NumberUnitInput

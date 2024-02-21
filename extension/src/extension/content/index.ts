@@ -18,7 +18,7 @@ import {
 	sendStyleChange
 } from '$lib/utils/messaging'
 import type { Activity } from '$shared/models/activity'
-import type { EditorStyleChange } from '$shared/models/visbug'
+import type { EditorStyleChange } from '$shared/models/editor'
 import { baseUrl } from '$lib/utils/env'
 import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
 import { convertEditorToStyleChangeMap } from '$shared/helpers'

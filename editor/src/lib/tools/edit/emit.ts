@@ -1,5 +1,5 @@
-import { finder } from "@medv/finder";
 import { addToHistory } from "./history";
+import { getUniqueSelector } from "../utilities";
 
 const STYLE_CHANGE: string = "STYLE_CHANGE";
 const OPEN_PROJECT: string = "OPEN_PROJECT";
@@ -16,7 +16,7 @@ function debounce(func, wait) {
     if (!elementSelectorCache.has(element)) {
       elementSelectorCache.set(
         element,
-        finder(element, { className: () => false })
+        getUniqueSelector(element)
       );
     }
     const elementSelector = elementSelectorCache.get(element);
@@ -39,7 +39,7 @@ function debounce(func, wait) {
 
 function postMessage(el: HTMLElement, styleType: string, newValue: Record<string, string>, oldValue: Record<string, string>) {
   const selector =
-    elementSelectorCache.get(el) || finder(el, { className: () => false });
+    elementSelectorCache.get(el) || getUniqueSelector(el);
 
   const event = {
     type: STYLE_CHANGE,

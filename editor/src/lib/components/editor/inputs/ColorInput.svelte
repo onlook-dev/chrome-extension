@@ -4,10 +4,18 @@
 
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
+  let inputString = "#000000";
 
-  $: inputString = expandShorthandHex(
-    new Color(elementStyle.value).toString({ format: "hex" })
-  );
+  $: if (elementStyle.value) {
+    try {
+      inputString = expandShorthandHex(
+        new Color(elementStyle.value).toString({ format: "hex" })
+      );
+    } catch (e) {
+      console.error("Error parsing color", e);
+      inputString = "#000000";
+    }
+  }
 
   function expandShorthandHex(hex: string) {
     if (hex.length <= 5) {
@@ -28,17 +36,19 @@
       class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full h-10 w-10 cursor-pointer"
       value={inputString}
       on:input={(event) => {
+        inputString = event.target.value;
         updateElementStyle(elementStyle.key, event.target.value);
       }}
     />
   </div>
 
   <input
-    class="w-[3.5rem] text-xs border-none text-text bg-background text-end focus:outline-none focus:ring-0"
+    class="w-[3.5rem] text-xs border-none text-text bg-transparent text-end focus:outline-none focus:ring-0"
     type="text"
     value={inputString}
     placeholder="--"
     on:input={(event) => {
+      inputString = event.target.value;
       updateElementStyle(elementStyle.key, event.target.value);
     }}
   />

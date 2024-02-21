@@ -2,12 +2,14 @@ import App from './App.svelte';
 import config from '../twind.config';
 import 'construct-style-sheets-polyfill';
 import { twind, cssom, observe } from '@twind/core';
-import { ONLOOK_TOOLBAR } from './lib/constants';
+import { DATA_ONLOOK_IGNORE, ONLOOK_TOOLBAR } from './lib/constants';
 
 class OnlookToolbar extends HTMLElement {
 	constructor() {
 		super();
-
+		this.style.position = 'fixed';
+		this.style.zIndex = '9999';
+		this.setAttribute(DATA_ONLOOK_IGNORE, 'true');
 		// Attaches a shadow DOM
 		const shadowRoot = this.attachShadow({ mode: 'open' });
 
@@ -22,10 +24,7 @@ class OnlookToolbar extends HTMLElement {
 		});
 	}
 
-	connectedCallback() {
-		this.style.position = 'fixed';
-		this.style.zIndex = '9999';
-	}
+	connectedCallback() { }
 }
 
 // Define the new element

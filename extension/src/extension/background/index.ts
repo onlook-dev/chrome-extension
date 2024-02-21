@@ -75,8 +75,9 @@ const setListeners = () => {
 					saveTabState(tabId, {
 						projectId: '',
 						state: InjectState.none
-					}).then(async () => {
-						const project = await getProjectById(tabState.projectId)
+					}).then(() => {
+						return getProjectById(tabState.projectId)
+					}).then(project => {
 						updateTabActiveState(tab, project, true)
 					})
 				} else {
