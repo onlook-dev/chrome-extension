@@ -1,15 +1,16 @@
+import type { EditEvent } from '$lib/types/editor';
 import { get, writable } from 'svelte/store';
 
+export const historyStore = writable<EditEvent[]>([]);
+export const redoStore = writable<EditEvent[]>([]);
 
-let _history = get(history);
-let _redo = get(redo);
 
 let historyStack = [];
 let redoStack = [];
 const UNDO_STYLE_CHANGE = "UNDO_STYLE_CHANGE";
 const REDO_STYLE_CHANGE = "REDO_STYLE_CHANGE";
 
-export function addToHistory(event) {
+export function addToHistory(event: EditEvent) {
   // Merge to last item if styleType, selector and keys are the same
   // Keeping oldest old val and newest new val
   let lastEvent = peek();
@@ -21,35 +22,44 @@ export function addToHistory(event) {
     lastEvent.detail.newVal = event.detail.newVal;
   } else {
     historyStack.push(event);
+    historyStore.update((store) => {
+      store.push(event);
+      return store;
+    });
   }
 }
 
 export function undoLastEvent() {
-  const event = historyStack.pop();
-  if (!event) return;
-
-  const reverseEvent = {
-    type: UNDO_STYLE_CHANGE,
-    detail: {
-      selector: event.detail.selector,
-      styleType: event.detail.styleType,
-      newVal: event.detail.oldVal,
-      oldVal: event.detail.newVal,
-      path: event.detail.path,
-    },
-  };
-
-  window.postMessage(reverseEvent, window.location.origin);
-  redoStack.push(event);
+  historyStore.update(history => {
+    const event = history.pop();
+    if (event) {
+      const reverseEvent = {
+        type: UNDO_STYLE_CHANGE,
+        detail: {
+          selector: event.detail.selector,
+          styleType: event.detail.styleType,
+          newVal: event.detail.oldVal,
+          oldVal: event.detail.newVal,
+          path: event.detail.path,
+        },
+      };
+      window.postMessage(reverseEvent, window.location.origin);
+      redoStore.update(redo => [...redo, event]);
+    }
+    return history;
+  });
 }
 
 export function redoLastEvent() {
-  const event = redoStack.pop();
-
-  if (!event) return;
-  event.type = REDO_STYLE_CHANGE;
-  window.postMessage(event, window.location.origin);
-  historyStack.push(event);
+  redoStore.update(redo => {
+    const event = redo.pop();
+    if (event) {
+      event.type = REDO_STYLE_CHANGE;
+      window.postMessage(event, window.location.origin);
+      historyStore.update(history => [...history, event]);
+    }
+    return redo;
+  });
 }
 
 function peek() {

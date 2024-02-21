@@ -6,6 +6,7 @@
   import { Separator } from "$lib/components/ui/separator";
   import { editorPanelVisible } from "$lib/states/editor";
   import type { EditTool } from "$lib/tools/edit";
+  import Changes from "./Changes.svelte";
 
   export let editTool: EditTool;
 
@@ -25,17 +26,13 @@
     <Card.Content>
       <Tabs.Root value={TabValue.CSS} class="w-full h-full">
         <Tabs.List class="bg-transparent p-0 gap-4">
-          <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CSS}
-            >Element Appearance</Tabs.Trigger
-          >
+          <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CSS}>Element Appearance</Tabs.Trigger>
+          <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.OTHER}>Changes</Tabs.Trigger>
         </Tabs.List>
         <Separator class="mt-1" />
-        <div
-          class="h-[74vh] overflow-auto overflow-y-hidden hover:overflow-y-auto"
-        >
-          <Tabs.Content value={TabValue.CSS}><CssTab {editTool} /></Tabs.Content
-          >
-          <Tabs.Content value={TabValue.OTHER}>Others</Tabs.Content>
+        <div class="h-[74vh] overflow-auto overflow-y-hidden hover:overflow-y-auto">
+          <Tabs.Content value={TabValue.CSS}><CssTab {editTool} /></Tabs.Content>
+          <Tabs.Content value={TabValue.OTHER}><Changes /></Tabs.Content>
         </div>
 
         <Card.Footer class="flex justify-between"></Card.Footer>
