@@ -30,6 +30,12 @@ export const TagMap: Record<string, TagInfo> = {
   nav: {
     title: "Navigation", description: "Represents a section of a page whose purpose is to provide navigation links, either within the current document or to other documents. Common examples of navigation sections are menus, tables of contents, and indexes."
   },
+  i: {
+    title: "Idiomatic Text", description: "The <i> HTML element represents a range of text that is set off from the normal text for some reason, such as idiomatic text, technical terms, taxonomical designations, among others. Historically, these have been presented using italicized type, which is the original source of the <i> naming of this element."
+  },
+  b: {
+    title: "Bring Attention", description: "The <b> HTML element is used to draw the reader's attention to the element's contents, which are not otherwise granted special importance. This was formerly known as the Boldface element, and most browsers still draw the text in boldface. However, you should not use <b> for styling text or granting importance. If you wish to create boldface text, you should use the CSS font-weight property. If you wish to indicate an element is of special importance, you should use the <strong> element."
+  },
   ul: {
     title: "Unordered List", description: "Represents an unordered list of items, typically rendered as a bulleted list."
   },
