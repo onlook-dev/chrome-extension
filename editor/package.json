@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "rollup -c -w",
     "dev:cpy": "npm run dev & nodemon --watch public/build/bundle.min.js --exec 'cp public/build/bundle.min.js ../extension/src/lib/editor/bundle.min.js'",
+    "dev:cpy:svelte": "npm run dev & nodemon --watch public/build/bundle.min.js --exec 'cp public/build/bundle.min.js ../www/src/bundle.min.js'",
     "build": "rollup -c",
     "build:cpy": "npm run build && cp public/build/bundle.min.js ../extension/src/lib/editor/bundle.min.js",
     "start": "sirv public --no-clear",

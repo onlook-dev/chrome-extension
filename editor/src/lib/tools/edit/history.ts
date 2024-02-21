@@ -1,3 +1,9 @@
+import { get, writable } from 'svelte/store';
+
+
+let _history = get(history);
+let _redo = get(redo);
+
 let historyStack = [];
 let redoStack = [];
 const UNDO_STYLE_CHANGE = "UNDO_STYLE_CHANGE";

@@ -21,13 +21,11 @@
 
   export let editTool: EditTool;
   let el: HTMLElement | undefined = undefined;
-  let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {};
+  let groupedStyles: Record<ElementStyleGroup, ElementStyle[]>;
   let unsubs: (() => void)[] = [];
 
   onMount(() => {
-    unsubs.push(
-      editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged)
-    );
+    unsubs.push(editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged));
   });
 
   onDestroy(() => {
@@ -91,12 +89,7 @@
                   {:else if elementStyle.type === ElementStyleType.Color}
                     <ColorInput {elementStyle} {updateElementStyle} />
                   {:else if elementStyle.type === ElementStyleType.Number}
-                    <NumberUnitInput
-                      unitWidth="w-6"
-                      unitEnd={true}
-                      {elementStyle}
-                      {updateElementStyle}
-                    />
+                    <NumberUnitInput unitWidth="w-6" unitEnd={true} {elementStyle} {updateElementStyle} />
                   {:else}
                     <Input
                       type="text"
@@ -104,10 +97,7 @@
                       class="w-24 text-xs"
                       value={elementStyle.value}
                       on:input={(event) => {
-                        updateElementStyle(
-                          elementStyle.key,
-                          event.target.value
-                        );
+                        updateElementStyle(elementStyle.key, event.target.value);
                       }}
                     />
                   {/if}
