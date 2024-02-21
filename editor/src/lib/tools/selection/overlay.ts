@@ -1,4 +1,4 @@
-import { DATA_ONLOOK_IGNORE } from "$lib/constants";
+import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ID } from "$lib/constants";
 
 interface Rect {
     element: HTMLElement;
@@ -29,6 +29,7 @@ class RectImpl implements Rect {
         this.element.style.pointerEvents = 'none' // Ensure it doesn't interfere with other interactions
         this.element.style.zIndex = '999'
         this.element.setAttribute(DATA_ONLOOK_IGNORE, 'true');
+        this.element.setAttribute('id', ONLOOK_RECT_ID)
         this.element.appendChild(this.svgElement)
     }
 

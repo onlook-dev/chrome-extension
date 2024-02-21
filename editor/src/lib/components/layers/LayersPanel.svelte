@@ -31,7 +31,7 @@
           >
         </Tabs.List>
         <Separator class="mt-1" />
-        <div class="h-[53vh] overflow-auto">
+        <div class="h-[54vh] overflow-auto">
           <Tabs.Content value={TabValue.LAYERS}
             ><LayersTab {editTool} /></Tabs.Content
           >

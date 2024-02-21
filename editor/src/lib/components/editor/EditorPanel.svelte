@@ -30,7 +30,9 @@
           >
         </Tabs.List>
         <Separator class="mt-1" />
-        <div class="h-[73vh] overflow-auto">
+        <div
+          class="h-[74vh] overflow-auto overflow-y-hidden hover:overflow-y-auto"
+        >
           <Tabs.Content value={TabValue.CSS}><CssTab {editTool} /></Tabs.Content
           >
           <Tabs.Content value={TabValue.OTHER}>Others</Tabs.Content>
