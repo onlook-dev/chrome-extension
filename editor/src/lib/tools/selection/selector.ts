@@ -26,6 +26,11 @@ export class SelectorEngine {
   handleMouseOver = (e) => {
     const target = deepElementFromPoint(e.clientX, e.clientY);
     if (isOffBounds(target)) return;
+    if (this.editing) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
     this.hoveredStore.set(target);
   }
 
@@ -39,6 +44,8 @@ export class SelectorEngine {
 
     e.preventDefault();
     e.stopPropagation();
+
+    if (this.editing) return;
 
     if (!e.shiftKey) {
       this.selectedStore.set([target])
@@ -54,6 +61,10 @@ export class SelectorEngine {
   handleDoubleClick = (e: MouseEvent) => {
     const target = deepElementFromPoint(e.clientX, e.clientY);
     if (isOffBounds(target)) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
     this.selectedStore.set([]);
     this.hoveredStore.set(undefined);
     this.editingStore.set(target);

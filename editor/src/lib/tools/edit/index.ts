@@ -10,6 +10,7 @@ export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
 	overlayManager: OverlayManager;
 	elResizeObserver: ResizeObserver;
+	oldText: string | undefined;
 
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
@@ -32,8 +33,6 @@ export class EditTool implements Tool {
 	}
 
 	onMouseOver(e: MouseEvent): void {
-		if (this.selectorEngine.editing) return;
-
 		this.selectorEngine.handleMouseOver(e);
 		this.overlayManager.updateHoverRect((this.selectorEngine.hovered));
 	}
@@ -44,12 +43,10 @@ export class EditTool implements Tool {
 	}
 
 	onClick(e: MouseEvent): void {
-		if (this.selectorEngine.editing) return;
-
 		editorPanelVisible.set(true);
+
 		this.selectorEngine.handleClick(e);
 		this.overlayManager.clear();
-
 		this.elResizeObserver.disconnect();
 
 		this.selectorEngine.selected.forEach((el) => {
@@ -59,6 +56,7 @@ export class EditTool implements Tool {
 	}
 
 	onDoubleClick(e: MouseEvent): void {
+		if (this.selectorEngine.editing) this.removeEditability({ target: this.selectorEngine.editing });
 		editorPanelVisible.set(true);
 		this.overlayManager.clear()
 		this.elResizeObserver.disconnect();
@@ -138,36 +136,37 @@ export class EditTool implements Tool {
 	}
 
 	addEditability = (el: HTMLElement) => {
-		const oldText = el.textContent;
-		const oldOutline = el.style.outline;
+		this.oldText = el.textContent;
 		el.setAttribute("contenteditable", "true");
 		el.setAttribute("spellcheck", "true");
 		el.classList.add(ONLOOK_EDITABLE);
 		el.focus();
 
-		const stopBubbling = (e) => e.key != "Escape" && e.stopPropagation();
-		const removeEditability = ({ target }) => {
-			target.classList.remove(ONLOOK_EDITABLE);
-			target.removeAttribute("contenteditable");
-			target.removeAttribute("spellcheck");
-			target.removeEventListener("blur", removeEditability);
-			target.removeEventListener("keydown", stopBubbling);
-			target.removeEventListener("input", handleInput);
-			this.selectorEngine.editingStore.set(undefined);
-		};
-
-		const handleInput = () => {
-			const newText = el.textContent
-			emitStyleChangeEvent(
-				el,
-				"text",
-				{ text: newText },
-				{ text: oldText }
-			);
-		}
-
-		el.addEventListener("keydown", stopBubbling);
-		el.addEventListener("blur", removeEditability);
-		el.addEventListener("input", handleInput);
+		el.addEventListener("keydown", this.stopBubbling);
+		el.addEventListener("blur", this.removeEditability);
+		el.addEventListener("input", this.handleInput);
 	}
+
+	handleInput = ({ target }) => {
+		const newText = target.textContent
+		emitStyleChangeEvent(
+			target,
+			"text",
+			{ text: newText },
+			{ text: this.oldText }
+		);
+	}
+
+	stopBubbling = (e) => e.key != "Escape" && e.stopPropagation();
+
+	removeEditability = ({ target }) => {
+		target.classList.remove(ONLOOK_EDITABLE);
+		target.removeAttribute("contenteditable");
+		target.removeAttribute("spellcheck");
+		target.removeEventListener("blur", this.removeEditability);
+		target.removeEventListener("keydown", this.stopBubbling);
+		target.removeEventListener("input", this.handleInput);
+		this.oldText = undefined;
+		this.selectorEngine.editingStore.set(undefined);
+	};
 }
