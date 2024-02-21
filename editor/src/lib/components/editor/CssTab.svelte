@@ -21,7 +21,14 @@
 
   export let editTool: EditTool;
   let el: HTMLElement | undefined = undefined;
-  let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {};
+  let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {
+    [ElementStyleGroup.Size]: [],
+    [ElementStyleGroup.Position]: [],
+    [ElementStyleGroup.Style]: [],
+    [ElementStyleGroup.Text]: [],
+    [ElementStyleGroup.Spacing]: [],
+    [ElementStyleGroup.Effects]: [],
+  };
   let unsubs: (() => void)[] = [];
 
   onMount(() => {
@@ -108,7 +115,7 @@
                       on:input={(event) => {
                         updateElementStyle(
                           elementStyle.key,
-                          event.target.value
+                          event.currentTarget.value
                         );
                       }}
                     />

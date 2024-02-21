@@ -5,6 +5,8 @@ export class SelectorEngine {
   page = document.body
   selectedStore: Writable<HTMLElement[]> = writable([]);
   hoveredStore: Writable<HTMLElement | undefined> = writable(undefined);
+  editingStore: Writable<HTMLElement | undefined> = writable(undefined);
+
   observer: MutationObserver;
 
   constructor() { }
@@ -17,9 +19,18 @@ export class SelectorEngine {
     return get(this.hoveredStore);
   }
 
+  get editing() {
+    return get(this.editingStore);
+  }
+
   handleMouseOver = (e) => {
     const target = deepElementFromPoint(e.clientX, e.clientY);
     if (isOffBounds(target)) return;
+    if (this.editing) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
     this.hoveredStore.set(target);
   }
 
@@ -34,6 +45,8 @@ export class SelectorEngine {
     e.preventDefault();
     e.stopPropagation();
 
+    if (this.editing) return;
+
     if (!e.shiftKey) {
       this.selectedStore.set([target])
     } else {
@@ -43,6 +56,18 @@ export class SelectorEngine {
         this.select(target);
       }
     }
+  }
+
+  handleDoubleClick = (e: MouseEvent) => {
+    const target = deepElementFromPoint(e.clientX, e.clientY);
+    if (isOffBounds(target)) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.selectedStore.set([]);
+    this.hoveredStore.set(undefined);
+    this.editingStore.set(target);
   }
 
   select(item) {

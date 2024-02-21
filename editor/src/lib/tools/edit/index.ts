@@ -1,27 +1,29 @@
+import { ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible } from '$lib/states/editor';
 import type { Tool } from '../index';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent } from '../utilities';
+import { emitStyleChangeEvent } from './emit';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
 	overlayManager: OverlayManager;
 	elResizeObserver: ResizeObserver;
+	oldText: string | undefined;
 
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
 		this.overlayManager = new OverlayManager();
-		// Initialize ResizeObserver with a callback
+
+		// Initialize resize observer for click element resize
 		this.elResizeObserver = new ResizeObserver(entries => {
 			const observedElements = entries.map(entry => entry.target);
 			this.onElementResize(observedElements);
 		});
 	}
 
-	onInit() {
-
-	}
+	onInit() { }
 
 	onDestroy() {
 		editorPanelVisible.set(false);
@@ -42,16 +44,24 @@ export class EditTool implements Tool {
 
 	onClick(e: MouseEvent): void {
 		editorPanelVisible.set(true);
-		this.selectorEngine.handleClick(e);
-		this.overlayManager.removeHoverRect();
-		this.overlayManager.removeClickedRects();
 
+		this.selectorEngine.handleClick(e);
+		this.overlayManager.clear();
 		this.elResizeObserver.disconnect();
 
 		this.selectorEngine.selected.forEach((el) => {
 			this.overlayManager.addClickRect(el);
 			this.elResizeObserver.observe(el);
 		});
+	}
+
+	onDoubleClick(e: MouseEvent): void {
+		if (this.selectorEngine.editing) this.removeEditability({ target: this.selectorEngine.editing });
+		editorPanelVisible.set(true);
+		this.overlayManager.clear()
+		this.elResizeObserver.disconnect();
+		this.selectorEngine.handleDoubleClick(e);
+		this.addEditability(this.selectorEngine.editing);
 	}
 
 	onScreenResize(e: Event): void {
@@ -125,4 +135,38 @@ export class EditTool implements Tool {
 		}
 	}
 
+	addEditability = (el: HTMLElement) => {
+		this.oldText = el.textContent;
+		el.setAttribute("contenteditable", "true");
+		el.setAttribute("spellcheck", "true");
+		el.classList.add(ONLOOK_EDITABLE);
+		el.focus();
+
+		el.addEventListener("keydown", this.stopBubbling);
+		el.addEventListener("blur", this.removeEditability);
+		el.addEventListener("input", this.handleInput);
+	}
+
+	handleInput = ({ target }) => {
+		const newText = target.textContent
+		emitStyleChangeEvent(
+			target,
+			"text",
+			{ text: newText },
+			{ text: this.oldText }
+		);
+	}
+
+	stopBubbling = (e) => e.key != "Escape" && e.stopPropagation();
+
+	removeEditability = ({ target }) => {
+		target.classList.remove(ONLOOK_EDITABLE);
+		target.removeAttribute("contenteditable");
+		target.removeAttribute("spellcheck");
+		target.removeEventListener("blur", this.removeEditability);
+		target.removeEventListener("keydown", this.stopBubbling);
+		target.removeEventListener("input", this.handleInput);
+		this.oldText = undefined;
+		this.selectorEngine.editingStore.set(undefined);
+	};
 }

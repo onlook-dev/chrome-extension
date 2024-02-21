@@ -31,7 +31,7 @@
         </Tabs.List>
         <Separator class="mt-1" />
         <div
-          class="h-[74vh] overflow-auto overflow-y-hidden hover:overflow-y-auto"
+          class="h-[calc(80vh-4rem)] overflow-auto overflow-y-hidden hover:overflow-y-auto"
         >
           <Tabs.Content value={TabValue.CSS}><CssTab {editTool} /></Tabs.Content
           >

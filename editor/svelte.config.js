@@ -4,9 +4,7 @@ import sveltePreprocess from 'svelte-preprocess';
 export default {
 	preprocess: [
 		sveltePreprocess({
-			postcss: {
-				plugins: ['tailwindcss', 'autoprefixer']
-			}
+			postcss: {}
 		}),
 		vitePreprocess()
 	],
