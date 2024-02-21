@@ -45,10 +45,6 @@ class RectImpl implements Rect {
 }
 
 class HoverRect extends RectImpl {
-    element: HTMLElement;
-    svgNamespace: string;
-    svgElement: Element;
-    rectElement: Element;
 
     constructor() {
         super()
@@ -61,10 +57,6 @@ class HoverRect extends RectImpl {
 }
 
 class ClickRect extends RectImpl {
-    element: HTMLElement;
-    svgNamespace: string;
-    svgElement: Element;
-    rectElement: Element;
 
     constructor() {
         super()
@@ -78,10 +70,6 @@ class ClickRect extends RectImpl {
 }
 
 class ParentRect extends RectImpl {
-    element: HTMLElement;
-    svgNamespace: string;
-    svgElement: Element;
-    rectElement: Element;
 
     constructor() {
         super()

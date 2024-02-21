@@ -14,7 +14,7 @@ export class LayersManager {
     this.getDomTree();
   }
 
-  cloneDOMWithReferences = (originalNode) => {
+  cloneDOMWithReferences = (originalNode: Element) => {
     // Base case for recursion: if the node is null or not a node, return it directly
     if (!originalNode || !(originalNode instanceof Node)) {
       return originalNode;
@@ -42,7 +42,7 @@ export class LayersManager {
     this.cloneToOriginalMap.set(clonedNode, originalNode);
 
     // Recursively clone and append child nodes
-    originalNode.childNodes.forEach((childNode) => {
+    originalNode.childNodes.forEach((childNode: Element) => {
       const clonedChildNode = this.cloneDOMWithReferences(childNode,);
       if (clonedChildNode) {
         clonedNode.appendChild(clonedChildNode);
@@ -58,7 +58,7 @@ export class LayersManager {
 
     const clonedRoot = this.cloneDOMWithReferences(document.body);
     this.clonedDocument = document.implementation.createHTMLDocument("New Document");
-    this.clonedDocument.body = clonedRoot
+    this.clonedDocument.body = clonedRoot as HTMLElement;
   }
 
   getSanitizedNode = (node: Node) => this.originalToCloneMap.get(node);

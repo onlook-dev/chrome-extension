@@ -31,7 +31,10 @@
     return [num, unit];
   };
 
-  const parsedValueToString = (floatValue: number, unit: string): string => {
+  const parsedValueToString = (
+    floatValue: number | string,
+    unit: string
+  ): string => {
     return `${floatValue}${unit}`;
   };
 
@@ -57,7 +60,10 @@
         if (!e.shiftKey) step = 1;
       }}
       on:input={(e) => {
-        const stringValue = parsedValueToString(e.target?.value, parsedUnit);
+        const stringValue = parsedValueToString(
+          e.currentTarget.value,
+          parsedUnit
+        );
         if (stringValue !== elementStyle.value) {
           updateElementStyle(elementStyle.key, stringValue);
         }
@@ -71,7 +77,7 @@
         ? 'text-end'
         : 'text-start'} focus:outline-none focus:ring-0"
       on:input={(e) => {
-        if (e.target?.value === auto) {
+        if (e.currentTarget.value === auto) {
           updateElementStyle(elementStyle.key, "inherit");
           parsedUnit = "";
           parsedNumber = 0;
@@ -81,9 +87,12 @@
         let newNumber = updateValueToUnit(
           parsedNumber,
           parsedUnit,
-          e.target?.value
+          e.currentTarget.value
         );
-        const stringValue = parsedValueToString(newNumber, e.target?.value);
+        const stringValue = parsedValueToString(
+          newNumber,
+          e.currentTarget.value
+        );
         if (stringValue !== elementStyle.value) {
           updateElementStyle(elementStyle.key, stringValue);
         }
