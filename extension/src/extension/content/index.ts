@@ -80,19 +80,6 @@ function revertActivityChanges(activity: Activity) {
 	}
 }
 
-export function applyVisbugStyleChange(visbugStyleChange: EditorStyleChange) {
-	const element = document.querySelector(visbugStyleChange.selector) as any
-	const styleChanges = convertEditorToStyleChangeMap(visbugStyleChange)
-	Object.entries(styleChanges).forEach(([style, changeObject]) => {
-		// Apply style to element
-		if (style === 'text') {
-			element.innerText = changeObject.newVal
-		} else {
-			element.style[style] = changeObject.newVal
-		}
-	})
-}
-
 export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
 	window.addEventListener('message', event => {
@@ -113,14 +100,14 @@ export function setupListeners() {
 
 		if (message.type === UNDO_STYLE_CHANGE) {
 			const editorStyleChange = message.detail as EditorStyleChange
-			applyVisbugStyleChange(editorStyleChange)
+			// applyVisbugStyleChange(editorStyleChange)
 			sendStyleChange(editorStyleChange)
 			return
 		}
 
 		if (message.type === REDO_STYLE_CHANGE) {
 			const visbugStyleChange = message.detail as EditorStyleChange
-			applyVisbugStyleChange(visbugStyleChange)
+			// applyVisbugStyleChange(visbugStyleChange)
 			sendStyleChange(visbugStyleChange)
 			return
 		}

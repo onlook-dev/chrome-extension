@@ -59,7 +59,13 @@ export class SelectorEngine {
   }
 
   handleDoubleClick = (e: MouseEvent) => {
-    const target = deepElementFromPoint(e.clientX, e.clientY);
+    let target = deepElementFromPoint(e.clientX, e.clientY);
+
+    // Find the most deeply nested element
+    while (target.children.length > 0) {
+      target = target.children[0];
+    }
+
     if (isOffBounds(target)) return;
 
     e.preventDefault();

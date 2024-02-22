@@ -136,6 +136,7 @@ export class EditTool implements Tool {
 	}
 
 	addEditability = (el: HTMLElement) => {
+		if (!el) return;
 		this.oldText = el.textContent;
 		el.setAttribute("contenteditable", "true");
 		el.setAttribute("spellcheck", "true");

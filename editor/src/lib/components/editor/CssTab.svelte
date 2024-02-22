@@ -18,8 +18,8 @@
   import SpacingInput from "./inputs/SpacingInput.svelte";
   import type { EditTool } from "$lib/tools/edit";
   import { onDestroy, onMount } from "svelte";
-  import { Textarea } from "$lib/components/ui/textarea";
-  import TailwindInput from "./inputs/TailwindInput.svelte";
+  // import { Textarea } from "$lib/components/ui/textarea";
+  // import TailwindInput from "./inputs/TailwindInput.svelte";
 
   export let editTool: EditTool;
   const custom = "Custom";
@@ -35,7 +35,9 @@
   let unsubs: (() => void)[] = [];
 
   onMount(() => {
-    unsubs.push(editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged));
+    unsubs.push(
+      editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged)
+    );
   });
 
   onDestroy(() => {
@@ -118,7 +120,10 @@
                       class="w-24 text-xs"
                       value={elementStyle.value}
                       on:input={(event) => {
-                        updateElementStyle(elementStyle.key, event.currentTarget.value);
+                        updateElementStyle(
+                          elementStyle.key,
+                          event.currentTarget.value
+                        );
                       }}
                     />
                   {/if}
@@ -129,7 +134,8 @@
         </Accordion.Item>
       {/if}
     {/each}
-    <Accordion.Item data-state="open" value={custom}>
+    <!-- TODO: Handle custom section -->
+    <!-- <Accordion.Item data-state="open" value={custom}>
       <Accordion.Trigger><h2 class="text-xs">{custom}</h2></Accordion.Trigger>
       <Accordion.Content>
         <div class="space-y-2 px-1">
@@ -145,8 +151,8 @@ color: white;"
             }}
           />
         </div>
-        <TailwindInput {editTool} />
+        <TailwindInput {editTool} {el} />
       </Accordion.Content>
-    </Accordion.Item>
+    </Accordion.Item> -->
   </Accordion.Root>
 {/if}

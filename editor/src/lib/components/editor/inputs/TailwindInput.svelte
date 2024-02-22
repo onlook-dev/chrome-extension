@@ -2,7 +2,10 @@
   import { Textarea } from "$lib/components/ui/textarea";
   import { emitStyleChangeEvent } from "$lib/tools/edit/emit";
 
+  export let el: HTMLElement;
   export let editTool;
+  $: value = elementToClass.get(el) || { original: "", edit: "" };
+
   let elementToClass: WeakMap<HTMLElement, { original: string; edit: string }> =
     new WeakMap();
 
@@ -32,6 +35,7 @@
   <Textarea
     class="w-full text-xs break-normal"
     placeholder="bg-red-500 text-white"
+    value={value.edit || ""}
     on:input={(event) => {
       const newClass = event.currentTarget.value;
       editTool.selectorEngine.selected.forEach((element) => {
