@@ -51,15 +51,12 @@ export function undoLastEvent() {
 }
 
 export function redoLastEvent() {
-  redoStore.update(redo => {
-    const event = redo.pop();
-    if (event) {
-      event.type = REDO_STYLE_CHANGE;
-      window.postMessage(event, window.location.origin);
-      historyStore.update(history => [...history, event]);
-    }
-    return redo;
-  });
+  const event = redoStack.pop();
+
+  if (!event) return;
+  event.type = REDO_STYLE_CHANGE;
+  window.postMessage(event, window.location.origin);
+  historyStack.push(event);
 }
 
 function peek() {

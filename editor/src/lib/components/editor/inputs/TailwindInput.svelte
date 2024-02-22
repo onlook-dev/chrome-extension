@@ -1,12 +1,12 @@
 <script lang="ts">
   import { Textarea } from "$lib/components/ui/textarea";
+  import { emitStyleChangeEvent } from "$lib/tools/edit/emit";
 
   export let editTool;
   let elementToClass: WeakMap<HTMLElement, { original: string; edit: string }> =
     new WeakMap();
 
   function applyClass(element: HTMLElement, newClass: string) {
-    console.log("applyClass", element, newClass);
     let stored = elementToClass.get(element);
     if (!stored) {
       // Save the original class if not previously saved
@@ -18,6 +18,12 @@
     }
     // Apply original + new classes
     element.className = `${stored.original} ${stored.edit}`;
+    emitStyleChangeEvent(
+      element,
+      "class",
+      { class: "" },
+      { class: stored.edit }
+    );
   }
 </script>
 
