@@ -4,9 +4,6 @@ import { get, writable } from 'svelte/store';
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
 
-
-let historyStack = [];
-let redoStack = [];
 const UNDO_STYLE_CHANGE = "UNDO_STYLE_CHANGE";
 const REDO_STYLE_CHANGE = "REDO_STYLE_CHANGE";
 
@@ -21,19 +18,15 @@ export function addToHistory(event: EditEvent) {
   ) {
     lastEvent.detail.newVal = event.detail.newVal;
   } else {
-    historyStack.push(event);
-    historyStore.update((store) => {
-      store.push(event);
-      return store;
-    });
+    historyStore.update(history => [...history, event]);
   }
 }
 
 export function undoLastEvent() {
   historyStore.update(history => {
-    const event = history.pop();
+    const event: EditEvent = history.pop();
     if (event) {
-      const reverseEvent = {
+      const reverseEvent: EditEvent = {
         type: UNDO_STYLE_CHANGE,
         detail: {
           selector: event.detail.selector,
@@ -43,7 +36,7 @@ export function undoLastEvent() {
           path: event.detail.path,
         },
       };
-      window.postMessage(reverseEvent, window.location.origin);
+      applyEvent(reverseEvent);
       redoStore.update(redo => [...redo, event]);
     }
     return history;
@@ -51,11 +44,11 @@ export function undoLastEvent() {
 }
 
 export function redoLastEvent() {
-  redoStore.update(redo => {
-    const event = redo.pop();
+  redoStore.update((redo) => {
+    const event: EditEvent = redo.pop();
     if (event) {
       event.type = REDO_STYLE_CHANGE;
-      window.postMessage(event, window.location.origin);
+      applyEvent(event);
       historyStore.update(history => [...history, event]);
     }
     return redo;
@@ -63,5 +56,20 @@ export function redoLastEvent() {
 }
 
 function peek() {
+  let historyStack = get(historyStore);
   return historyStack[historyStack.length - 1];
+}
+
+function applyEvent(event: EditEvent) {
+  const detail = event.detail;
+  const element: HTMLElement | undefined = document.querySelector(detail.selector);
+  if (!element) return;
+  Object.entries(detail.newVal).forEach(([style, newVal]) => {
+    if (style === 'text') {
+      element.innerText = newVal
+    } else {
+      element.style[style] = newVal;
+    }
+  });
+  window.postMessage(event, window.location.origin);
 }
