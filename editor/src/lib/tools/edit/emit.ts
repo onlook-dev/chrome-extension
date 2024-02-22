@@ -1,5 +1,6 @@
 import { addToHistory } from "./history";
 import { getUniqueSelector } from "../utilities";
+import type { EditEvent } from "$lib/types/editor";
 
 const STYLE_CHANGE: string = "STYLE_CHANGE";
 const OPEN_PROJECT: string = "OPEN_PROJECT";
@@ -52,7 +53,7 @@ function postMessage(el: HTMLElement, styleType: string, newValue: Record<string
     },
   };
 
-  addToHistory(event);
+  addToHistory(event as EditEvent);
   window.postMessage(event, window.location.origin);
 }
 

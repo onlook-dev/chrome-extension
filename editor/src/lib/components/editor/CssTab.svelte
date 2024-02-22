@@ -32,9 +32,7 @@
   let unsubs: (() => void)[] = [];
 
   onMount(() => {
-    unsubs.push(
-      editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged)
-    );
+    unsubs.push(editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged));
   });
 
   onDestroy(() => {
@@ -113,10 +111,7 @@
                       class="w-24 text-xs"
                       value={elementStyle.value}
                       on:input={(event) => {
-                        updateElementStyle(
-                          elementStyle.key,
-                          event.currentTarget.value
-                        );
+                        updateElementStyle(elementStyle.key, event.currentTarget.value);
                       }}
                     />
                   {/if}
