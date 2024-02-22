@@ -18,8 +18,11 @@
   import SpacingInput from "./inputs/SpacingInput.svelte";
   import type { EditTool } from "$lib/tools/edit";
   import { onDestroy, onMount } from "svelte";
+  import { Textarea } from "$lib/components/ui/textarea";
+  import TailwindInput from "./inputs/TailwindInput.svelte";
 
   export let editTool: EditTool;
+  const custom = "Custom";
   let el: HTMLElement | undefined = undefined;
   let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {
     [ElementStyleGroup.Size]: [],
@@ -59,7 +62,11 @@
 </script>
 
 {#if el}
-  <Accordion.Root class="w-full" multiple value={Object.keys(groupedStyles)}>
+  <Accordion.Root
+    class="w-full"
+    multiple
+    value={[...Object.keys(groupedStyles), custom]}
+  >
     {#each Object.entries(groupedStyles) as [groupKey, elementStyles]}
       {#if groupKey == ElementStyleGroup.Size}
         <SizeSection {elementStyles} {updateElementStyle} />
@@ -122,5 +129,24 @@
         </Accordion.Item>
       {/if}
     {/each}
+    <Accordion.Item data-state="open" value={custom}>
+      <Accordion.Trigger><h2 class="text-xs">{custom}</h2></Accordion.Trigger>
+      <Accordion.Content>
+        <div class="space-y-2 px-1">
+          <p class="text-xs w-24 mr-2 text-start opacity-60">CSS</p>
+          <Textarea
+            class="w-full text-xs break-normal"
+            placeholder="background-color: red;
+color: white;"
+            on:input={(event) => {
+              editTool.selectorEngine.selected.forEach((element) => {
+                element.style.cssText = event.currentTarget.value;
+              });
+            }}
+          />
+        </div>
+        <TailwindInput {editTool} />
+      </Accordion.Content>
+    </Accordion.Item>
   </Accordion.Root>
 {/if}
