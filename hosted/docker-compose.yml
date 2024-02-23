@@ -1,12 +1,7 @@
 version: '3.8'
 
 services:
-  nginx:
-    build: ./nginx
-    ports:
-      - "80:80"
-    depends_on:
-        - server
-
+  # client:
+  #   build: ./client
   server:
     build: ./server
