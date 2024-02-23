@@ -2,7 +2,7 @@
   import { Button } from "$lib/components/ui/button";
   import { CodeMirror } from "$lib/components/ui/codemirror";
   import { onDestroy, onMount } from "svelte";
-  import { websocketService } from "$lib/websocketService";
+  import { websocketService } from "$lib/websocket";
   import {
     javascript,
     jsxLanguage,
@@ -13,15 +13,14 @@
   import { css } from "@codemirror/lang-css";
   import { oneDark } from "@codemirror/theme-one-dark";
   import { svelte } from "@replit/codemirror-lang-svelte";
-  import { draggable } from "@neodrag/svelte";
   import type { EditTool } from "$lib/tools/edit";
   import { getDataOnlookId } from "$lib/tools/utilities";
+  import hotkeys from "hotkeys-js";
 
   export let editTool: EditTool;
 
   let fileContent = "";
   let original = "";
-  let visible = false;
   let language = "js";
   let codemirror: CodeMirror;
 
@@ -75,7 +74,7 @@
       original = message.content;
       fileContent = message.content;
 
-      // TODO: Handle this better
+      // TODO: Handle this better. Waiting for content to load first. Use codemirror callback.
       setTimeout(() => {
         codemirror.highlightLines(startLine, endLine);
         codemirror.scrollToLine(startLine);
@@ -84,7 +83,6 @@
   }
 
   function selectedElementsChanged(selected: HTMLElement[]) {
-    // TODO: Handle multiple elements. Show similar values and leave non-similar ones blank
     if (selected.length !== 1) return;
     el = selected[0];
     const path = getDataOnlookId(el);
@@ -96,11 +94,16 @@
   function connect(path: string) {
     websocketService.connect(path);
     unsubSocket = websocketService.subscribe(handleMessage);
+    hotkeys("CMD+s", (event) => {
+      event.preventDefault();
+      saveContent();
+    });
   }
 
   function disconnect() {
     if (unsubSocket) unsubSocket();
     websocketService.disconnect();
+    hotkeys.unbind("CMD+s");
   }
 
   function saveContent() {
@@ -123,13 +126,17 @@
 
 <div class="flex flex-col">
   <CodeMirror
-    class="rounded border border-border bg-black bg-opacity-80 resize-none"
+    class="rounded border border-border bg-transparent bg-opacity-80 resize-none"
     styles={{
       "&": {
+        backgroundColor: "rgba(0, 0, 0, 0)",
         borderRadius: "0.5rem",
         width: "500px",
         maxWidth: "100%",
-        height: "20rem",
+        height: "65vh",
+      },
+      ".cm-gutters": {
+        backgroundColor: "rgb(33,33,32)",
       },
     }}
     bind:value={fileContent}
@@ -138,16 +145,12 @@
     theme={oneDark}
   />
 
-  <div class="flex mt-2 space-x-4">
-    <Button
-      variant="secondary"
-      class="rounded-full opacity-80 mr-4"
-      on:click={undoChanges}>undo</Button
+  <div class="flex flex-row mt-2 space-x-4 ml-auto">
+    <Button variant="secondary" class="opacity-80 mr-4" on:click={undoChanges}
+      >Reset</Button
     >
-    <Button
-      variant="secondary"
-      class="rounded-full opacity-80 ml-4"
-      on:click={saveContent}>save</Button
+    <Button variant="secondary" class="opacity-80 ml-4" on:click={saveContent}
+      >Save</Button
     >
   </div>
 </div>

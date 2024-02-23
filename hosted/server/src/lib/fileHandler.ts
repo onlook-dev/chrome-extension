@@ -5,9 +5,12 @@ import { CLIENT_LOCATION } from '../config';
 export async function writeFile(ws: ServerWebSocket, message: Message) {
 	const path = `${CLIENT_LOCATION}/${message.path}`
 	try {
-		console.log('Writing file:', path);
-		console.log(await Bun.write(path, `${message.content}`));
+		const res = await Bun.write(path, `${message.content}`)
 		ws.publish('onlook-editor', JSON.stringify(message));
+
+		if (typeof res !== 'number') {
+			console.error('Failed to write file:', path, res);
+		}
 	} catch (error) {
 		console.error('Failed to process message:', error);
 		ws.send('Error processing changes');
