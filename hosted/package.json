@@ -4,8 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "docker-compose up --build",
-    "build": "docker-compose -f docker-compose.yml up --build",
+    "remote": "docker-compose up",
     "publish": "concurrently \"npm run publish:client\" \"npm run publish:server\"",
+    "publish:arm": "DOCKER_DEFAULT_PLATFORM=\"linux/arm64\" npm run publish",
+    "publish:amd": "DOCKER_DEFAULT_PLATFORM=\"linux/amd64\" npm run publish",
     "publish:client": "docker build -t hoakiet98/onlook-client ./client && docker push hoakiet98/onlook-client",
     "publish:server": "docker build -t hoakiet98/onlook-server ./server && docker push hoakiet98/onlook-server"
   },
