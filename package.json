@@ -14,7 +14,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "install": "cd dashboard && npm install && cd ../editor && npm install && cd ../extension && npm install",
     "build": "cd editor && npm run build:cpy && cd ../extension && npm run build",
-    "docker": "cd hosted && docker-compose up --build"
+    "docker": "cd hosted && npm run dev"
   },
   "repository": {
     "type": "git",

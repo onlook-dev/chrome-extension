@@ -1,0 +1,19 @@
+{
+  "name": "hosted",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "docker-compose up --build",
+    "build": "docker-compose -f docker-compose.yml up --build",
+    "publish": "concurrently \"npm run publish:client\" \"npm run publish:server\"",
+    "publish:client": "docker build -t hoakiet98/onlook-client ./client && docker push hoakiet98/onlook-client",
+    "publish:server": "docker build -t hoakiet98/onlook-server ./server && docker push hoakiet98/onlook-server"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "concurrently": "^8.2.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
