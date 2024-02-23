@@ -4,11 +4,18 @@ services:
   client:
     build: ./client
     ports:
-      - "5173:5173"
+      - "8000:5173"
     depends_on:
       - server
+    volumes:
+      - client_files:/usr/src/app
       
   server:
     build: ./server
     ports: 
-      - "8080:8080"
+      - "8001:8080"
+    volumes:
+      - client_files:/usr/src/app/client
+
+volumes:
+  client_files:

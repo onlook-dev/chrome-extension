@@ -7,3 +7,5 @@ export type WebSocketData = {
 	createdAt: number;
 	userId: string;
 };
+
+export const CLIENT_LOCATION = 'client';

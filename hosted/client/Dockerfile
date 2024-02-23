@@ -5,5 +5,6 @@ WORKDIR /usr/src/app
 
 # Copy files to container and build
 COPY project .
+
 RUN bun install
 ENTRYPOINT [ "bun", "run", "dev" ]

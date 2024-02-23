@@ -32,7 +32,7 @@ const server = Bun.serve({
 
 			switch (parsedMessage.type) {
 				case 'readFile':
-					await readFile(ws, parsedMessage.path);
+					await readFile(ws, parsedMessage);
 					break;
 				case 'writeFile':
 					writeFile(ws, parsedMessage); // Pass the WebSocket connection and the message to writeChanges
