@@ -1,18 +1,18 @@
-name: Build for Editor
+# name: Build for Editor
 
-on:
-  pull_request:
-    branches: [master]
+# on:
+#   pull_request:
+#     branches: [main]
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      - name: Deploy to DigitalOcean App Platform
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DO_PAT }}
-          command: apps create --spec .do/app.yaml
+#       - name: Deploy to DigitalOcean App Platform
+#         uses: digitalocean/action-doctl@v2
+#         with:
+#           token: ${{ secrets.DO_PAT }}
+#           command: apps create --spec .do/app.yaml
