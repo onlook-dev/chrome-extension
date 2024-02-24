@@ -1,0 +1,28 @@
+{
+  "name": "@onlook/bonfire-server",
+  "version": "0.0.1",
+  "author": "onlook.dev",
+  "main": "./dist/server.js",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "bun-types": "^1.0.26",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.3",
+    "prettier-plugin-svelte": "^3.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "bin": {
+    "onlook": "./serve.sh"
+  },
+  "description": "",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc src/server.ts --outDir dist --skipLibCheck",
+    "start": "bun run dist/server.js",
+    "dev": " bun --hot src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pub": "bun run build && npm publish",
+    "serve": "concurrently --kill-others \"bun run start\" \"bun run ngrok\""
+  }
+}

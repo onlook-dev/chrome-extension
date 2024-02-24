@@ -166,7 +166,7 @@
   });
 
   const lineHighlightMark = Decoration.line({
-    attributes: { style: "background-color: rgba(74, 180, 255, 0.3)" },
+    attributes: { style: "background-color: hsl(344 100% 53%/ 0.20)" },
   });
 
   // Function to highlight and scroll
@@ -212,6 +212,7 @@
   .scm-waiting {
     position: relative;
   }
+
   .scm-waiting__loading {
     position: absolute;
     top: 0;
