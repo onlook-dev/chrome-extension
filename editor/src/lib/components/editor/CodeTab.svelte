@@ -104,6 +104,7 @@
   }
 
   function selectedElementsChanged(selected: HTMLElement[]) {
+    if (!connected) return;
     if (selected.length !== 1) return;
     el = selected[0];
     const path = getDataOnlookId(el);
