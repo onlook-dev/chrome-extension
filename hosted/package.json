@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "docker-compose up --build",
-    "remote": "docker-compose up",
+    "build": "docker-compose -f docker-compose.yml -f docker-compose.build.yml up --build",
+    "build:image": "docker-compose -f docker-compose.yml -f docker-compose.image.yml up",
     "publish": "concurrently \"npm run publish:client\" \"npm run publish:server\"",
     "publish:arm": "DOCKER_DEFAULT_PLATFORM=\"linux/arm64\" npm run publish",
     "publish:amd": "DOCKER_DEFAULT_PLATFORM=\"linux/amd64\" npm run publish",

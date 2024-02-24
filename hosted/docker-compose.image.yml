@@ -1,0 +1,6 @@
+version: '3.8'
+services:
+  client:
+    image: hoakiet98/onlook-client
+  server:
+    image: hoakiet98/onlook-server
