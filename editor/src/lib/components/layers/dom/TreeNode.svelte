@@ -3,6 +3,7 @@
   import { TagMap } from "$lib/tools/selection/tag";
   import { ChevronDown } from "radix-icons-svelte";
   import { Component1, Text, BoxModel } from "radix-icons-svelte";
+  import { DATA_ONLOOK_IGNORE, IGNORE_TAGS } from "$lib/constants";
 
   export let node: HTMLElement | undefined;
   export let selected: HTMLElement | undefined;
@@ -44,115 +45,117 @@
     ? "bg-[#38040c] rounded-b rounded-t-none font-normal text-white/60"
     : "";
   $: iconClass = `h-3 w-3 ml-1 mr-2 ${isSelected ? "text-white" : "text-red"}`;
-  $: {
-    if (isSelected) {
-      if (!selfSelected) {
-        nodeRef.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "start",
-        });
-        selfSelected = false;
-      }
-    }
+
+  $: if (isSelected && !selfSelected) {
+    nodeRef.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "start",
+    });
+    selfSelected = false;
   }
+
   const paddingY = "py-1";
 </script>
 
-<div bind:this={nodeRef} class={depth > 0 ? "pl-2" : ""}>
-  {#if isEmptyText}
-    <!-- Nothing -->
-  {:else if isText}
-    <!-- Show text -->
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div
-      on:click={(e) => {
-        select(e, node);
-        selfSelected = true;
-      }}
-      on:mouseover={(e) => mouseEnter(e, node)}
-      class="{hoverClass} {selectedClass} {paddingY}"
-    >
-      {'"' + node.nodeValue + '"'}
-    </div>
-  {:else if isEmpty}
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div
-      on:click={(e) => {
-        select(e, node);
-        selfSelected = true;
-      }}
-      on:mouseover={(e) => mouseEnter(e, node)}
-      class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
-    >
-      <Component1 class={iconClass} />
-      {name}
-    </div>
-  {:else if hasOnlyChild}
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div
-      on:click={(e) => {
-        select(e, node);
-        selfSelected = true;
-      }}
-      on:mouseover={(e) => mouseEnter(e, node)}
-      class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
-    >
-      <Text class={iconClass} />
-      {node.firstChild.nodeValue || name}
-    </div>
-  {:else}
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <details
-      bind:open={isOpen}
-      on:click|self={(e) => {
-        select(e, node);
-        selfSelected = true;
-      }}
-      on:mouseover|self={(e) => mouseEnter(e, node)}
-      class="{hoverClass} {selectedClass}"
-    >
-      <summary
-        class="list-none cursor-pointer flex flex-row items-center {paddingY}"
+{#if node && node instanceof Node && node.nodeType == Node.ELEMENT_NODE && !IGNORE_TAGS.includes(node.nodeName) && !node.hasAttribute(DATA_ONLOOK_IGNORE)}
+  <div bind:this={nodeRef} class={depth > 0 ? "pl-2" : ""}>
+    {#if isEmptyText}
+      <!-- Nothing -->
+    {:else if isText}
+      <!-- Show text -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <div
+        on:click={(e) => {
+          select(e, node);
+          selfSelected = true;
+        }}
         on:mouseover={(e) => mouseEnter(e, node)}
-        tabIndex="-1"
+        class="{hoverClass} {selectedClass} {paddingY}"
       >
-        <ChevronDown
-          class="w-3 h-3 {isOpen
-            ? 'transform rotate-0'
-            : 'transform -rotate-90'} {internalHover ? 'visible' : 'invisible'}"
-        ></ChevronDown>
-        <BoxModel class={iconClass} />
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <p
-          class="flex-grow"
-          on:click|preventDefault={(e) => {
-            select(e, node);
-            selfSelected = true;
-          }}
-        >
-          {name}
-        </p>
-      </summary>
-      <div class={childrenSelectedClass}>
-        {#if isOpen}
-          {#each node.childNodes as child}
-            <svelte:self
-              node={child}
-              depth={depth + 1}
-              {selected}
-              {hovered}
-              {select}
-              {mouseEnter}
-              {internalHover}
-            />
-          {/each}
-        {/if}
+        {'"' + node.nodeValue + '"'}
       </div>
-    </details>
-  {/if}
-</div>
+    {:else if isEmpty}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <div
+        on:click={(e) => {
+          select(e, node);
+          selfSelected = true;
+        }}
+        on:mouseover={(e) => mouseEnter(e, node)}
+        class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
+      >
+        <Component1 class={iconClass} />
+        {name}
+      </div>
+    {:else if hasOnlyChild}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <div
+        on:click={(e) => {
+          select(e, node);
+          selfSelected = true;
+        }}
+        on:mouseover={(e) => mouseEnter(e, node)}
+        class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
+      >
+        <Text class={iconClass} />
+        {node.firstChild.nodeValue || name}
+      </div>
+    {:else}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+      <details
+        bind:open={isOpen}
+        on:click|self={(e) => {
+          select(e, node);
+          selfSelected = true;
+        }}
+        on:mouseover|self={(e) => mouseEnter(e, node)}
+        class="{hoverClass} {selectedClass}"
+      >
+        <summary
+          class="list-none cursor-pointer flex flex-row items-center {paddingY}"
+          on:mouseover={(e) => mouseEnter(e, node)}
+          tabIndex="-1"
+        >
+          <ChevronDown
+            class="w-3 h-3 {isOpen
+              ? 'transform rotate-0'
+              : 'transform -rotate-90'} {internalHover
+              ? 'visible'
+              : 'invisible'}"
+          ></ChevronDown>
+          <BoxModel class={iconClass} />
+          <!-- svelte-ignore a11y-no-static-element-interactions -->
+          <p
+            class="flex-grow"
+            on:click|preventDefault={(e) => {
+              select(e, node);
+              selfSelected = true;
+            }}
+          >
+            {name}
+          </p>
+        </summary>
+        <div class={childrenSelectedClass}>
+          {#if isOpen}
+            {#each node.childNodes as child}
+              <svelte:self
+                node={child}
+                depth={depth + 1}
+                {selected}
+                {hovered}
+                {select}
+                {mouseEnter}
+                {internalHover}
+              />
+            {/each}
+          {/if}
+        </div>
+      </details>
+    {/if}
+  </div>
+{/if}

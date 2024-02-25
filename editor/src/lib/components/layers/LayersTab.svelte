@@ -1,40 +1,31 @@
 <script lang="ts">
   import type { EditTool } from "$lib/tools/edit";
-  import { LayersManager } from "$lib/tools/layers";
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import TreeRoot from "./dom/TreeRoot.svelte";
-  import { getUniqueSelector } from "$lib/tools/utilities";
-  import { DATA_ONLOOK_SELECTOR } from "$lib/constants";
 
   export let editTool: EditTool;
 
-  let layersManager: LayersManager;
   let hovered: HTMLElement;
   let selected: HTMLElement;
-  let parser: DOMParser;
-
   let htmlDoc: Document;
   let tree: HTMLElement;
 
   onMount(() => {
-    layersManager = new LayersManager();
-    parser = new DOMParser();
-    htmlDoc = layersManager.clonedDocument;
+    htmlDoc = document;
     tree = htmlDoc.body;
-
     editTool.selectorEngine.selectedStore.subscribe(handleNewSelections);
     editTool.selectorEngine.hoveredStore.subscribe(handleNewHover);
   });
 
   function select(e: Event, node: HTMLElement) {
     if (selected == node) return;
-    selected = layersManager?.getOriginalNode(node) as HTMLElement;
+    selected = node;
     editTool.simulateClick(selected);
   }
 
   function mouseEnter(e: Event, node: HTMLElement) {
     if (hovered == node) return;
-    hovered = layersManager?.getOriginalNode(node) as HTMLElement;
+    hovered = node;
     editTool.simulateHover(hovered);
   }
 
@@ -48,10 +39,7 @@
       hovered = undefined;
       return;
     }
-    const hoveredEl = layersManager?.getSanitizedNode(el);
-    if (hoveredEl) {
-      hovered = hoveredEl as HTMLElement;
-    }
+    hovered = el;
   }
 
   function handleNewSelections(els: HTMLElement[]) {
@@ -59,10 +47,7 @@
       selected = undefined;
       return;
     }
-    const selectedEl = layersManager?.getSanitizedNode(els[0]);
-    if (selectedEl) {
-      selected = selectedEl as HTMLElement;
-    }
+    selected = els[0];
   }
 </script>
 

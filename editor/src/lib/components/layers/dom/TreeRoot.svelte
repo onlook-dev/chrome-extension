@@ -14,15 +14,15 @@
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div
-  class="select-none text-xs text-white/60"
-  on:mouseleave|preventDefault={(e) => {
-    internalHover = false;
-    mouseLeave(e);
-  }}
-  on:mouseenter={() => (internalHover = true)}
->
-  {#if node}
+{#if node}
+  <div
+    class="select-none text-xs text-white/60"
+    on:mouseleave|preventDefault={(e) => {
+      internalHover = false;
+      mouseLeave(e);
+    }}
+    on:mouseenter={() => (internalHover = true)}
+  >
     <DOMTreeNode
       bind:node
       {selected}
@@ -31,5 +31,5 @@
       {mouseEnter}
       {internalHover}
     />
-  {/if}
-</div>
+  </div>
+{/if}

@@ -2,7 +2,6 @@
   import * as Card from "$lib/components/ui/card";
   import { ExternalLink, Pencil1, Stop } from "radix-icons-svelte";
   import ToolBarAnimation from "./ToolbarAnimation.svelte";
-  import { onMount } from "svelte";
   import { ToolManager, ToolName } from "$lib/tools";
   import EditorPanel from "../editor/EditorPanel.svelte";
   import Button from "../ui/button/button.svelte";

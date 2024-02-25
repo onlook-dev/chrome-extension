@@ -62,6 +62,7 @@
   });
 
   function handshake() {
+    if (connecting || connected) return;
     connecting = true;
     websocketService
       .handshake()

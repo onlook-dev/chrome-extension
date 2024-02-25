@@ -7,7 +7,7 @@
 		getTeamById
 	} from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
-	import { deleteProjectFromFirebase } from '$lib/storage/project'
+	import { deleteProjectFromFirebase, postProjectToFirebase } from '$lib/storage/project'
 
 	export let project: Project
 	const modalId = 'delete-project-modal'
@@ -58,8 +58,6 @@
 
 <div class="p-4 space-y-2">
 	<div class="flex flex-col space-y-4">
-		<div class="divider">Project information</div>
-
 		<div class="space-y-2">
 			<span class="label-text">Name</span>
 			<input
@@ -67,7 +65,13 @@
 				type="text"
 				placeholder="My project"
 				class="input input-bordered w-full"
-				disabled
+				on:input={e => {
+					project.name = e.currentTarget.value
+				}}
+				on:blur={e => {
+					projectsMapBucket.set({ [project.id]: project })
+					postProjectToFirebase(project)
+				}}
 			/>
 		</div>
 
@@ -78,32 +82,14 @@
 				type="url"
 				placeholder="https://onlook.dev"
 				class="input input-bordered w-full"
-				disabled
+				on:input={e => {
+					project.hostUrl = e.currentTarget.value
+				}}
+				on:blur={e => {
+					projectsMapBucket.set({ [project.id]: project })
+					postProjectToFirebase(project)
+				}}
 			/>
-		</div>
-
-		<div class="divider">Editor preferences</div>
-
-		<!-- Toggles -->
-		<div class="flex flex-col">
-			<div class="form-control w-52">
-				<label class="cursor-pointer label">
-					<span class="label-text">Save image changes</span>
-					<input type="checkbox" class="toggle toggle-primary" disabled />
-				</label>
-			</div>
-			<div class="form-control w-52">
-				<label class="cursor-pointer label">
-					<span class="label-text">Save text changes</span>
-					<input type="checkbox" class="toggle toggle-primary" disabled />
-				</label>
-			</div>
-			<div class="form-control w-52">
-				<label class="cursor-pointer label">
-					<span class="label-text">Save position changes</span>
-					<input type="checkbox" class="toggle toggle-primary" disabled />
-				</label>
-			</div>
 		</div>
 
 		<div class="divider">Danger zone</div>
