@@ -9,17 +9,17 @@
 
 	import Open from '~icons/ion/open-outline'
 
-	let projectsMap: Map<string, Project> = new Map()
+	let projects: Project[] = []
 
 	onMount(async () => {
 		// Get active team's projects
 		popupStateBucket.valueStream.subscribe(async ({ activeTeamId }) => {
 			const team = await getTeamById(activeTeamId)
 			if (team) {
-				const teamProjectsMap = await projectsMapBucket.get()
-				projectsMap = new Map(
-					Object.entries(teamProjectsMap).filter(([_, project]) => project.teamId === team.id)
-				)
+				const teamProjectsMap = new Map(Object.entries(await projectsMapBucket.get()))
+				projects = Array.from(teamProjectsMap.values()).sort((a, b) => {
+					return a.createdAt < b.createdAt ? 1 : -1
+				})
 			}
 		})
 	})
@@ -28,7 +28,7 @@
 <div
 	class=" pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
 >
-	{#each projectsMap.values() as project}
+	{#each projects as project}
 		<button
 			class="bg-base-100 rounded space-y-4 p-4 hover:shadow block"
 			on:click={() => {
@@ -70,7 +70,7 @@
 		</button>
 	{/each}
 
-	{#if projectsMap.size === 0}
+	{#if projects.length === 0}
 		<div class="flex flex-col col-span-full h-60 mt-10 align-middle">
 			<p class="text-center">No projects yet</p>
 		</div>

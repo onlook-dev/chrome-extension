@@ -3,6 +3,7 @@ import { SERVER_SOCKET_URL } from "./config";
 type MessageHandler = (message: any) => void;
 
 class WebSocketService {
+  private handshakeWs: WebSocket | null = null;
   private ws: WebSocket | null = null;
   private readonly url: string;
   private messageHandlers: Set<MessageHandler> = new Set();
@@ -18,21 +19,23 @@ class WebSocketService {
 
   handshake(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      const ws = new WebSocket(this.url);
+      if (this.handshakeWs) {
+        this.handshakeWs.close();
+      }
+      this.handshakeWs = new WebSocket(this.url);
 
       const timeout = setTimeout(() => {
-        console.error("WebSocket connection timeout.");
-        ws.close();
+        this.handshakeWs.close();
         resolve(false);
       }, 2000);
 
-      ws.onopen = () => {
+      this.handshakeWs.onopen = () => {
         clearTimeout(timeout);
-        ws.close();
+        this.handshakeWs.close();
         resolve(true);
       };
-      ws.onerror = (error) => {
-        ws.close();
+      this.handshakeWs.onerror = (error) => {
+        this.handshakeWs.close();
         resolve(false);
       };
     });

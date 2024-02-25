@@ -21,7 +21,6 @@ import type { Activity } from '$shared/models/activity'
 import type { EditorStyleChange } from '$shared/models/editor'
 import { baseUrl } from '$lib/utils/env'
 import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
-import { convertEditorToStyleChangeMap } from '$shared/helpers'
 
 function simulateEventOnSelector(
 	selector: string,
