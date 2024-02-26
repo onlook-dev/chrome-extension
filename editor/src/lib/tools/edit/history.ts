@@ -1,5 +1,5 @@
 import type { EditEvent } from '$lib/types/editor';
-import { get, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
@@ -53,7 +53,7 @@ export function undoLastEvent() {
 
 export function redoLastEvent() {
   redoStore.update((redo) => {
-    const event: EditEvent = redo.pop();
+    let event: EditEvent = redo.pop();
     if (event) {
       event.type = REDO_STYLE_CHANGE;
       applyEvent(event);
@@ -61,11 +61,6 @@ export function redoLastEvent() {
     }
     return redo;
   });
-}
-
-function peek() {
-  let historyStack = get(historyStore);
-  return historyStack[historyStack.length - 1];
 }
 
 function applyEvent(event: EditEvent) {
