@@ -10,16 +10,23 @@ const REDO_STYLE_CHANGE = "REDO_STYLE_CHANGE";
 export function addToHistory(event: EditEvent) {
   // Merge to last item if styleType, selector and keys are the same
   // Keeping oldest old val and newest new val
-  let lastEvent = peek();
-  if (
-    lastEvent &&
-    lastEvent.detail.styleType === event.detail.styleType &&
-    lastEvent.detail.selector === event.detail.selector
-  ) {
-    lastEvent.detail.newVal = event.detail.newVal;
-  } else {
-    historyStore.update(history => [...history, event]);
-  }
+  historyStore.update((history) => {
+    if (history.length === 0) return [event];
+
+    // Deduplicate last event
+    const lastEvent = history[history.length - 1];
+
+    if (
+      lastEvent.detail.styleType === event.detail.styleType &&
+      lastEvent.detail.selector === event.detail.selector
+    ) {
+      lastEvent.detail.newVal = event.detail.newVal;
+      lastEvent.detail.createdAt = event.detail.createdAt;
+      return history;
+    } else {
+      return [...history, event];
+    }
+  });
 }
 
 export function undoLastEvent() {
@@ -29,6 +36,7 @@ export function undoLastEvent() {
       const reverseEvent: EditEvent = {
         type: UNDO_STYLE_CHANGE,
         detail: {
+          createdAt: event.detail.createdAt,
           selector: event.detail.selector,
           styleType: event.detail.styleType,
           newVal: event.detail.oldVal,

@@ -22,11 +22,7 @@ function debounce(func, wait) {
     }
     const elementSelector = elementSelectorCache.get(element);
 
-    if (!timeouts[elementSelector]) {
-      func.apply(context, args); // Execute immediately
-    } else {
-      clearTimeout(timeouts[elementSelector]);
-    }
+    if (timeouts[elementSelector]) clearTimeout(timeouts[elementSelector]);
 
     const later = () => {
       delete timeouts[elementSelector];
@@ -42,9 +38,10 @@ function postMessage(el: HTMLElement, styleType: string, newValue: Record<string
   const selector =
     elementSelectorCache.get(el) || getUniqueSelector(el);
 
-  const event = {
+  const event: EditEvent = {
     type: STYLE_CHANGE,
     detail: {
+      createdAt: new Date().toISOString(),
       selector: selector,
       styleType: styleType,
       newVal: newValue,
@@ -52,7 +49,6 @@ function postMessage(el: HTMLElement, styleType: string, newValue: Record<string
       path: el.dataset.onlookId,
     },
   };
-
   addToHistory(event as EditEvent);
   window.postMessage(event, window.location.origin);
 }
