@@ -89,7 +89,7 @@
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
-      class="flex flex-col space-y-2 py-2 hover:bg-stone-900 hover:bg-opacity-30"
+      class="flex flex-col space-y-2 py-2 hover:bg-stone-900 hover:bg-opacity-40 transition duration-300 ease-in-out cursor-pointer"
       transition:slide
       on:mouseenter={() => {
         hoverEvent(event);
