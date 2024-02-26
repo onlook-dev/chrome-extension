@@ -53,7 +53,8 @@ export function undoLastEvent() {
 
 export function redoLastEvent() {
   redoStore.update((redo) => {
-    const event: EditEvent = redo.pop();
+    const event = redo.pop();
+
     if (event) {
       event.type = REDO_STYLE_CHANGE;
       applyEvent(event);
