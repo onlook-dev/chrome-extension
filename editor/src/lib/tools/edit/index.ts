@@ -91,9 +91,11 @@ export class EditTool implements Tool {
 
 	simulateClick(el: HTMLElement) {
 		if (el) {
+			this.simulateOut();
 			this.selectorEngine.selectedStore.set([el as HTMLElement]);
-			this.overlayManager.removeClickedRects();
+			this.overlayManager.clear();
 			this.overlayManager.addClickRect(el as HTMLElement);
+			this.updateParentRect();
 
 			this.scrollElementIntoView(el);
 		}

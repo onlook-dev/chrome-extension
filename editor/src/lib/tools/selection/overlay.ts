@@ -103,6 +103,7 @@ export class OverlayManager {
     }
 
     addClickRect = (el: HTMLElement) => {
+        if (!el) return
         const clickRect = new ClickRect()
         this.clickedRects.push(clickRect)
         const rect = el.getBoundingClientRect()
@@ -111,15 +112,16 @@ export class OverlayManager {
     }
 
     updateParentRect = (el: HTMLElement) => {
+        if (!el || !this.parentRect) return
         const rect = el.getBoundingClientRect()
         this.parentRect.render(rect)
     }
 
     updateHoverRect = (el: HTMLElement) => {
-        if (el && this.hoverRect) {
-            const rect = el.getBoundingClientRect()
-            this.hoverRect.render(rect)
-        }
+        if (!el || !this.hoverRect) return
+        const rect = el.getBoundingClientRect()
+        this.hoverRect.render(rect)
+
     }
 
     removeHoverRect = () => {
