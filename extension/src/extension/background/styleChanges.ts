@@ -1,6 +1,6 @@
-import type { EditorStyleChange } from '$shared/models/visbug'
+import type { EditorStyleChange } from '$shared/models/editor'
 import type { Activity, StyleChange } from '$shared/models/activity'
-import { convertEditorToStyleChangeMap } from '$shared/helpers'
+import { convertEditorToStyleChangeMap } from '$shared/translation'
 import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { sendGetScreenshotRequest } from '$lib/utils/messaging'
 import { forwardToActiveProjectTab } from './tabs'

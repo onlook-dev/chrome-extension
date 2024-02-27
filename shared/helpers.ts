@@ -27,17 +27,6 @@ export function debounce(func: any, wait: number) {
   };
 }
 
-export function convertEditorToStyleChangeMap(
-  editorStyleChange: EditorStyleChange
-): Record<string, StyleChange> {
-  const styleChangeMap: Record<string, StyleChange> = {};
-  Object.entries(editorStyleChange.newVal).forEach(([style, newVal]) => {
-    const oldVal = editorStyleChange.oldVal[style];
-    styleChangeMap[style] = { key: style, oldVal, newVal };
-  });
-  return styleChangeMap;
-}
-
 export function truncateString(str: string, num: number) {
   if (str.length <= num) {
     return str;
