@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { exportToPRComments } from '$lib/github/github';
 	import { DashboardRoutes, MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
-	import { postProjectToFirebase } from '$lib/storage/project';
+	import { getProjectFromFirebase, postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
 	import { getGithubHistoriesFromFirebase, postGithubHistoryToFirebase } from '$lib/storage/github';
@@ -16,6 +16,15 @@
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
+	import {
+		checkRun,
+		createRunAndThread,
+		createTranslateMessage,
+		createTranslateThread,
+		deleteThread,
+		getResponse,
+		runThread
+	} from '$lib/openai/translate';
 
 	export let project: Project;
 	export let userId: string;
@@ -34,6 +43,10 @@
 	let descriptionPlaceholder = 'Made UI adjustments using the onlook platform';
 	let title = '';
 	let description = '';
+
+	import { useChat } from 'ai/svelte';
+
+	const { input, append, messages, isLoading: chatLoading } = useChat();
 
 	onMount(() => {
 		// Check each activities for a path
@@ -66,6 +79,26 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
+			const exampleInput = [
+				{
+					changes: ['fontSize 26px'],
+					currentValue: "class='flex flex-row gap-2 mb-4 items-center'"
+				},
+				{
+					changes: ['color #1e3067', 'fontSize 34px', 'textAlign center', 'lineHeight 52px'],
+					currentValue: "class='m-2 font-semibold'"
+				}
+			];
+
+			try {
+				// TODO: this triggers sending activites to openai.
+				// The server should then handle calling github with the translated code
+				// The UI should handle the success or failure of this process
+				await append({ role: 'user', content: `json: ${JSON.stringify(exampleInput)}` });
+			} catch (error) {
+				console.error('Error appending message:', error);
+			}
+
 			prLink = await exportToPRComments(userId, project?.id, title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
@@ -164,6 +197,11 @@
 				placeholder={descriptionPlaceholder}
 				maxlength={MAX_DESCRIPTION_LENGTH}
 			></textarea>
+			<ul>
+				{#each $messages as message}
+					<li>{message.role}: {message.content}</li>
+				{/each}
+			</ul>
 			<div class="mt-6 ml-auto">
 				{#if errorMessage}
 					<p class="text-xs text-error">{errorMessage}</p>
