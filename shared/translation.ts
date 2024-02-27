@@ -53,8 +53,6 @@ export function updateFileContent(content: string, newClass: string, attribute: 
 
   if (!found) {
     // If no class/className attribute is found, decide where to add it.
-    // The example adds the class to the first element, adjusting as needed.
-    // This uses double quotes by default for the added attribute.
     updatedContent = content.replace(/(<\w+)(\s|>)/, `$1 ${attribute}="${newClass}"$2`);
   }
 

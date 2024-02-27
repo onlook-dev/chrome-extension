@@ -26,7 +26,27 @@ describe('files', () => {
       code: `<div class=\`${OLD_CLASS}\`>`,
       expected: `<div class=\`${NEW_CLASS}\`>`
     },
+    {
+      code: `<div id="uniqueId" class="${OLD_CLASS}" data-test="test">`,
+      expected: `<div id="uniqueId" class="${NEW_CLASS}" data-test="test">`
+    },
+    {
+      code: `<div className="">`,
+      expected: `<div className="${NEW_CLASS}">`
+    },
   ];
+
+  // TODO: Handle this. Might need parser like cheerio or babel
+  const UNHANDLED_CASES = [
+    {
+      code: `<div class = "${OLD_CLASS}">`,
+      expected: `<div class = "${NEW_CLASS}">`
+    },
+    {
+      code: `<span>Some text with class="${OLD_CLASS}" in it</span>`,
+      expected: `<span>Some text with class="${OLD_CLASS}" in it</span>` // No change expected
+    }
+  ]
 
   test('should insert class', async () => {
     CASES.forEach(async (c) => {
