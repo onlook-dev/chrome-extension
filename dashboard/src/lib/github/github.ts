@@ -224,7 +224,6 @@ export async function createPRWithComments(
 	return pullRequestUrl;
 }
 
-// Create a comment on each file that has onlook edits
 async function prepareCommit(
 	octokit: Octokit,
 	owner: string,
@@ -232,54 +231,44 @@ async function prepareCommit(
 	branch: string,
 	rootPath: string,
 	activities: Record<string, Activity>
-): Promise<{ path: string; content: string; sha: string }[]> {
-	const fileEdits = new Map<string, number[]>();
+) {
+	const fileEdits = parseActivitiesToPathEdits(activities, rootPath);
+	const filesToUpdate = await fetchAndUpdateFiles(octokit, owner, repo, branch, fileEdits);
+	return filesToUpdate.filter(file => file !== null);
+}
 
-	for (const activityKey in activities) {
-		const path = activities[activityKey].path;
-		if (!path) {
-			console.error('No path found for activity');
-			continue;
-		}
-		const [initialPath, startLineString, endLineString] = path.split(':');
-
-		const filePath =
-			rootPath === '.' || rootPath === '' || rootPath === '/'
-				? `${initialPath}`
-				: `${rootPath}/${initialPath}`;
-
-		const lineNumber = parseInt(startLineString);
-		if (!fileEdits.has(filePath)) {
-			fileEdits.set(filePath, []);
-		}
+function parseActivitiesToPathEdits(activities: Record<string, Activity>, rootPath: string) {
+	const fileEdits: Map<string, number[]> = new Map();
+	Object.values(activities).forEach(activity => {
+		const path = activity.path;
+		if (!path) return console.error('No path found for activity');
+		const [initialPath, startLineString] = path.split(':');
+		const filePath = rootPath.trim() && rootPath !== '/' ? `${rootPath}/${initialPath}` : initialPath;
+		const lineNumber = parseInt(startLineString, 10);
+		if (!fileEdits.has(filePath)) fileEdits.set(filePath, []);
 		fileEdits.get(filePath)?.push(lineNumber);
-	}
+	});
+	return fileEdits;
+}
 
-	const filesToUpdate = await Promise.all(
+async function fetchAndUpdateFiles(octokit: Octokit,
+	owner: string,
+	repo: string,
+	branch: string,
+	fileEdits: Map<string, number[]>) {
+	return Promise.all(
 		Array.from(fileEdits).map(async ([filePath, lineNumbers]) => {
 			try {
-				const contentResponse = await octokit.request(
-					`GET /repos/${owner}/${repo}/contents/${filePath}?ref=${branch}`,
-					{ owner, repo, path: filePath }
-				);
-
-				const content = atob(contentResponse.data.content);
-				const contentLines = content.split('\n');
-
-				lineNumbers.sort((a, b) => b - a); // Sort line numbers in descending order
-
-				for (const lineNumber of lineNumbers) {
-					if (lineNumber <= contentLines.length) {
-						contentLines.splice(lineNumber - 1, 0, '// onlook edits');
-					}
-				}
-
-				const newContent = contentLines.join('\n');
-
+				const contentResponse = await octokit.request(`GET /repos/${owner}/${repo}/contents/${filePath}?ref=${branch}`, {
+					owner,
+					repo,
+					path: filePath,
+				});
+				const newContent = updateFileContent(contentResponse.data.content, lineNumbers);
 				return {
 					path: filePath,
 					content: newContent,
-					sha: contentResponse.data.sha
+					sha: contentResponse.data.sha,
 				};
 			} catch (error) {
 				console.error(`Failed to fetch content for ${filePath}:`, error);
@@ -287,10 +276,17 @@ async function prepareCommit(
 			}
 		})
 	);
+}
 
-	return filesToUpdate.filter(
-		(file): file is { path: string; content: string; sha: string } => file !== null
-	);
+function updateFileContent(encodedContent: string, lineNumbers: number[]) {
+	const content = atob(encodedContent);
+	const contentLines = content.split('\n');
+	lineNumbers.sort((a, b) => b - a).forEach(lineNumber => {
+		if (lineNumber <= contentLines.length) {
+			contentLines.splice(lineNumber - 1, 0, '// onlook edits');
+		}
+	});
+	return contentLines.join('\n');
 }
 
 async function createCommit(
