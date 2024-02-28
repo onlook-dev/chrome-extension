@@ -92,7 +92,7 @@
 	</div>
 {/if}
 <div class="divide-y flex flex-col w-full">
-	<h1 class="text-red-500 font-light">Activities</h1>
+	<h1 class="text-red-500 font-thin">Activities</h1>
 	{#each activities as activity}
 		<!-- TODO: Add helper -->
 		{#if Object.keys(activity.styleChanges).length > 0}
