@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { exportToPRComments } from '$lib/github/github';
 	import { DashboardRoutes, MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
-	import { getProjectFromFirebase, postProjectToFirebase } from '$lib/storage/project';
+	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
 	import { getGithubHistoriesFromFirebase, postGithubHistoryToFirebase } from '$lib/storage/github';
@@ -33,6 +33,10 @@
 	let descriptionPlaceholder = 'Made UI adjustments using the onlook platform';
 	let title = '';
 	let description = '';
+
+	import { useChat } from 'ai/svelte';
+
+	const { input, append, messages, isLoading: chatLoading } = useChat();
 
 	onMount(() => {
 		// Check each activities for a path
