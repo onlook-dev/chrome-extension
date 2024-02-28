@@ -4,12 +4,10 @@ import { fetchFileFromPath, getPathInfo, type FileContentData, type PathInfo } f
 import type { TreeItem } from "$shared/models/github";
 
 import { activityToTranslationInput, getContentClass, updateContentClass } from '$shared/translation';
-import type { TranslationInput } from "$shared/models/translation";
+import type { TranslationInput, TranslationOutput } from "$shared/models/translation";
 
-async function postToServer(input: TranslationInput) {
-  const messages = [
-    { role: 'user', content: `json: ${JSON.stringify(input)}` }
-  ]
+async function getTranslationsFromServer(inputs: TranslationInput[]): Promise<TranslationOutput[]> {
+  const messages = inputs.map(input => ({ role: 'user', content: `json: ${JSON.stringify(input)}` }));
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: {
@@ -23,24 +21,18 @@ async function postToServer(input: TranslationInput) {
   }
 
   const data = await response.json();
-  const content = data.choices[0].message.content;
-  const newValue = JSON.parse(content).newValue;
-  console.log('content:', content);
-  return newValue;
+  return data.choices.map(choice => JSON.parse(choice.message.content) as TranslationOutput);
 }
-async function updateContent(content: string, pathInfo: PathInfo, activity: Activity) {
 
+function getTranslationInput(content: string, pathInfo: PathInfo, activity: Activity): TranslationInput {
+  const newContent = content.split('\n').slice(pathInfo.startLine - 1, pathInfo.endLine).join('\n');
+  const translationInput = activityToTranslationInput(activity, pathInfo, getContentClass(newContent));
+  return translationInput;
+}
+
+function updateContentChunk(content: string, pathInfo: PathInfo, newClass: string): string {
   let newContent = content.split('\n').slice(pathInfo.startLine - 1, pathInfo.endLine).join('\n');
-  const translationInput = activityToTranslationInput(activity);
-  translationInput.currentValue = getContentClass(newContent);
-  const translationOutput = await postToServer(translationInput);
-
-  if (!translationOutput) {
-    console.error('No translation output found');
-    return content;
-  }
-
-  newContent = updateContentClass(newContent, translationOutput);
+  newContent = updateContentClass(newContent, newClass);
   // Merge new content back into content
   const contentLines = content.split('\n');
   contentLines.splice(pathInfo.startLine - 1, pathInfo.endLine - pathInfo.startLine + 1, newContent);
@@ -56,31 +48,56 @@ export async function prepareCommit(
   activities: Record<string, Activity>
 ): Promise<Map<string, FileContentData>> {
   const fileDataMap = new Map<string, FileContentData>();
-  const fetchPromises: Promise<void>[] = [];
+  const fetchPromises: Promise<FileContentData | undefined>[] = [];
+  const translationMap = new Map<string, { input: TranslationInput, pathInfo: PathInfo }>();
 
-  Object.values(activities).forEach((activity) => {
+  // Get array of inputs
+  Object.values(activities).forEach(async (activity) => {
     if (!activity.path) {
       console.error('No path found for activity');
       return;
     }
     const pathInfo = getPathInfo(activity.path, rootPath);
-    if (!fileDataMap.has(pathInfo.path)) {
-      const fetchPromise = fetchFileFromPath(octokit, owner, repo, branch, pathInfo.path)
-        .then(async (fileData) => {
-          if (!fileData) {
-            console.error('No file data found for path:', pathInfo.path);
-            return;
-          }
-          const newContent = await updateContent(fileData.content, pathInfo, activity);
-          fileData.content = newContent;
-          fileDataMap.set(pathInfo.path, fileData);
-        });
+    if (!pathInfo) {
+      console.error('No path info found for activity');
+      return;
+    }
+    let fileData = fileDataMap.get(pathInfo.path);
+    if (!fileData) {
+      const fetchPromise = fetchFileFromPath(octokit, owner, repo, branch, pathInfo.path);
       fetchPromises.push(fetchPromise);
+      fileData = await fetchPromise
+
+      if (!fileData) {
+        console.error('No file data found');
+        return;
+      }
+
+      // Get translation input
+      const translationInput = getTranslationInput(fileData.content, pathInfo, activity);
+      translationMap.set(pathInfo.path, { input: translationInput, pathInfo });
+      fileDataMap.set(pathInfo.path, fileData);
     }
   });
 
   // Wait for all promises to resolve before returning the map
   await Promise.all(fetchPromises);
+
+  // Get translations from server
+  const inputArray = Array.from(translationMap.values()).map((translation) => translation.input);
+  const translationOutputs: TranslationOutput[] = await getTranslationsFromServer(inputArray);
+
+  translationOutputs.forEach((output) => {
+    const fileData = fileDataMap.get(output.path);
+    const translation = translationMap.get(output.path);
+    console.log("output", output)
+    if (fileData && translation) {
+      const newContent = updateContentChunk(fileData.content, translation.pathInfo, output.newClasses.join(' '));
+      fileData.content = newContent;
+    } else {
+      console.error('No file data or translation found');
+    }
+  })
   return fileDataMap;
 }
 
