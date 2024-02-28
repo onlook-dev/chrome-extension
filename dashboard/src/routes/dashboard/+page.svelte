@@ -72,7 +72,7 @@
 			>
 
 			<!-- TODO: Change based on folder -->
-			<h1 class="text-red-500 font-light">
+			<h1 class="text-2xl text-white bg-red-500 font-thin">
 				{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 			</h1>
 		</div>
