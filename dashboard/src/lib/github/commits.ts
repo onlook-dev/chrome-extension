@@ -26,7 +26,8 @@ async function getTranslationsFromServer(inputs: TranslationInput[]): Promise<Tr
 
 function getTranslationInput(content: string, pathInfo: PathInfo, activity: Activity): TranslationInput {
   const newContent = content.split('\n').slice(pathInfo.startLine - 1, pathInfo.endLine).join('\n');
-  const translationInput = activityToTranslationInput(activity, pathInfo, getContentClass(newContent));
+  const currentClasses = getContentClass(newContent);
+  const translationInput = activityToTranslationInput(activity, pathInfo, currentClasses);
   return translationInput;
 }
 
