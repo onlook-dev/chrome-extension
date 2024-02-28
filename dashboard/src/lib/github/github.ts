@@ -1,18 +1,18 @@
 import { getProjectFromFirebase } from '$lib/storage/project';
 import { getUserFromFirebase } from '$lib/storage/user';
 import { Octokit } from '@octokit/core';
-import { createAppAuth } from '@octokit/auth-app';
 import { getGithubAuthFromFirebase } from '$lib/storage/github';
 import type { Activity } from '$shared/models/activity';
-import { baseUrl, githubConfig } from '$lib/utils/env';
-import type { GithubRepo, TreeItem } from '$shared/models/github';
+import { baseUrl, } from '$lib/utils/env';
 import { jsToCssProperty } from '$shared/helpers';
 import { DashboardRoutes, DashboardSearchParams } from '$shared/constants';
+import { getInstallationOctokit } from './installation';
+import { createCommit, prepareCommit } from './commits';
+import { getPathInfo, type FileContentData } from './files';
 
 // TODO: Should clean up if any steps fail
 // - Delete branch
 // - Delete PR
-
 export async function exportToPRComments(
 	userId: string,
 	projectId: string,
@@ -41,11 +41,8 @@ export async function exportToPRComments(
 	}
 
 	const githubSettings = project.githubSettings;
-
 	const octokit = await getInstallationOctokit(installationId);
-
 	const branchName = `onlook-${Date.now()}`;
-
 	const newBranch = await createBranch(
 		octokit,
 		githubSettings.owner,
@@ -61,7 +58,7 @@ export async function exportToPRComments(
 
 	console.log('created new branch: ', branchName);
 
-	const commitDetails = await prepareCommit(
+	const commitDetails: Map<string, FileContentData> = await prepareCommit(
 		octokit,
 		githubSettings.owner,
 		githubSettings.repositoryName,
@@ -77,7 +74,7 @@ export async function exportToPRComments(
 		githubSettings.owner,
 		githubSettings.repositoryName,
 		branchName,
-		commitDetails
+		Array.from(commitDetails.values())
 	);
 
 	console.log('created new commit');
@@ -161,8 +158,6 @@ export async function createPRWithComments(
 	const pullRequestNumber = pullRequest.data.number;
 	const pullRequestUrl = pullRequest.data.html_url;
 
-	// TODO: determine if we enable selective exporting of activities
-	// TODO: determine if we archive activies for a project after they are exported
 	for (const activityKey in activities) {
 		const activity = activities[activityKey];
 		// TODO: will have to decrypt tag to get file:lineNumber
@@ -171,13 +166,8 @@ export async function createPRWithComments(
 			continue;
 		}
 
-		const [initialPath, startLineString, endLineString] = activity.path.split(':');
-		const filePath =
-			rootPath === '.' || rootPath === '' || rootPath === '/'
-				? `${initialPath}`
-				: `${rootPath}/${initialPath}`;
+		const pathInfo = getPathInfo(activity.path, rootPath);
 		// End line must be at least one line after the start line
-		const endLine = parseInt(endLineString);
 
 		let commentBody = 'onlook changes to line below:\n```\n';
 		for (const key in activity.styleChanges) {
@@ -189,31 +179,15 @@ export async function createPRWithComments(
 
 		commentBody += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${projectId}?${DashboardSearchParams.ACTIVITY}=${activity.id})`;
 
-		// TODO: Add preview image but this currently takes too long to run
-		// try {
-		// 	if (activity.previewImage) {
-		// 		// Check if base64 image vs url
-		// 		let previewImageUrl = activity.previewImage;
-		// 		if (isBase64ImageString(activity.previewImage)) {
-		// 			const result = await storeImageUri({ dataUri: activity.previewImage });
-		// 			previewImageUrl = result.data;
-		// 		}
-
-		// 		commentBody += `\n![preview image](${previewImageUrl})`;
-		// 	}
-		// } catch (error) {
-		// 	console.error('Failed to add preview image:', error);
-		// }
-
 		await octokit.request(`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments`, {
 			owner,
 			repo: repositoryName,
 			pull_number: pullRequestNumber,
 			body: commentBody,
 			commit_id: commitId,
-			path: filePath,
+			path: pathInfo.path,
 			start_side: 'RIGHT',
-			line: endLine,
+			line: pathInfo.endLine,
 			side: 'RIGHT',
 			headers: {
 				'X-GitHub-Api-Version': '2022-11-28'
@@ -222,195 +196,4 @@ export async function createPRWithComments(
 	}
 
 	return pullRequestUrl;
-}
-
-async function prepareCommit(
-	octokit: Octokit,
-	owner: string,
-	repo: string,
-	branch: string,
-	rootPath: string,
-	activities: Record<string, Activity>
-) {
-	const fileEdits = parseActivitiesToPathEdits(activities, rootPath);
-	const filesToUpdate = await fetchAndUpdateFiles(octokit, owner, repo, branch, fileEdits);
-	return filesToUpdate.filter(file => file !== null);
-}
-
-function parseActivitiesToPathEdits(activities: Record<string, Activity>, rootPath: string) {
-	const fileEdits: Map<string, number[]> = new Map();
-	Object.values(activities).forEach(activity => {
-		const path = activity.path;
-		if (!path) return console.error('No path found for activity');
-		const [initialPath, startLineString] = path.split(':');
-		const filePath = rootPath.trim() && rootPath !== '/' ? `${rootPath}/${initialPath}` : initialPath;
-		const lineNumber = parseInt(startLineString, 10);
-		if (!fileEdits.has(filePath)) fileEdits.set(filePath, []);
-		fileEdits.get(filePath)?.push(lineNumber);
-	});
-	return fileEdits;
-}
-
-async function fetchAndUpdateFiles(octokit: Octokit,
-	owner: string,
-	repo: string,
-	branch: string,
-	fileEdits: Map<string, number[]>) {
-	return Promise.all(
-		Array.from(fileEdits).map(async ([filePath, lineNumbers]) => {
-			try {
-				const contentResponse = await octokit.request(`GET /repos/${owner}/${repo}/contents/${filePath}?ref=${branch}`, {
-					owner,
-					repo,
-					path: filePath,
-				});
-				const newContent = updateFileContent(contentResponse.data.content, lineNumbers);
-				return {
-					path: filePath,
-					content: newContent,
-					sha: contentResponse.data.sha,
-				};
-			} catch (error) {
-				console.error(`Failed to fetch content for ${filePath}:`, error);
-				return null;
-			}
-		})
-	);
-}
-
-function updateFileContent(encodedContent: string, lineNumbers: number[]) {
-	const content = atob(encodedContent);
-	const contentLines = content.split('\n');
-	lineNumbers.sort((a, b) => b - a).forEach(lineNumber => {
-		if (lineNumber <= contentLines.length) {
-			contentLines.splice(lineNumber - 1, 0, '// onlook edits');
-		}
-	});
-	return contentLines.join('\n');
-}
-
-async function createCommit(
-	octokit: Octokit,
-	owner: string,
-	repo: string,
-	branch: string,
-	files: { path: string; content: string; sha: string }[]
-): Promise<string> {
-	try {
-		// Preparing the tree for the commit
-		const trees: TreeItem[] = files.map((file) => ({
-			path: file.path,
-			mode: '100644', // mode is explicitly typed
-			type: 'blob', // type is explicitly typed
-			content: file.content
-		}));
-
-		// Getting the SHA of the latest commit on the branch
-		const latestCommit = await octokit.request(`GET /repos/{owner}/{repo}/git/ref/{ref}`, {
-			owner,
-			repo,
-			ref: `heads/${branch}`
-		});
-		const latestCommitSha = latestCommit.data.object.sha;
-
-		// Creating a new tree in the repository
-		const treeResponse = await octokit.request(`POST /repos/{owner}/{repo}/git/trees`, {
-			owner,
-			repo,
-			tree: trees,
-			base_tree: latestCommitSha // Use the latest commit SHA as the base tree
-		});
-
-		// Creating the commit pointing to the new tree
-		const commitResponse = await octokit.request(`POST /repos/{owner}/{repo}/git/commits`, {
-			owner,
-			repo,
-			message: 'Adding onlook comments to multiple files',
-			tree: treeResponse.data.sha,
-			parents: [latestCommitSha],
-			author: {
-				name: 'Onlook',
-				email: 'erik@onlook.dev', // TODO: Add users' email here
-				date: new Date().toISOString()
-			},
-			headers: {
-				'X-GitHub-Api-Version': '2022-11-28'
-			}
-		});
-
-		// Updating the reference of the branch to point to the new commit
-		await octokit.request(`PATCH /repos/{owner}/{repo}/git/refs/heads/${branch}`, {
-			owner,
-			repo,
-			sha: commitResponse.data.sha
-		});
-
-		return commitResponse.data.sha;
-	} catch (error) {
-		console.error('Failed to create commit:', error);
-		return 'failed to create commit';
-	}
-}
-
-export const getReposByInstallation = async (installationId: string) => {
-	const octokit = await getInstallationOctokit(installationId);
-
-	// Get the repositories accessible to the installation
-	console.log('Getting user repositories...');
-
-	// https://docs.github.com/en/rest/apps/installations?apiVersion=2022-11-28#list-repositories-accessible-to-the-app-installation
-	const response = await octokit.request('GET /installation/repositories', {
-		headers: {
-			'X-GitHub-Api-Version': '2022-11-28'
-		}
-	});
-
-	const repos = response.data.repositories.map((repo: any) => {
-		return {
-			id: repo.id,
-			name: repo.name,
-			owner: repo.owner.login
-		};
-	});
-
-	return { repos };
-};
-
-async function getInstallationOctokit(installationId: string) {
-	const installationOctokit = new Octokit({
-		authStrategy: createAppAuth,
-		auth: {
-			appId: githubConfig.appId,
-			privateKey: githubConfig.privateKey,
-			installationId: installationId
-		}
-	});
-
-	return installationOctokit;
-}
-
-export async function getRepoDefaults(
-	installationId: string,
-	repo: GithubRepo
-): Promise<string | null> {
-	const octokit = await getInstallationOctokit(installationId);
-
-	try {
-		const repoSettings = await octokit.request('GET /repos/{owner}/{repo}', {
-			owner: repo.owner,
-			repo: repo.name
-		});
-
-		const defaultBranch = repoSettings.data.default_branch;
-		console.log('defaultBranch:', defaultBranch);
-
-		if (!defaultBranch) {
-			return null;
-		}
-
-		return defaultBranch;
-	} catch (error) {
-		console.error('Error fetching repository details:', error);
-		return null;
-	}
 }

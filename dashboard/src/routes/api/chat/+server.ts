@@ -1,6 +1,4 @@
 import OpenAI from 'openai';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
-import type { RequestHandler } from './$types';
 import { openAi } from '$lib/utils/env';
 
 const systemMessage = {
@@ -33,9 +31,5 @@ export const POST = async ({ request }) => {
 		response_format: { type: 'json_object' },
 		temperature: 0
 	});
-	console.log('response:', response.choices[0].message.content);
-
-	// TODO: handle response and send to github
-
 	return new Response(JSON.stringify(response));
 };
