@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { openAi } from '$lib/utils/env';
+import { openAi } from '$lib/utils/serverEnv';
 
 const systemMessage = {
 	role: 'system',

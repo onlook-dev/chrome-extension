@@ -30,10 +30,9 @@ import {
 	PUBLIC_GITHUB_APP_ID_PROD,
 	PUBLIC_GITHUB_PRIVATE_KEY_PROD,
 	PUBLIC_GITHUB_APP_URL_TEST,
-	PUBLIC_GITHUB_APP_URL_PROD,
-	PUBLIC_PROD_OPENAPI_ORG,
-	PUBLIC_PROD_OPENAPI_API_KEY
+	PUBLIC_GITHUB_APP_URL_PROD
 } from '$env/static/public';
+
 import { Tier } from '$shared/models/team';
 
 const testFirebaseConfig = {
@@ -84,12 +83,6 @@ const prodGithubConfig = {
 	privateKey: PUBLIC_GITHUB_PRIVATE_KEY_PROD
 };
 
-const openAiConfig = {
-	organization: PUBLIC_PROD_OPENAPI_ORG,
-	apiKey: PUBLIC_PROD_OPENAPI_API_KEY
-};
-
-export const openAi = openAiConfig;
 export const isDevelopment: boolean = import.meta.env.DEV;
 export const isFirebaseEmulator: boolean = import.meta.env.VITE_FIREBASE_EMULATOR;
 export const firebaseConfig = isDevelopment ? testFirebaseConfig : prodFirebaseConfig;
