@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeEach } from 'bun:test';
+import { expect, test, describe, } from 'bun:test';
 import { updateFileContent } from '../translation';
 
 describe('files', () => {
