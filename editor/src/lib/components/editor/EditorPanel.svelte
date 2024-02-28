@@ -8,14 +8,12 @@
   import { Separator } from "$lib/components/ui/separator";
   import { editorPanelVisible } from "$lib/states/editor";
   import type { EditTool } from "$lib/tools/edit";
-  // import Changes from "./Changes.svelte";
   import CodeTab from "./CodeTab.svelte";
 
   export let editTool: EditTool;
   enum TabValue {
     CSS = "css",
     CODE = "code",
-    CHANGES = "changes",
   }
   let selectedTab: string = TabValue.CSS;
 
@@ -60,7 +58,6 @@
           <Tabs.Content value={TabValue.CODE}
             ><CodeTab {editTool} /></Tabs.Content
           >
-          <!-- <Tabs.Content value={TabValue.CHANGES}><Changes /></Tabs.Content> -->
         </div>
 
         <Card.Footer class="flex justify-between"></Card.Footer>

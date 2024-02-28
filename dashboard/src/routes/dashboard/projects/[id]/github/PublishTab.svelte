@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { exportToPRComments } from '$lib/github/github';
 	import { DashboardRoutes, MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
-	import { getProjectFromFirebase, postProjectToFirebase } from '$lib/storage/project';
+	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
 	import { getGithubHistoriesFromFirebase, postGithubHistoryToFirebase } from '$lib/storage/github';
@@ -16,16 +16,6 @@
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
-	import {
-		checkRun,
-		createRunAndThread,
-		createTranslateMessage,
-		createTranslateThread,
-		deleteThread,
-		getResponse,
-		runThread
-	} from '$lib/openai/translate';
-
 	export let project: Project;
 	export let userId: string;
 
@@ -89,15 +79,6 @@
 					currentValue: "class='m-2 font-semibold'"
 				}
 			];
-
-			try {
-				// TODO: this triggers sending activites to openai.
-				// The server should then handle calling github with the translated code
-				// The UI should handle the success or failure of this process
-				await append({ role: 'user', content: `json: ${JSON.stringify(exampleInput)}` });
-			} catch (error) {
-				console.error('Error appending message:', error);
-			}
 
 			prLink = await exportToPRComments(userId, project?.id, title, description);
 		} catch (error) {
