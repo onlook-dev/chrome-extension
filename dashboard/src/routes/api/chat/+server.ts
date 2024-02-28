@@ -4,7 +4,7 @@ import { openAi } from '$lib/utils/serverEnv';
 const systemMessage = {
 	role: 'system',
 	content:
-		'you are a css translator that can translate raw css to any underlying example syntax such as tailwind css. You receive an object, within it is an array of strings called newCss which is a list of raw css changes and a field called currentClasses which is the current tailwind class values, it could be empty. It is your job to translate all changes to match the syntax of currentClasses and return json that the same object with the newCss filed replaced with newClasses, which will be the new tailwind classes in the same format as currentClasses.'
+		'you are a css translator that can translate raw css to any underlying example syntax such as tailwind css. You receive an object, within it is an array of strings called newCss which is a list of raw css changes and a field called currentClasses which is the current tailwind class values, it could be empty. It is your job to translate all changes to match the syntax of currentClasses and return json that the same object with the newCss filed replaced with newClasses, which will be the new tailwind classes in the same format as currentClasses. Try not to remove any classes if not applicable. Only add classes or replace existing classes if newCss requires it. If you are unable to translate a class, return the original class. Dont make things up.'
 };
 
 // Create an OpenAI API client
