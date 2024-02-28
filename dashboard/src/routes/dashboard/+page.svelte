@@ -104,7 +104,7 @@
 									});
 								}}
 							>
-								<p
+								<p class="font-medium"
 									class="{activeTeamId === teamId
 										? 'active font-extrabold'
 										: ''} col-span-2 text-left"
