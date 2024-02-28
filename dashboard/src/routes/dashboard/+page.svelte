@@ -66,7 +66,7 @@
 	<!-- Drawer content -->
 	<div class="bg-[#e6e6e6] drawer-content px-4 py-6 overflow-auto h-screen">
 		<!-- Page content here -->
-		<div class="flex flex-row gap-2 mb-4 items-center">
+		<div class="font-bold">
 			<label for={dashboardDrawerId} class="btn btn-square btn-ghost drawer-button lg:hidden"
 				><SideBarLine /></label
 			>
