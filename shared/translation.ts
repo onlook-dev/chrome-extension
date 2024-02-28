@@ -4,7 +4,7 @@ import type { TranslationInput } from "./models/translation";
 
 const CLASS_MATCH = /(class|className)=["'`](.*?)["'`]/g
 
-export function activityToTranslationInput(activity: Activity, pathInfo: { path: string }, currentValue = ''): TranslationInput {
+export function activityToTranslationInput(activity: Activity, pathInfo: { path: string }, currentValue: string): TranslationInput {
   const newValues = Object.values(activity.styleChanges).map((styleChange) => {
     return `${styleChange.key}: ${styleChange.newVal}`;
   });
@@ -47,6 +47,6 @@ export function updateContentClass(content: string, newClass: string, attribute:
 }
 
 export function getContentClass(content: string): string {
-  const match = content.match(CLASS_MATCH);
-  return match ? match[1] : '';
+  const matches = [...content.matchAll(CLASS_MATCH)];
+  return matches.length > 0 ? matches[0][2] : '';
 }

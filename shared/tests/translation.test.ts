@@ -1,7 +1,7 @@
 import { expect, test, describe, } from 'bun:test';
 import type { Activity } from '../models/activity';
 import type { TranslationInput } from '../models/translation';
-import { activityToTranslationInput, updateContentClass, } from '../translation';
+import { activityToTranslationInput, updateContentClass, getContentClass } from '../translation';
 
 describe('translation', () => {
   const PATH = 'path/to/file';
@@ -103,4 +103,48 @@ describe('edit classes', () => {
     })
   });
 
+});
+
+describe('getContentClass functionality', () => {
+  test('should extract class from element', async () => {
+    const html = `<div class="test-class">Content</div>`;
+    const className = getContentClass(html);
+    expect(className).toBe('test-class');
+  });
+
+  test('should extract className from element', async () => {
+    const html = `<div className="test-class-name">Content</div>`;
+    const className = getContentClass(html);
+    expect(className).toBe('test-class-name');
+  });
+
+  test('should handle elements without class or className', async () => {
+    const html = `<div>Content</div>`;
+    const className = getContentClass(html);
+    expect(className).toBe('');
+  });
+
+  test('should prioritize class over className when both are present', async () => {
+    const html = `<div class="first-class" className="second-class">Content</div>`;
+    const className = getContentClass(html);
+    expect(className).toBe('first-class'); // or 'second-class' depending on the implementation preference
+  });
+
+  test('should handle multiple classes in a single attribute', async () => {
+    const html = `<div class="first-class second-class">Content</div>`;
+    const className = getContentClass(html);
+    expect(className).toBe('first-class second-class');
+  });
+
+  test('should handle single quotes', async () => {
+    const html = `<div class='single-quote-class'>Content</div>`;
+    const className = getContentClass(html);
+    expect(className).toBe('single-quote-class');
+  });
+
+  test('should handle template literals', async () => {
+    const html = `<div class=\`template-literal-class\`>Content</div>`;
+    const className = getContentClass(html);
+    expect(className).toBe('template-literal-class');
+  });
 });
