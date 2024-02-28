@@ -82,7 +82,7 @@
 							class="textarea input-primary input-bordered w-full mb-2"
 							placeholder="Feedback"
 						/>
-						<button class="btn btn-primary w-full">Submit</button>
+						<button class="bg-red-500">Submit</button>
 					</div>
 				</div>
 			</div>
