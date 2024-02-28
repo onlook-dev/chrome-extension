@@ -34,10 +34,6 @@
 	let title = '';
 	let description = '';
 
-	import { useChat } from 'ai/svelte';
-
-	const { input, append, messages, isLoading: chatLoading } = useChat();
-
 	onMount(() => {
 		// Check each activities for a path
 		if (project?.activities && Object.keys(project.activities).length > 0) {
@@ -178,11 +174,6 @@
 				placeholder={descriptionPlaceholder}
 				maxlength={MAX_DESCRIPTION_LENGTH}
 			></textarea>
-			<ul>
-				{#each $messages as message}
-					<li>{message.role}: {message.content}</li>
-				{/each}
-			</ul>
 			<div class="mt-6 ml-auto">
 				{#if errorMessage}
 					<p class="text-xs text-error">{errorMessage}</p>
