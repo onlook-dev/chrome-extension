@@ -45,7 +45,7 @@
 						<div class="bg-gray-100 aspect-video rounded w-full" />
 					{/if}
 				</figure>
-				<div class="flex items-center space-x-2">
+				<div class="px-3 mt-3">
 					<div class="avatar">
 						<div class="w-8 mask mask-circle">
 							<!-- TODO: Get author from ID -->
