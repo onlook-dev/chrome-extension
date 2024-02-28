@@ -64,7 +64,7 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="bg-[#e6e6e6] drawer-content px-4 py-6 overflow-auto h-screen">
+	<div class="bg-gray-300">
 		<!-- Page content here -->
 		<div class="flex flex-row gap-2 mb-4 items-center">
 			<label for={dashboardDrawerId} class="btn btn-square btn-ghost drawer-button lg:hidden"
