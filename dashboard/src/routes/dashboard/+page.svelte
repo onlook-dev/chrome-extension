@@ -64,7 +64,7 @@
 <div class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a]">
 	<input id={dashboardDrawerId} type="checkbox" class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a]" />
 	<!-- Drawer content -->
-	<div class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a]">
+	<div class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a] bg-[#7e2610]">
 		<!-- Page content here -->
 		<div class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a]">
 			<label for={dashboardDrawerId} class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a]"
@@ -72,7 +72,7 @@
 			>
 
 			<!-- TODO: Change based on folder -->
-			<h1 class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a] text-red-500 text-6xl">
+			<h1 class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a] text-red-500 text-6xl text-red-500">
 				{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 			</h1>
 		</div>
@@ -83,7 +83,7 @@
 	<!-- Drawer Sidebar -->
 	<div class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a]">
 		<label for={dashboardDrawerId} aria-label="close sidebar" class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a]"></label>
-		<ul class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a]">
+		<ul class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a] bg-[#631a08]">
 			<!-- Sidebar content -->
 			<li>
 				<AvatarDropdown {user} />
