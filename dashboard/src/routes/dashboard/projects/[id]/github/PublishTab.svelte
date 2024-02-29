@@ -16,7 +16,6 @@
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
-
 	export let project: Project;
 	export let userId: string;
 
@@ -66,6 +65,17 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
+			const exampleInput = [
+				{
+					changes: ['fontSize 26px'],
+					currentValue: "class='flex flex-row gap-2 mb-4 items-center'"
+				},
+				{
+					changes: ['color #1e3067', 'fontSize 34px', 'textAlign center', 'lineHeight 52px'],
+					currentValue: "class='m-2 font-semibold'"
+				}
+			];
+
 			prLink = await exportToPRComments(userId, project?.id, title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);

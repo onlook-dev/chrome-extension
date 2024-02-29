@@ -32,6 +32,7 @@ import {
 	PUBLIC_GITHUB_APP_URL_TEST,
 	PUBLIC_GITHUB_APP_URL_PROD
 } from '$env/static/public';
+
 import { Tier } from '$shared/models/team';
 
 const testFirebaseConfig = {

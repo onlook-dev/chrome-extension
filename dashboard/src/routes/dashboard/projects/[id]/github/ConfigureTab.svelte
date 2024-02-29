@@ -6,7 +6,7 @@
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { getGithubAuthFromFirebase } from '$lib/storage/github';
-	import { getRepoDefaults, getReposByInstallation } from '$lib/github/github';
+	import { getRepoDefaults, getReposByInstallation } from '$lib/github/repos';
 	import { onMount } from 'svelte';
 	import { githubConfig } from '$lib/utils/env';
 	import Info from '~icons/akar-icons/info';
