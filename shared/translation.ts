@@ -1,20 +1,20 @@
+import type { PathInfo } from "$lib/github/files";
 import type { Activity, StyleChange } from "./models/activity";
 import type { EditorStyleChange } from "./models/editor";
 import type { TranslationInput } from "./models/translation";
 
 const CLASS_MATCH = /(class|className)=["'`](.*?)["'`]/g
 
-export function activityToTranslationInput(activity: Activity, pathInfo: { path: string }, currentValue: string): TranslationInput {
-  const newValues = Object.values(activity.styleChanges).map((styleChange) => {
+export function activityToTranslationInput(activity: Activity, pathInfo: PathInfo, currentValue: string): TranslationInput {
+  const newCss = Object.values(activity.styleChanges).map((styleChange) => {
     return `${styleChange.key}: ${styleChange.newVal}`;
-  });
+  }).join('; ');
 
   const translationInput: TranslationInput = {
-    path: pathInfo.path,
-    newCss: newValues,
-    currentClasses: currentValue,
+    pathInfo,
+    classes: currentValue,
+    newCss,
   } as TranslationInput
-
   return translationInput;
 }
 
