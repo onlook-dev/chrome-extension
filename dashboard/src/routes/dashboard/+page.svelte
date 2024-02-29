@@ -83,7 +83,7 @@
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 					<div
 						tabindex="0"
-						class="dropdown-content z-1 p-2 shadow bg-base-100 rounded w-200 min-h-100 pt-4 pb-4 pl-4 min-w-300 pr-4 h-full"
+						class="dropdown-content z-[1] p-2 shadow bg-base-100 rounded min-h-[100px] pt-4 pb-4 pl-4 min-w-[300px] pr-4"
 					>
 						<textarea
 							class="textarea input-primary input-bordered w-full mb-2 h-32"
