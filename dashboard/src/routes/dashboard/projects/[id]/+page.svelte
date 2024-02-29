@@ -97,7 +97,7 @@
 				</p>
 			</div>
 
-			<div class="navbar-end space-x-2">
+			<div class="navbar-end space-x-2 bg-black">
 				<ShareModal teamId={project.teamId} />
 				<div class="dropdown dropdown-end">
 					<button tabindex="0" class="btn btn-primary">Publish</button>
