@@ -64,22 +64,22 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="bg-gray-200 drawer-content px-4 py-6 overflow-auto h-screen">
+	<div class="bg-gray-200 drawer-content px-4 py-6 overflow-auto h-screen bg-gray-300">
 		<!-- Page content here -->
 		<div class="flex flex-row gap-2 mb-4 items-center">
 			<label for={dashboardDrawerId} class="btn btn-square btn-ghost drawer-button lg:hidden"
 				><SideBarLine /></label
 			>
 			<div class="flex flex-row w-full items-center">
-			  <h1 class="text-2xl font-bold text-red-500 font-medium">
+			  <h1 class="text-2xl font-bold text-red-500 font-medium font-semibold text-black">
 					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 				</h1>
 				<div class="ml-auto dropdown dropdown-end">
-					<button tabindex="0" class="btn btn-sm btn-outline btn-primary">Feedback</button>
+					<button tabindex="0" class="btn btn-sm btn-outline btn-primary mt-0 pl-4 pb-0 pt-0 w-full ml-0 min-w-32 h-10 min-h-10 pr-4">Feedback</button>
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-					<div tabindex="0" class="dropdown-content z-[1] p-2 shadow bg-base-100 rounded w-52">
+					<div tabindex="0" class="dropdown-content z-1 p-2 shadow bg-base-100 rounded w-200 min-h-100 pt-4 pb-4 pl-4 min-w-300 pr-4 h-full">
 						<textarea
-							class="textarea input-primary input-bordered w-full mb-2"
+							class="textarea input-primary input-bordered w-full mb-2 h-32"
 							placeholder="Feedback"
 						/>
 						<button class="btn btn-primary w-full">Submit</button>
@@ -115,7 +115,7 @@
 									});
 								}}
 							>
-								<p
+								<p class="font-semibold"
 									class="font-medium {activeTeamId === teamId
 										? 'active font-extrabold'
 										: ''} col-span-2 text-left"
