@@ -64,7 +64,7 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="bg-[#e6e6e6] drawer-content px-4 py-6 overflow-auto h-screen">
+	<div class="bg-gray-200 drawer-content px-4 py-6 overflow-auto h-screen">
 		<!-- Page content here -->
 		<div class="flex flex-row gap-2 mb-4 items-center">
 			<label for={dashboardDrawerId} class="btn btn-square btn-ghost drawer-button lg:hidden"
@@ -72,7 +72,7 @@
 			>
 
 			<!-- TODO: Change based on folder -->
-			<h1 class="text-2xl font-bold">
+			<h1 class="text-2xl font-bold text-red-500 font-medium">
 				{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 			</h1>
 		</div>
@@ -104,7 +104,7 @@
 									});
 								}}
 							>
-								<p
+								<p class="font-medium"
 									class="{activeTeamId === teamId
 										? 'active font-extrabold'
 										: ''} col-span-2 text-left"
