@@ -87,12 +87,12 @@
 		<div class="navbar bg-base-100">
 			<div class="navbar-start flex flex-row">
 				<a
-					class="btn btn-ghost text-sm"
+					class="btn btn-ghost text-sm text-red-500"
 					href="{DashboardRoutes.DASHBOARD}?{DashboardSearchParams.TEAM}={project?.teamId}"
 					>Onlook</a
 				>
 				<p class="text-sm mr-4">/</p>
-				<p class="truncate">
+				<p class="truncate font-light">
 					{truncateString(project?.name || 'Dashboard', MAX_TITLE_LENGTH)}
 				</p>
 			</div>
@@ -118,7 +118,7 @@
 		<!-- Main content -->
 		<div class="bg-base-200 flex flex-col sm:flex-row flex-grow overflow-auto">
 			<!-- Screenshot -->
-			<div class="sm:w-full flex flex-grow h-full border items-center justify-center">
+			<div class="sm:w-full flex flex-grow h-full border items-center justify-center bg-red-500">
 				{#if activeActivity && activeActivity.previewImage}
 					<img
 						src={activeActivity.previewImage}

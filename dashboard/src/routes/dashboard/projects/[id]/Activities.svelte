@@ -91,14 +91,14 @@
 		<p class="text-gray-500">No activities yet</p>
 	</div>
 {/if}
-<div class="divide-y flex flex-col w-full">
+<div class="divide-y flex flex-col w-full text-blue-500">
 	<h1 class="m-2 font-semibold">Activities</h1>
 	{#each activities as activity}
 		<!-- TODO: Add helper -->
 		{#if Object.keys(activity.styleChanges).length > 0}
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			<div
+			<div class="text-black"
 				class="w-full p-4 flex flex-col pb-6 transition duration-200 ease-in-out {activeActivityId ==
 				activity.id
 					? 'bg-sky-100 shadow-lg'
