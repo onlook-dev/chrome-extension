@@ -104,7 +104,7 @@
 					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 					<ul
 						tabindex="0"
-						class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+						class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 bg-red-500 text-white"
 					>
 						<li><PublishToGithubModal {project} /></li>
 						<div class="divider">Coming soon</div>
