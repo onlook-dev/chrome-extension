@@ -72,7 +72,7 @@
 			>
 
 			<!-- TODO: Change based on folder -->
-			<h1 class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a]">
+			<h1 class="bg-[#8a230a] drawer-content px-4 py-6 overflow-auto h-screen bg-[#8a230a] text-red-500 text-6xl">
 				{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 			</h1>
 		</div>
