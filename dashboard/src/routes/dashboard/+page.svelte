@@ -64,7 +64,7 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="bg-black drawer-content px-4 py-6 overflow-auto h-screen">
+	<div class="bg-black drawer-content px-4 py-6 overflow-auto h-screen bg-black">
 		<!-- Page content here -->
 		<div class="flex flex-row gap-2 mb-4 items-center">
 			<label for={dashboardDrawerId} class="btn btn-square btn-ghost drawer-button lg:hidden"
@@ -72,7 +72,7 @@
 			>
 
 			<!-- TODO: Change based on folder -->
-			<h1 class="text-2xl font-bold">
+			<h1 class="text-2xl font-bold text-2xl font-bold pl-2 pt-2 font-light text-white pb-2 bg-red-500">
 				{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 			</h1>
 		</div>
@@ -83,7 +83,7 @@
 	<!-- Drawer Sidebar -->
 	<div class="drawer-side shadow">
 		<label for={dashboardDrawerId} aria-label="close sidebar" class="drawer-overlay"></label>
-		<ul class="w-64 min-h-full bg-base-100 space-y-2 p-2">
+		<ul class="w-64 min-h-full bg-base-100 space-y-2 p-2 bg-green-500">
 			<!-- Sidebar content -->
 			<li>
 				<AvatarDropdown {user} />
