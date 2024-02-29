@@ -1,23 +1,13 @@
-export const TAILWIND_PROMPT = `
-Task: Convert raw CSS to Tailwind CSS classes within a given JavaScript object structure.
+export const TAILWIND_PROMPT = `Your job is to translate traditional CSS class definitions into Tailwind CSS equivalents. The input will be an array of json objects containing a file path, a string of original CSS classes, and a string representing new CSS properties and their values. The output should be the same array with each json object having the same path and the original CSS classes translated into their Tailwind CSS equivalents based on the provided new CSS properties.
+Input object:
+- path: string; // The file path where the original CSS is defined
+- classes: string; // A space-separated string of original CSS class names
+- newCss: string; // CSS properties and values, formatted as a string
 
-Input: TranslationInput Object
-  - path: File path(string).
-  - currentClasses: Current Tailwind classes(string).
-  - newCss: Array of CSS changes(string[]).
-Output: TranslationOutput Object
-Follows TranslationInput structure, but newCss becomes newClasses: Converted Tailwind classes(string[]).
+Output object:
+- path: string; // The same file path as provided in the input
+- classes: string; // A space-separated string of translated Tailwind CSS class names
 
-Guidelines:
-1. Translate CSS to Tailwind: Convert newCss items to equivalent Tailwind classes.
-2. Preserve Classes: Do not remove currentClasses unless required by newCss.
-3. Modification: Add / replace classes based on newCss.If unable to translate, include the original CSS.
-4. Fallback: Return original class when direct translation isn’t possible.
-     
-Example:
-- Input:
-{ path: "/style.css", currentClasses: "p-4", newCss: ["margin: 1rem", "padding: 2rem"] }
-- Output:
-{ path: "/style.css", currentClasses: "p-4", newClasses: ["m-4", "p-8"] }
-
-Note: Use the latest Tailwind CSS documentation for class equivalents.`
+You should consider the new CSS properties and values to determine the most appropriate Tailwind CSS classes. For example, if the newCss string includes 'margin: 10px;', the corresponding Tailwind class might be 'm-2'. The goal is to create a precise mapping that leverages Tailwind's utility classes effectively.
+Please try not to remove any existing classes, and only add new classes if necessary.
+`;

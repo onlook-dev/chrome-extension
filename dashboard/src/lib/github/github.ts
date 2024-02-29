@@ -89,14 +89,15 @@ export async function exportToPRComments(
 
 	console.log('created new pr: ', pullRequestUrl);
 
-	// TODO: Add PR comments
 	// await createPullRequestComments(
+	// 	octokit,
 	// 	githubSettings.owner,
+	// 	project.activities,
+	// 	projectId,
 	// 	githubSettings.repositoryName,
 	// 	pullRequestNumber,
 	// 	githubSettings.rootPath,
-	// 	description,
-	// 	octokit
+	// 	commitId
 	// );
 
 	return pullRequestUrl;
@@ -201,13 +202,13 @@ export async function createPullRequest(
 
 
 export async function createPullRequestComments(
+	octokit: Octokit,
+	owner: string,
 	activities: Record<string, Activity>,
 	projectId: string,
-	owner: string,
 	repositoryName: string,
 	pullRequestNumber: number,
 	rootPath: string,
-	octokit: Octokit,
 	commitId: string
 ): Promise<void> {
 	// Add comments to the PR for each activity

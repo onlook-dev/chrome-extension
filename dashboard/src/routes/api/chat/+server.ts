@@ -18,10 +18,10 @@ export const POST = async ({ request }) => {
 
 	const combinedMessages = [
 		systemMessage,
-		...messages.map((message: any) => ({
-			content: message.content,
-			role: message.role
-		}))
+		{
+			content: messages.content,
+			role: messages.role
+		}
 	];
 
 	// Ask OpenAI for a chat completion given the prompt

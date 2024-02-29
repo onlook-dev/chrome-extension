@@ -7,7 +7,8 @@ import { activityToTranslationInput, getContentClass, updateContentClass } from 
 import type { TranslationInput, TranslationOutput } from "$shared/models/translation";
 
 async function getTranslationsFromServer(inputs: TranslationInput[]): Promise<TranslationOutput[]> {
-  const messages = inputs.map(input => ({ role: 'user', content: `json: ${JSON.stringify(input)}` }));
+  const messages = { role: 'user', content: `json: ${JSON.stringify({ "inputs": inputs })}` };
+  console.log('messages', messages);
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: {
@@ -19,9 +20,9 @@ async function getTranslationsFromServer(inputs: TranslationInput[]): Promise<Tr
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
-
   const data = await response.json();
-  return data.choices.map(choice => JSON.parse(choice.message.content) as TranslationOutput);
+  console.log('data', data);
+  return JSON.parse(data.choices[0].message.content).inputs;
 }
 
 function getTranslationInput(content: string, pathInfo: PathInfo, activity: Activity): TranslationInput {
@@ -53,33 +54,33 @@ export async function prepareCommit(
   const translationMap = new Map<string, { input: TranslationInput, pathInfo: PathInfo }>();
 
   // Get array of inputs
-  Object.values(activities).forEach(async (activity) => {
+  for (const activity of Object.values(activities)) {
     if (!activity.path) {
       console.error('No path found for activity');
-      return;
+      continue;
     }
     const pathInfo = getPathInfo(activity.path, rootPath);
     if (!pathInfo) {
       console.error('No path info found for activity');
-      return;
+      continue;
     }
     let fileData = fileDataMap.get(pathInfo.path);
     if (!fileData) {
       const fetchPromise = fetchFileFromPath(octokit, owner, repo, branch, pathInfo.path);
-      fetchPromises.push(fetchPromise);
-      fileData = await fetchPromise
+      fileData = await fetchPromise;
 
       if (!fileData) {
         console.error('No file data found');
-        return;
+        continue;
       }
-
-      // Get translation input
-      const translationInput = getTranslationInput(fileData.content, pathInfo, activity);
-      translationMap.set(pathInfo.path, { input: translationInput, pathInfo });
-      fileDataMap.set(pathInfo.path, fileData);
+      fileDataMap.set(pathInfo.path, fileData); // Ensure this is inside the if block
     }
-  });
+
+    // The following lines should be moved outside the if block
+    // Get translation input
+    const translationInput = getTranslationInput(fileData.content, pathInfo, activity);
+    translationMap.set(pathInfo.path, { input: translationInput, pathInfo });
+  }
 
   // Wait for all promises to resolve before returning the map
   await Promise.all(fetchPromises);
@@ -93,7 +94,7 @@ export async function prepareCommit(
     const translation = translationMap.get(output.path);
     console.log("output", output)
     if (fileData && translation) {
-      const newContent = updateContentChunk(fileData.content, translation.pathInfo, output.newClasses.join(' '));
+      const newContent = updateContentChunk(fileData.content, translation.pathInfo, output.classes);
       fileData.content = newContent;
     } else {
       console.error('No file data or translation found');
