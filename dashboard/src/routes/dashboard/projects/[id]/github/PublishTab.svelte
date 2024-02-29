@@ -104,7 +104,7 @@
 
 			project.githubHistoryIds.push(githubHistory.id);
 			githubHistories = [...githubHistories, githubHistory];
-			toast.push('Changes published to GitHub! 🎉', {
+			toast.push('Changes published to GitHub! ð', {
 				theme: {
 					'--toastColor': 'mintcream',
 					'--toastBackground': 'rgba(72,187,120,0.9)',
