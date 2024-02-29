@@ -70,11 +70,22 @@
 			<label for={dashboardDrawerId} class="btn btn-square btn-ghost drawer-button lg:hidden"
 				><SideBarLine /></label
 			>
-
-			<!-- TODO: Change based on folder -->
-			<h1 class="text-2xl font-bold text-red-500 font-medium">
-				{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
-			</h1>
+			<div class="flex flex-row w-full items-center">
+			  <h1 class="text-2xl font-bold text-red-500 font-medium">
+					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
+				</h1>
+				<div class="ml-auto dropdown dropdown-end">
+					<button tabindex="0" class="btn btn-sm btn-outline btn-primary">Feedback</button>
+					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+					<div tabindex="0" class="dropdown-content z-[1] p-2 shadow bg-base-100 rounded w-52">
+						<textarea
+							class="textarea input-primary input-bordered w-full mb-2"
+							placeholder="Feedback"
+						/>
+						<button class="btn btn-primary w-full">Submit</button>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
