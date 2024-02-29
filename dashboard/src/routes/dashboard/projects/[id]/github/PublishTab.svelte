@@ -104,7 +104,7 @@
 
 			project.githubHistoryIds.push(githubHistory.id);
 			githubHistories = [...githubHistories, githubHistory];
-			toast.push('Changes published to GitHub! ÃÂ°ÃÂÃÂÃÂ', {
+			toast.push('Changes published to GitHub! ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ', {
 				theme: {
 					'--toastColor': 'mintcream',
 					'--toastBackground': 'rgba(72,187,120,0.9)',
@@ -150,7 +150,7 @@
 	}
 </script>
 
-<div class="flex flex-col items-center justify-center h-full mt-4">
+<div class="flex flex-col items-center justify-center h-full mt-4 bg-green-400">
 	{#if githubConfigured}
 		<label class="form-control w-full p-2">
 			<div class="label">
