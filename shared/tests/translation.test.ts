@@ -2,6 +2,7 @@ import { expect, test, describe, } from 'bun:test';
 import type { Activity } from '../models/activity';
 import type { TranslationInput } from '../models/translation';
 import { activityToTranslationInput, updateContentClass, getContentClass } from '../translation';
+import exp from 'constants';
 
 describe('translation', () => {
   const PATH = 'path/to/file';
@@ -36,9 +37,9 @@ describe('translation', () => {
   };
 
   const TRANSLATION_INPUT: TranslationInput = {
-    path: PATH,
-    newCss: ['color: blue', 'backgroundColor: black'],
-    currentClasses: CURRENT_VALUE
+    pathInfo: { path: PATH },
+    newCss: 'color: blue; backgroundColor: black',
+    classes: CURRENT_VALUE
   }
 
   test('should translate from activity to changes', async () => {
@@ -82,19 +83,15 @@ describe('edit classes', () => {
       code: `<div className="">`,
       expected: `<div className="${NEW_CLASS}">`
     },
-  ];
-
-  // TODO: Handle this. Might need parser like cheerio or babel
-  const UNHANDLED_CASES = [
     {
-      code: `<div class = "${OLD_CLASS}">`,
-      expected: `<div class = "${NEW_CLASS}">`
+      code: `< div class = "${OLD_CLASS}" > `,
+      expected: `< div class = "${NEW_CLASS}" > `
     },
     {
-      code: `<span>Some text with class="${OLD_CLASS}" in it</span>`,
-      expected: `<span>Some text with class="${OLD_CLASS}" in it</span>` // No change expected
-    }
-  ]
+      code: `<p class="{activeTeamId === teamId ? 'active font-extrabold'  : '' } col - span - 2 text - left"`,
+      expected: `<p class="${NEW_CLASS}"`
+    },
+  ];
 
   test('should insert class', async () => {
     CASES.forEach(async (c) => {
@@ -147,4 +144,14 @@ describe('getContentClass functionality', () => {
     const className = getContentClass(html);
     expect(className).toBe('template-literal-class');
   });
+
+  test('should handle space between class', async () => {
+    const html = `<div class = "first-class second-class">Content</div>`;
+    const className = getContentClass(html);
+    expect(className).toBe('first-class second-class');
+  })
+
+  test('should handle complex class attributes', async () => {
+
+  })
 });

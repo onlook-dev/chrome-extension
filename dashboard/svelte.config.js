@@ -6,7 +6,7 @@ import { onlookPreprocess } from '@onlook/svelte';
 const config = {
 	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
 	// for more information about preprocessors
-	preprocess: [vitePreprocess(), onlookPreprocess()],
+	preprocess: [vitePreprocess(), onlookPreprocess({ root: process.cwd() })],
 	kit: {
 		adapter: adapter()
 	}
