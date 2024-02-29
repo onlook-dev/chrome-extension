@@ -7,8 +7,7 @@ import { activityToTranslationInput, getContentClass, updateContentClass } from 
 import type { TranslationInput, TranslationOutput } from "$shared/models/translation";
 
 async function getTranslationsFromServer(inputs: TranslationInput[]): Promise<TranslationOutput[]> {
-  const messages = { role: 'user', content: `json: ${JSON.stringify({ "inputs": inputs })}` };
-  console.log('messages', messages);
+  const messages = { role: 'user', content: `json: ${JSON.stringify({ "changes": inputs })}` };
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: {
@@ -22,13 +21,13 @@ async function getTranslationsFromServer(inputs: TranslationInput[]): Promise<Tr
   }
   const data = await response.json();
   console.log('data', data);
-  return JSON.parse(data.choices[0].message.content).inputs;
+  return JSON.parse(data.choices[0].message.content).changes;
 }
 
 function getTranslationInput(content: string, pathInfo: PathInfo, activity: Activity): TranslationInput {
   const newContent = content.split('\n').slice(pathInfo.startLine - 1, pathInfo.endLine).join('\n');
   const currentClasses = getContentClass(newContent);
-  const translationInput = activityToTranslationInput(activity, pathInfo, currentClasses);
+  const translationInput = activityToTranslationInput(activity, pathInfo, currentClasses,);
   return translationInput;
 }
 
@@ -50,56 +49,64 @@ export async function prepareCommit(
   activities: Record<string, Activity>
 ): Promise<Map<string, FileContentData>> {
   const fileDataMap = new Map<string, FileContentData>();
-  const fetchPromises: Promise<FileContentData | undefined>[] = [];
-  const translationMap = new Map<string, { input: TranslationInput, pathInfo: PathInfo }>();
+  const fetchPromises: Promise<void>[] = [];
+  const translationInputs: TranslationInput[] = [];
 
-  // Get array of inputs
-  for (const activity of Object.values(activities)) {
+  // Get corresponding File for each activity
+  Object.values(activities).forEach((activity: Activity) => {
     if (!activity.path) {
       console.error('No path found for activity');
-      continue;
+      return;
     }
     const pathInfo = getPathInfo(activity.path, rootPath);
-    if (!pathInfo) {
-      console.error('No path info found for activity');
-      continue;
-    }
-    let fileData = fileDataMap.get(pathInfo.path);
-    if (!fileData) {
-      const fetchPromise = fetchFileFromPath(octokit, owner, repo, branch, pathInfo.path);
-      fileData = await fetchPromise;
-
-      if (!fileData) {
-        console.error('No file data found');
-        continue;
-      }
-      fileDataMap.set(pathInfo.path, fileData); // Ensure this is inside the if block
-    }
-
-    // The following lines should be moved outside the if block
-    // Get translation input
-    const translationInput = getTranslationInput(fileData.content, pathInfo, activity);
-    translationMap.set(pathInfo.path, { input: translationInput, pathInfo });
-  }
-
-  // Wait for all promises to resolve before returning the map
-  await Promise.all(fetchPromises);
-
-  // Get translations from server
-  const inputArray = Array.from(translationMap.values()).map((translation) => translation.input);
-  const translationOutputs: TranslationOutput[] = await getTranslationsFromServer(inputArray);
-
-  translationOutputs.forEach((output) => {
-    const fileData = fileDataMap.get(output.path);
-    const translation = translationMap.get(output.path);
-    console.log("output", output)
-    if (fileData && translation) {
-      const newContent = updateContentChunk(fileData.content, translation.pathInfo, output.classes);
-      fileData.content = newContent;
-    } else {
-      console.error('No file data or translation found');
+    if (!fileDataMap.has(pathInfo.path)) {
+      const fetchPromise = fetchFileFromPath(octokit, owner, repo, branch, pathInfo.path).then((fileContentData: FileContentData) => {
+        fileDataMap.set(pathInfo.path, fileContentData);
+      })
+      fetchPromises.push(fetchPromise);
     }
   })
+
+  await Promise.all(fetchPromises)
+
+  console.log('fileDataMap before', fileDataMap);
+
+  // Get correponding TranslationInput for each activities
+  Object.values(activities).forEach((activity: Activity) => {
+    if (!activity.path) {
+      console.error('No path found for activity');
+      return;
+    }
+    const pathInfo = getPathInfo(activity.path, rootPath);
+    const fileContentData = fileDataMap.get(pathInfo.path);
+    if (!fileContentData) {
+      console.error('No file content found for activity');
+      return;
+    }
+
+    const translationInput = getTranslationInput(fileContentData.content, pathInfo, activity);
+    translationInputs.push(translationInput);
+  });
+
+  console.log('translationInputs', translationInputs);
+
+  // Get translations from server
+  const translationOutput = await getTranslationsFromServer(translationInputs);
+  console.log('translationOutput', translationOutput);
+
+  // Write translations back into files
+  translationOutput.forEach((translation: TranslationOutput) => {
+    const fileContentData = fileDataMap.get(translation.pathInfo.path);
+    if (!fileContentData) {
+      console.error('No file content found for translation');
+      return;
+    }
+
+    const newContent = updateContentChunk(fileContentData.content, translation.pathInfo, translation.classes);
+    fileContentData.content = newContent;
+  });
+
+  console.log('fileDataMap after', fileDataMap);
   return fileDataMap;
 }
 
