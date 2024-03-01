@@ -32,7 +32,7 @@
 		{#each team?.projectIds.map((id) => $projectsMapStore.get(id)) as project}
 			<button
 				on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
-				class="bg-base-100 rounded space-y-4 p-4 hover:shadow block"
+				class="bg-base-100 rounded space-y-4 p-4 hover:shadow block p-5 pl-5 pb-5 pr-5 pt-5"
 			>
 				<figure class="">
 					{#if project?.hostData.previewImage}
@@ -57,7 +57,7 @@
 						</div>
 					</div>
 					<div class="text-left overflow-x-hidden">
-						<p class="text-sm font-semibold truncate">{project?.name}</p>
+						<p class="text-sm font-semibold truncate font-light">{project?.name}</p>
 						<p class="text-xs opacity-70 truncate">{project?.hostUrl}</p>
 					</div>
 				</div>
