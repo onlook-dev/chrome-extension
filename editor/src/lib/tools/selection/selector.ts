@@ -1,5 +1,5 @@
 import { get, writable, type Writable } from "svelte/store";
-import { deepElementFromPoint, isOffBounds } from "../utilities";
+import { deepElementFromPoint, getByDataOnlookId, getDataOnlookId, isOffBounds } from "../utilities";
 
 export class SelectorEngine {
   page = document.body
@@ -48,7 +48,7 @@ export class SelectorEngine {
     if (this.editing) return;
 
     if (!e.shiftKey) {
-      this.selectedStore.set([target])
+      this.selectSingle(target);
     } else {
       if (get(this.selectedStore).includes(target)) {
         this.unselect(target);
@@ -63,7 +63,7 @@ export class SelectorEngine {
 
     // Find the most deeply nested element
     while (target.children.length > 0) {
-      target = target.children[0];
+      target = target.children[0] as HTMLElement;
     }
 
     if (isOffBounds(target)) return;
@@ -76,12 +76,28 @@ export class SelectorEngine {
     this.editingStore.set(target);
   }
 
+  selectSingle(item) {
+    const targets = [item]
+    const dataOnlookId = getDataOnlookId(item);
+    dataOnlookId && targets.push(...getByDataOnlookId(dataOnlookId));
+
+    this.selectedStore.update((s) => [...targets])
+  }
+
   select(item) {
-    this.selectedStore.update((s) => [...s, item])
+    const targets = [item]
+    const dataOnlookId = getDataOnlookId(item);
+    dataOnlookId && targets.push(...getByDataOnlookId(dataOnlookId));
+
+    this.selectedStore.update((s) => [...s, ...targets])
   }
 
   unselect(item) {
-    this.selectedStore.update((s) => s.filter((i) => i !== item))
+    const targets = [item]
+    const dataOnlookId = getDataOnlookId(item);
+    dataOnlookId && targets.push(...getByDataOnlookId(dataOnlookId));
+
+    this.selectedStore.update((s) => s.filter((i) => targets.includes(i) === false))
   }
 
   clear() {
