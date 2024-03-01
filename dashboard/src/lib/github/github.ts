@@ -5,7 +5,7 @@ import { getInstallationOctokit } from './installation';
 import { createCommit, prepareCommit } from './commits';
 import type { FileContentData } from '$shared/models/translation';
 import { createOrGetBranch } from './branches';
-import { createOrGetPullRequest, } from './pullRequests';
+import { createOrGetPullRequest } from './pullRequests';
 
 // TODO: Should clean up if any steps fail
 // - Delete branch
@@ -54,7 +54,7 @@ export async function exportToPRComments(
 		throw 'Export failed: No commit details found';
 	}
 
-	console.log('prepared commit details');
+	console.log('prepared new commit');
 
 	const branchName = `onlook-${projectId}`;
 	const branchFound = await createOrGetBranch(
@@ -70,6 +70,17 @@ export async function exportToPRComments(
 		throw 'Export failed: Failed to create or fetch branch';
 	}
 
+	const commitId = await createCommit(
+		octokit,
+		githubSettings.owner,
+		githubSettings.repositoryName,
+		branchName,
+		Array.from(commitDetails.values()),
+		user,
+	);
+
+	console.log('created new commit');
+
 	const { pullRequestNumber, pullRequestUrl } = await createOrGetPullRequest(
 		octokit,
 		githubSettings.owner,
@@ -81,16 +92,5 @@ export async function exportToPRComments(
 	);
 
 	console.log('created new pr: ', pullRequestUrl);
-
-	const commitId = await createCommit(
-		octokit,
-		githubSettings.owner,
-		githubSettings.repositoryName,
-		branchName,
-		Array.from(commitDetails.values()),
-		user,
-	);
-
-	console.log('created new commit');
 	return pullRequestUrl;
 }

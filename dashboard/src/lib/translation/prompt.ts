@@ -1,5 +1,5 @@
 export const TAILWIND_PROMPT = `
-Translate CSS to TailwindCSS in provided code chunks. Input is a 'changes' object with 'TranslationInput' items containing 'pathInfo' (keep unchanged), original code, and CSS properties. Output should match input structure, replacing CSS with Tailwind classes in 'codeChunk'. Ensure valid JSON output with terminated string.
+Translate CSS to TailwindCSS in provided code chunks. Input is a 'changes' object with 'TranslationInput' items containing 'pathInfo' (keep unchanged), original code, and CSS properties. Output should match input structure, updating or insert Tailwind classes in 'codeChunk' corresonding to 'newCss'. Ensure valid JSON output with terminated string. Keep tab and spacing consistent with input.
 
 - Input: 'TranslationInput' with 'pathInfo', 'newCss' (CSS properties as string), 'codeChunk' (original HTML/JSX).
 - Output: 'TranslationOutput' with 'pathInfo', 'codeChunk' updated with Tailwind classes.
