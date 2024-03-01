@@ -1,44 +1,11 @@
 import type { Activity } from "$shared/models/activity";
 import type { Octokit } from "@octokit/core";
-import { fetchFileFromPath, getPathInfo, type FileContentData, type PathInfo } from "./files";
 import type { TreeItem } from "$shared/models/github";
-
-import { activityToTranslationInput, getContentClass, updateContentClass } from '$shared/translation';
-import type { TranslationInput, TranslationOutput } from "$shared/models/translation";
-
-async function getTranslationsFromServer(inputs: TranslationInput[]): Promise<TranslationOutput[]> {
-  const messages = { role: 'user', content: `json: ${JSON.stringify({ "changes": inputs })}` };
-  const response = await fetch('/api/chat', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ messages })
-  });
-
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  const data = await response.json();
-  console.log('data', data);
-  return JSON.parse(data.choices[0].message.content).changes;
-}
-
-function getTranslationInput(content: string, pathInfo: PathInfo, activity: Activity): TranslationInput {
-  const newContent = content.split('\n').slice(pathInfo.startLine - 1, pathInfo.endLine).join('\n');
-  const currentClasses = getContentClass(newContent);
-  const translationInput = activityToTranslationInput(activity, pathInfo, currentClasses,);
-  return translationInput;
-}
-
-function updateContentChunk(content: string, pathInfo: PathInfo, newClass: string): string {
-  let newContent = content.split('\n').slice(pathInfo.startLine - 1, pathInfo.endLine).join('\n');
-  newContent = updateContentClass(newContent, newClass);
-  // Merge new content back into content
-  const contentLines = content.split('\n');
-  contentLines.splice(pathInfo.startLine - 1, pathInfo.endLine - pathInfo.startLine + 1, newContent);
-  return contentLines.join('\n');
-}
+import type { FileContentData, TranslationInput, TranslationOutput } from "$shared/models/translation";
+import { getTranslationsFromServer, } from "$lib/translation/translation";
+import { getTranslationInput, updateContentChunk } from "$shared/translation";
+import { fetchFileFromPath, getPathInfo, } from "./files";
+import type { User } from "$shared/models/user";
 
 export async function prepareCommit(
   octokit: Octokit,
@@ -46,7 +13,7 @@ export async function prepareCommit(
   repo: string,
   branch: string,
   rootPath: string,
-  activities: Record<string, Activity>
+  activities: Record<string, Activity>,
 ): Promise<Map<string, FileContentData>> {
   const fileDataMap = new Map<string, FileContentData>();
   const fetchPromises: Promise<void>[] = [];
@@ -60,8 +27,12 @@ export async function prepareCommit(
     }
     const pathInfo = getPathInfo(activity.path, rootPath);
     if (!fileDataMap.has(pathInfo.path)) {
-      const fetchPromise = fetchFileFromPath(octokit, owner, repo, branch, pathInfo.path).then((fileContentData: FileContentData) => {
-        fileDataMap.set(pathInfo.path, fileContentData);
+      const fetchPromise = fetchFileFromPath(octokit, owner, repo, branch, pathInfo.path).then((fileContentData: FileContentData | undefined) => {
+        if (!fileContentData) {
+          console.error("Dile content not found for path: ", pathInfo.path)
+        } else {
+          fileDataMap.set(pathInfo.path, fileContentData);
+        }
       })
       fetchPromises.push(fetchPromise);
     }
@@ -102,7 +73,7 @@ export async function prepareCommit(
       return;
     }
 
-    const newContent = updateContentChunk(fileContentData.content, translation.pathInfo, translation.classes);
+    const newContent = updateContentChunk(fileContentData.content, translation.codeChunk, translation.pathInfo);
     fileContentData.content = newContent;
   });
 
@@ -110,13 +81,13 @@ export async function prepareCommit(
   return fileDataMap;
 }
 
-
 export async function createCommit(
   octokit: Octokit,
   owner: string,
   repo: string,
   branch: string,
-  files: FileContentData[]
+  files: FileContentData[],
+  user: User
 ): Promise<string> {
   try {
     // Preparing the tree for the commit
@@ -151,8 +122,8 @@ export async function createCommit(
       tree: treeResponse.data.sha,
       parents: [latestCommitSha],
       author: {
-        name: 'Onlook',
-        email: 'erik@onlook.dev', // TODO: Add users' email here
+        name: user.name,
+        email: user.email, // TODO: Add users' email here
         date: new Date().toISOString()
       },
       headers: {

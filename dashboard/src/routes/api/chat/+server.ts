@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { openAi } from '$lib/utils/serverEnv';
-import { TAILWIND_PROMPT } from '$lib/utils/prompt.js';
+import { TAILWIND_PROMPT } from '$lib/translation/prompt.js';
 
 const systemMessage = {
 	role: 'system',
@@ -25,11 +25,17 @@ export const POST = async ({ request }) => {
 	];
 
 	// Ask OpenAI for a chat completion given the prompt
-	const response = await openai.chat.completions.create({
-		model: 'gpt-3.5-turbo',
+	const stream = await openai.chat.completions.create({
+		model: 'gpt-4-0125-preview',
 		messages: combinedMessages,
 		response_format: { type: 'json_object' },
 		temperature: 0,
+		stream: true
 	});
+
+	let response = ''
+	for await (const chunk of stream) {
+		response += chunk.choices[0]?.delta?.content || "";
+	}
 	return new Response(JSON.stringify(response));
 };
