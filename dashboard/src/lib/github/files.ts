@@ -1,16 +1,5 @@
 import type { Octokit } from "@octokit/core";
-
-export interface FileContentData {
-  path: string;
-  content: string;
-  sha: string;
-}
-
-export interface PathInfo {
-  path: string;
-  startLine: number;
-  endLine: number;
-}
+import type { FileContentData, PathInfo } from "$shared/models/translation";
 
 export function getPathInfo(activityPath: string, rootPath: string): PathInfo {
   const [filePath, startLine, endLine] = activityPath.split(':');

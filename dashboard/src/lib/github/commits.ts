@@ -1,9 +1,11 @@
 import type { Activity } from "$shared/models/activity";
 import type { Octokit } from "@octokit/core";
-import { fetchFileFromPath, getPathInfo, type FileContentData, } from "./files";
 import type { TreeItem } from "$shared/models/github";
-import type { TranslationInput, TranslationOutput } from "$shared/models/translation";
-import { getTranslationInput, getTranslationsFromServer, updateContentChunk } from "$lib/translation/translation";
+import type { FileContentData, TranslationInput, TranslationOutput } from "$shared/models/translation";
+import { getTranslationsFromServer, } from "$lib/translation/translation";
+import { getTranslationInput, updateContentChunk } from "$shared/translation";
+import { fetchFileFromPath, getPathInfo, } from "./files";
+import type { User } from "$shared/models/user";
 
 export async function prepareCommit(
   octokit: Octokit,
@@ -11,7 +13,7 @@ export async function prepareCommit(
   repo: string,
   branch: string,
   rootPath: string,
-  activities: Record<string, Activity>
+  activities: Record<string, Activity>,
 ): Promise<Map<string, FileContentData>> {
   const fileDataMap = new Map<string, FileContentData>();
   const fetchPromises: Promise<void>[] = [];
@@ -71,7 +73,7 @@ export async function prepareCommit(
       return;
     }
 
-    const newContent = updateContentChunk(fileContentData.content, translation.pathInfo, translation.classes);
+    const newContent = updateContentChunk(fileContentData.content, translation.codeChunk, translation.pathInfo);
     fileContentData.content = newContent;
   });
 
@@ -79,13 +81,13 @@ export async function prepareCommit(
   return fileDataMap;
 }
 
-
 export async function createCommit(
   octokit: Octokit,
   owner: string,
   repo: string,
   branch: string,
-  files: FileContentData[]
+  files: FileContentData[],
+  user: User
 ): Promise<string> {
   try {
     // Preparing the tree for the commit
@@ -120,8 +122,8 @@ export async function createCommit(
       tree: treeResponse.data.sha,
       parents: [latestCommitSha],
       author: {
-        name: 'Onlook',
-        email: 'erik@onlook.dev', // TODO: Add users' email here
+        name: user.name,
+        email: user.email, // TODO: Add users' email here
         date: new Date().toISOString()
       },
       headers: {
