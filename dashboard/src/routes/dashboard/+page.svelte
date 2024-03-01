@@ -64,14 +64,14 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="drawer-content px-4 py-6 overflow-auto h-screen bg-gray-300 bg-gray-200 bg-black">
+	<div class="drawer-content px-4 py-6 overflow-auto h-screen bg-black">
 		<!-- Page content here -->
 		<div class="flex flex-row gap-2 mb-4 items-center">
 			<label for={dashboardDrawerId} class="btn btn-square btn-ghost drawer-button lg:hidden"
 				><SideBarLine /></label
 			>
 			<div class="flex flex-row w-full items-center">
-				<h1 class="text-2xl font-semibold text-black font-medium text-white bg-red-500 py-2 px-2">
+				<h1 class="text-2xl font-light text-white bg-red-500 px-2.5 py-2.5">
 					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 				</h1>
 				<div class="ml-auto dropdown dropdown-end">
@@ -101,7 +101,7 @@
 	<!-- Drawer Sidebar -->
 	<div class="drawer-side shadow">
 		<label for={dashboardDrawerId} aria-label="close sidebar" class="drawer-overlay"></label>
-		<ul class="w-64 min-h-full bg-base-100 space-y-2 p-2 bg-green-500">
+		<ul class="w-64 min-h-full bg-lime-400 space-y-2 p-2">
 			<!-- Sidebar content -->
 			<li>
 				<AvatarDropdown {user} />
@@ -114,7 +114,7 @@
 					{#each user?.teamIds as teamId}
 						<li>
 							<button
-								class="grid grid-cols-3 items-center w-full"
+								class="grid grid-cols-3 items-center w-full bg-red-500 text-white"
 								on:click={() => {
 									activeTeamId = teamId;
 									goto(`${DashboardRoutes.DASHBOARD}?${DashboardSearchParams.TEAM}=` + teamId, {
@@ -123,7 +123,7 @@
 								}}
 							>
 								<p
-									class="font-semibold {activeTeamId === teamId
+									class="font-black {activeTeamId === teamId
 										? 'active font-extrabold'
 										: ''} col-span-2 text-left"
 								>
