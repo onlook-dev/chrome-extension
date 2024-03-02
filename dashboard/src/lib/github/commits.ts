@@ -123,7 +123,7 @@ export async function createCommit(
       parents: [latestCommitSha],
       author: {
         name: user.name,
-        email: user.email, // TODO: Add users' email here
+        email: user.email,
         date: new Date().toISOString()
       },
       headers: {
