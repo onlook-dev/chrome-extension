@@ -11,6 +11,7 @@ export class EditTool implements Tool {
 	overlayManager: OverlayManager;
 	elResizeObserver: ResizeObserver;
 	oldText: string | undefined;
+	copiedElement: HTMLElement | undefined;
 
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
@@ -171,5 +172,26 @@ export class EditTool implements Tool {
 		target.removeEventListener("input", this.handleInput);
 		this.oldText = undefined;
 		this.selectorEngine.editingStore.set(undefined);
+	};
+
+	insertElement = (el: HTMLElement) => {
+		if (!el) return;
+		const selected = this.selectorEngine.selected;
+		if (selected.length == 0) return
+		const selectedEl = selected[0];
+		// Insert element into childrens list 
+		selectedEl.appendChild(el);
+	};
+
+	copyElement = () => {
+		const selected = this.selectorEngine.selected;
+		if (selected.length == 0) return;
+		this.copiedElement = selected[0]
+	};
+
+	pasteElement = () => {
+		if (!this.copiedElement) return;
+		const clonedElement = this.copiedElement.cloneNode(true) as HTMLElement;
+		this.insertElement(clonedElement);
 	};
 }

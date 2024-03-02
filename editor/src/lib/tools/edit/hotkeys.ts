@@ -1,13 +1,14 @@
 import hotkeys from "hotkeys-js";
 import { redoLastEvent, undoLastEvent } from "./history";
 import { ToolName } from "..";
+import type { EditTool } from ".";
 
 export class HotKeys {
   metaKey: string;
   altKey: string;
   toolKeyMaps: Record<ToolName, Record<string, () => void>>;
 
-  constructor() {
+  constructor(editTool: EditTool) {
     this.metaKey = window.navigator.platform.includes('Mac')
       ? 'cmd'
       : 'ctrl'
@@ -26,7 +27,9 @@ export class HotKeys {
     this.toolKeyMaps = {
       [ToolName.EDIT]: {
         [`${this.metaKey}+z`]: () => undoLastEvent(),
-        [`${this.metaKey}+shift+z`]: () => redoLastEvent()
+        [`${this.metaKey}+shift+z`]: () => redoLastEvent(),
+        [`${this.metaKey}+c`]: () => editTool.copyElement(),
+        [`${this.metaKey}+v`]: () => editTool.pasteElement(),
       }
     }
   }

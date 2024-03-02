@@ -17,8 +17,8 @@ export interface Tool {
 export class ToolManager {
   selectedTool?: Tool | undefined;
   toolMap: Record<ToolName, Tool>
-  hotKeys: HotKeys;
   editTool: EditTool;
+  hotKeys: HotKeys;
 
   eventsMap = {
     'mouseover': (e) => this.handleMouseOver(e),
@@ -29,8 +29,8 @@ export class ToolManager {
   };
 
   constructor(toolName: ToolName,) {
-    this.hotKeys = new HotKeys();
     this.editTool = new EditTool();
+    this.hotKeys = new HotKeys(this.editTool);
     this.toolMap = {
       [ToolName.EDIT]: this.editTool,
     }

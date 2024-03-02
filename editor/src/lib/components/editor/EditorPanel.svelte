@@ -9,11 +9,13 @@
   import { editorPanelVisible } from "$lib/states/editor";
   import type { EditTool } from "$lib/tools/edit";
   import CodeTab from "./CodeTab.svelte";
+  import ComponentsTab from "./ComponentsTab.svelte";
 
   export let editTool: EditTool;
   enum TabValue {
     CSS = "css",
     CODE = "code",
+    COMPONENTS = "components",
   }
   let selectedTab: string = TabValue.CSS;
 
@@ -47,7 +49,10 @@
           <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CODE}
             >Code</Tabs.Trigger
           >
-          <!-- <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.OTHER}>Changes</Tabs.Trigger> -->
+          <Tabs.Trigger
+            class="bg-transparent p-0 text-xs"
+            value={TabValue.COMPONENTS}>Components</Tabs.Trigger
+          >
         </Tabs.List>
         <Separator class="mt-1" />
         <div
@@ -57,6 +62,9 @@
           >
           <Tabs.Content value={TabValue.CODE}
             ><CodeTab {editTool} /></Tabs.Content
+          >
+          <Tabs.Content value={TabValue.COMPONENTS}
+            ><ComponentsTab {editTool} /></Tabs.Content
           >
         </div>
 
