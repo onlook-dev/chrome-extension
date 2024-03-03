@@ -4,6 +4,7 @@
   import { ChevronDown } from "radix-icons-svelte";
   import { Component1, Text, BoxModel } from "radix-icons-svelte";
   import { DATA_ONLOOK_IGNORE, IGNORE_TAGS } from "$lib/constants";
+  import { onMount } from "svelte";
 
   export let node: HTMLElement | undefined;
   export let selected: HTMLElement | undefined;
@@ -28,7 +29,7 @@
     node.tagName &&
     (TagMap[node.tagName.toLowerCase()]?.title ||
       capitalizeFirstLetter(node.tagName.toLowerCase()));
-  let isOpen = true;
+  let isOpen = false;
   let selfSelected = false;
 
   function capitalizeFirstLetter(string) {
@@ -56,6 +57,28 @@
   }
 
   const paddingY = "py-1";
+
+  onMount(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // Node is visible, proceed to load/render it
+          isOpen = true;
+          observer.unobserve(entry.target);
+        }
+      });
+    });
+
+    if (nodeRef) {
+      observer.observe(nodeRef);
+    }
+
+    return () => {
+      if (nodeRef) {
+        observer.unobserve(nodeRef);
+      }
+    };
+  });
 </script>
 
 {#if node && node instanceof Node && node.nodeType == Node.ELEMENT_NODE && !IGNORE_TAGS.includes(node.nodeName) && !node.hasAttribute(DATA_ONLOOK_IGNORE)}

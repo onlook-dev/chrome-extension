@@ -193,5 +193,12 @@ export class EditTool implements Tool {
 		if (!this.copiedElement) return;
 		const clonedElement = this.copiedElement.cloneNode(true) as HTMLElement;
 		this.insertElement(clonedElement);
+		this.simulateClick(clonedElement);
+	};
+
+	deleteElement = () => {
+		const selected = this.selectorEngine.selected;
+		if (selected.length == 0) return;
+		selected.forEach((el) => el.remove());
 	};
 }

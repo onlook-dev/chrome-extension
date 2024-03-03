@@ -6,6 +6,7 @@ import type { EditTool } from ".";
 export class HotKeys {
   metaKey: string;
   altKey: string;
+  deleteKey: string;
   toolKeyMaps: Record<ToolName, Record<string, () => void>>;
 
   constructor(editTool: EditTool) {
@@ -16,6 +17,10 @@ export class HotKeys {
     this.altKey = window.navigator.platform.includes('Mac')
       ? 'opt'
       : 'alt'
+
+    this.deleteKey = window.navigator.platform.includes('Mac')
+      ? 'backspace'
+      : 'delete'
 
     if (this.metaKey === 'ctrl')
       [...document.querySelectorAll('kbd')]
@@ -30,6 +35,7 @@ export class HotKeys {
         [`${this.metaKey}+shift+z`]: () => redoLastEvent(),
         [`${this.metaKey}+c`]: () => editTool.copyElement(),
         [`${this.metaKey}+v`]: () => editTool.pasteElement(),
+        [`${this.deleteKey}`]: () => editTool.deleteElement(),
       }
     }
   }

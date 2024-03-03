@@ -1,7 +1,7 @@
 import type { MouseEvent } from '$shared/constants'
 import type { Activity } from '$shared/models/activity'
 import type { Project } from '$shared/models/project'
-import type { EditorStyleChange } from '$shared/models/visbug'
+import type { EditorStyleChange } from '$shared/models/editor'
 import { getMessage } from '@extend-chrome/messages'
 import type { SendOptions } from '@extend-chrome/messages/types/types'
 import { Observable } from 'rxjs'
