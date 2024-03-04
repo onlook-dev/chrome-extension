@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import DOMTreeNode from "./TreeNode.svelte";
 
   export let node: HTMLElement | undefined;
