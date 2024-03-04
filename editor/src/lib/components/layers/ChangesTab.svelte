@@ -10,7 +10,7 @@
   let hoveredEvent: EditEvent | undefined;
   let clickedEvent: EditEvent | undefined;
 
-  $: events = $historyStore.sort(
+  $: events = [...$historyStore].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 

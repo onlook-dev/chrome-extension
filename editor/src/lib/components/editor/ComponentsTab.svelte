@@ -5,7 +5,6 @@
   export let editTool: EditTool;
 
   function insertElement() {
-    console.log("Inserting element");
     editTool.insertElement(createStyledButton("Click me"));
   }
 

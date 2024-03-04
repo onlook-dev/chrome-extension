@@ -1,6 +1,6 @@
 import { addToHistory } from "./history";
 import { getUniqueSelector } from "../utilities";
-import type { EditEvent, EditType } from "$lib/types/editor";
+import type { EditEvent, EditType, InsertRemoveVal } from "$lib/types/editor";
 
 const OPEN_PROJECT: string = "OPEN_PROJECT";
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
@@ -33,7 +33,7 @@ function debounce(func, wait) {
   };
 }
 
-function postMessage(el: HTMLElement, editType: EditType, newValue: Record<string, string>, oldValue: Record<string, string>) {
+function postMessage(el: HTMLElement, editType: EditType, newValue: Record<string, string> | InsertRemoveVal, oldValue: Record<string, string> | InsertRemoveVal) {
   const selector =
     elementSelectorCache.get(el) || getUniqueSelector(el);
 
@@ -51,8 +51,8 @@ function postMessage(el: HTMLElement, editType: EditType, newValue: Record<strin
 
 let debouncedPostMessage = debounce(postMessage, 1000);
 
-export function emitStyleChangeEvent(el: HTMLElement, styleType: string, newValue: Record<string, string>, oldValue: Record<string, string>) {
-  debouncedPostMessage(el, styleType, newValue, oldValue);
+export function emitStyleChangeEvent(el: HTMLElement, editType: EditType, newValue: Record<string, string> | InsertRemoveVal, oldValue: Record<string, string> | InsertRemoveVal) {
+  debouncedPostMessage(el, editType, newValue, oldValue);
 }
 
 export function emitOpenProjectMessage() {

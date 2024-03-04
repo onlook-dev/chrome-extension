@@ -1,5 +1,5 @@
-import type { EditEvent } from '$lib/types/editor';
-import { writable } from 'svelte/store';
+import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$lib/types/editor';
+import { get, writable } from 'svelte/store';
 
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
@@ -12,13 +12,13 @@ export function addToHistory(event: EditEvent) {
 
     // Deduplicate last event
     const lastEvent = history[history.length - 1];
-
     if (
       lastEvent.editType === event.editType &&
       lastEvent.selector === event.selector
     ) {
       lastEvent.newVal = event.newVal;
       lastEvent.createdAt = event.createdAt;
+      history[history.length - 1] = lastEvent;
       return history;
     } else {
       return [...history, event];
@@ -28,20 +28,16 @@ export function addToHistory(event: EditEvent) {
 
 export function undoLastEvent() {
   historyStore.update(history => {
-    const event: EditEvent = history.pop();
-    if (event) {
-      const reverseEvent: EditEvent = {
-        createdAt: event.createdAt,
-        selector: event.selector,
-        editType: event.editType,
-        newVal: event.oldVal,
-        oldVal: event.newVal,
-        path: event.path,
-      };
-      applyEvent(reverseEvent);
-      redoStore.update(redo => [...redo, event]);
+    if (history.length === 0) {
+      return history;
     }
-    return history;
+    const lastEvent = history[history.length - 1];
+    if (lastEvent) {
+      const reverseEvent: EditEvent = createReverseEvent(lastEvent);
+      applyEvent(reverseEvent);
+      redoStore.update(redo => [...redo, lastEvent]);
+    }
+    return history.slice(0, -1);
   });
 }
 
@@ -56,15 +52,86 @@ export function redoLastEvent() {
   });
 }
 
-function applyEvent(event: EditEvent) {
-  const element: HTMLElement | undefined = document.querySelector(event.selector);
+function createReverseEvent(event: EditEvent): EditEvent {
+  switch (event.editType) {
+    case EditType.STYLE || EditType.TEXT:
+      return {
+        createdAt: event.createdAt,
+        selector: event.selector,
+        editType: event.editType,
+        newVal: event.oldVal,
+        oldVal: event.newVal,
+        path: event.path,
+      };
+    case EditType.INSERT:
+      return {
+        createdAt: event.createdAt,
+        selector: event.selector,
+        editType: EditType.REMOVE,
+        newVal: event.oldVal,
+        oldVal: event.newVal,
+        path: event.path,
+      };
+    case EditType.REMOVE:
+      return {
+        createdAt: event.createdAt,
+        selector: event.selector,
+        editType: EditType.INSERT,
+        newVal: event.oldVal,
+        oldVal: event.newVal,
+        path: event.path,
+      };
+  }
+}
+
+function applyStyleEvent(event: EditEvent, element: HTMLElement) {
   if (!element) return;
   Object.entries(event.newVal).forEach(([style, newVal]) => {
-    if (style === 'text') {
-      element.innerText = newVal
-    } else {
-      element.style[style] = newVal;
-    }
+    element.style[style] = newVal;
   });
+}
+
+function applyTextEvent(event: EditEvent, element: HTMLElement) {
+  if (!element) return;
+  const newVal = event.newVal as TextVal;
+  element.textContent = newVal.text;
+}
+
+function applyInsertEvent(event: EditEvent, parent: HTMLElement) {
+  const newVal = event.newVal as InsertRemoveVal;
+  if (!parent) return;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(newVal.childContent, "application/xml");
+  const el = doc.documentElement
+  if (!el) return;
+  if (newVal.position >= parent.childNodes.length) {
+    parent.insertBefore(el, parent.childNodes[newVal.position]);
+  } else {
+    parent.appendChild(el);
+  }
+}
+
+function applyRemoveEvent(event: EditEvent, parent: HTMLElement) {
+  const oldVal = event.oldVal as InsertRemoveVal;
+  const el = parent.querySelector(oldVal.childSelector);
+  if (el) el.remove();
+}
+
+function applyEvent(event: EditEvent) {
+  const element: HTMLElement | undefined = document.querySelector(event.selector);
+  switch (event.editType) {
+    case EditType.STYLE:
+      applyStyleEvent(event, element);
+      break;
+    case EditType.TEXT:
+      applyTextEvent(event, element);
+      break;
+    case EditType.INSERT:
+      applyInsertEvent(event, element);
+      break;
+    case EditType.REMOVE:
+      applyRemoveEvent(event, element);
+      break;
+  }
   window.postMessage(event, window.location.origin);
 }

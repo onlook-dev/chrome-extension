@@ -1,9 +1,10 @@
 import { ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible } from '$lib/states/editor';
+import { EditType, type InsertRemoveVal } from '$lib/types/editor';
 import type { Tool } from '../index';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
-import { findCommonParent } from '../utilities';
+import { findCommonParent, getUniqueSelector } from '../utilities';
 import { emitStyleChangeEvent } from './emit';
 
 export class EditTool implements Tool {
@@ -156,7 +157,7 @@ export class EditTool implements Tool {
 		const newText = target.textContent
 		emitStyleChangeEvent(
 			target,
-			"text",
+			EditType.TEXT,
 			{ text: newText },
 			{ text: this.oldText }
 		);
@@ -182,6 +183,17 @@ export class EditTool implements Tool {
 		const selectedEl = selected[0];
 		// Insert element into childrens list 
 		selectedEl.appendChild(el);
+
+		// Emit event
+		const serializer = new XMLSerializer();
+		const xmlStr = serializer.serializeToString(el);
+		const position = Array.from(selectedEl.children).indexOf(el);
+		emitStyleChangeEvent(
+			selectedEl,
+			EditType.INSERT,
+			{ childContent: xmlStr, childSelector: getUniqueSelector(el), position } as InsertRemoveVal,
+			{}
+		);
 	};
 
 	copyElement = () => {
@@ -200,6 +212,18 @@ export class EditTool implements Tool {
 	deleteElement = () => {
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return;
-		selected.forEach((el) => el.remove());
+		selected.forEach((el) => {
+			const serializer = new XMLSerializer();
+			const xmlStr = serializer.serializeToString(el);
+			const parent = el.parentElement;
+			const position = Array.from(parent.children).indexOf(el);
+			emitStyleChangeEvent(
+				parent,
+				EditType.REMOVE,
+				{ removed: getUniqueSelector(el) },
+				{ childContent: xmlStr, childSelector: getUniqueSelector(el), position } as InsertRemoveVal,
+			);
+			el.remove()
+		});
 	};
 }

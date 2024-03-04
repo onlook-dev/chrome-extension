@@ -18,6 +18,7 @@
   import SpacingInput from "./inputs/SpacingInput.svelte";
   import type { EditTool } from "$lib/tools/edit";
   import { onDestroy, onMount } from "svelte";
+  import { EditType } from "$lib/types/editor";
   // import { Textarea } from "$lib/components/ui/textarea";
   // import TailwindInput from "./inputs/TailwindInput.svelte";
 
@@ -58,7 +59,12 @@
       const oldStyle = element.style[key];
       element.style[key] = value;
       // Emit event
-      emitStyleChangeEvent(element, key, { [key]: value }, { [key]: oldStyle });
+      emitStyleChangeEvent(
+        element,
+        EditType.STYLE,
+        { [key]: value },
+        { [key]: oldStyle }
+      );
     });
   }
 </script>

@@ -74,24 +74,6 @@
 				<h1 class="text-2xl text-black font-medium">
 					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 				</h1>
-				<div class="ml-auto dropdown dropdown-end">
-					<button
-						tabindex="0"
-						class="btn btn-sm btn-outline btn-primary mt-0 pl-4 pb-0 pt-0 w-full ml-0 min-w-32 h-10 min-h-10 pr-4"
-						>Feedback</button
-					>
-					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-					<div
-						tabindex="0"
-						class="dropdown-content z-[1] p-2 shadow bg-base-100 rounded min-h-[100px] pt-4 pb-4 pl-4 min-w-[300px] pr-4"
-					>
-						<textarea
-							class="textarea input-primary input-bordered w-full mb-2 h-32"
-							placeholder="Feedback"
-						/>
-						<button class="btn btn-primary w-full">Submit</button>
-					</div>
-				</div>
 			</div>
 		</div>
 
