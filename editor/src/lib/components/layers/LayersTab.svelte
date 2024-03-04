@@ -6,7 +6,7 @@
   export let editTool: EditTool;
 
   let hovered: HTMLElement;
-  let selected: HTMLElement;
+  let selected: HTMLElement[] = [];
   let htmlDoc: Document;
   let tree: HTMLElement;
 
@@ -18,9 +18,9 @@
   });
 
   function select(e: Event, node: HTMLElement) {
-    if (selected == node) return;
-    selected = node;
-    editTool.simulateClick(selected);
+    if (selected.includes(node)) return;
+    selected = [node];
+    editTool.simulateClick(node);
   }
 
   function mouseEnter(e: Event, node: HTMLElement) {
@@ -44,10 +44,10 @@
 
   function handleNewSelections(els: HTMLElement[]) {
     if (els.length == 0) {
-      selected = undefined;
+      selected = [];
       return;
     }
-    selected = els[0];
+    selected = els;
   }
 </script>
 

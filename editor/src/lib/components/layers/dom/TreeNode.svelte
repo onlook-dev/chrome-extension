@@ -7,7 +7,7 @@
   import { onMount } from "svelte";
 
   export let node: HTMLElement | undefined;
-  export let selected: HTMLElement | undefined;
+  export let selected: HTMLElement[];
   export let hovered: HTMLElement | undefined;
   export let depth = 0;
   export let internalHover = false;
@@ -36,7 +36,7 @@
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  $: isSelected = node == selected;
+  $: isSelected = selected.includes(node);
   $: isHovered = node == hovered;
   $: selectedClass = isSelected
     ? "bg-red rounded text-white font-semibold"
