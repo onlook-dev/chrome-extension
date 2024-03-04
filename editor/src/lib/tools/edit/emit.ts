@@ -1,8 +1,7 @@
 import { addToHistory } from "./history";
 import { getUniqueSelector } from "../utilities";
-import type { EditEvent } from "$lib/types/editor";
+import type { EditEvent, EditType } from "$lib/types/editor";
 
-const STYLE_CHANGE: string = "STYLE_CHANGE";
 const OPEN_PROJECT: string = "OPEN_PROJECT";
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
 
@@ -34,20 +33,17 @@ function debounce(func, wait) {
   };
 }
 
-function postMessage(el: HTMLElement, styleType: string, newValue: Record<string, string>, oldValue: Record<string, string>) {
+function postMessage(el: HTMLElement, editType: EditType, newValue: Record<string, string>, oldValue: Record<string, string>) {
   const selector =
     elementSelectorCache.get(el) || getUniqueSelector(el);
 
   const event: EditEvent = {
-    type: STYLE_CHANGE,
-    detail: {
-      createdAt: new Date().toISOString(),
-      selector: selector,
-      styleType: styleType,
-      newVal: newValue,
-      oldVal: oldValue,
-      path: el.dataset.onlookId,
-    },
+    createdAt: new Date().toISOString(),
+    selector: selector,
+    editType: editType,
+    newVal: newValue,
+    oldVal: oldValue,
+    path: el.dataset.onlookId,
   };
   addToHistory(event as EditEvent);
   window.postMessage(event, window.location.origin);

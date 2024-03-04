@@ -4,9 +4,6 @@ import { writable } from 'svelte/store';
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
 
-const UNDO_STYLE_CHANGE = "UNDO_STYLE_CHANGE";
-const REDO_STYLE_CHANGE = "REDO_STYLE_CHANGE";
-
 export function addToHistory(event: EditEvent) {
   // Merge to last item if styleType, selector and keys are the same
   // Keeping oldest old val and newest new val
@@ -17,11 +14,11 @@ export function addToHistory(event: EditEvent) {
     const lastEvent = history[history.length - 1];
 
     if (
-      lastEvent.detail.styleType === event.detail.styleType &&
-      lastEvent.detail.selector === event.detail.selector
+      lastEvent.editType === event.editType &&
+      lastEvent.selector === event.selector
     ) {
-      lastEvent.detail.newVal = event.detail.newVal;
-      lastEvent.detail.createdAt = event.detail.createdAt;
+      lastEvent.newVal = event.newVal;
+      lastEvent.createdAt = event.createdAt;
       return history;
     } else {
       return [...history, event];
@@ -34,15 +31,12 @@ export function undoLastEvent() {
     const event: EditEvent = history.pop();
     if (event) {
       const reverseEvent: EditEvent = {
-        type: UNDO_STYLE_CHANGE,
-        detail: {
-          createdAt: event.detail.createdAt,
-          selector: event.detail.selector,
-          styleType: event.detail.styleType,
-          newVal: event.detail.oldVal,
-          oldVal: event.detail.newVal,
-          path: event.detail.path,
-        },
+        createdAt: event.createdAt,
+        selector: event.selector,
+        editType: event.editType,
+        newVal: event.oldVal,
+        oldVal: event.newVal,
+        path: event.path,
       };
       applyEvent(reverseEvent);
       redoStore.update(redo => [...redo, event]);
@@ -55,7 +49,6 @@ export function redoLastEvent() {
   redoStore.update((redo) => {
     const event: EditEvent = redo.pop();
     if (event) {
-      event.type = REDO_STYLE_CHANGE;
       applyEvent(event);
       historyStore.update(history => [...history, event]);
     }
@@ -64,10 +57,9 @@ export function redoLastEvent() {
 }
 
 function applyEvent(event: EditEvent) {
-  const detail = event.detail;
-  const element: HTMLElement | undefined = document.querySelector(detail.selector);
+  const element: HTMLElement | undefined = document.querySelector(event.selector);
   if (!element) return;
-  Object.entries(detail.newVal).forEach(([style, newVal]) => {
+  Object.entries(event.newVal).forEach(([style, newVal]) => {
     if (style === 'text') {
       element.innerText = newVal
     } else {

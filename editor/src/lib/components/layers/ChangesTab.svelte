@@ -11,9 +11,7 @@
   let clickedEvent: EditEvent | undefined;
 
   $: events = $historyStore.sort(
-    (a, b) =>
-      new Date(b.detail.createdAt).getTime() -
-      new Date(a.detail.createdAt).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
   function shortenSelector(selector: string) {
@@ -60,9 +58,7 @@
 
   function hoverEvent(event: EditEvent) {
     hoveredEvent = event;
-    const el: HTMLElement | undefined = document.querySelector(
-      event.detail.selector
-    );
+    const el: HTMLElement | undefined = document.querySelector(event.selector);
     if (!el) {
       editTool.simulateOut();
       return;
@@ -72,13 +68,17 @@
   }
 
   function clickEvent(event: EditEvent) {
+    if (event && clickedEvent === event) {
+      clickedEvent = undefined;
+      editTool.simulateClick([]);
+      return;
+    }
+
     clickedEvent = event;
-    const el: HTMLElement | undefined = document.querySelector(
-      event.detail.selector
-    );
+    const el: HTMLElement | undefined = document.querySelector(event.selector);
     if (!el) return;
 
-    editTool.simulateClick(el);
+    editTool.simulateClick([el]);
   }
 </script>
 
@@ -119,12 +119,12 @@
           <Avatar.Fallback></Avatar.Fallback>
         </Avatar.Root>
         <p>You</p>
-        <p class="opacity-60">{timeSince(new Date(event.detail.createdAt))}</p>
+        <p class="opacity-60">{timeSince(new Date(event.createdAt))}</p>
       </div>
       <div class="flex flex-row items-center space-x-1">
         <p class="opacity-60">Element:</p>
         <span class="text-red bg-red/20 p-1"
-          >{shortenSelector(event.detail.selector)}</span
+          >{shortenSelector(event.selector)}</span
         >
       </div>
       <ul
@@ -133,7 +133,7 @@
           : 'bg-stone-900'}"
         transition:slide
       >
-        {#each Object.entries(event.detail.newVal) as [key, val]}
+        {#each Object.entries(event.newVal) as [key, val]}
           <li class="opacity-60">{jsToCssProperty(key)}: {val};</li>
         {/each}
       </ul>

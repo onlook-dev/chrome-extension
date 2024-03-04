@@ -1,32 +1,26 @@
 import { expect, test, describe, beforeEach } from 'bun:test';
 import { get } from 'svelte/store';
-import { historyStore, redoStore, addToHistory, undoLastEvent, redoLastEvent } from '$lib/tools/edit/history';
-import type { EditEvent } from '$lib/types/editor';
+import { historyStore, redoStore, addToHistory, undoLastEvent, redoLastEvent } from '../src/lib/tools/edit/history';
+import { EditType, type EditEvent } from '../src/lib/types/editor';
 
 describe('history functionality', () => {
   const mockEvent = {
-    type: 'STYLE_CHANGE',
-    detail: {
-      createdAt: new Date().toISOString(),
-      selector: '.test',
-      styleType: 'color',
-      newVal: 'red',
-      oldVal: 'blue',
-      path: ['path', 'to', 'element']
-    }
-  };
+    createdAt: new Date().toISOString(),
+    selector: '.test',
+    editType: EditType.STYLE,
+    newVal: { 'color': 'red' },
+    oldVal: { 'color': 'blue' },
+    path: 'path1',
+  } as EditEvent;
 
   const mockEvent1 = {
-    type: 'STYLE_CHANGE',
-    detail: {
-      createdAt: new Date().toISOString(),
-      selector: '.test1',
-      styleType: 'color1',
-      newVal: 'red1',
-      oldVal: 'blue1',
-      path: ['path', 'to', 'element']
-    }
-  };
+    createdAt: new Date().toISOString(),
+    selector: '.test1',
+    editType: EditType.STYLE,
+    newVal: { 'color': 'red1' },
+    oldVal: { 'color': 'blue1' },
+    path: 'path1'
+  } as EditEvent;
 
   beforeEach(() => {
     // Reset the stores before each test
@@ -36,7 +30,7 @@ describe('history functionality', () => {
 
   test('addToHistory adds an event to the history', () => {
     addToHistory(mockEvent);
-    const history: EditEvent = get(historyStore);
+    const history: EditEvent[] = get(historyStore);
     expect(history.length).toBe(1);
     expect(history[0]).toEqual(mockEvent);
   });
@@ -46,7 +40,7 @@ describe('history functionality', () => {
     addToHistory(mockEvent);
     addToHistory(mockEvent1);
     addToHistory(mockEvent1);
-    const history: EditEvent = get(historyStore);
+    const history: EditEvent[] = get(historyStore);
     expect(history.length).toBe(2);
     expect(history[0]).toEqual(mockEvent);
     expect(history[1]).toEqual(mockEvent1);
@@ -58,7 +52,7 @@ describe('history functionality', () => {
     addToHistory(mockEvent1);
     addToHistory(mockEvent);
     addToHistory(mockEvent);
-    const history: EditEvent = get(historyStore);
+    const history: EditEvent[] = get(historyStore);
     expect(history.length).toBe(3);
     expect(history[0]).toEqual(mockEvent);
     expect(history[1]).toEqual(mockEvent1);
@@ -70,11 +64,10 @@ describe('history functionality', () => {
     addToHistory(mockEvent);
     undoLastEvent();
 
-    const history: EditEvent = get(historyStore);
-    const redo: EditEvent = get(redoStore);
+    const history: EditEvent[] = get(historyStore);
+    const redo: EditEvent[] = get(redoStore);
     expect(history.length).toBe(0);
     expect(redo.length).toBe(1);
-    expect(redo[0].type).toBe('STYLE_CHANGE');
   });
 
   test('redoLastEvent moves the last event from redo to history', () => {
@@ -83,10 +76,9 @@ describe('history functionality', () => {
     undoLastEvent();
     redoLastEvent();
 
-    const history: EditEvent = get(historyStore);
-    const redo: EditEvent = get(redoStore);
+    const history: EditEvent[] = get(historyStore);
+    const redo: EditEvent[] = get(redoStore);
     expect(history.length).toBe(1);
     expect(redo.length).toBe(0);
-    expect(history[0].type).toBe('REDO_STYLE_CHANGE');
   });
 });

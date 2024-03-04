@@ -17,7 +17,7 @@
     editTool.selectorEngine.hoveredStore.subscribe(handleNewHover);
   });
 
-  function select(e: Event, node: HTMLElement) {
+  function select(e: Event | any, node: HTMLElement) {
     if (e.shiftKey) {
       if (selected.includes(node)) {
         selected = selected.filter((el) => el !== node);
