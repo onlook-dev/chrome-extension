@@ -18,9 +18,16 @@
   });
 
   function select(e: Event, node: HTMLElement) {
-    if (selected.includes(node)) return;
-    selected = [node];
-    editTool.simulateClick(node, e.shiftKey);
+    if (e.shiftKey) {
+      if (selected.includes(node)) {
+        selected = selected.filter((el) => el !== node);
+      } else {
+        selected = [...selected, node];
+      }
+    } else {
+      selected = [node];
+    }
+    editTool.simulateClick(selected);
   }
 
   function mouseEnter(e: Event, node: HTMLElement) {

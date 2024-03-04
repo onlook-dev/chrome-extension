@@ -90,38 +90,34 @@ export class EditTool implements Tool {
 		}
 	}
 
-	simulateClick(el: HTMLElement, shiftKey = false) {
-		if (el) {
-			this.simulateOut();
-			if (shiftKey) {
-				this.selectorEngine.selectedStore.set([...this.selectorEngine.selected, el as HTMLElement]);
-			} else {
-				this.selectorEngine.selectedStore.set([el as HTMLElement]);
-			}
-			this.overlayManager.clear();
-			this.overlayManager.addClickRect(el as HTMLElement);
-			this.updateParentRect();
+	simulateClick(els: HTMLElement[]) {
+		if (!els) return;
 
-			this.scrollElementIntoView(el);
-		}
+		this.selectorEngine.selectedStore.set(els);
+		this.overlayManager.clear();
+		this.elResizeObserver.disconnect();
+
+		this.selectorEngine.selected.forEach((el) => {
+			this.overlayManager.addClickRect(el);
+			this.elResizeObserver.observe(el);
+		});
 	}
 
 	simulateHover = (el: HTMLElement) => {
-		if (el) {
-			this.selectorEngine.hoveredStore.set(el as HTMLElement);
-			this.overlayManager.updateHoverRect(el as HTMLElement);
-		}
+		if (!el) return
+		this.selectorEngine.hoveredStore.set(el as HTMLElement);
+		this.overlayManager.updateHoverRect(el as HTMLElement);
 	}
 
 	simulateOut = () => {
 		const el = this.selectorEngine.hovered;
-		if (el) {
-			this.selectorEngine.hoveredStore.set(undefined);
-			this.overlayManager.removeHoverRect();
-		}
+		if (!el) return
+		this.selectorEngine.hoveredStore.set(undefined);
+		this.overlayManager.removeHoverRect();
 	}
 
 	scrollElementIntoView(el: HTMLElement) {
+		if (!el) return;
 		const rect = el.getBoundingClientRect();
 		const isVisible = (
 			rect.top >= 0 &&
