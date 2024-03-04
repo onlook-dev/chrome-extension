@@ -20,7 +20,7 @@
   function select(e: Event, node: HTMLElement) {
     if (selected.includes(node)) return;
     selected = [node];
-    editTool.simulateClick(node);
+    editTool.simulateClick(node, e.shiftKey);
   }
 
   function mouseEnter(e: Event, node: HTMLElement) {
@@ -43,7 +43,7 @@
   }
 
   function handleNewSelections(els: HTMLElement[]) {
-    if (els.length == 0) {
+    if (!els || els.length == 0) {
       selected = [];
       return;
     }
