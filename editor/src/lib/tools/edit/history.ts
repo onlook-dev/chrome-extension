@@ -4,8 +4,19 @@ import { get, writable } from 'svelte/store';
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
 
+function compareKeys(a: Record<string, string>, b: Record<string, string>): boolean {
+  if (!a || !b) return false;
+  const set1 = new Set(Object.keys(a));
+  const set2 = new Set(Object.keys(b));
+  if (set1.size !== set2.size) return false;
+  for (let item of set1) {
+    if (!set2.has(item)) return false;
+  }
+  return true;
+}
+
 export function addToHistory(event: EditEvent) {
-  // Merge to last item if styleType, selector and keys are the same
+  // Merge to last item if type, selector and keys are the same
   // Keeping oldest old val and newest new val
   historyStore.update((history) => {
     if (history.length === 0) return [event];
@@ -14,7 +25,8 @@ export function addToHistory(event: EditEvent) {
     const lastEvent = history[history.length - 1];
     if (
       lastEvent.editType === event.editType &&
-      lastEvent.selector === event.selector
+      lastEvent.selector === event.selector &&
+      compareKeys(lastEvent.newVal as Record<string, string>, event.newVal as Record<string, string>)
     ) {
       lastEvent.newVal = event.newVal;
       lastEvent.createdAt = event.createdAt;
