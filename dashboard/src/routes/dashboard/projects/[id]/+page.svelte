@@ -92,7 +92,7 @@
 					>Onlook</a
 				>
 				<p class="text-sm mr-4">/</p>
-				<p class="truncate">
+				<p class="truncate text-9xl">
 					{truncateString(project?.name || 'Dashboard', MAX_TITLE_LENGTH)}
 				</p>
 			</div>
