@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { EditTool } from "$lib/tools/edit";
-  import { onMount, tick } from "svelte";
+  import { onMount } from "svelte";
   import TreeRoot from "./dom/TreeRoot.svelte";
 
   export let editTool: EditTool;

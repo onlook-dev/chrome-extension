@@ -48,7 +48,7 @@
   $: iconClass = `h-3 w-3 ml-1 mr-2 ${isSelected ? "text-white" : "text-red"}`;
 
   $: if (isSelected && !selfSelected) {
-    nodeRef.scrollIntoView({
+    nodeRef?.scrollIntoView({
       behavior: "smooth",
       block: "center",
       inline: "start",
