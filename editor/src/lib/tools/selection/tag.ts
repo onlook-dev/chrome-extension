@@ -81,6 +81,9 @@ export const TagMap: Record<string, TagInfo> = {
   svg: {
     title: "Scalable Vector Graphics", description: "A language for describing two-dimensional vector graphics in XML."
   },
+  path: {
+    title: "Path", description: "The <path> SVG element is the generic element to define a shape. All the basic shapes can be created with a path element."
+  },
   canvas: {
     title: "Canvas", description: "Provides a resolution-dependent bitmap area, which can be used for rendering graphs, game graphics, or other visual images on the fly."
   },

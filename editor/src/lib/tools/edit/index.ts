@@ -96,7 +96,6 @@ export class EditTool implements Tool {
 		this.selectorEngine.selectedStore.set(els);
 		this.overlayManager.clear();
 		this.elResizeObserver.disconnect();
-
 		this.selectorEngine.selected.forEach((el) => {
 			this.overlayManager.addClickRect(el);
 			this.elResizeObserver.observe(el);
@@ -193,7 +192,7 @@ export class EditTool implements Tool {
 		if (!this.copiedElement) return;
 		const clonedElement = this.copiedElement.cloneNode(true) as HTMLElement;
 		this.insertElement(clonedElement);
-		this.simulateClick(clonedElement);
+		this.simulateClick([clonedElement]);
 	};
 
 	deleteElement = () => {
