@@ -117,7 +117,7 @@ export class EditTool implements Tool {
 	}
 
 	scrollElementIntoView(el: HTMLElement) {
-		if (!el) return;
+		if (!el || !el.getBoundingClientRect) return;
 		const rect = el.getBoundingClientRect();
 		const isVisible = (
 			rect.top >= 0 &&

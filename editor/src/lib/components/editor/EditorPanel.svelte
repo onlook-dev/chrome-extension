@@ -32,10 +32,13 @@
 </script>
 
 <div
-  use:draggable={{ bounds: "body" }}
-  class="fixed top-10 right-2 transform -translate-y-1/2 -translate-x-1/2 {$editorPanelVisible
-    ? 'visible'
-    : 'invisible'}"
+  use:draggable={{
+    bounds: {
+      top: 0,
+      left: 0,
+    },
+  }}
+  class="fixed top-10 right-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
 >
   <Card.Root
     class="h-[80vh] w-[{$width}px] backdrop-blur bg-background/90 pt-2"

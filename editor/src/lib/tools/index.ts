@@ -77,13 +77,13 @@ export class ToolManager {
 
   setListeners = () => {
     Object.keys(this.eventsMap).forEach(event => {
-      window.addEventListener(event, this.eventsMap[event], true);
+      document.body.addEventListener(event, this.eventsMap[event], true);
     });
   }
 
   removeListeners = () => {
     Object.keys(this.eventsMap).forEach(event => {
-      window.removeEventListener(event, this.eventsMap[event], true);
+      document.body.removeEventListener(event, this.eventsMap[event], true);
     });
   }
 }
