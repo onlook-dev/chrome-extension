@@ -100,6 +100,8 @@ export class EditTool implements Tool {
 			this.overlayManager.addClickRect(el);
 			this.elResizeObserver.observe(el);
 		});
+		if (els.length > 0)
+			this.scrollElementIntoView(els[0]);
 	}
 
 	simulateHover = (el: HTMLElement) => {
@@ -116,7 +118,7 @@ export class EditTool implements Tool {
 	}
 
 	scrollElementIntoView(el: HTMLElement) {
-		if (!el || !el.getBoundingClientRect) return;
+		if (!el) return;
 		const rect = el.getBoundingClientRect();
 		const isVisible = (
 			rect.top >= 0 &&
