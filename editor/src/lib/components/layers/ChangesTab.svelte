@@ -138,6 +138,5 @@
         {/each}
       </ul>
     </div>
-    <Separator />
   {/each}
 </div>

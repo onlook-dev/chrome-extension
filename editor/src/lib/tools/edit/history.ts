@@ -1,5 +1,5 @@
 import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$lib/types/editor';
-import { get, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
