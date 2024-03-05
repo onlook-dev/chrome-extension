@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import type { Project } from '$shared/models/project'
-	import type { Activity, StyleChange } from '$shared/models/activity'
+	import type { Activity, ChangeValues } from '$shared/models/activity'
 	import type { User } from '$shared/models/user'
 	import { usersMapBucket, projectsMapBucket } from '$lib/utils/localstorage'
 	import { sendActivityRevert, sendActivityApply } from '$lib/utils/messaging'
@@ -93,7 +93,7 @@
 		}
 	}
 
-	function formatStyleChanges(styleChanges: Record<string, StyleChange>): string {
+	function formatStyleChanges(styleChanges: Record<string, ChangeValues>): string {
 		return Object.values(styleChanges)
 			.map(({ key, newVal }) => `${jsToCssProperty(key)}: ${newVal};`)
 			.join('\n')
@@ -171,15 +171,17 @@
 					<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.path}</span>
 				{/if}
 
-				<p>Code Change:</p>
-				<CodeBlock
-					class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-auto "
-					language="css"
-					code={formatStyleChanges(activity.styleChanges)}
-					color="text-gray-800"
-					text="text-xs"
-					button="btn btn-xs ml-auto rounded-sm"
-				/>
+				{#if activity.styleChanges}
+					<p>Code Change:</p>
+					<CodeBlock
+						class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-auto "
+						language="css"
+						code={formatStyleChanges(activity.styleChanges)}
+						color="text-gray-800"
+						text="text-xs"
+						button="btn btn-xs ml-auto rounded-sm"
+					/>
+				{/if}
 
 				{#if activity.previewImage}
 					<p>Preview image:</p>

@@ -191,7 +191,7 @@ export class EditTool implements Tool {
 		handleEditEvent({
 			el: selectedEl,
 			editType: EditType.INSERT,
-			newValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position } as InsertRemoveVal,
+			newValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}` } as InsertRemoveVal,
 			oldValue: {}
 		});
 	};
@@ -221,7 +221,7 @@ export class EditTool implements Tool {
 				el: parent,
 				editType: EditType.REMOVE,
 				newValue: { removed: getUniqueSelector(el) },
-				oldValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position } as InsertRemoveVal,
+				oldValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}` } as InsertRemoveVal,
 			});
 			el.remove()
 		});

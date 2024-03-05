@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import type { Project } from '$shared/models/project';
-	import type { Activity, StyleChange } from '$shared/models/activity';
+	import type { Activity, ChangeValues } from '$shared/models/activity';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 	import { jsToCssProperty } from '$shared/helpers';
 	import { postProjectToFirebase } from '$lib/storage/project';
@@ -79,7 +79,7 @@
 	}
 
 	// Format style changes for an activity
-	function formatStyleChanges(styleChanges: Record<string, StyleChange>): string {
+	function formatStyleChanges(styleChanges: Record<string, ChangeValues>): string {
 		return Object.values(styleChanges)
 			.map(({ key, newVal }) => `${jsToCssProperty(key)}: ${newVal};`)
 			.join('\n');
@@ -181,14 +181,49 @@
 						<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.path}</span>
 					{/if}
 
-					<p>Code Change:</p>
-					<CodeBlock
-						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
-						language="css"
-						code={formatStyleChanges(activity.styleChanges)}
-						color="text-gray-800"
-						text="text-sm"
-					/>
+					{#if activity.styleChanges && Object.keys(activity.styleChanges).length > 0}
+						<p>Code Change:</p>
+						<CodeBlock
+							class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
+							language="css"
+							code={formatStyleChanges(activity.styleChanges)}
+							color="text-gray-800"
+							text="text-sm"
+						/>
+					{/if}
+
+					{#if activity.textChanges && Object.keys(activity.textChanges).length > 0}
+						<p>Text Change:</p>
+						<CodeBlock
+							class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
+							language="text"
+							code={formatStyleChanges(activity.textChanges)}
+							color="text-gray-800"
+							text="text-sm"
+						/>
+					{/if}
+
+					{#if activity.insertChanges && Object.keys(activity.insertChanges).length > 0}
+						<p>Insert Change:</p>
+						<CodeBlock
+							class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
+							language="css"
+							code={formatStyleChanges(activity.insertChanges)}
+							color="text-gray-800"
+							text="text-sm"
+						/>
+					{/if}
+
+					{#if activity.removeChanges && Object.keys(activity.removeChanges).length > 0}
+						<p>Remove Change:</p>
+						<CodeBlock
+							class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
+							language="css"
+							code={formatStyleChanges(activity.removeChanges)}
+							color="text-gray-800"
+							text="text-sm"
+						/>
+					{/if}
 
 					{#if activity.previewImage}
 						<p>Preview image:</p>

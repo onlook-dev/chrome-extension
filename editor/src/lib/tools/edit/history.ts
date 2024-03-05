@@ -116,8 +116,9 @@ function applyInsertEvent(event: EditEvent, parent: HTMLElement) {
   const doc = parser.parseFromString(newVal.childContent, "application/xml");
   const el = doc.documentElement
   if (!el) return;
-  if (newVal.position >= parent.childNodes.length) {
-    parent.insertBefore(el, parent.childNodes[newVal.position]);
+  const pos = parseInt(newVal.position);
+  if (pos >= parent.childNodes.length) {
+    parent.insertBefore(el, parent.childNodes[pos]);
   } else {
     parent.appendChild(el);
   }

@@ -14,7 +14,7 @@ export type TextVal = {
 export type InsertRemoveVal = {
   childContent: string;
   childSelector: string;
-  position: number;
+  position: string;
 }
 
 export enum EditType {

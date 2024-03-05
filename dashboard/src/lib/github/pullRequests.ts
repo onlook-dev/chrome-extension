@@ -1,9 +1,4 @@
-import type { Activity } from "$shared/models/activity";
 import type { Octokit } from "@octokit/core";
-import { getPathInfo } from "./files";
-import { jsToCssProperty } from "$shared/helpers";
-import { DashboardRoutes, DashboardSearchParams } from "$shared/constants";
-import { baseUrl } from "$lib/utils/env";
 
 export async function createOrGetPullRequest(
   octokit: Octokit,

@@ -8,7 +8,7 @@ import {
 	openUrlRequestStream,
 	sendActivityInspect,
 	sendActivityRevert,
-	styleChangeStream,
+	editEventStream,
 	activityApplyStream,
 	sendActivityApply,
 	saveProjectStream
@@ -275,7 +275,7 @@ const setListeners = () => {
 	})
 
 	// Style change from visbug and content script
-	styleChangeStream.subscribe(async ([visbugStyleChange]) => {
+	editEventStream.subscribe(async ([visbugStyleChange]) => {
 		changeQueue.push(visbugStyleChange)
 
 		// Process the queue

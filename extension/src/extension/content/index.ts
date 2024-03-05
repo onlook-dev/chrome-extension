@@ -13,7 +13,7 @@ import {
 	getScreenshotStream,
 	sendOpenUrlRequest,
 	sendSaveProject,
-	sendStyleChange
+	sendEditEvent
 } from '$lib/utils/messaging'
 import type { Activity } from '$shared/models/activity'
 import type { EditEvent, } from '$shared/models/editor'
@@ -92,7 +92,7 @@ export function setupListeners() {
 		if (message.type === EDIT_EVENT) {
 			const editorStyleChange = message.detail as EditEvent
 			console.log('Received style change', editorStyleChange)
-			sendStyleChange(editorStyleChange)
+			sendEditEvent(editorStyleChange)
 			return
 		}
 
