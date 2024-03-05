@@ -1,4 +1,5 @@
 document.querySelectorAll('onlook-toolbar').forEach(node => {
+  // @ts-ignore - style does exist
   node.style.display = 'block';
   node.animate([
     // Keyframes: from current opacity to 0
@@ -13,6 +14,7 @@ document.querySelectorAll('onlook-toolbar').forEach(node => {
 
 // Show rectangles
 document.querySelectorAll('#onlook-rect').forEach(node => {
+  // @ts-ignore - style does exist
   node.style.display = 'block';
   node.animate([
     // Keyframes: from current opacity to 0

@@ -1,4 +1,4 @@
-
+// @ts-ignore - Browser exists in context 
 var platform = typeof browser === 'undefined' ? chrome : browser
 
 const script = document.createElement('script')

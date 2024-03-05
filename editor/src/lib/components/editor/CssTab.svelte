@@ -6,7 +6,6 @@
     getElementComputedStylesData,
     groupElementStylesByGroup,
   } from "$lib/tools/selection/styles";
-  import { emitStyleChangeEvent } from "$lib/tools/edit/emit";
   import * as Accordion from "$lib/components/ui/accordion";
   import { Input } from "$lib/components/ui/input";
   import Separator from "../ui/separator/separator.svelte";
@@ -19,6 +18,7 @@
   import type { EditTool } from "$lib/tools/edit";
   import { onDestroy, onMount } from "svelte";
   import { EditType } from "$lib/types/editor";
+  import { handleStyleChangeEvent } from "$lib/tools/edit/handleEvents";
   // import { Textarea } from "$lib/components/ui/textarea";
   // import TailwindInput from "./inputs/TailwindInput.svelte";
 
@@ -59,12 +59,12 @@
       const oldStyle = element.style[key];
       element.style[key] = value;
       // Emit event
-      emitStyleChangeEvent(
-        element,
-        EditType.STYLE,
-        { [key]: value },
-        { [key]: oldStyle }
-      );
+      handleStyleChangeEvent({
+        el: element,
+        editType: EditType.STYLE,
+        newValue: { [key]: value },
+        oldValue: { [key]: oldStyle },
+      });
     });
   }
 </script>

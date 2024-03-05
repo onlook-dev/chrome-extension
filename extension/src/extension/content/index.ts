@@ -1,10 +1,8 @@
 import {
 	DASHBOARD_AUTH,
 	DashboardRoutes,
+	EDIT_EVENT,
 	OPEN_PROJECT,
-	REDO_STYLE_CHANGE,
-	STYLE_CHANGE,
-	UNDO_STYLE_CHANGE
 } from '$shared/constants'
 import { authUserBucket, getActiveProject } from '$lib/utils/localstorage'
 import {
@@ -91,23 +89,9 @@ export function setupListeners() {
 			return
 		}
 
-		if (message.type === STYLE_CHANGE) {
+		if (message.type === EDIT_EVENT) {
 			const editorStyleChange = message.detail as EditorStyleChange
 			sendStyleChange(editorStyleChange)
-			return
-		}
-
-		if (message.type === UNDO_STYLE_CHANGE) {
-			const editorStyleChange = message.detail as EditorStyleChange
-			// applyVisbugStyleChange(editorStyleChange)
-			sendStyleChange(editorStyleChange)
-			return
-		}
-
-		if (message.type === REDO_STYLE_CHANGE) {
-			const visbugStyleChange = message.detail as EditorStyleChange
-			// applyVisbugStyleChange(visbugStyleChange)
-			sendStyleChange(visbugStyleChange)
 			return
 		}
 

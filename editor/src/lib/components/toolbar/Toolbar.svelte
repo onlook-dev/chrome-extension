@@ -1,12 +1,12 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card";
-  import { ExternalLink, Pencil1, Stop } from "radix-icons-svelte";
+  import { ExternalLink, Pencil1 } from "radix-icons-svelte";
   import ToolBarAnimation from "./ToolbarAnimation.svelte";
   import { ToolManager, ToolName } from "$lib/tools";
   import EditorPanel from "../editor/EditorPanel.svelte";
   import Button from "../ui/button/button.svelte";
   import { slide } from "svelte/transition";
-  import { emitOpenProjectMessage } from "$lib/tools/edit/emit";
+  import { emitOpenProjectMessage } from "$lib/tools/messages";
   import LayersPanel from "../layers/LayersPanel.svelte";
 
   let activeToolName: ToolName | undefined = ToolName.EDIT;

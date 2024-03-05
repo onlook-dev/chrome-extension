@@ -5,7 +5,7 @@ import type { Tool } from '../index';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getUniqueSelector } from '../utilities';
-import { emitStyleChangeEvent } from './emit';
+import { handleStyleChangeEvent } from './handleEvents';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
@@ -155,12 +155,12 @@ export class EditTool implements Tool {
 
 	handleInput = ({ target }) => {
 		const newText = target.textContent
-		emitStyleChangeEvent(
-			target,
-			EditType.TEXT,
-			{ text: newText },
-			{ text: this.oldText }
-		);
+		handleStyleChangeEvent({
+			el: target,
+			editType: EditType.TEXT,
+			newValue: { text: newText },
+			oldValue: { text: this.oldText }
+		});
 	}
 
 	stopBubbling = (e) => e.key != "Escape" && e.stopPropagation();
@@ -188,12 +188,12 @@ export class EditTool implements Tool {
 		const serializer = new XMLSerializer();
 		const xmlStr = serializer.serializeToString(el);
 		const position = Array.from(selectedEl.children).indexOf(el);
-		emitStyleChangeEvent(
-			selectedEl,
-			EditType.INSERT,
-			{ childContent: xmlStr, childSelector: getUniqueSelector(el), position } as InsertRemoveVal,
-			{}
-		);
+		handleStyleChangeEvent({
+			el: selectedEl,
+			editType: EditType.INSERT,
+			newValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position } as InsertRemoveVal,
+			oldValue: {}
+		});
 	};
 
 	copyElement = () => {
@@ -217,12 +217,12 @@ export class EditTool implements Tool {
 			const xmlStr = serializer.serializeToString(el);
 			const parent = el.parentElement;
 			const position = Array.from(parent.children).indexOf(el);
-			emitStyleChangeEvent(
-				parent,
-				EditType.REMOVE,
-				{ removed: getUniqueSelector(el) },
-				{ childContent: xmlStr, childSelector: getUniqueSelector(el), position } as InsertRemoveVal,
-			);
+			handleStyleChangeEvent({
+				el: parent,
+				editType: EditType.REMOVE,
+				newValue: { removed: getUniqueSelector(el) },
+				oldValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position } as InsertRemoveVal,
+			});
 			el.remove()
 		});
 	};

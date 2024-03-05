@@ -1,8 +1,8 @@
 import { addToHistory } from "./history";
 import { getUniqueSelector } from "../utilities";
 import type { EditEvent, EditType, InsertRemoveVal } from "$lib/types/editor";
+import { emitEditEvent } from "../messages";
 
-const OPEN_PROJECT: string = "OPEN_PROJECT";
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
 
 function debounce(func, wait) {
@@ -33,28 +33,32 @@ function debounce(func, wait) {
   };
 }
 
-function postMessage(el: HTMLElement, editType: EditType, newValue: Record<string, string> | InsertRemoveVal, oldValue: Record<string, string> | InsertRemoveVal) {
+interface HandleEditEventParams {
+  el: HTMLElement,
+  editType: EditType,
+  newValue: Record<string, string> | InsertRemoveVal,
+  oldValue: Record<string, string> | InsertRemoveVal
+}
+
+function handleEditEvent(param: HandleEditEventParams) {
   const selector =
-    elementSelectorCache.get(el) || getUniqueSelector(el);
+    elementSelectorCache.get(param.el) || getUniqueSelector(param.el);
 
   const event: EditEvent = {
     createdAt: new Date().toISOString(),
     selector: selector,
-    editType: editType,
-    newVal: newValue,
-    oldVal: oldValue,
-    path: el.dataset.onlookId,
+    editType: param.editType,
+    newVal: param.newValue,
+    oldVal: param.oldValue,
+    path: param.el.dataset.onlookId,
   };
+
   addToHistory(event as EditEvent);
-  window.postMessage(event, window.location.origin);
+  emitEditEvent(event);
 }
 
-let debouncedPostMessage = debounce(postMessage, 1000);
+let debouncedHandleEditEvent = debounce(handleEditEvent, 1000);
 
-export function emitStyleChangeEvent(el: HTMLElement, editType: EditType, newValue: Record<string, string> | InsertRemoveVal, oldValue: Record<string, string> | InsertRemoveVal) {
-  debouncedPostMessage(el, editType, newValue, oldValue);
+export function handleStyleChangeEvent(param: HandleEditEventParams) {
+  debouncedHandleEditEvent(param);
 }
-
-export function emitOpenProjectMessage() {
-  window.postMessage({ type: OPEN_PROJECT }, window.location.origin);
-};
