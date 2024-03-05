@@ -47,13 +47,9 @@ function simulateEventOnSelector(
 function applyActivityChanges(activity: Activity): boolean {
 	const element = document.querySelector(activity.selector) as any
 	if (element) {
-		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
+		Object.entries(activity.styleChanges ?? {}).forEach(([style, changeObject]) => {
 			// Apply style to element
-			if (style === 'text') {
-				element.innerText = changeObject.newVal
-			} else {
-				element.style[style] = changeObject.newVal
-			}
+			element.style[style] = changeObject.newVal
 		})
 		if (activity.path !== element.dataset.onlookId) {
 			activity.path = element.dataset.onlookId
@@ -66,7 +62,7 @@ function applyActivityChanges(activity: Activity): boolean {
 function revertActivityChanges(activity: Activity) {
 	const element = document.querySelector(activity.selector) as any
 	if (element) {
-		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
+		Object.entries(activity.styleChanges ?? {}).forEach(([style, changeObject]) => {
 			// Apply style to element
 			if (style === 'text') {
 				element.innerText = changeObject.oldVal
@@ -91,7 +87,6 @@ export function setupListeners() {
 
 		if (message.type === EDIT_EVENT) {
 			const editorStyleChange = message.detail as EditEvent
-			console.log('Received style change', editorStyleChange)
 			sendEditEvent(editorStyleChange)
 			return
 		}

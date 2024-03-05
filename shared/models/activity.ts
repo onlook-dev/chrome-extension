@@ -15,8 +15,10 @@ export interface Activity {
   createdAt: string; // New, migrating
 
   // TODO: Handle content changes + structure changes
-  styleChanges?: Record<string, ChangeValues>;
-  textChange?: Record<string, ChangeValues>;
+  styleChanges: Record<string, ChangeValues>;
+  textChanges?: Record<string, ChangeValues>;
+  insertChanges?: Record<string, ChangeValues>;
+  removeChanges?: Record<string, ChangeValues>;
 }
 
 export interface ChangeValues {

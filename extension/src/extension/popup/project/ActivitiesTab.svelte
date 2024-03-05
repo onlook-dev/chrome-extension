@@ -171,7 +171,7 @@
 					<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.path}</span>
 				{/if}
 
-				{#if activity.styleChanges}
+				{#if activity.styleChanges && Object.keys(activity.styleChanges).length > 0}
 					<p>Code Change:</p>
 					<CodeBlock
 						class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-auto "
@@ -180,6 +180,39 @@
 						color="text-gray-800"
 						text="text-xs"
 						button="btn btn-xs ml-auto rounded-sm"
+					/>
+				{/if}
+
+				{#if activity.textChanges && Object.keys(activity.textChanges).length > 0}
+					<p>Text Change:</p>
+					<CodeBlock
+						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
+						language="text"
+						code={activity.textChanges.text?.newVal ?? ''}
+						color="text-gray-800"
+						text="text-sm"
+					/>
+				{/if}
+
+				{#if activity.insertChanges && Object.keys(activity.insertChanges).length > 0}
+					<p>Insert Change:</p>
+					<CodeBlock
+						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
+						language="css"
+						code={formatStyleChanges(activity.insertChanges)}
+						color="text-gray-800"
+						text="text-sm"
+					/>
+				{/if}
+
+				{#if activity.removeChanges && Object.keys(activity.removeChanges).length > 0}
+					<p>Remove Change:</p>
+					<CodeBlock
+						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
+						language="css"
+						code={formatStyleChanges(activity.removeChanges)}
+						color="text-gray-800"
+						text="text-sm"
 					/>
 				{/if}
 

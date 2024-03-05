@@ -33,7 +33,7 @@ import { subscribeToUser } from '$lib/storage/user'
 import { subscribeToTeam } from '$lib/storage/team'
 import { postProjectToFirebase, subscribeToProject } from '$lib/storage/project'
 import { forwardToActiveProjectTab, updateTabActiveState } from './tabs'
-import { changeQueue, processChangeQueue } from './styleChanges'
+import { changeQueue, processChangeQueue } from './editEvents'
 
 import type { Team } from '$shared/models/team'
 import type { Activity } from '$shared/models/activity'
@@ -275,8 +275,8 @@ const setListeners = () => {
 	})
 
 	// Style change from visbug and content script
-	editEventStream.subscribe(async ([visbugStyleChange]) => {
-		changeQueue.push(visbugStyleChange)
+	editEventStream.subscribe(async ([editEvent]) => {
+		changeQueue.push(editEvent)
 
 		// Process the queue
 		if (changeQueue.length === 1) {

@@ -22,12 +22,12 @@ export function updateContentChunk(content: string, newContent: string, pathInfo
   return lines.join('\n');
 }
 
-export function convertEditorToStyleChangeMap(
-  editorStyleChange: EditEvent
+export function convertEditEventToStyleChangeMap(
+  editEvent: EditEvent
 ): Record<string, ChangeValues> {
   const styleChangeMap: Record<string, ChangeValues> = {};
-  Object.entries(editorStyleChange.newVal).forEach(([style, newVal]) => {
-    const oldVal = editorStyleChange.oldVal as Record<string, string>;
+  Object.entries(editEvent.newVal).forEach(([style, newVal]) => {
+    const oldVal = editEvent.oldVal as Record<string, string>;
     styleChangeMap[style] = { key: style, oldVal: oldVal[style], newVal };
   });
   return styleChangeMap;
