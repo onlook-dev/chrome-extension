@@ -185,12 +185,10 @@
 
 				{#if activity.textChanges && Object.keys(activity.textChanges).length > 0}
 					<p>Text Change:</p>
-					<CodeBlock
-						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
-						language="text"
-						code={activity.textChanges.text?.newVal ?? ''}
-						color="text-gray-800"
-						text="text-sm"
+					<textarea
+						disabled
+						class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col overflow-auto text-gray-800 text-sm"
+						value={activity.textChanges.text?.newVal ?? ''}
 					/>
 				{/if}
 
