@@ -4,15 +4,23 @@
   import * as Avatar from "$lib/components/ui/avatar";
   import type { EditTool } from "$lib/tools/edit";
   import { slide } from "svelte/transition";
-  import Separator from "../ui/separator/separator.svelte";
+  import { getUniqueSelector } from "$lib/tools/utilities";
 
   export let editTool: EditTool;
   let hoveredEvent: EditEvent | undefined;
   let clickedEvent: EditEvent | undefined;
+  let selfSelected = false;
 
   $: events = [...$historyStore].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
+
+  editTool.selectorEngine.selectedStore.subscribe((selected) => {
+    if (!selfSelected) {
+      clickedEvent = undefined;
+    }
+    selfSelected = false;
+  });
 
   function shortenSelector(selector: string) {
     return selector.split(" ").pop();
@@ -77,7 +85,7 @@
     clickedEvent = event;
     const el: HTMLElement | undefined = document.querySelector(event.selector);
     if (!el) return;
-
+    selfSelected = true;
     editTool.simulateClick([el]);
   }
 </script>

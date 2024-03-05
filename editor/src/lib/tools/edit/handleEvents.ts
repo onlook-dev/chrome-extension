@@ -10,7 +10,8 @@ function debounce(func, wait) {
 
   return function (...args) {
     const context = this;
-    const element = args[0];
+    const editEvent = args[0] as HandleEditEventParams;
+    const element = editEvent.el;
 
     // Use cached selector if available, otherwise compute and cache it
     if (!elementSelectorCache.has(element)) {
@@ -40,7 +41,7 @@ interface HandleEditEventParams {
   oldValue: Record<string, string> | InsertRemoveVal
 }
 
-function handleEditEvent(param: HandleEditEventParams) {
+function undebounceHandleEditEvent(param: HandleEditEventParams) {
   const selector =
     elementSelectorCache.get(param.el) || getUniqueSelector(param.el);
 
@@ -57,8 +58,8 @@ function handleEditEvent(param: HandleEditEventParams) {
   emitEditEvent(event);
 }
 
-let debouncedHandleEditEvent = debounce(handleEditEvent, 1000);
+let debouncedHandleEditEvent = debounce(undebounceHandleEditEvent, 1000);
 
-export function handleStyleChangeEvent(param: HandleEditEventParams) {
+export function handleEditEvent(param: HandleEditEventParams) {
   debouncedHandleEditEvent(param);
 }

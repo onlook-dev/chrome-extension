@@ -5,7 +5,7 @@ import type { Tool } from '../index';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getUniqueSelector } from '../utilities';
-import { handleStyleChangeEvent } from './handleEvents';
+import { handleEditEvent } from './handleEvents';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
@@ -155,7 +155,7 @@ export class EditTool implements Tool {
 
 	handleInput = ({ target }) => {
 		const newText = target.textContent
-		handleStyleChangeEvent({
+		handleEditEvent({
 			el: target,
 			editType: EditType.TEXT,
 			newValue: { text: newText },
@@ -188,7 +188,7 @@ export class EditTool implements Tool {
 		const serializer = new XMLSerializer();
 		const xmlStr = serializer.serializeToString(el);
 		const position = Array.from(selectedEl.children).indexOf(el);
-		handleStyleChangeEvent({
+		handleEditEvent({
 			el: selectedEl,
 			editType: EditType.INSERT,
 			newValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position } as InsertRemoveVal,
@@ -217,7 +217,7 @@ export class EditTool implements Tool {
 			const xmlStr = serializer.serializeToString(el);
 			const parent = el.parentElement;
 			const position = Array.from(parent.children).indexOf(el);
-			handleStyleChangeEvent({
+			handleEditEvent({
 				el: parent,
 				editType: EditType.REMOVE,
 				newValue: { removed: getUniqueSelector(el) },

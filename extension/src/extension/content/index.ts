@@ -16,7 +16,7 @@ import {
 	sendStyleChange
 } from '$lib/utils/messaging'
 import type { Activity } from '$shared/models/activity'
-import type { EditorStyleChange } from '$shared/models/editor'
+import type { EditEvent, } from '$shared/models/editor'
 import { baseUrl } from '$lib/utils/env'
 import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
 
@@ -90,7 +90,8 @@ export function setupListeners() {
 		}
 
 		if (message.type === EDIT_EVENT) {
-			const editorStyleChange = message.detail as EditorStyleChange
+			const editorStyleChange = message.detail as EditEvent
+			console.log('Received style change', editorStyleChange)
 			sendStyleChange(editorStyleChange)
 			return
 		}

@@ -18,7 +18,7 @@
   import type { EditTool } from "$lib/tools/edit";
   import { onDestroy, onMount } from "svelte";
   import { EditType } from "$lib/types/editor";
-  import { handleStyleChangeEvent } from "$lib/tools/edit/handleEvents";
+  import { handleEditEvent } from "$lib/tools/edit/handleEvents";
   // import { Textarea } from "$lib/components/ui/textarea";
   // import TailwindInput from "./inputs/TailwindInput.svelte";
 
@@ -59,7 +59,7 @@
       const oldStyle = element.style[key];
       element.style[key] = value;
       // Emit event
-      handleStyleChangeEvent({
+      handleEditEvent({
         el: element,
         editType: EditType.STYLE,
         newValue: { [key]: value },
