@@ -18,6 +18,8 @@
 	import shell from 'highlight.js/lib/languages/shell';
 	import 'highlight.js/styles/github.css';
 	import { goto } from '$app/navigation';
+	import ComponentPreview from './ComponentPreview.svelte';
+	import { stringify } from 'postcss';
 
 	export let project: Project;
 	export let activeActivityId: string;
@@ -198,20 +200,14 @@
 				{/if}
 
 				{#if activity.insertChanges && Object.keys(activity.insertChanges).length > 0}
-					<p>Insert Change:</p>
-					<CodeBlock
-						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
-						language="css"
-						code={formatStyleChanges(activity.insertChanges)}
-						color="text-gray-800"
-						text="text-sm"
-					/>
+					<p>Inserted component:</p>
+					<ComponentPreview component={activity.insertChanges.childContent.newVal} />
 				{/if}
 
 				{#if activity.removeChanges && Object.keys(activity.removeChanges).length > 0}
-					<p>Remove Change:</p>
+					<p>Removed component:</p>
 					<CodeBlock
-						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
+						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto"
 						language="css"
 						code={formatStyleChanges(activity.removeChanges)}
 						color="text-gray-800"

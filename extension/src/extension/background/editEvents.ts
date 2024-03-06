@@ -17,7 +17,6 @@ export async function processChangeQueue() {
 }
 
 async function processEditEvent(editEvent: EditEvent) {
-	console.log('Processing edit event', editEvent)
 	const activeProject = await getActiveProject()
 	if (!activeProject) return
 
@@ -56,8 +55,6 @@ async function processEditEvent(editEvent: EditEvent) {
 			activity.removeChanges = getChangeObject(editEvent, activity.removeChanges ?? {})
 			break
 	}
-
-	console.log('Processed edit event', editEvent, activity)
 
 	// Remove activity if changes are empty
 	if (isActivityEmpty(activity)) {

@@ -16,6 +16,7 @@
 	import ClockArrow from '~icons/mdi/clock-arrow'
 	import Trash from '~icons/material-symbols/delete'
 	import { postProjectToFirebase } from '$lib/storage/project'
+	import ComponentPreview from './ComponentPreview.svelte'
 
 	export let project: Project
 
@@ -45,29 +46,6 @@
 		projectsMapBucket.set({ [project.id]: project })
 		project = { ...project }
 		closeModal()
-	}
-
-	let clickActivity = (activity: Activity) => {
-		// sendActivityInspect({
-		// 	selector: activity.selector,
-		// 	event: MouseEvent.CLICK,
-		// 	scrollToElement: true
-		// })
-	}
-
-	let hoverActivity = (activity: Activity) => {
-		// sendActivityInspect({
-		// 	selector: activity.selector,
-		// 	event: MouseEvent.MOUSEMOVE,
-		// 	scrollToElement: false
-		// })
-	}
-	let leaveActivity = (activity: Activity) => {
-		// sendActivityInspect({
-		// 	selector: activity.selector,
-		// 	event: MouseEvent.MOUSEMOVE,
-		// 	scrollToElement: false
-		// })
 	}
 
 	function showModal() {
@@ -107,16 +85,11 @@
 {/if}
 <div class="divide-y flex flex-col w-full">
 	{#each activities as activity}
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<div
 			class="w-full p-4 flex flex-col pb-6 hover:bg-gray-50 transition duration-200 ease-in-out {!activity.visible
 				? 'opacity-60'
 				: ''}
 					"
-			on:mouseenter={() => hoverActivity(activity)}
-			on:mouseleave={() => leaveActivity(activity)}
-			on:click={() => clickActivity(activity)}
 		>
 			<!-- Item header -->
 			<ItemHeader
@@ -194,13 +167,7 @@
 
 				{#if activity.insertChanges && Object.keys(activity.insertChanges).length > 0}
 					<p>Insert Change:</p>
-					<CodeBlock
-						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
-						language="css"
-						code={formatStyleChanges(activity.insertChanges)}
-						color="text-gray-800"
-						text="text-sm"
-					/>
+					<ComponentPreview component={activity.insertChanges.childContent.newVal} />
 				{/if}
 
 				{#if activity.removeChanges && Object.keys(activity.removeChanges).length > 0}
