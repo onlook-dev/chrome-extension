@@ -14,6 +14,7 @@
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 
 	export let project: Project;
+	export let user: User;
 
 	enum Tab {
 		PUBLISH = 'Publish',
@@ -23,7 +24,6 @@
 	const modalId = 'publish-modal';
 	let selectedTab = Tab.PUBLISH;
 	let unsubs: any[] = [];
-	let user: User | undefined;
 
 	onMount(async () => {
 		const projectId = $page.params.id;
@@ -37,7 +37,7 @@
 		}
 
 		userStore.subscribe((newUser) => {
-			user = newUser;
+			user = newUser as User;
 		});
 	});
 
@@ -77,19 +77,7 @@
 		<div class="modal-box card w-full h-[60%] flex flex-col p-6">
 			<h2 class="text-xl font-semibold mb-3">Publish to Github</h2>
 
-			{#if !user?.githubAuthId}
-				<div class="flex flex-col items-center justify-center h-full mt-4">
-					<button
-						class="btn btn-primary"
-						on:click={() => {
-							window.open(
-								`${githubConfig.appUrl}/installations/new?state=${project?.id}`,
-								'_blank'
-							);
-						}}><GitHub class="h-5 w-5" />Connect Github Repos</button
-					>
-				</div>
-			{:else}
+			{#if project?.githubSettings?.auth}
 				<div role="tablist" class="tabs tabs-bordered">
 					<input
 						type="radio"
@@ -124,6 +112,18 @@
 							</div>
 						</div>
 					</div>
+				</div>
+			{:else}
+				<div class="flex flex-col items-center justify-center h-full mt-4">
+					<button
+						class="btn btn-primary"
+						on:click={() => {
+							window.open(
+								`${githubConfig.appUrl}/installations/new?state=${project?.id}`,
+								'_blank'
+							);
+						}}><GitHub class="h-5 w-5" />Connect Github Repos</button
+					>
 				</div>
 			{/if}
 		</div>
