@@ -1,4 +1,4 @@
-import { EditType, type EditEvent } from '$shared/models/editor'
+import { EditType, type EditEvent, type InsertRemoveVal } from '$shared/models/editor'
 import type { Activity, ChangeValues } from '$shared/models/activity'
 import { convertEditEventToStyleChangeMap } from '$shared/translation'
 import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
@@ -17,6 +17,7 @@ export async function processChangeQueue() {
 }
 
 async function processEditEvent(editEvent: EditEvent) {
+	console.log('Processing edit event', editEvent)
 	const activeProject = await getActiveProject()
 	if (!activeProject) return
 
@@ -52,7 +53,7 @@ async function processEditEvent(editEvent: EditEvent) {
 			activity.insertChanges = getChangeObject(editEvent, activity.insertChanges ?? {})
 			break
 		case EditType.REMOVE:
-			activity.removeChanges = getChangeObject(editEvent, activity.removeChanges ?? {})
+			activity = handleRemoveChange(editEvent, activity)
 			break
 	}
 
@@ -107,4 +108,14 @@ function getChangeObject(editEvent: EditEvent, changeObject: Record<string, Chan
 		}
 	})
 	return changeObject
+}
+
+function handleRemoveChange(editEvent: EditEvent, activity: Activity) {
+	// If inserted change is removed change, remove inserted
+	if (activity.insertChanges && activity.insertChanges.childSelector.newVal === (editEvent.oldVal as InsertRemoveVal).childSelector) {
+		delete activity.insertChanges
+	} else {
+		activity.removeChanges = getChangeObject(editEvent, activity.removeChanges ?? {})
+	}
+	return activity
 }

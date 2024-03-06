@@ -1,5 +1,6 @@
 import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$lib/types/editor';
 import { writable } from 'svelte/store';
+import { emitEditEvent } from '../messages';
 
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
@@ -146,5 +147,6 @@ function applyEvent(event: EditEvent) {
       applyRemoveEvent(event, element);
       break;
   }
-  window.postMessage(event, window.location.origin);
+
+  emitEditEvent(event);
 }

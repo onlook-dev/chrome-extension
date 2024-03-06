@@ -17,6 +17,8 @@ export interface Activity {
   // TODO: Handle content changes + structure changes
   styleChanges: Record<string, ChangeValues>;
   textChanges?: Record<string, ChangeValues>;
+
+  // TODO: These will be different
   insertChanges?: Record<string, ChangeValues>;
   removeChanges?: Record<string, ChangeValues>;
 }

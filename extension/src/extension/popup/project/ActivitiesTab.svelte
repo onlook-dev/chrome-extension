@@ -10,6 +10,7 @@
 	import { CodeBlock, storeHighlightJs } from '@skeletonlabs/skeleton'
 	import hljs from 'highlight.js/lib/core'
 	import css from 'highlight.js/lib/languages/css'
+	import html from 'highlight.js/lib/languages/xml'
 	import 'highlight.js/styles/github.css'
 
 	import ItemHeader from './ItemHeader.svelte'
@@ -28,6 +29,7 @@
 		usersMap = new Map(Object.entries(await usersMapBucket.get()))
 		storeHighlightJs.set(hljs)
 		hljs.registerLanguage('css', css)
+		hljs.registerLanguage('html', html)
 	})
 
 	$: activities = Object.values(project.activities).sort(
@@ -147,7 +149,7 @@
 				{#if activity.styleChanges && Object.keys(activity.styleChanges).length > 0}
 					<p>Code Change:</p>
 					<CodeBlock
-						class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-auto "
+						class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-scroll"
 						language="css"
 						code={formatStyleChanges(activity.styleChanges)}
 						color="text-gray-800"
@@ -157,21 +159,28 @@
 				{/if}
 
 				{#if activity.textChanges && Object.keys(activity.textChanges).length > 0}
-					<p>Text Change:</p>
+					<p>Text change:</p>
 					<textarea
 						disabled
-						class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col overflow-auto text-gray-800 text-sm"
+						class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col overflow-scroll text-gray-800 text-xs"
 						value={activity.textChanges.text?.newVal ?? ''}
 					/>
 				{/if}
 
 				{#if activity.insertChanges && Object.keys(activity.insertChanges).length > 0}
 					<p>Inserted component:</p>
-					<ComponentPreview component={activity.insertChanges.childContent.newVal} />
+					<CodeBlock
+						class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-scroll"
+						language="html"
+						code={activity.insertChanges.childContent.newVal ?? ''}
+						color="text-gray-800"
+						text="text-xs"
+						button="btn btn-xs ml-auto rounded-sm"
+					/>
 				{/if}
 
 				{#if activity.removeChanges && Object.keys(activity.removeChanges).length > 0}
-					<p>Remove component:</p>
+					<p>Removed component:</p>
 					<CodeBlock
 						class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-auto "
 						language="css"
