@@ -33,8 +33,21 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
 		createdAt: new Date().toISOString()
 	} as Team;
 
-	const demoTeam = await duplicateTeam(DEMO_TEAM_ID, user.uid);
-	const demoProject = await duplicateProject(DEMO_PROJECT_ID);
+	const newTeamId = nanoid.nanoid();
+	const newProjectId = nanoid.nanoid();
+
+	const demoTeam = await duplicateTeam(
+		DEMO_TEAM_ID,
+		user.uid,
+		newProjectId,
+		newTeamId
+	);
+
+	const demoProject = await duplicateProject(
+		DEMO_PROJECT_ID,
+		newProjectId,
+		newTeamId
+	);
 
 	// Create default team
 	await admin
