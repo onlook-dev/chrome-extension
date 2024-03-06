@@ -23,14 +23,16 @@ export async function exportToPRComments(
 		return 'export failed: no user found';
 	}
 
-	if (!user.githubAuthId) {
-		console.error('No github auth ID found for this user');
-		throw 'export failed: no github auth ID found for this user';
+	const project = await getProjectFromFirebase(projectId);
+
+	if (!user.githubAuthId && !project?.githubSettings?.auth) {
+		console.error('No github auth ID found');
+		throw 'export failed: no github auth ID found';
 	}
 
-	const { installationId } = await getGithubAuthFromFirebase(user.githubAuthId);
-
-	const project = await getProjectFromFirebase(projectId);
+	const { installationId } = await getGithubAuthFromFirebase(
+		user.githubAuthId ?? (project?.githubSettings?.auth as string)
+	);
 
 	if (!project.githubSettings) {
 		console.error('No github settings found for this project');
@@ -46,7 +48,7 @@ export async function exportToPRComments(
 		githubSettings.repositoryName,
 		githubSettings.baseBranch,
 		githubSettings.rootPath,
-		project.activities,
+		project.activities
 	);
 
 	if (commitDetails.size === 0) {
@@ -76,7 +78,7 @@ export async function exportToPRComments(
 		githubSettings.repositoryName,
 		branchName,
 		Array.from(commitDetails.values()),
-		user,
+		user
 	);
 
 	console.log('created new commit');
