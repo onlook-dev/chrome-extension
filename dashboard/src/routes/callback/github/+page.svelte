@@ -7,10 +7,12 @@
 	import { postUserToFirebase } from '$lib/storage/user';
 	import { nanoid } from 'nanoid';
 	import { postGithubAuthToFirebase } from '$lib/storage/github';
+	import { get } from 'svelte/store';
 
 	let installationId = $page.url.searchParams.get('installation_id');
 	let errorMessage = 'Saving project state failed';
 	let savedAuthId = '';
+
 	enum CallbackState {
 		loading,
 		success,
@@ -19,44 +21,71 @@
 
 	let state = CallbackState.loading;
 
-	onMount(async () => {
+	onMount(() => {
 		state = CallbackState.loading;
-		if (!installationId) {
-			state = CallbackState.error;
-			errorMessage = 'Missing parameters';
-			return;
-		}
-		userStore.subscribe(async (user) => {
+	});
+
+	// Only run this if the state is loading, othewise as the store is updated it will rerun
+	$: $userStore &&
+		state === CallbackState.loading &&
+		(async () => {
+			const user = $userStore;
+
 			if (!user) {
+				state = CallbackState.error;
+				errorMessage = 'User not found';
+				return;
+			}
+
+			if (!installationId) {
+				state = CallbackState.error;
+				errorMessage = 'Missing parameters';
+				return;
+			}
+
+			// If the user has a github auth id we can update it with the new instillation id
+			if (user.githubAuthId) {
+				const githubAuth = {
+					id: user.githubAuthId,
+					installationId: installationId
+				};
+
+				await postGithubAuthToFirebase(githubAuth);
+
+				state = CallbackState.success;
+
+				closeWindow();
 				return;
 			} else {
-				if (user.githubAuthId === savedAuthId) {
-					// Already saved, can close window
-					setTimeout(() => {
-						window.close();
-					}, 1000);
-					return;
-				}
+				// Otherwise we need to create a new github auth
 				const githubAuth = {
 					id: nanoid(),
 					installationId: installationId
-				} as GithubAuth;
+				};
 
 				user.githubAuthId = githubAuth.id;
+				try {
+					await postGithubAuthToFirebase(githubAuth);
+					await postUserToFirebase(user);
 
-				await postGithubAuthToFirebase(githubAuth);
-				await postUserToFirebase(user);
+					state = CallbackState.success;
 
-				savedAuthId = githubAuth.id;
-				state = CallbackState.success;
-				userStore.set(user);
-				// Wait 1 second
-				setTimeout(() => {
-					window.close();
-				}, 1000);
+					userStore.set(user);
+
+					closeWindow();
+				} catch (error) {
+					state = CallbackState.error;
+					errorMessage = error instanceof Error ? error.message : 'An error occurred';
+				}
 			}
-		});
-	});
+		})();
+
+	function closeWindow() {
+		// Wait 1 second
+		setTimeout(() => {
+			window.close();
+		}, 1000);
+	}
 </script>
 
 <div

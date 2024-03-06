@@ -35,10 +35,6 @@
 		if (!project.githubSettings) {
 			selectedTab = Tab.CONFIGURE;
 		}
-
-		userStore.subscribe((newUser) => {
-			user = newUser as User;
-		});
 	});
 
 	onDestroy(() => {
@@ -77,7 +73,7 @@
 		<div class="modal-box card w-full h-[60%] flex flex-col p-6">
 			<h2 class="text-xl font-semibold mb-3">Publish to Github</h2>
 
-			{#if project?.githubSettings?.auth}
+			{#if project?.githubSettings?.auth || user?.githubAuthId}
 				<div role="tablist" class="tabs tabs-bordered">
 					<input
 						type="radio"
