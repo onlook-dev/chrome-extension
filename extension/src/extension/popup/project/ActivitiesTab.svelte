@@ -83,7 +83,7 @@
 		<p class="text-gray-500">No activities yet<br />Start editing to see changes</p>
 	</div>
 {/if}
-<div class="divide-y flex flex-col w-full">
+<div class="divide-y flex flex-col w-screen">
 	{#each activities as activity}
 		<div
 			class="w-full p-4 flex flex-col pb-6 hover:bg-gray-50 transition duration-200 ease-in-out {!activity.visible
@@ -166,18 +166,19 @@
 				{/if}
 
 				{#if activity.insertChanges && Object.keys(activity.insertChanges).length > 0}
-					<p>Insert Change:</p>
+					<p>Inserted component:</p>
 					<ComponentPreview component={activity.insertChanges.childContent.newVal} />
 				{/if}
 
 				{#if activity.removeChanges && Object.keys(activity.removeChanges).length > 0}
-					<p>Remove Change:</p>
+					<p>Remove component:</p>
 					<CodeBlock
-						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto "
+						class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-auto "
 						language="css"
 						code={formatStyleChanges(activity.removeChanges)}
 						color="text-gray-800"
-						text="text-sm"
+						text="text-xs"
+						button="btn btn-xs ml-auto rounded-sm"
 					/>
 				{/if}
 

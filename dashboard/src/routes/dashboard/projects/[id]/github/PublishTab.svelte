@@ -151,7 +151,11 @@
 </script>
 
 <div class="flex flex-col items-center justify-center h-full mt-4">
-	{#if githubConfigured}
+	{#if !hasActivities}
+		<p class="text-center text-gray-500">
+			Nothing to publish. <br />Try editing the project with extension first.
+		</p>
+	{:else if githubConfigured}
 		<label class="form-control w-full p-2">
 			<div class="label">
 				<span class="label-text">Title</span>
