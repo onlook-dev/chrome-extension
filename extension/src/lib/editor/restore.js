@@ -1,4 +1,6 @@
 document.querySelectorAll('onlook-toolbar').forEach(node => {
+  node.setAttribute('data-onlook-inject', 'true');
+
   // @ts-ignore - style does exist
   node.style.display = 'block';
   node.animate([

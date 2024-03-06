@@ -2,9 +2,10 @@ import App from './App.svelte';
 import config from '../twind.config';
 import 'construct-style-sheets-polyfill';
 import { twind, cssom, observe } from '@twind/core';
-import { DATA_ONLOOK_IGNORE, ONLOOK_EDITABLE, ONLOOK_TOOLBAR } from './lib/constants';
+import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, ONLOOK_EDITABLE, ONLOOK_TOOLBAR } from './lib/constants';
 
 class OnlookToolbar extends HTMLElement {
+	app: any;
 	constructor() {
 		super();
 		this.style.position = 'fixed';
@@ -19,9 +20,17 @@ class OnlookToolbar extends HTMLElement {
 		observe(twind(config, sheet), shadowRoot);
 
 		// Initialize Svelte app in the shadow root
-		new App({
+		this.app = new App({
 			target: shadowRoot
 		});
+	}
+
+	static get observedAttributes() {
+		return [DATA_ONLOOK_EJECT, DATA_ONLOOK_INJECT];
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		this.app.handleValueUpdate(name, oldValue, newValue);
 	}
 
 	connectedCallback() { }

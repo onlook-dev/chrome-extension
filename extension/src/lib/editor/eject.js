@@ -1,4 +1,6 @@
 document.querySelectorAll('onlook-toolbar').forEach((node) => {
+  node.setAttribute('data-onlook-eject', 'true');
+
   node.animate([
     // Keyframes: from current opacity to 0
     { opacity: 1 },

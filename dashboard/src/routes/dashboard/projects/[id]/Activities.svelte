@@ -19,7 +19,6 @@
 	import 'highlight.js/styles/github.css';
 	import { goto } from '$app/navigation';
 	import ComponentPreview from './ComponentPreview.svelte';
-	import { stringify } from 'postcss';
 
 	export let project: Project;
 	export let activeActivityId: string;
@@ -201,7 +200,14 @@
 
 				{#if activity.insertChanges && Object.keys(activity.insertChanges).length > 0}
 					<p>Inserted component:</p>
-					<ComponentPreview component={activity.insertChanges.childContent.newVal} />
+					<CodeBlock
+						class="text-sm bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-scroll"
+						language="html"
+						code={activity.insertChanges.childContent.newVal ?? ''}
+						color="text-gray-800"
+						text="text-sm"
+						button="btn btn-xs ml-auto rounded-sm"
+					/>
 				{/if}
 
 				{#if activity.removeChanges && Object.keys(activity.removeChanges).length > 0}

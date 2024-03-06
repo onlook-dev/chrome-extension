@@ -13,6 +13,15 @@
   let toolManager: ToolManager = new ToolManager(activeToolName);
 
   $: toolManager?.selectTool(activeToolName);
+
+  export function getActiveToolName() {
+    return activeToolName;
+  }
+
+  export function updateTool(toolName: ToolName) {
+    activeToolName = toolName;
+    toolManager?.selectTool(toolName);
+  }
 </script>
 
 <div class="fixed bottom-3 left-0 right-0 flex justify-center">

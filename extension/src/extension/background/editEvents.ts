@@ -17,7 +17,6 @@ export async function processChangeQueue() {
 }
 
 async function processEditEvent(editEvent: EditEvent) {
-	console.log('Processing edit event', editEvent)
 	const activeProject = await getActiveProject()
 	if (!activeProject) return
 
