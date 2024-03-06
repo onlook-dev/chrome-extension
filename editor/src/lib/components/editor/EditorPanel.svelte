@@ -52,10 +52,6 @@
           <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CODE}
             >Code</Tabs.Trigger
           >
-          <Tabs.Trigger
-            class="bg-transparent p-0 text-xs"
-            value={TabValue.COMPONENTS}>Components</Tabs.Trigger
-          >
         </Tabs.List>
         <Separator class="mt-1" />
         <div
@@ -66,11 +62,7 @@
           <Tabs.Content value={TabValue.CODE}
             ><CodeTab {editTool} /></Tabs.Content
           >
-          <Tabs.Content value={TabValue.COMPONENTS}
-            ><ComponentsTab {editTool} /></Tabs.Content
-          >
         </div>
-
         <Card.Footer class="flex justify-between"></Card.Footer>
       </Tabs.Root>
     </Card.Content>
