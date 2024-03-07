@@ -9,15 +9,17 @@
   import ChangesTab from "./ChangesTab.svelte";
   import { historyStore } from "$lib/tools/edit/history";
   import { slide } from "svelte/transition";
+  import ElementsTab from "./ElementsTab.svelte";
 
   enum TabValue {
     LAYERS = "css",
     CHANGES = "changes",
+    ELEMENTS = "elements",
   }
 
   export let editTool: EditTool;
   let newHistory: boolean = false;
-  let selectedTab = TabValue.LAYERS;
+  let selectedTab = TabValue.ELEMENTS;
 
   historyStore.subscribe((history) => {
     if (selectedTab === TabValue.CHANGES) return;
@@ -36,7 +38,7 @@
       left: 0,
     },
   }}
-  class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
+  class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'visible'}"
 >
   <Card.Root class="w-[260px] h-[60vh] backdrop-blur bg-background/90 pt-2">
     <Card.Content>
@@ -45,6 +47,10 @@
           <Tabs.Trigger
             class="bg-transparent p-0 text-xs"
             value={TabValue.LAYERS}>Layers</Tabs.Trigger
+          >
+          <Tabs.Trigger
+            class="bg-transparent p-0 text-xs"
+            value={TabValue.ELEMENTS}>Elements</Tabs.Trigger
           >
           <Tabs.Trigger
             class="bg-transparent p-0 text-xs space-x-2 {newHistory
@@ -62,6 +68,9 @@
         <div class="h-[calc(60vh-4rem)] overflow-auto">
           <Tabs.Content value={TabValue.LAYERS}
             ><LayersTab {editTool} /></Tabs.Content
+          >
+          <Tabs.Content value={TabValue.ELEMENTS}
+            ><ElementsTab {editTool} /></Tabs.Content
           >
           <Tabs.Content value={TabValue.CHANGES}
             ><ChangesTab {editTool} /></Tabs.Content
