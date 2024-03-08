@@ -35,7 +35,6 @@ export function addToHistory(event: EditEvent) {
       history[history.length - 1] = lastEvent;
       return history;
     } else {
-      console.log('b')
       return [...history, event];
     }
   });

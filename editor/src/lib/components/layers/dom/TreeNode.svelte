@@ -78,13 +78,35 @@
       });
     });
 
+    const childNodeObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "childList") {
+          // Handle child node changes here
+          isEmpty = node && node.childNodes.length == 0;
+          isEmptyText = isText && node?.nodeValue?.trim() == "";
+          hasOnlyChild =
+            node &&
+            node.childNodes.length == 1 &&
+            node?.firstChild?.nodeType == Node.TEXT_NODE;
+        }
+      });
+    });
+
+    if (node && node.nodeType == Node.ELEMENT_NODE && node.tagName !== "BODY") {
+      childNodeObserver.observe(node, { childList: true });
+    }
+
     if (nodeRef) {
       observer.observe(nodeRef);
     }
 
+    // Cleanup
     return () => {
       if (nodeRef) {
         observer.unobserve(nodeRef);
+      }
+      if (node) {
+        childNodeObserver.disconnect();
       }
     };
   });

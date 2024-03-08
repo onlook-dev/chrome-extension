@@ -62,6 +62,7 @@
             on:mouseleave={() => (hovered = undefined)}
             on:click={() => {
               editTool.insertElement(element.getElement());
+              elementsPanelVisible.set(false);
             }}
           >
             <div
