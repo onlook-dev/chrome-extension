@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "NODE_ENV=development vite build --watch",
 		"dev:emulator": "NODE_ENV=development VITE_FIREBASE_EMULATOR=true vite build --watch",
-		"build": "NODE_ENV=production vite build && bun run badlinks",
+		"build": "NODE_ENV=production vite build && bun run badlinks && bun run zip",
 		"badlinks": "npx badlinks dist -r",
 		"zip": "zip -r dist.zip dist",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
