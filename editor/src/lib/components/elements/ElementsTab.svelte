@@ -60,7 +60,7 @@
             on:mouseenter={() => (hovered = element.type)}
             on:mouseleave={() => (hovered = undefined)}
             on:click={() => {
-              editTool.insertElement(element.element);
+              editTool.insertElement(element.getElement());
             }}
           >
             <div

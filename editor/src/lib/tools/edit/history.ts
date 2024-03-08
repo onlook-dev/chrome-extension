@@ -25,6 +25,7 @@ export function addToHistory(event: EditEvent) {
     // Deduplicate last event
     const lastEvent = history[history.length - 1];
     if (
+      lastEvent.editType !== EditType.INSERT &&
       lastEvent.editType === event.editType &&
       lastEvent.selector === event.selector &&
       compareKeys(lastEvent.newVal as Record<string, string>, event.newVal as Record<string, string>)
@@ -34,6 +35,7 @@ export function addToHistory(event: EditEvent) {
       history[history.length - 1] = lastEvent;
       return history;
     } else {
+      console.log('b')
       return [...history, event];
     }
   });
@@ -67,15 +69,6 @@ export function redoLastEvent() {
 
 function createReverseEvent(event: EditEvent): EditEvent {
   switch (event.editType) {
-    case EditType.STYLE || EditType.TEXT:
-      return {
-        createdAt: event.createdAt,
-        selector: event.selector,
-        editType: event.editType,
-        newVal: event.oldVal,
-        oldVal: event.newVal,
-        path: event.path,
-      };
     case EditType.INSERT:
       return {
         createdAt: event.createdAt,
@@ -84,7 +77,7 @@ function createReverseEvent(event: EditEvent): EditEvent {
         newVal: event.oldVal,
         oldVal: event.newVal,
         path: event.path,
-      };
+      } as EditEvent;
     case EditType.REMOVE:
       return {
         createdAt: event.createdAt,
@@ -93,7 +86,17 @@ function createReverseEvent(event: EditEvent): EditEvent {
         newVal: event.oldVal,
         oldVal: event.newVal,
         path: event.path,
-      };
+      } as EditEvent;
+    case EditType.STYLE || EditType.TEXT:
+    default:
+      return {
+        createdAt: event.createdAt,
+        selector: event.selector,
+        editType: event.editType,
+        newVal: event.oldVal,
+        oldVal: event.newVal,
+        path: event.path,
+      } as EditEvent;
   }
 }
 

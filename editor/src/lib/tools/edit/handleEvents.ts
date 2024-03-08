@@ -1,6 +1,6 @@
 import { addToHistory } from "./history";
 import { getUniqueSelector } from "../utilities";
-import type { EditEvent, EditType, InsertRemoveVal } from "$lib/types/editor";
+import { EditType, type EditEvent, type InsertRemoveVal } from "$lib/types/editor";
 import { emitEditEvent } from "../messages";
 
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
@@ -61,5 +61,9 @@ function undebounceHandleEditEvent(param: HandleEditEventParams) {
 let debouncedHandleEditEvent = debounce(undebounceHandleEditEvent, 1000);
 
 export function handleEditEvent(param: HandleEditEventParams) {
-  debouncedHandleEditEvent(param);
+  if (param.editType === EditType.STYLE || param.editType === EditType.TEXT) {
+    debouncedHandleEditEvent(param);
+  } else {
+    undebounceHandleEditEvent(param);
+  }
 }
