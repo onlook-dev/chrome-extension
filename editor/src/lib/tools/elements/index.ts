@@ -1,4 +1,4 @@
-import { CustomButton, CustomColumnDiv, CustomDiv, CustomElement, CustomGridDiv, CustomRowDiv, CustomText } from "./custom";
+import { CustomButton, CustomColumnDiv, CustomDiv, CustomElement, CustomGridDiv, CustomImage, CustomInput, CustomRowDiv, CustomText } from "./custom";
 
 export class ElementsManager {
   elements: Record<string, CustomElement>;
@@ -6,6 +6,8 @@ export class ElementsManager {
     'Primitive Elements': [
       new CustomText(),
       new CustomButton(),
+      new CustomInput(),
+      new CustomImage(),
     ],
     "Divs & Sections": [
       new CustomDiv(),
@@ -25,7 +27,10 @@ export class ElementsManager {
     const filteredElements: Record<string, CustomElement[]> = {};
 
     Object.keys(this.defaultElements).forEach((category) => {
-      const elements = this.defaultElements[category].filter(element => element.title.toLocaleLowerCase().includes(filter.toLowerCase()));
+      const elements = this.defaultElements[category].filter(element =>
+        element.title.toLocaleLowerCase().includes(filter.toLowerCase())
+        || element.subtitle.toLocaleLowerCase().includes(filter.toLowerCase())
+      );
       if (elements.length > 0) {
         filteredElements[category] = elements;
       }

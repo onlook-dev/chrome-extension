@@ -3,6 +3,7 @@ export enum CustomElementType {
   Text = "Text",
   Button = "Button",
   Image = "Image",
+  Input = "Input",
   Video = "Video",
   Div = "Div",
   RowDiv = "Row Div",
@@ -28,6 +29,7 @@ export class CustomText extends CustomElement {
     super('Text', undefined, CustomElementType.Text);
 
     let text = document.createElement('p');
+    text.textContent = "Lorem ipsum";
     text.style.margin = "0";
     text.style.padding = "0";
     text.style.fontSize = "16px";
@@ -65,6 +67,23 @@ export class CustomButton extends CustomElement {
   }
 }
 
+export class CustomInput extends CustomElement {
+  constructor() {
+    super('Input', "A text input", CustomElementType.Input);
+
+    let input = document.createElement('input');
+    input.style.width = "100%";
+    input.style.height = "auto";
+    input.style.padding = "10px";
+    input.style.fontSize = "16px";
+    input.style.border = "1px solid #ccc";
+    input.style.borderRadius = "5px";
+    input.style.boxSizing = "border-box";
+
+    this.element = input;
+  }
+}
+
 export class CustomImage extends CustomElement {
   constructor() {
     super('Image', undefined, CustomElementType.Image);
@@ -72,7 +91,7 @@ export class CustomImage extends CustomElement {
     let image = document.createElement('img');
     image.style.width = "100%";
     image.style.height = "auto";
-
+    image.src = "https://picsum.photos/200/300";
     this.element = image;
   }
 }

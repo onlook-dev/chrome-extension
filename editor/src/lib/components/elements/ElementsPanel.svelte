@@ -19,7 +19,7 @@
     ? 'visible'
     : 'invisible'}"
 >
-  <Card.Root class="w-[320px] h-[60vh] backdrop-blur bg-background/90 pt-2">
+  <Card.Root class="w-[340px] h-[60vh] backdrop-blur bg-background/90 pt-2">
     <Card.Content>
       <ElementsTab {editTool} />
     </Card.Content>

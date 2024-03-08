@@ -13,6 +13,7 @@
     ViewHorizontal,
     Grid,
     MagnifyingGlass,
+    Input,
   } from "radix-icons-svelte";
 
   export let editTool: EditTool;
@@ -46,7 +47,7 @@
   </label>
   <div class="overflow-auto h-[calc(60vh-7rem)]">
     {#each Object.entries(defaultElements) as [key, elements]}
-      <p class="opacity-30">{key}</p>
+      <p class="opacity-30 my-1">{key}</p>
       <div>
         {#each elements as element}
           <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -77,11 +78,13 @@
               {:else if element.type === CustomElementType.Div}
                 <Square class="w-4 h-4" />
               {:else if element.type === CustomElementType.RowDiv}
-                <ViewHorizontal class="w-4 h-4" />
-              {:else if element.type === CustomElementType.ColumnDiv}
                 <ViewVertical class="w-4 h-4" />
+              {:else if element.type === CustomElementType.ColumnDiv}
+                <ViewHorizontal class="w-4 h-4" />
               {:else if element.type === CustomElementType.GridDiv}
                 <Grid class="w-4 h-4" />
+              {:else if element.type === CustomElementType.Input}
+                <Input class="w-4 h-4" />
               {/if}
             </div>
             <div class="flex flex-col flex-grow">
