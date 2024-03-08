@@ -1,3 +1,5 @@
+import { DATA_ONLOOK_ID } from "../constants";
+
 export interface EventMetadata {
   key: string;
   value: string;
@@ -9,7 +11,7 @@ export enum EventMetadataType {
   BROWSER = "browser",
   OS = "os",
   TIME_STAMP = "time-stamp",
-  SOURCE_MAP_ID = "data-onlook-id",
+  SOURCE_MAP_ID = DATA_ONLOOK_ID,
 }
 
 export let getEventDataByType = (

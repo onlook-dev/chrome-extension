@@ -1,3 +1,4 @@
+import { DATA_ONLOOK_ID, ONLOOK_TOOLBAR } from '$lib/constants'
 import { finder } from '$lib/tools/selection/uniqueSelector'
 
 export const deepElementFromPoint = (x, y): HTMLElement => {
@@ -19,11 +20,11 @@ export const deepElementFromPoint = (x, y): HTMLElement => {
   return nested_shadow || el
 }
 
-export const isOffBounds = node => node?.closest && (node.closest('onlook-toolbar') || node.closest('#onlook-toolbar'))
+export const isOffBounds = node => node?.closest && (node.closest(ONLOOK_TOOLBAR) || node.closest('#onlook-toolbar'))
 
-export const getDataOnlookId = node => node?.getAttribute('data-onlook-id')
+export const getDataOnlookId = node => node?.getAttribute(DATA_ONLOOK_ID)
 
-export const getByDataOnlookId = id => document.querySelectorAll(`[data-onlook-id="${id}"]`)
+export const getByDataOnlookId = id => document.querySelectorAll(`[${DATA_ONLOOK_ID}="${id}"]`)
 
 export const findCommonParent = (...nodes): HTMLElement => {
   // Early exit if there's only one node or no nodes

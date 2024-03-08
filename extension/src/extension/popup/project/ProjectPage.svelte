@@ -94,7 +94,7 @@
 								sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project?.id}`)
 							})
 						}
-					}}>Publish</button
+					}}>Review</button
 				>
 			</div>
 		{/if}

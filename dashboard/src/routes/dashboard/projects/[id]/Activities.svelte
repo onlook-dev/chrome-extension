@@ -14,11 +14,11 @@
 	import { CodeBlock, storeHighlightJs } from '@skeletonlabs/skeleton';
 	import hljs from 'highlight.js/lib/core';
 	import css from 'highlight.js/lib/languages/css';
+	import html from 'highlight.js/lib/languages/xml';
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import shell from 'highlight.js/lib/languages/shell';
 	import 'highlight.js/styles/github.css';
 	import { goto } from '$app/navigation';
-	import ComponentPreview from './ComponentPreview.svelte';
 
 	export let project: Project;
 	export let activeActivityId: string;
@@ -34,6 +34,7 @@
 		hljs.registerLanguage('css', css);
 		hljs.registerLanguage('javascript', javascript);
 		hljs.registerLanguage('shell', shell);
+		hljs.registerLanguage('html', html);
 	});
 
 	$: activities = Object.values(project.activities).sort(

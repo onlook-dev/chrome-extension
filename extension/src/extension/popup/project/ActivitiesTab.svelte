@@ -17,7 +17,6 @@
 	import ClockArrow from '~icons/mdi/clock-arrow'
 	import Trash from '~icons/material-symbols/delete'
 	import { postProjectToFirebase } from '$lib/storage/project'
-	import ComponentPreview from './ComponentPreview.svelte'
 
 	export let project: Project
 
