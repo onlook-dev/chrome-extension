@@ -5,6 +5,7 @@
   import { Component1, Text, BoxModel } from "radix-icons-svelte";
   import { DATA_ONLOOK_IGNORE, IGNORE_TAGS } from "$lib/constants";
   import { onMount } from "svelte";
+  import { slide } from "svelte/transition";
 
   export let node: HTMLElement | undefined;
   export let selected: HTMLElement[];
@@ -103,7 +104,7 @@
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
-        class="{hoverClass} {selectedClass} {paddingY}"
+        class=" {hoverClass} {selectedClass} {paddingY}"
       >
         {'"' + node.nodeValue + '"'}
       </div>
@@ -116,7 +117,7 @@
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
-        class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
+        class=" {hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
       >
         <Component1 class={iconClass} />
         {name}
@@ -130,7 +131,7 @@
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
-        class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
+        class=" {hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
       >
         <Text class={iconClass} />
         {node.firstChild.nodeValue || name}
@@ -145,7 +146,7 @@
           selfSelected = true;
         }}
         on:mouseover|self={(e) => mouseEnter(e, node)}
-        class="{hoverClass} {selectedClass}"
+        class=" {hoverClass} {selectedClass}"
       >
         <summary
           class="list-none cursor-pointer flex flex-row items-center {paddingY}"
@@ -173,17 +174,19 @@
         </summary>
         <div class={childrenSelectedClass}>
           {#if isOpen}
-            {#each node.childNodes as child}
-              <svelte:self
-                node={child}
-                depth={depth + 1}
-                {selected}
-                {hovered}
-                {select}
-                {mouseEnter}
-                {internalHover}
-              />
-            {/each}
+            <div transition:slide>
+              {#each node.childNodes as child}
+                <svelte:self
+                  node={child}
+                  depth={depth + 1}
+                  {selected}
+                  {hovered}
+                  {select}
+                  {mouseEnter}
+                  {internalHover}
+                />
+              {/each}
+            </div>
           {/if}
         </div>
       </details>

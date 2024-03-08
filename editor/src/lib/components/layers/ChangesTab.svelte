@@ -102,7 +102,7 @@
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
-      class="rounded flex flex-col space-y-2 p-2 mb-1 transition duration-300 ease-in-out cursor-pointer {hoveredEvent ==
+      class="rounded flex flex-col space-y-2 p-2 mb-1 transition duration-200 ease-in-out cursor-pointer {hoveredEvent ==
       event
         ? 'bg-red/20'
         : ''} {clickedEvent == event
@@ -135,7 +135,8 @@
         >
       </div>
       <ul
-        class="p-2 rounded {hoveredEvent == event || clickedEvent == event
+        class="p-2 rounded transition duration-200 ease-in-out {hoveredEvent ==
+          event || clickedEvent == event
           ? 'bg-red/20'
           : 'bg-stone-900'}"
         transition:slide
