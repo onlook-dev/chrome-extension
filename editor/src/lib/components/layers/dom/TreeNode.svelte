@@ -31,13 +31,17 @@
       capitalizeFirstLetter(node.tagName.toLowerCase()));
   let isOpen = false;
   let selfSelected = false;
+  let loaded = false;
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
+  $: if (isOpen) {
+    loaded = true;
+  }
   $: if (selected.length) {
     selected.forEach((el) => {
-      if (node.contains(el)) isOpen = true;
+      if (node.contains(el) && node !== el) isOpen = true;
     });
   }
   $: isSelected = selected.includes(node);
@@ -65,7 +69,9 @@
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           // Node is visible, proceed to load/render it
-          isOpen = true;
+          if (!loaded) {
+            isOpen = true;
+          }
           observer.unobserve(entry.target);
         }
       });

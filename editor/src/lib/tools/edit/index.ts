@@ -1,5 +1,5 @@
 import { ONLOOK_EDITABLE } from '$lib/constants';
-import { editorPanelVisible } from '$lib/states/editor';
+import { editorPanelVisible, elementsPanelVisible, } from '$lib/states/editor';
 import { EditType, type InsertRemoveVal } from '$lib/types/editor';
 import type { Tool } from '../index';
 import { OverlayManager } from '../selection/overlay';
@@ -29,6 +29,7 @@ export class EditTool implements Tool {
 
 	onDestroy() {
 		editorPanelVisible.set(false);
+		elementsPanelVisible.set(false);
 		this.overlayManager.clear();
 		this.selectorEngine.clear();
 		this.elResizeObserver.disconnect();

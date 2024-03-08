@@ -17,4 +17,20 @@ export class ElementsManager {
   constructor() {
     this.elements = {};
   }
+
+  getFilteredDefaultElements(filter: string): Record<string, CustomElement[]> {
+    if (!filter || filter === "") {
+      return this.defaultElements;
+    }
+    const filteredElements: Record<string, CustomElement[]> = {};
+
+    Object.keys(this.defaultElements).forEach((category) => {
+      const elements = this.defaultElements[category].filter(element => element.title.toLocaleLowerCase().includes(filter.toLowerCase()));
+      if (elements.length > 0) {
+        filteredElements[category] = elements;
+      }
+    });
+
+    return filteredElements;
+  }
 }
