@@ -4,7 +4,6 @@
   import * as Avatar from "$lib/components/ui/avatar";
   import type { EditTool } from "$lib/tools/edit";
   import { slide } from "svelte/transition";
-  import { getUniqueSelector } from "$lib/tools/utilities";
 
   export let editTool: EditTool;
   let hoveredEvent: EditEvent | undefined;

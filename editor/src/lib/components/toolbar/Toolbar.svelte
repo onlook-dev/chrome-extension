@@ -8,6 +8,7 @@
   import { slide } from "svelte/transition";
   import { emitOpenProjectMessage } from "$lib/tools/messages";
   import LayersPanel from "../layers/LayersPanel.svelte";
+  import ElementsPanel from "../elements/ElementsPanel.svelte";
 
   let activeToolName: ToolName | undefined = ToolName.EDIT;
   let toolManager: ToolManager = new ToolManager(activeToolName);
@@ -94,3 +95,4 @@
 
 <EditorPanel editTool={toolManager?.editTool} />
 <LayersPanel editTool={toolManager?.editTool} />
+<ElementsPanel editTool={toolManager?.editTool} />

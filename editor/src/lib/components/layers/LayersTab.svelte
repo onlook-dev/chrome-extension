@@ -1,8 +1,10 @@
 <script lang="ts">
-  import type { EditTool } from "$lib/tools/edit";
   import { onMount } from "svelte";
+  import type { EditTool } from "$lib/tools/edit";
   import TreeRoot from "./dom/TreeRoot.svelte";
-
+  import { elementsPanelVisible } from "$lib/states/editor";
+  import Separator from "../ui/separator/separator.svelte";
+  import { Plus } from "radix-icons-svelte";
   export let editTool: EditTool;
 
   let hovered: HTMLElement;
@@ -58,13 +60,27 @@
   }
 </script>
 
-{#if tree}
-  <TreeRoot
-    node={tree}
-    {hovered}
-    {selected}
-    {select}
-    {mouseEnter}
-    {mouseLeave}
-  />
-{/if}
+<div class="h-[calc(60vh-8rem)] overflow-auto">
+  {#if tree}
+    <TreeRoot
+      node={tree}
+      {hovered}
+      {selected}
+      {select}
+      {mouseEnter}
+      {mouseLeave}
+    />
+  {/if}
+</div>
+<Separator />
+<div class="h-[4rem] flex items-center text-xs">
+  <button
+    class="rounded h-8 text-red w-full bg-red/20 hover:bg-red/25 transition flex items-center justify-center space-x-2"
+    on:click={() => {
+      elementsPanelVisible.set(!$elementsPanelVisible);
+    }}
+  >
+    <Plus class="h-3 w-3" />
+    <span>Add element</span></button
+  >
+</div>

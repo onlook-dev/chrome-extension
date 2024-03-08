@@ -6,8 +6,9 @@
 	"scripts": {
 		"dev": "NODE_ENV=development vite build --watch",
 		"dev:emulator": "NODE_ENV=development VITE_FIREBASE_EMULATOR=true vite build --watch",
-		"build": "NODE_ENV=production vite build && npx badlinks dist -r",
+		"build": "NODE_ENV=production vite build && bun run badlinks",
 		"badlinks": "npx badlinks dist -r",
+		"zip": "zip -r dist.zip dist",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write ."
