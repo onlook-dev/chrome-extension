@@ -53,8 +53,7 @@ function undebounceHandleEditEvent(param: HandleEditEventParams) {
     oldVal: param.oldValue,
     path: param.el.dataset.onlookId,
   };
-
-  addToHistory(event as EditEvent);
+  addToHistory(event);
   emitEditEvent(event);
 }
 

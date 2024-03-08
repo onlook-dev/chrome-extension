@@ -56,14 +56,29 @@
 
   function updateElementStyle(key, value) {
     editTool.selectorEngine.selected.forEach((element) => {
-      const oldStyle = element.style[key];
+      // Initialize the oldStyles map if it doesn't exist
+      let oldStyles = element.dataset.oldStyles
+        ? JSON.parse(element.dataset.oldStyles)
+        : {};
+
+      // Save the current style value to the map before updating, only if it doesn't exist
+      if (oldStyles[key] === undefined) {
+        const oldStyle = element.style[key];
+        if (oldStyle !== undefined) {
+          // Save only if there's a current value
+          oldStyles[key] = oldStyle;
+          element.dataset.oldStyles = JSON.stringify(oldStyles); // Serialize and save back to dataset
+        }
+      }
+
+      // Update the style
       element.style[key] = value;
       // Emit event
       handleEditEvent({
         el: element,
         editType: EditType.STYLE,
         newValue: { [key]: value },
-        oldValue: { [key]: oldStyle },
+        oldValue: { [key]: oldStyles[key] },
       });
     });
   }
