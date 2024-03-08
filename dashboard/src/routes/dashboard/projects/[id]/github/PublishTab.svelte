@@ -25,6 +25,7 @@
 	let hasActivities = false;
 	let isLoading = false;
 	let publishError = false;
+	let publishErrorMessage = '';
 	let historyOpen = true;
 	let errorMessage = '';
 	let prLink: string | undefined;
@@ -79,6 +80,7 @@
 			prLink = await exportToPRComments(userId, project?.id, title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
+			publishErrorMessage = `Error publishing changes: ${JSON.stringify(error)}`;
 			publishError = true;
 		} finally {
 			isLoading = false;
@@ -144,9 +146,7 @@
 	}
 
 	$: if (publishError) {
-		displayError(
-			'GitHub publish failed: Check your Github settings. If this issue persists, contact contact@onlook.dev'
-		);
+		displayError(publishErrorMessage);
 	}
 </script>
 
