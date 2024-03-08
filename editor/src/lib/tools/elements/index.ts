@@ -28,8 +28,8 @@ export class ElementsManager {
 
     Object.keys(this.defaultElements).forEach((category) => {
       const elements = this.defaultElements[category].filter(element =>
-        element.title.toLocaleLowerCase().includes(filter.toLowerCase())
-        || element.subtitle.toLocaleLowerCase().includes(filter.toLowerCase())
+        element.title.toLowerCase().includes(filter.toLowerCase())
+        || element.subtitle?.toLowerCase().includes(filter.toLowerCase())
       );
       if (elements.length > 0) {
         filteredElements[category] = elements;
