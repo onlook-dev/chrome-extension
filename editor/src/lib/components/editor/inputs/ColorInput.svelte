@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Color from "color";
   import type { ElementStyle } from "$lib/tools/selection/styles";
 
   export let elementStyle: ElementStyle;

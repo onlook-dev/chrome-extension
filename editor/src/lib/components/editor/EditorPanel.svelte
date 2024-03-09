@@ -9,7 +9,6 @@
   import { editorPanelVisible } from "$lib/states/editor";
   import type { EditTool } from "$lib/tools/edit";
   import CodeTab from "./CodeTab.svelte";
-  import ComponentsTab from "./ComponentsTab.svelte";
 
   export let editTool: EditTool;
   enum TabValue {

@@ -110,7 +110,7 @@
               {/if}
             </div>
             {#if hovered == element.type}
-              <div transition:fade={{ duration: 300 }}>
+              <div transition:fade={{ duration: 200 }}>
                 <Plus class="w-4 h-4 text-red" />
               </div>
             {/if}

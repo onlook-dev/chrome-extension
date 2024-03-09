@@ -2,6 +2,13 @@ import hotkeys from "hotkeys-js";
 import { redoLastEvent, undoLastEvent } from "./history";
 import { ToolName } from "..";
 import type { EditTool } from ".";
+import { ONLOOK_TOOLBAR } from "$lib/constants";
+
+hotkeys.filter = function (event) {
+  var target = (event.target || event.srcElement || event.currentTarget) as HTMLElement;
+  var tagName = target.tagName;
+  return !(target.isContentEditable || tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || tagName.toLowerCase() === ONLOOK_TOOLBAR.toLowerCase());
+}
 
 export class HotKeys {
   metaKey: string;
