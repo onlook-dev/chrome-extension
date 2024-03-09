@@ -64,6 +64,7 @@
           e.currentTarget.value,
           parsedUnit
         );
+
         if (stringValue !== elementStyle.value) {
           updateElementStyle(elementStyle.key, stringValue);
         }
@@ -79,24 +80,19 @@
       on:input={(e) => {
         if (e.currentTarget.value === auto) {
           updateElementStyle(elementStyle.key, "inherit");
-          parsedUnit = "";
           parsedNumber = 0;
+          parsedUnit = e.currentTarget.value;
           return;
         }
+        parsedUnit = e.currentTarget.value;
 
-        let newNumber = updateValueToUnit(
-          parsedNumber,
-          parsedUnit,
-          e.currentTarget.value
-        );
         const stringValue = parsedValueToString(
-          newNumber,
+          parsedNumber,
           e.currentTarget.value
         );
         if (stringValue !== elementStyle.value) {
           updateElementStyle(elementStyle.key, stringValue);
         }
-        parsedNumber = newNumber;
       }}
       value={isEmpty() ? auto : parsedUnit}
     >

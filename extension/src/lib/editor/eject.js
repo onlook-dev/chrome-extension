@@ -1,4 +1,6 @@
-document.querySelectorAll('onlook-toolbar').forEach(node => {
+document.querySelectorAll('onlook-toolbar').forEach((node) => {
+  node.setAttribute('data-onlook-eject', 'true');
+
   node.animate([
     // Keyframes: from current opacity to 0
     { opacity: 1 },
@@ -9,6 +11,7 @@ document.querySelectorAll('onlook-toolbar').forEach(node => {
     easing: 'ease-out' // Easing function
   }).onfinish = () => {
     // Set display to none after animation completes
+    // @ts-ignore - style does exist
     node.style.display = 'none';
   };
 });
@@ -25,6 +28,7 @@ document.querySelectorAll(`#onlook-rect`).forEach(node => {
     easing: 'ease-out' // Easing function
   }).onfinish = () => {
     // Set display to none after animation completes
+    // @ts-ignore - style does exist
     node.style.display = 'none';
   };
 });

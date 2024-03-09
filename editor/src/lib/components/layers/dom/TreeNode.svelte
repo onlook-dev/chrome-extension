@@ -4,9 +4,11 @@
   import { ChevronDown } from "radix-icons-svelte";
   import { Component1, Text, BoxModel } from "radix-icons-svelte";
   import { DATA_ONLOOK_IGNORE, IGNORE_TAGS } from "$lib/constants";
+  import { onMount } from "svelte";
+  import { slide } from "svelte/transition";
 
   export let node: HTMLElement | undefined;
-  export let selected: HTMLElement | undefined;
+  export let selected: HTMLElement[];
   export let hovered: HTMLElement | undefined;
   export let depth = 0;
   export let internalHover = false;
@@ -28,14 +30,22 @@
     node.tagName &&
     (TagMap[node.tagName.toLowerCase()]?.title ||
       capitalizeFirstLetter(node.tagName.toLowerCase()));
-  let isOpen = true;
+  let isOpen = false;
   let selfSelected = false;
+  let loaded = false;
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-
-  $: isSelected = node == selected;
+  $: if (isOpen) {
+    loaded = true;
+  }
+  $: if (selected.length) {
+    selected.forEach((el) => {
+      if (node.contains(el) && node !== el) isOpen = true;
+    });
+  }
+  $: isSelected = selected.includes(node);
   $: isHovered = node == hovered;
   $: selectedClass = isSelected
     ? "bg-red rounded text-white font-semibold"
@@ -45,17 +55,61 @@
     ? "bg-[#38040c] rounded-b rounded-t-none font-normal text-white/60"
     : "";
   $: iconClass = `h-3 w-3 ml-1 mr-2 ${isSelected ? "text-white" : "text-red"}`;
-
   $: if (isSelected && !selfSelected) {
-    nodeRef.scrollIntoView({
+    nodeRef?.scrollIntoView({
       behavior: "smooth",
       block: "center",
       inline: "start",
     });
     selfSelected = false;
   }
-
   const paddingY = "py-1";
+
+  onMount(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          // Node is visible, proceed to load/render it
+          if (!loaded) {
+            isOpen = true;
+          }
+          observer.unobserve(entry.target);
+        }
+      });
+    });
+
+    const childNodeObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "childList") {
+          // Handle child node changes here
+          isEmpty = node && node.childNodes.length == 0;
+          isEmptyText = isText && node?.nodeValue?.trim() == "";
+          hasOnlyChild =
+            node &&
+            node.childNodes.length == 1 &&
+            node?.firstChild?.nodeType == Node.TEXT_NODE;
+        }
+      });
+    });
+
+    if (node && node.nodeType == Node.ELEMENT_NODE && node.tagName !== "BODY") {
+      childNodeObserver.observe(node, { childList: true });
+    }
+
+    if (nodeRef) {
+      observer.observe(nodeRef);
+    }
+
+    // Cleanup
+    return () => {
+      if (nodeRef) {
+        observer.unobserve(nodeRef);
+      }
+      if (node) {
+        childNodeObserver.disconnect();
+      }
+    };
+  });
 </script>
 
 {#if node && node instanceof Node && node.nodeType == Node.ELEMENT_NODE && !IGNORE_TAGS.includes(node.nodeName) && !node.hasAttribute(DATA_ONLOOK_IGNORE)}
@@ -72,7 +126,7 @@
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
-        class="{hoverClass} {selectedClass} {paddingY}"
+        class=" {hoverClass} {selectedClass} {paddingY}"
       >
         {'"' + node.nodeValue + '"'}
       </div>
@@ -85,7 +139,7 @@
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
-        class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
+        class=" {hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
       >
         <Component1 class={iconClass} />
         {name}
@@ -99,7 +153,7 @@
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
-        class="{hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
+        class=" {hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
       >
         <Text class={iconClass} />
         {node.firstChild.nodeValue || name}
@@ -114,7 +168,7 @@
           selfSelected = true;
         }}
         on:mouseover|self={(e) => mouseEnter(e, node)}
-        class="{hoverClass} {selectedClass}"
+        class=" {hoverClass} {selectedClass}"
       >
         <summary
           class="list-none cursor-pointer flex flex-row items-center {paddingY}"
@@ -142,17 +196,19 @@
         </summary>
         <div class={childrenSelectedClass}>
           {#if isOpen}
-            {#each node.childNodes as child}
-              <svelte:self
-                node={child}
-                depth={depth + 1}
-                {selected}
-                {hovered}
-                {select}
-                {mouseEnter}
-                {internalHover}
-              />
-            {/each}
+            <div transition:slide>
+              {#each node.childNodes as child}
+                <svelte:self
+                  node={child}
+                  depth={depth + 1}
+                  {selected}
+                  {hovered}
+                  {select}
+                  {mouseEnter}
+                  {internalHover}
+                />
+              {/each}
+            </div>
           {/if}
         </div>
       </details>

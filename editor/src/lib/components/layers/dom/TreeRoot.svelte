@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import DOMTreeNode from "./TreeNode.svelte";
 
   export let node: HTMLElement | undefined;
-  export let selected: HTMLElement | undefined;
+  export let selected: HTMLElement[];
   export let hovered: HTMLElement | undefined;
 
   export let select: (e: Event, node: HTMLElement) => void;

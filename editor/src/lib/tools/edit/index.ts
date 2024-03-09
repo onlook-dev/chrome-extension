@@ -1,16 +1,18 @@
 import { ONLOOK_EDITABLE } from '$lib/constants';
-import { editorPanelVisible } from '$lib/states/editor';
+import { editorPanelVisible, elementsPanelVisible, } from '$lib/states/editor';
+import { EditType, type InsertRemoveVal } from '$lib/types/editor';
 import type { Tool } from '../index';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
-import { findCommonParent } from '../utilities';
-import { emitStyleChangeEvent } from './emit';
+import { findCommonParent, getUniqueSelector } from '../utilities';
+import { handleEditEvent } from './handleEvents';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
 	overlayManager: OverlayManager;
 	elResizeObserver: ResizeObserver;
 	oldText: string | undefined;
+	copiedElement: HTMLElement | undefined;
 
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
@@ -27,6 +29,7 @@ export class EditTool implements Tool {
 
 	onDestroy() {
 		editorPanelVisible.set(false);
+		elementsPanelVisible.set(false);
 		this.overlayManager.clear();
 		this.selectorEngine.clear();
 		this.elResizeObserver.disconnect();
@@ -89,34 +92,35 @@ export class EditTool implements Tool {
 		}
 	}
 
-	simulateClick(el: HTMLElement) {
-		if (el) {
-			this.simulateOut();
-			this.selectorEngine.selectedStore.set([el as HTMLElement]);
-			this.overlayManager.clear();
-			this.overlayManager.addClickRect(el as HTMLElement);
-			this.updateParentRect();
+	simulateClick(els: HTMLElement[]) {
+		if (!els) return;
 
-			this.scrollElementIntoView(el);
-		}
+		this.selectorEngine.selectedStore.set(els);
+		this.overlayManager.clear();
+		this.elResizeObserver.disconnect();
+		this.selectorEngine.selected.forEach((el) => {
+			this.overlayManager.addClickRect(el);
+			this.elResizeObserver.observe(el);
+		});
+		if (els.length > 0)
+			this.scrollElementIntoView(els[0]);
 	}
 
 	simulateHover = (el: HTMLElement) => {
-		if (el) {
-			this.selectorEngine.hoveredStore.set(el as HTMLElement);
-			this.overlayManager.updateHoverRect(el as HTMLElement);
-		}
+		if (!el) return
+		this.selectorEngine.hoveredStore.set(el as HTMLElement);
+		this.overlayManager.updateHoverRect(el as HTMLElement);
 	}
 
 	simulateOut = () => {
 		const el = this.selectorEngine.hovered;
-		if (el) {
-			this.selectorEngine.hoveredStore.set(undefined);
-			this.overlayManager.removeHoverRect();
-		}
+		if (!el) return
+		this.selectorEngine.hoveredStore.set(undefined);
+		this.overlayManager.removeHoverRect();
 	}
 
 	scrollElementIntoView(el: HTMLElement) {
+		if (!el) return;
 		const rect = el.getBoundingClientRect();
 		const isVisible = (
 			rect.top >= 0 &&
@@ -152,12 +156,12 @@ export class EditTool implements Tool {
 
 	handleInput = ({ target }) => {
 		const newText = target.textContent
-		emitStyleChangeEvent(
-			target,
-			"text",
-			{ text: newText },
-			{ text: this.oldText }
-		);
+		handleEditEvent({
+			el: target,
+			editType: EditType.TEXT,
+			newValue: { text: newText },
+			oldValue: { text: this.oldText }
+		});
 	}
 
 	stopBubbling = (e) => e.key != "Escape" && e.stopPropagation();
@@ -171,5 +175,60 @@ export class EditTool implements Tool {
 		target.removeEventListener("input", this.handleInput);
 		this.oldText = undefined;
 		this.selectorEngine.editingStore.set(undefined);
+	};
+
+	insertElement = (el: HTMLElement) => {
+		if (!el) return;
+		const selected = this.selectorEngine.selected;
+		if (selected.length == 0) return
+		const selectedEl = selected[0];
+		// Insert element into childrens list 
+		selectedEl.appendChild(el);
+
+		// Emit event
+		const serializer = new XMLSerializer();
+		const xmlStr = serializer.serializeToString(el);
+		const position = Array.from(selectedEl.children).indexOf(el);
+		const componentId = el.dataset.onlookComponentId;
+		handleEditEvent({
+			el: selectedEl,
+			editType: EditType.INSERT,
+			newValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}`, componentId } as InsertRemoveVal,
+			oldValue: {}
+		});
+	};
+
+	copyElement = () => {
+		const selected = this.selectorEngine.selected;
+		if (selected.length == 0) return;
+		this.copiedElement = selected[0]
+	};
+
+	pasteElement = () => {
+		if (!this.copiedElement) return;
+		const clonedElement = this.copiedElement.cloneNode(true) as HTMLElement;
+		this.insertElement(clonedElement);
+		this.simulateClick([clonedElement]);
+	};
+
+	deleteElement = () => {
+		const selected = this.selectorEngine.selected;
+		if (selected.length == 0) return;
+		selected.forEach((el) => {
+			const componentId = el.dataset.onlookComponentId;
+			if (componentId) {
+				const serializer = new XMLSerializer();
+				const xmlStr = serializer.serializeToString(el);
+				const parent = el.parentElement;
+				const position = Array.from(parent.children).indexOf(el);
+				handleEditEvent({
+					el: parent,
+					editType: EditType.REMOVE,
+					newValue: { removed: getUniqueSelector(el), componentId },
+					oldValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}`, componentId } as InsertRemoveVal,
+				});
+				el.remove()
+			}
+		});
 	};
 }

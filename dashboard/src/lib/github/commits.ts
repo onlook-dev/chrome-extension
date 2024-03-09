@@ -97,7 +97,8 @@ export async function createCommit(
 	repo: string,
 	branch: string,
 	files: FileContentData[],
-	user: User
+	user: User,
+	title: string
 ): Promise<string> {
 	try {
 		// Preparing the tree for the commit
@@ -128,12 +129,12 @@ export async function createCommit(
 		const commitResponse = await octokit.request(`POST /repos/{owner}/{repo}/git/commits`, {
 			owner,
 			repo,
-			message: 'Adding onlook comments to multiple files',
+			message: title,
 			tree: treeResponse.data.sha,
 			parents: [latestCommitSha],
 			author: {
 				name: user.name,
-				email: user.email, // TODO: Add users' email here
+				email: user.email,
 				date: new Date().toISOString()
 			},
 			headers: {

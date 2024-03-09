@@ -2,17 +2,18 @@
   import { draggable } from "@neodrag/svelte";
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
-  import { Separator } from "$lib/components/ui/separator";
   import { editorPanelVisible } from "$lib/states/editor";
   import type { EditTool } from "$lib/tools/edit";
   import LayersTab from "./LayersTab.svelte";
   import ChangesTab from "./ChangesTab.svelte";
   import { historyStore } from "$lib/tools/edit/history";
   import { slide } from "svelte/transition";
+  import Separator from "../ui/separator/separator.svelte";
 
   enum TabValue {
     LAYERS = "css",
     CHANGES = "changes",
+    ELEMENTS = "elements",
   }
 
   export let editTool: EditTool;
@@ -30,10 +31,13 @@
 </script>
 
 <div
-  use:draggable={{ bounds: "body" }}
-  class="fixed top-10 left-2 transform -translate-y-1/2 -translate-x-1/2 {$editorPanelVisible
-    ? 'visible'
-    : 'invisible'}"
+  use:draggable={{
+    bounds: {
+      top: 0,
+      left: 0,
+    },
+  }}
+  class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
 >
   <Card.Root class="w-[260px] h-[60vh] backdrop-blur bg-background/90 pt-2">
     <Card.Content>
@@ -43,6 +47,7 @@
             class="bg-transparent p-0 text-xs"
             value={TabValue.LAYERS}>Layers</Tabs.Trigger
           >
+
           <Tabs.Trigger
             class="bg-transparent p-0 text-xs space-x-2 {newHistory
               ? 'text-red'
@@ -58,13 +63,12 @@
         <Separator class="mt-1" />
         <div class="h-[calc(60vh-4rem)] overflow-auto">
           <Tabs.Content value={TabValue.LAYERS}
-            ><LayersTab {editTool} /></Tabs.Content
-          >
+            ><LayersTab {editTool} />
+          </Tabs.Content>
           <Tabs.Content value={TabValue.CHANGES}
             ><ChangesTab {editTool} /></Tabs.Content
           >
         </div>
-        <Card.Footer class="flex justify-between"></Card.Footer>
       </Tabs.Root>
     </Card.Content>
   </Card.Root>

@@ -30,8 +30,8 @@
 	let errorMessage = '';
 	let prLink: string | undefined;
 
-	let titlePlaceholder = 'Design QA with onlook.dev';
-	let descriptionPlaceholder = 'Made UI adjustments using the onlook platform';
+	let titlePlaceholder = 'Updated site using Onlook';
+	let descriptionPlaceholder = 'Describe your changes here';
 	let title = '';
 	let description = '';
 
@@ -62,21 +62,9 @@
 
 	async function handlePublishClick() {
 		title = title || titlePlaceholder;
-		description = description || descriptionPlaceholder;
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
-			const exampleInput = [
-				{
-					changes: ['fontSize 26px'],
-					currentValue: "class='flex flex-row gap-2 mb-4 items-center'"
-				},
-				{
-					changes: ['color #1e3067', 'fontSize 34px', 'textAlign center', 'lineHeight 52px'],
-					currentValue: "class='m-2 font-semibold'"
-				}
-			];
-
 			prLink = await exportToPRComments(userId, project?.id, title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
@@ -103,7 +91,9 @@
 			// Reset activites, they are archived in github history
 			title = '';
 			description = '';
-
+			if (!project.githubHistoryIds) {
+				project.githubHistoryIds = [];
+			}
 			project.githubHistoryIds.push(githubHistory.id);
 			githubHistories = [...githubHistories, githubHistory];
 			toast.push('Changes published to GitHub! 🎉', {
@@ -151,7 +141,11 @@
 </script>
 
 <div class="flex flex-col items-center justify-center h-full mt-4">
-	{#if githubConfigured}
+	{#if !hasActivities}
+		<p class="text-center text-gray-500">
+			Nothing to publish. <br />Try editing the project using the extension first.
+		</p>
+	{:else if githubConfigured}
 		<label class="form-control w-full p-2">
 			<div class="label">
 				<span class="label-text">Title</span>
