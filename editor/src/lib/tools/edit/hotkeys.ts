@@ -33,10 +33,10 @@ export class HotKeys {
       [ToolName.EDIT]: {
         [`${this.metaKey}+z`]: () => undoLastEvent(),
         [`${this.metaKey}+shift+z`]: () => redoLastEvent(),
-        [`${this.metaKey}+c`]: () => editTool.copyElement(),
-        [`${this.metaKey}+v`]: () => editTool.pasteElement(),
         // TODO: This is disabled for a separate task. Need to handle edge cases.
-        // [`${this.deleteKey}`]: () => editTool.deleteElement(),
+        // [`${this.metaKey}+c`]: () => editTool.copyElement(),
+        // [`${this.metaKey}+v`]: () => editTool.pasteElement(),
+        [`${this.deleteKey}`]: () => editTool.deleteElement(),
       }
     }
   }

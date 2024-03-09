@@ -143,14 +143,23 @@
       >
         {#if event.editType === EditType.INSERT}
           <li class="opacity-60">
-            Insert: {event.newVal["componentId"]?.split("-")[0] || "Element"}
+            Inserted: {event.newVal["componentId"]?.split("-")[0] || "Element"}
           </li>
           <li class="opacity-60">
             Position: {event.newVal["position"] || "0"}
           </li>
+          <li class="opacity-60">
+            Id: {event.newVal["componentId"]}
+          </li>
         {:else if event.editType === EditType.REMOVE}
           <li class="opacity-60">
             Removed: {event.oldVal["componentId"]?.split("-")[0] || "Element"}
+          </li>
+          <li class="opacity-60">
+            Position: {event.oldVal["position"] || "0"}
+          </li>
+          <li class="opacity-60">
+            Id: {event.oldVal["componentId"]}
           </li>
         {:else}
           {#each Object.entries(event.newVal) as [key, val]}

@@ -215,18 +215,20 @@ export class EditTool implements Tool {
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return;
 		selected.forEach((el) => {
-			const serializer = new XMLSerializer();
-			const xmlStr = serializer.serializeToString(el);
-			const parent = el.parentElement;
-			const position = Array.from(parent.children).indexOf(el);
 			const componentId = el.dataset.onlookComponentId;
-			handleEditEvent({
-				el: parent,
-				editType: EditType.REMOVE,
-				newValue: { removed: getUniqueSelector(el), componentId },
-				oldValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}`, componentId } as InsertRemoveVal,
-			});
-			el.remove()
+			if (componentId) {
+				const serializer = new XMLSerializer();
+				const xmlStr = serializer.serializeToString(el);
+				const parent = el.parentElement;
+				const position = Array.from(parent.children).indexOf(el);
+				handleEditEvent({
+					el: parent,
+					editType: EditType.REMOVE,
+					newValue: { removed: getUniqueSelector(el), componentId },
+					oldValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}`, componentId } as InsertRemoveVal,
+				});
+				el.remove()
+			}
 		});
 	};
 }

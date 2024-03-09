@@ -36,7 +36,7 @@ export class CustomText extends CustomElement {
   }
 
   getElement(): HTMLElement {
-    let text = document.createElement('p');
+    const text = document.createElement('p');
     text.textContent = "Lorem ipsum";
     text.style.margin = "0";
     text.style.padding = "0";
@@ -55,8 +55,8 @@ export class CustomButton extends CustomElement {
   }
 
   getElement(): HTMLElement {
-    let button = document.createElement('button');
-    button.textContent = "Click Me";
+    const button = document.createElement('button');
+
     button.style.backgroundColor = "red";
     button.style.color = "white";
     button.style.padding = "10px 20px";
@@ -72,8 +72,13 @@ export class CustomButton extends CustomElement {
     button.style.height = "auto";
     button.style.textAlign = "center";
     button.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
-
     button.dataset.onlookComponentId = `button-${nanoid()}`
+
+    const span = document.createElement('span');
+    span.textContent = "Click Me";
+    span.dataset.onlookComponentId = `span-${nanoid()}`
+    button.appendChild(span);
+
     return button;
   }
 }
@@ -84,7 +89,7 @@ export class CustomInput extends CustomElement {
   }
 
   getElement(): HTMLElement {
-    let input = document.createElement('input');
+    const input = document.createElement('input');
     input.style.width = "auto";
     input.style.height = "auto";
     input.style.minHeight = "2rem";
@@ -106,7 +111,7 @@ export class CustomImage extends CustomElement {
   }
 
   getElement(): HTMLElement {
-    let image = document.createElement('img');
+    const image = document.createElement('img');
     image.style.width = "auto";
     image.style.height = "auto";
     image.style.maxWidth = "100%";
@@ -126,7 +131,7 @@ export class CustomDiv extends CustomElement {
   }
 
   getElement(): HTMLElement {
-    let div = document.createElement('div');
+    const div = document.createElement('div');
     div.style.width = "auto";
     div.style.height = "auto";
     div.style.minWidth = "10rem";
@@ -143,7 +148,7 @@ export class CustomRowDiv extends CustomElement {
   }
 
   getElement(): HTMLElement {
-    let div = document.createElement('div');
+    const div = document.createElement('div');
     div.style.width = "auto";
     div.style.height = "auto";
     div.style.minWidth = "10rem";
@@ -164,7 +169,7 @@ export class CustomColumnDiv extends CustomElement {
   }
 
   getElement(): HTMLElement {
-    let div = document.createElement('div');
+    const div = document.createElement('div');
     div.style.width = "auto";
     div.style.height = "auto";
     div.style.minWidth = "10rem";
@@ -185,7 +190,7 @@ export class CustomGridDiv extends CustomElement {
   }
 
   getElement(): HTMLElement {
-    let div = document.createElement('div');
+    const div = document.createElement('div');
     div.style.width = "auto";
     div.style.height = "auto";
     div.style.minWidth = "10rem";
@@ -193,7 +198,7 @@ export class CustomGridDiv extends CustomElement {
     div.style.height = "auto";
     div.style.display = "grid";
     div.style.gridTemplateColumns = "repeat(3, 1fr)";
-    div.style.gridGap = "10px";
+    div.style.gap = "10px";
 
     div.dataset.onlookComponentId = `div-${nanoid()}`
     return div
