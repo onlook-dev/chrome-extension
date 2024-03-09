@@ -1,26 +1,10 @@
 <script lang="ts">
-  import chroma from "chroma-js";
+  import Color from "color";
   import type { ElementStyle } from "$lib/tools/selection/styles";
 
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
-  let inputString = "#000000";
-
-  $: if (elementStyle.value) {
-    try {
-      inputString = chroma(elementStyle.value).hex("rgb");
-    } catch (e) {
-      console.error("Error parsing color", e);
-      inputString = "#000000";
-    }
-  }
-
-  function expandShorthandHex(hex: string) {
-    if (hex.length <= 5) {
-      return `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`;
-    }
-    return hex;
-  }
+  $: inputString = elementStyle.value || "#000000";
 </script>
 
 <div
@@ -41,7 +25,7 @@
   </div>
 
   <input
-    class="w-[3.5rem] text-xs border-none text-text bg-transparent text-end focus:outline-none focus:ring-0"
+    class="w-[4rem] text-xs border-none text-text bg-transparent text-end focus:outline-none focus:ring-0"
     type="text"
     value={inputString}
     placeholder="--"

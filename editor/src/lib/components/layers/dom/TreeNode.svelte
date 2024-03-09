@@ -54,7 +54,7 @@
   $: childrenSelectedClass = isSelected
     ? "bg-[#38040c] rounded-b rounded-t-none font-normal text-white/60"
     : "";
-  $: iconClass = `h-3 w-3 ml-1 mr-2 ${isSelected ? "text-white" : "text-red"}`;
+  $: iconClass = `shrink-0 h-3 w-3 ml-1 mr-2 ${isSelected ? "text-white" : "text-red"}`;
   $: if (isSelected && !selfSelected) {
     nodeRef?.scrollIntoView({
       behavior: "smooth",
@@ -156,7 +156,9 @@
         class=" {hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
       >
         <Text class={iconClass} />
-        {node.firstChild.nodeValue || name}
+        <span class="text-ellipsis overflow-hidden">
+          {node.firstChild.nodeValue || name}
+        </span>
       </div>
     {:else}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
