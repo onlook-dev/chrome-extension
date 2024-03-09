@@ -58,7 +58,7 @@
   $: if (isSelected && !selfSelected) {
     nodeRef?.scrollIntoView({
       behavior: "smooth",
-      block: "center",
+      block: "start",
       inline: "start",
     });
     selfSelected = false;
@@ -128,7 +128,7 @@
         on:mouseover={(e) => mouseEnter(e, node)}
         class=" {hoverClass} {selectedClass} {paddingY}"
       >
-        {'"' + node.nodeValue + '"'}
+        {node.nodeValue}
       </div>
     {:else if isEmpty}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
