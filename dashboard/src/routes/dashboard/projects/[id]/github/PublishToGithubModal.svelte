@@ -67,11 +67,11 @@
 
 <div>
 	<button class="flex flex-row justify-center" on:click={showModal}>
-		<GitHub class="mr-2" /> Publish to Github
+		<GitHub class="mr-2" /> Pull Request
 	</button>
 	<dialog id={modalId} class="modal">
 		<div class="modal-box card w-full h-[60%] flex flex-col p-6">
-			<h2 class="text-xl font-semibold mb-3">Publish to Github</h2>
+			<h2 class="text-xl font-semibold mb-3">Send to Github</h2>
 
 			{#if project?.githubSettings?.auth || user?.githubAuthId}
 				<div role="tablist" class="tabs tabs-bordered">

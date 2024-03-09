@@ -40,6 +40,11 @@
 		if (project?.activities && Object.keys(project.activities).length > 0) {
 			hasActivities = true;
 		}
+
+		if (project?.githubSettings?.auth) {
+			githubConfigured = true;
+		}
+
 		Object.values(project.activities).forEach((activity) => {
 			if (activity.path) {
 				// If a path is found, open the modal
@@ -66,17 +71,6 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
-			const exampleInput = [
-				{
-					changes: ['fontSize 26px'],
-					currentValue: "class='flex flex-row gap-2 mb-4 items-center'"
-				},
-				{
-					changes: ['color #1e3067', 'fontSize 34px', 'textAlign center', 'lineHeight 52px'],
-					currentValue: "class='m-2 font-semibold'"
-				}
-			];
-
 			prLink = await exportToPRComments(userId, project?.id, title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
@@ -151,7 +145,7 @@
 </script>
 
 <div class="flex flex-col items-center justify-center h-full mt-4">
-	{#if githubConfigured}
+	{#if githubConfigured && hasActivities}
 		<label class="form-control w-full p-2">
 			<div class="label">
 				<span class="label-text">Title</span>
@@ -248,7 +242,10 @@
 				</div>
 			</div>
 		{/if}
+	{:else if !githubConfigured}
+		<p class="text-center text-lg">No github config found</p>
 	{:else}
-		<ConfigureProjectInstructions />
+		<p class="text-center text-lg">No activities</p>
+		<p class="text-center text-lg">Use the extension to make some changes!</p>
 	{/if}
 </div>

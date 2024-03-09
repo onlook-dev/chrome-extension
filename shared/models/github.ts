@@ -11,6 +11,7 @@ export interface GithubSettings {
   owner: string;
   rootPath: string;
   baseBranch: string;
+  installationId?: string
 }
 
 export interface GithubRepo {
