@@ -89,7 +89,9 @@
 			// Reset activites, they are archived in github history
 			title = '';
 			description = '';
-
+			if (!project.githubHistoryIds) {
+				project.githubHistoryIds = [];
+			}
 			project.githubHistoryIds.push(githubHistory.id);
 			githubHistories = [...githubHistories, githubHistory];
 			toast.push('Changes published to GitHub! 🎉', {
