@@ -78,7 +78,8 @@ export async function exportToPRComments(
 		githubSettings.repositoryName,
 		branchName,
 		Array.from(commitDetails.values()),
-		user
+		user,
+		title
 	);
 
 	console.log('created new commit');

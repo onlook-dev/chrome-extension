@@ -6,7 +6,6 @@
     getElementComputedStylesData,
     groupElementStylesByGroup,
   } from "$lib/tools/selection/styles";
-  import { emitStyleChangeEvent } from "$lib/tools/edit/emit";
   import * as Accordion from "$lib/components/ui/accordion";
   import { Input } from "$lib/components/ui/input";
   import Separator from "../ui/separator/separator.svelte";
@@ -18,6 +17,8 @@
   import SpacingInput from "./inputs/SpacingInput.svelte";
   import type { EditTool } from "$lib/tools/edit";
   import { onDestroy, onMount } from "svelte";
+  import { EditType } from "$lib/types/editor";
+  import { handleEditEvent } from "$lib/tools/edit/handleEvents";
   // import { Textarea } from "$lib/components/ui/textarea";
   // import TailwindInput from "./inputs/TailwindInput.svelte";
 
@@ -55,10 +56,30 @@
 
   function updateElementStyle(key, value) {
     editTool.selectorEngine.selected.forEach((element) => {
-      const oldStyle = element.style[key];
+      // Initialize the oldStyles map if it doesn't exist
+      let oldStyles = element.dataset.oldStyles
+        ? JSON.parse(element.dataset.oldStyles)
+        : {};
+
+      // Save the current style value to the map before updating, only if it doesn't exist
+      if (oldStyles[key] === undefined) {
+        const oldStyle = element.style[key];
+        if (oldStyle !== undefined) {
+          // Save only if there's a current value
+          oldStyles[key] = oldStyle;
+          element.dataset.oldStyles = JSON.stringify(oldStyles); // Serialize and save back to dataset
+        }
+      }
+
+      // Update the style
       element.style[key] = value;
       // Emit event
-      emitStyleChangeEvent(element, key, { [key]: value }, { [key]: oldStyle });
+      handleEditEvent({
+        el: element,
+        editType: EditType.STYLE,
+        newValue: { [key]: value },
+        oldValue: { [key]: oldStyles[key] },
+      });
     });
   }
 </script>

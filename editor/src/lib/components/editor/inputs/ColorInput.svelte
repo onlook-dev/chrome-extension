@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Color from "colorjs.io";
+  import chroma from "chroma-js";
   import type { ElementStyle } from "$lib/tools/selection/styles";
 
   export let elementStyle: ElementStyle;
@@ -8,9 +8,7 @@
 
   $: if (elementStyle.value) {
     try {
-      inputString = expandShorthandHex(
-        new Color(elementStyle.value).toString({ format: "hex" })
-      );
+      inputString = chroma(elementStyle.value).hex("rgb");
     } catch (e) {
       console.error("Error parsing color", e);
       inputString = "#000000";

@@ -1,10 +1,8 @@
 import {
 	DASHBOARD_AUTH,
 	DashboardRoutes,
+	EDIT_EVENT,
 	OPEN_PROJECT,
-	REDO_STYLE_CHANGE,
-	STYLE_CHANGE,
-	UNDO_STYLE_CHANGE
 } from '$shared/constants'
 import { authUserBucket, getActiveProject } from '$lib/utils/localstorage'
 import {
@@ -15,10 +13,10 @@ import {
 	getScreenshotStream,
 	sendOpenUrlRequest,
 	sendSaveProject,
-	sendStyleChange
+	sendEditEvent
 } from '$lib/utils/messaging'
 import type { Activity } from '$shared/models/activity'
-import type { EditorStyleChange } from '$shared/models/editor'
+import type { EditEvent, } from '$shared/models/editor'
 import { baseUrl } from '$lib/utils/env'
 import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
 
@@ -49,13 +47,9 @@ function simulateEventOnSelector(
 function applyActivityChanges(activity: Activity): boolean {
 	const element = document.querySelector(activity.selector) as any
 	if (element) {
-		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
+		Object.entries(activity.styleChanges ?? {}).forEach(([style, changeObject]) => {
 			// Apply style to element
-			if (style === 'text') {
-				element.innerText = changeObject.newVal
-			} else {
-				element.style[style] = changeObject.newVal
-			}
+			element.style[style] = changeObject.newVal
 		})
 		if (activity.path !== element.dataset.onlookId) {
 			activity.path = element.dataset.onlookId
@@ -68,7 +62,7 @@ function applyActivityChanges(activity: Activity): boolean {
 function revertActivityChanges(activity: Activity) {
 	const element = document.querySelector(activity.selector) as any
 	if (element) {
-		Object.entries(activity.styleChanges).forEach(([style, changeObject]) => {
+		Object.entries(activity.styleChanges ?? {}).forEach(([style, changeObject]) => {
 			// Apply style to element
 			if (style === 'text') {
 				element.innerText = changeObject.oldVal
@@ -91,23 +85,9 @@ export function setupListeners() {
 			return
 		}
 
-		if (message.type === STYLE_CHANGE) {
-			const editorStyleChange = message.detail as EditorStyleChange
-			sendStyleChange(editorStyleChange)
-			return
-		}
-
-		if (message.type === UNDO_STYLE_CHANGE) {
-			const editorStyleChange = message.detail as EditorStyleChange
-			// applyVisbugStyleChange(editorStyleChange)
-			sendStyleChange(editorStyleChange)
-			return
-		}
-
-		if (message.type === REDO_STYLE_CHANGE) {
-			const visbugStyleChange = message.detail as EditorStyleChange
-			// applyVisbugStyleChange(visbugStyleChange)
-			sendStyleChange(visbugStyleChange)
+		if (message.type === EDIT_EVENT) {
+			const editorStyleChange = message.detail as EditEvent
+			sendEditEvent(editorStyleChange)
 			return
 		}
 

@@ -1,18 +1,28 @@
 <script lang="ts">
   import * as Card from "$lib/components/ui/card";
-  import { ExternalLink, Pencil1, Stop } from "radix-icons-svelte";
+  import { ExternalLink, Pencil1 } from "radix-icons-svelte";
   import ToolBarAnimation from "./ToolbarAnimation.svelte";
   import { ToolManager, ToolName } from "$lib/tools";
   import EditorPanel from "../editor/EditorPanel.svelte";
   import Button from "../ui/button/button.svelte";
   import { slide } from "svelte/transition";
-  import { emitOpenProjectMessage } from "$lib/tools/edit/emit";
+  import { emitOpenProjectMessage } from "$lib/tools/messages";
   import LayersPanel from "../layers/LayersPanel.svelte";
+  import ElementsPanel from "../elements/ElementsPanel.svelte";
 
   let activeToolName: ToolName | undefined = ToolName.EDIT;
   let toolManager: ToolManager = new ToolManager(activeToolName);
 
   $: toolManager?.selectTool(activeToolName);
+
+  export function getActiveToolName() {
+    return activeToolName;
+  }
+
+  export function updateTool(toolName: ToolName) {
+    activeToolName = toolName;
+    toolManager?.selectTool(toolName);
+  }
 </script>
 
 <div class="fixed bottom-3 left-0 right-0 flex justify-center">
@@ -85,3 +95,4 @@
 
 <EditorPanel editTool={toolManager?.editTool} />
 <LayersPanel editTool={toolManager?.editTool} />
+<ElementsPanel editTool={toolManager?.editTool} />

@@ -7,6 +7,8 @@
 	import Google from '~icons/devicon/google';
 	// import GitHub from '~icons/mdi/github';
 
+	let loading = false;
+
 	onMount(() => {
 		userStore.subscribe((user) => {
 			if (user) {
@@ -29,14 +31,21 @@
 			<h2 class="card-title justify-center">Sign in</h2>
 
 			<div class="form-control space-y-4">
-				<button class="btn btn-outline" on:click={signInWithGoogle}>
-					<Google class="w-4 h-4" />
-					Continue with Google</button
+				<button
+					class="btn btn-outline"
+					on:click={() => {
+						loading = true;
+						signInWithGoogle();
+					}}
 				>
-				<!-- <button class="btn btn-outline" on:click={signInWithGithub}>
-					<GitHub class="w-4 h-4" />
-					Continue with GitHub</button
-				> -->
+					{#if loading}
+						<div class="loading"></div>
+						Signing in...
+					{:else}
+						<Google class="w-4 h-4" />
+						Continue with Google
+					{/if}</button
+				>
 			</div>
 		</div>
 	</div>

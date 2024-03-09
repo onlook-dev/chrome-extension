@@ -30,8 +30,8 @@
 	let errorMessage = '';
 	let prLink: string | undefined;
 
-	let titlePlaceholder = 'Design QA with onlook.dev';
-	let descriptionPlaceholder = 'Made UI adjustments using the onlook platform';
+	let titlePlaceholder = 'Updated site using Onlook';
+	let descriptionPlaceholder = 'Describe your changes here';
 	let title = '';
 	let description = '';
 
@@ -67,7 +67,6 @@
 
 	async function handlePublishClick() {
 		title = title || titlePlaceholder;
-		description = description || descriptionPlaceholder;
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
@@ -97,7 +96,9 @@
 			// Reset activites, they are archived in github history
 			title = '';
 			description = '';
-
+			if (!project.githubHistoryIds) {
+				project.githubHistoryIds = [];
+			}
 			project.githubHistoryIds.push(githubHistory.id);
 			githubHistories = [...githubHistories, githubHistory];
 			toast.push('Changes published to GitHub! 🎉', {
@@ -245,7 +246,7 @@
 	{:else if !githubConfigured}
 		<p class="text-center text-lg">No github config found</p>
 	{:else}
-		<p class="text-center text-lg">No activities</p>
-		<p class="text-center text-lg">Use the extension to make some changes!</p>
+		<p class="text-center text-lg">Nothing to publish</p>
+		<p class="text-center text-lg">Use the extension to make some edits!</p>
 	{/if}
 </div>

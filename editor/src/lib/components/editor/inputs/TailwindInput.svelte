@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Textarea } from "$lib/components/ui/textarea";
-  import { emitStyleChangeEvent } from "$lib/tools/edit/emit";
+  import { handleEditEvent } from "$lib/tools/edit/handleEvents";
+  import { EditType } from "$lib/types/editor";
 
   export let el: HTMLElement;
   export let editTool;
@@ -21,12 +22,12 @@
     }
     // Apply original + new classes
     element.className = `${stored.original} ${stored.edit}`;
-    emitStyleChangeEvent(
-      element,
-      "class",
-      { class: "" },
-      { class: stored.edit }
-    );
+    handleEditEvent({
+      el: element,
+      editType: EditType.ATTR,
+      newValue: { class: stored.edit },
+      oldValue: { class: "" },
+    });
   }
 </script>
 

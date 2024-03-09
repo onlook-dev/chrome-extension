@@ -5,7 +5,6 @@
 	import type { Project } from '$shared/models/project';
 	import type { User } from '$shared/models/user';
 	import { DashboardRoutes } from '$shared/constants';
-	import { userStore } from '$lib/utils/store';
 
 	import GitHub from '~icons/mdi/github';
 	import ConfigureTab from './ConfigureTab.svelte';

@@ -1,6 +1,3 @@
-import type { StyleChange } from "./models/activity";
-import type { EditorStyleChange } from "./models/editor";
-
 export function jsToCssProperty(key: string) {
   if (!key) return "";
   return key.replace(/([A-Z])/g, "-$1").toLowerCase();

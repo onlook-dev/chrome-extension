@@ -7,11 +7,9 @@
 	import { postUserToFirebase } from '$lib/storage/user';
 	import { nanoid } from 'nanoid';
 	import { postGithubAuthToFirebase } from '$lib/storage/github';
-	import { get } from 'svelte/store';
 
 	let installationId = $page.url.searchParams.get('installation_id');
 	let errorMessage = 'Saving project state failed';
-	let savedAuthId = '';
 
 	enum CallbackState {
 		loading,
@@ -43,7 +41,7 @@
 				return;
 			}
 
-			// If the user has a github auth id we can update it with the new instillation id
+			// If the user has a github auth id we can update it with the new installation id
 			if (user.githubAuthId) {
 				const githubAuth = {
 					id: user.githubAuthId,
@@ -61,7 +59,7 @@
 				const githubAuth = {
 					id: nanoid(),
 					installationId: installationId
-				};
+				} as GithubAuth;
 
 				user.githubAuthId = githubAuth.id;
 				try {
@@ -84,7 +82,7 @@
 		// Wait 1 second
 		setTimeout(() => {
 			window.close();
-		}, 1000);
+		}, 0);
 	}
 </script>
 

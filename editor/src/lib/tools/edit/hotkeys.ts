@@ -1,13 +1,15 @@
 import hotkeys from "hotkeys-js";
 import { redoLastEvent, undoLastEvent } from "./history";
 import { ToolName } from "..";
+import type { EditTool } from ".";
 
 export class HotKeys {
   metaKey: string;
   altKey: string;
+  deleteKey: string;
   toolKeyMaps: Record<ToolName, Record<string, () => void>>;
 
-  constructor() {
+  constructor(editTool: EditTool) {
     this.metaKey = window.navigator.platform.includes('Mac')
       ? 'cmd'
       : 'ctrl'
@@ -15,6 +17,10 @@ export class HotKeys {
     this.altKey = window.navigator.platform.includes('Mac')
       ? 'opt'
       : 'alt'
+
+    this.deleteKey = window.navigator.platform.includes('Mac')
+      ? 'backspace'
+      : 'delete'
 
     if (this.metaKey === 'ctrl')
       [...document.querySelectorAll('kbd')]
@@ -26,7 +32,11 @@ export class HotKeys {
     this.toolKeyMaps = {
       [ToolName.EDIT]: {
         [`${this.metaKey}+z`]: () => undoLastEvent(),
-        [`${this.metaKey}+shift+z`]: () => redoLastEvent()
+        [`${this.metaKey}+shift+z`]: () => redoLastEvent(),
+        // TODO: This is disabled for a separate task. Need to handle edge cases.
+        // [`${this.metaKey}+c`]: () => editTool.copyElement(),
+        // [`${this.metaKey}+v`]: () => editTool.pasteElement(),
+        [`${this.deleteKey}`]: () => editTool.deleteElement(),
       }
     }
   }

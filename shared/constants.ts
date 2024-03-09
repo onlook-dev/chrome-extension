@@ -13,9 +13,7 @@ export const MAX_DESCRIPTION_LENGTH = 250;
 
 // Messaging
 export const DASHBOARD_AUTH = "DASHBOARD_AUTH";
-export const STYLE_CHANGE = "STYLE_CHANGE";
-export const UNDO_STYLE_CHANGE = "UNDO_STYLE_CHANGE";
-export const REDO_STYLE_CHANGE = "REDO_STYLE_CHANGE";
+export const EDIT_EVENT = "EDIT_EVENT";
 export const OPEN_PROJECT = "OPEN_PROJECT";
 
 // Links
@@ -23,6 +21,7 @@ export const SUPPORT_LINK = "mailto:support@onlook.dev";
 
 // Editor
 export const ONLOOK_TOOLBAR = "onlook-toolbar";
+export const DATA_ONLOOK_ID = "data-onlook-id";
 
 // Dashboard routes
 export enum DashboardRoutes {

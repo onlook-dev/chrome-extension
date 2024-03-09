@@ -1,7 +1,7 @@
 import type { MouseEvent } from '$shared/constants'
 import type { Activity } from '$shared/models/activity'
 import type { Project } from '$shared/models/project'
-import type { EditorStyleChange } from '$shared/models/visbug'
+import type { EditEvent } from '$shared/models/editor'
 import { getMessage } from '@extend-chrome/messages'
 import type { SendOptions } from '@extend-chrome/messages/types/types'
 import { Observable } from 'rxjs'
@@ -65,8 +65,8 @@ export const [sendAuthRequest, authRequestStream] = getExtendedMessages<void>(
 export const [sendEditProjectRequest, editProjectRequestStream] =
 	getExtendedMessages<EditProjectRequest>('REQUEST_EDIT_PROJECT', MessageReceiver.BACKGROUND)
 
-export const [sendStyleChange, styleChangeStream] = getExtendedMessages<EditorStyleChange>(
-	'STYLE_CHANGE',
+export const [sendEditEvent, editEventStream] = getExtendedMessages<EditEvent>(
+	'EDIT_EVENT',
 	MessageReceiver.BACKGROUND
 )
 
