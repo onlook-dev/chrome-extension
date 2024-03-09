@@ -1,3 +1,4 @@
+import { nanoid } from "ai";
 
 export enum CustomElementType {
   Text = "Text",
@@ -42,6 +43,8 @@ export class CustomText extends CustomElement {
     text.style.textAlign = "left";
     text.style.width = "auto";
     text.style.height = "auto";
+
+    text.dataset.onlookComponentId = `p-${nanoid()}`
     return text;
   }
 }
@@ -69,6 +72,8 @@ export class CustomButton extends CustomElement {
     button.style.height = "auto";
     button.style.textAlign = "center";
     button.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
+
+    button.dataset.onlookComponentId = `button-${nanoid()}`
     return button;
   }
 }
@@ -89,6 +94,8 @@ export class CustomInput extends CustomElement {
     input.style.border = "1px solid #ccc";
     input.style.borderRadius = "5px";
     input.style.boxSizing = "border-box";
+
+    input.dataset.onlookComponentId = `input-${nanoid()}`
     return input;
   }
 }
@@ -107,6 +114,8 @@ export class CustomImage extends CustomElement {
     image.style.minWidth = "10rem";
     image.style.minHeight = "10rem";
     image.src = "https://picsum.photos/300/200";
+
+    image.dataset.onlookComponentId = `img-${nanoid()}`
     return image;
   }
 }
@@ -122,6 +131,8 @@ export class CustomDiv extends CustomElement {
     div.style.height = "auto";
     div.style.minWidth = "10rem";
     div.style.minHeight = "10rem";
+
+    div.dataset.onlookComponentId = `div-${nanoid()}`
     return div;
   }
 }
@@ -141,6 +152,8 @@ export class CustomRowDiv extends CustomElement {
     div.style.flexDirection = "row";
     div.style.justifyContent = "space-between";
     div.style.alignItems = "center";
+
+    div.dataset.onlookComponentId = `div-${nanoid()}`
     return div;
   };
 }
@@ -160,6 +173,8 @@ export class CustomColumnDiv extends CustomElement {
     div.style.flexDirection = "column";
     div.style.justifyContent = "space-between";
     div.style.alignItems = "center";
+
+    div.dataset.onlookComponentId = `div-${nanoid()}`
     return div
   }
 }
@@ -179,6 +194,8 @@ export class CustomGridDiv extends CustomElement {
     div.style.display = "grid";
     div.style.gridTemplateColumns = "repeat(3, 1fr)";
     div.style.gridGap = "10px";
+
+    div.dataset.onlookComponentId = `div-${nanoid()}`
     return div
   }
 }

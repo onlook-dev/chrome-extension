@@ -5,6 +5,7 @@ export type EditEvent = {
   newVal: Record<string, string> | InsertRemoveVal | TextVal;
   oldVal: Record<string, string> | InsertRemoveVal | TextVal;
   path?: string | undefined;
+  componentId?: string | undefined;
 }
 
 export type TextVal = {
@@ -15,6 +16,7 @@ export type InsertRemoveVal = {
   childContent: string;
   childSelector: string;
   position: string;
+  componentId: string;
 }
 
 export enum EditType {

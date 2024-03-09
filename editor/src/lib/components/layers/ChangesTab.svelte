@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { EditEvent } from "$lib/types/editor";
+  import { type EditEvent, EditType } from "$lib/types/editor";
   import { historyStore } from "$lib/tools/edit/history";
   import * as Avatar from "$lib/components/ui/avatar";
   import type { EditTool } from "$lib/tools/edit";
@@ -131,7 +131,7 @@
       <div class="flex flex-row items-center space-x-1">
         <p class="opacity-60">Element:</p>
         <span class="text-red bg-red/20 p-1"
-          >{shortenSelector(event.selector)}</span
+          >{event.componentId ?? shortenSelector(event.selector)}</span
         >
       </div>
       <ul
@@ -141,9 +141,22 @@
           : 'bg-stone-900'}"
         transition:slide
       >
-        {#each Object.entries(event.newVal) as [key, val]}
-          <li class="opacity-60">{jsToCssProperty(key)}: {val};</li>
-        {/each}
+        {#if event.editType === EditType.INSERT}
+          <li class="opacity-60">
+            Insert: {event.newVal["componentId"]?.split("-")[0] || "Element"}
+          </li>
+          <li class="opacity-60">
+            Position: {event.newVal["position"] || "0"}
+          </li>
+        {:else if event.editType === EditType.REMOVE}
+          <li class="opacity-60">
+            Removed: {event.oldVal["componentId"]?.split("-")[0] || "Element"}
+          </li>
+        {:else}
+          {#each Object.entries(event.newVal) as [key, val]}
+            <li class="opacity-60">{jsToCssProperty(key)}: {val};</li>
+          {/each}
+        {/if}
       </ul>
     </div>
   {/each}

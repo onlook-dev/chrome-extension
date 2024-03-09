@@ -8,6 +8,7 @@ export function emitOpenProjectMessage() {
 };
 
 export function emitEditEvent(event: EditEvent) {
+  console.log("emitEditEvent", event);
   const message = {
     type: EDIT_EVEMT,
     detail: event,

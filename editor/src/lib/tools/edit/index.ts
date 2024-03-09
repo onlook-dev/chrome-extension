@@ -189,10 +189,11 @@ export class EditTool implements Tool {
 		const serializer = new XMLSerializer();
 		const xmlStr = serializer.serializeToString(el);
 		const position = Array.from(selectedEl.children).indexOf(el);
+		const componentId = el.dataset.onlookComponentId;
 		handleEditEvent({
 			el: selectedEl,
 			editType: EditType.INSERT,
-			newValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}` } as InsertRemoveVal,
+			newValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}`, componentId } as InsertRemoveVal,
 			oldValue: {}
 		});
 	};
@@ -218,11 +219,12 @@ export class EditTool implements Tool {
 			const xmlStr = serializer.serializeToString(el);
 			const parent = el.parentElement;
 			const position = Array.from(parent.children).indexOf(el);
+			const componentId = el.dataset.onlookComponentId;
 			handleEditEvent({
 				el: parent,
 				editType: EditType.REMOVE,
-				newValue: { removed: getUniqueSelector(el) },
-				oldValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}` } as InsertRemoveVal,
+				newValue: { removed: getUniqueSelector(el), componentId },
+				oldValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}`, componentId } as InsertRemoveVal,
 			});
 			el.remove()
 		});
