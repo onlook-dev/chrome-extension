@@ -17,4 +17,5 @@ export interface Project {
   // Integrations
   githubHistoryIds: string[];
   githubSettings?: GithubSettings;
+  installationId?: string;
 }

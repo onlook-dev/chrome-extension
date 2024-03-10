@@ -22,6 +22,8 @@
 	import type { Activity } from '$shared/models/activity';
 
 	let project: Project | undefined;
+	let project1: Project | undefined;
+
 	let user: User | null;
 	let unsubs: any[] = [];
 	let activeActivityId: string = '';
@@ -43,6 +45,11 @@
 		userStore.subscribe((storeUser) => {
 			if (!storeUser) return;
 			user = storeUser;
+		});
+
+		projectsMapStore.subscribe((storeProjects) => {
+			if (!storeProjects) return;
+			project1 = storeProjects.get($page.params.id);
 		});
 
 		// Get project

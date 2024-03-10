@@ -25,20 +25,17 @@ export async function exportToPRComments(
 
 	const project = await getProjectFromFirebase(projectId);
 
-	if (!user.githubAuthId && !project?.githubSettings?.auth) {
-		console.error('No github auth ID found');
-		throw 'export failed: no github auth ID found';
+	if (!project?.installationId) {
+		console.error('Project has no installation ID');
+		throw 'export failed: Project has no installation ID';
 	}
-
-	const { installationId } = await getGithubAuthFromFirebase(
-		user.githubAuthId ?? (project?.githubSettings?.auth as string)
-	);
 
 	if (!project.githubSettings) {
 		console.error('No github settings found for this project');
 		throw 'Export failed: No github settings found for this project';
 	}
 
+	const installationId = project.installationId;
 	const githubSettings = project.githubSettings;
 	const octokit = await getInstallationOctokit(installationId);
 

@@ -38,32 +38,28 @@
 		filteredRepositories = repositories.filter((repo) => repo.name !== selectedRepo?.name);
 	}
 
-	$: if (user?.githubAuthId) {
+	$: if (project.installationId) {
 		loadingRepos = true;
-		getGithubAuthFromFirebase(user.githubAuthId)
-			.then((auth) => {
-				return getReposByInstallation(auth.installationId);
-			})
+		getReposByInstallation(project.installationId)
 			.then(({ repos }) => {
 				repositories = repos;
 				filteredRepositories = repos;
 				loadingRepos = false;
-				console.log('Successfully got user repositories');
+				console.log('Successfully got repositories');
 			})
 			.catch((error) => {
-				console.error('Error fetching GitHub data:', error);
+				console.error('Error fetching repositories:', error);
 			});
 	}
 
 	async function connectRepoToProject(repo: GithubRepo) {
-		if (!project) return;
+		if (!project.installationId) {
+			console.error('No installation id found');
+		}
 
-		const githubAuth = await getGithubAuthFromFirebase(user?.githubAuthId as string);
-		const installationId = githubAuth.installationId;
-		const defaultBranch = await getRepoDefaults(installationId, repo);
+		const defaultBranch = await getRepoDefaults(project.installationId as string, repo);
 
 		project.githubSettings = {
-			auth: user?.githubAuthId,
 			repositoryName: repo.name,
 			owner: repo.owner,
 			rootPath: '/',
@@ -197,7 +193,8 @@
 	<button
 		class="btn btn-link mt-4"
 		on:click={() => {
-			window.open(`${githubConfig.appUrl}/installations/new?state=${project?.id}`, '_blank');
+			console.log('projectsMapStore', $projectsMapStore);
+			window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
 		}}>Github Permissions</button
 	>
 </div>

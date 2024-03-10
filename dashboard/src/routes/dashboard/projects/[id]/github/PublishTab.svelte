@@ -13,7 +13,6 @@
 	import PullRequest from '~icons/ph/git-pull-request-bold';
 	import GitHub from '~icons/mdi/github';
 	import Restore from '~icons/ic/baseline-restore';
-	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
 	export let project: Project;
@@ -23,6 +22,7 @@
 
 	let githubConfigured = false;
 	let hasActivities = false;
+	let hasFilePaths = false;
 	let isLoading = false;
 	let publishError = false;
 	let publishErrorMessage = '';
@@ -37,24 +37,22 @@
 
 	onMount(() => {
 		// Check each activities for a path
-		if (project?.activities && Object.keys(project.activities).length > 0) {
+		if (Object.keys(project.activities).length > 0) {
 			hasActivities = true;
-		}
-
-		if (project?.githubSettings?.auth) {
-			githubConfigured = true;
 		}
 
 		Object.values(project.activities).forEach((activity) => {
 			if (activity.path) {
-				// If a path is found, open the modal
-				githubConfigured = true;
+				hasFilePaths = true;
 				return;
 			}
 		});
 
-		if (project?.githubHistoryIds?.length > 0) {
+		if (project?.installationId) {
 			githubConfigured = true;
+		}
+
+		if (project?.githubHistoryIds?.length > 0) {
 			getGithubHistoriesFromFirebase(project.githubHistoryIds)
 				.then((histories) => {
 					githubHistories = histories;
@@ -146,7 +144,7 @@
 </script>
 
 <div class="flex flex-col items-center justify-center h-full mt-4">
-	{#if githubConfigured && hasActivities}
+	{#if githubConfigured && hasActivities && hasFilePaths}
 		<label class="form-control w-full p-2">
 			<div class="label">
 				<span class="label-text">Title</span>
@@ -245,6 +243,8 @@
 		{/if}
 	{:else if !githubConfigured}
 		<p class="text-center text-lg">No github config found</p>
+	{:else if hasActivities && !hasFilePaths}
+		<p class="text-center text-lg">Edited website not configured with Onlook</p>
 	{:else}
 		<p class="text-center text-lg">Nothing to publish</p>
 		<p class="text-center text-lg">Use the extension to make some edits!</p>
