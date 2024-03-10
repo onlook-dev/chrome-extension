@@ -94,7 +94,7 @@
 	</div>
 {/if}
 <div class="divide-y flex flex-col w-full">
-	<h1 class="m-2 font-semibold">Activities</h1>
+	<h1 class="m-2 font-semibold text-4xl">Activities</h1>
 	{#each activities as activity}
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
