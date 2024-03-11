@@ -10,14 +10,15 @@
   import { slide } from "svelte/transition";
   import Separator from "../ui/separator/separator.svelte";
 
+  export let editTool: EditTool;
+  let newHistory: boolean = false;
+  let isInputFocused = false;
+
   enum TabValue {
     LAYERS = "css",
     CHANGES = "changes",
     ELEMENTS = "elements",
   }
-
-  export let editTool: EditTool;
-  let newHistory: boolean = false;
   let selectedTab = TabValue.LAYERS;
 
   historyStore.subscribe((history) => {
@@ -36,7 +37,10 @@
       top: 0,
       left: 0,
     },
+    disabled: isInputFocused,
   }}
+  on:focusin={() => (isInputFocused = true)}
+  on:focusout={() => (isInputFocused = false)}
   class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
 >
   <Card.Root class="w-[260px] h-[60vh] backdrop-blur bg-background/90 pt-2">

@@ -11,6 +11,8 @@
   import CodeTab from "./CodeTab.svelte";
 
   export let editTool: EditTool;
+  let isInputFocused = false;
+
   enum TabValue {
     CSS = "css",
     CODE = "code",
@@ -36,7 +38,10 @@
       top: 0,
       left: 0,
     },
+    disabled: isInputFocused,
   }}
+  on:focusin={() => (isInputFocused = true)}
+  on:focusout={() => (isInputFocused = false)}
   class="fixed top-10 right-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
 >
   <Card.Root
