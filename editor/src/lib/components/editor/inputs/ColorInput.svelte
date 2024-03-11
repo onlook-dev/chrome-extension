@@ -1,9 +1,10 @@
 <script lang="ts">
+  import { stringToHex } from "$lib/tools/edit/colors";
   import type { ElementStyle } from "$lib/tools/selection/styles";
-
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
-  $: inputString = elementStyle.value || "#000000";
+
+  $: inputString = stringToHex(elementStyle.value);
 </script>
 
 <div
