@@ -19,14 +19,14 @@ export async function exportToPR(
 
 	if (!user) {
 		console.error('No user found');
-		return 'export failed: no user found';
+		return 'Export failed: no user found';
 	}
 
 	const project = await getProjectFromFirebase(projectId);
 
 	if (!project?.installationId) {
 		console.error('Project has no installation ID');
-		throw 'export failed: Project has no installation ID';
+		throw 'Export failed: Project has no installation ID';
 	}
 
 	if (!project.githubSettings) {

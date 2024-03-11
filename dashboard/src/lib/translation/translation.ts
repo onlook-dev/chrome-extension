@@ -11,7 +11,7 @@ export async function getTranslationsFromServer(inputs: TranslationInput[]): Pro
   });
 
   if (!response.ok) {
-    throw new Error('Network response was not ok');
+    throw new Error(`Network response was not ok. Response: ${response.status} ${response.statusText}`);
   }
   const data = await response.json();
   return JSON.parse(data).changes;
