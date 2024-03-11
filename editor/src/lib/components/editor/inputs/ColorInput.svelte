@@ -1,26 +1,11 @@
 <script lang="ts">
-  import chroma from "chroma-js";
+  import { stringToHex } from "$lib/tools/edit/colors";
   import type { ElementStyle } from "$lib/tools/selection/styles";
-
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
-  let inputString = "#000000";
+  import { parse } from "culori";
 
-  $: if (elementStyle.value) {
-    try {
-      inputString = chroma(elementStyle.value).hex("rgb");
-    } catch (e) {
-      console.error("Error parsing color", e);
-      inputString = "#000000";
-    }
-  }
-
-  function expandShorthandHex(hex: string) {
-    if (hex.length <= 5) {
-      return `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`;
-    }
-    return hex;
-  }
+  $: inputString = stringToHex(elementStyle.value);
 </script>
 
 <div
@@ -45,7 +30,17 @@
     type="text"
     value={inputString}
     placeholder="--"
+    on:keydown={(e) => {
+      if (e.key === "Enter") {
+        e.currentTarget.blur();
+        return;
+      }
+    }}
     on:input={(event) => {
+      if (parse(event.currentTarget.value) === undefined) {
+        console.log("Invalid color");
+        return;
+      }
       inputString = event.currentTarget.value;
       updateElementStyle(elementStyle.key, event.currentTarget.value);
     }}

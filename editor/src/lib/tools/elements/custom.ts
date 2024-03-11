@@ -90,10 +90,8 @@ export class CustomInput extends CustomElement {
 
   getElement(): HTMLElement {
     const input = document.createElement('input');
-    input.style.width = "auto";
+    input.style.width = "100px";
     input.style.height = "auto";
-    input.style.minHeight = "2rem";
-    input.style.minWidth = "10rem";
     input.style.padding = "10px";
     input.style.fontSize = "16px";
     input.style.border = "1px solid #ccc";
@@ -112,12 +110,10 @@ export class CustomImage extends CustomElement {
 
   getElement(): HTMLElement {
     const image = document.createElement('img');
-    image.style.width = "auto";
-    image.style.height = "auto";
+    image.style.width = "100px";
+    image.style.height = "100px";
     image.style.maxWidth = "100%";
     image.style.maxHeight = "100%";
-    image.style.minWidth = "10rem";
-    image.style.minHeight = "10rem";
     image.src = "https://picsum.photos/300/200";
 
     image.dataset.onlookComponentId = `img-${nanoid()}`
@@ -132,11 +128,9 @@ export class CustomDiv extends CustomElement {
 
   getElement(): HTMLElement {
     const div = document.createElement('div');
-    div.style.width = "auto";
-    div.style.height = "auto";
-    div.style.minWidth = "10rem";
-    div.style.minHeight = "10rem";
-
+    div.style.width = "100px";
+    div.style.height = "100px";
+    div.style.backgroundColor = "#75FB9E"
     div.dataset.onlookComponentId = `div-${nanoid()}`
     return div;
   }
@@ -149,14 +143,13 @@ export class CustomRowDiv extends CustomElement {
 
   getElement(): HTMLElement {
     const div = document.createElement('div');
-    div.style.width = "auto";
-    div.style.height = "auto";
-    div.style.minWidth = "10rem";
-    div.style.minHeight = "10rem";
+    div.style.width = "100px";
+    div.style.height = "100px";
     div.style.display = "flex";
     div.style.flexDirection = "row";
     div.style.justifyContent = "space-between";
     div.style.alignItems = "center";
+    div.style.backgroundColor = "#75FB9E"
 
     div.dataset.onlookComponentId = `div-${nanoid()}`
     return div;
@@ -170,15 +163,13 @@ export class CustomColumnDiv extends CustomElement {
 
   getElement(): HTMLElement {
     const div = document.createElement('div');
-    div.style.width = "auto";
-    div.style.height = "auto";
-    div.style.minWidth = "10rem";
-    div.style.minHeight = "10rem";
+    div.style.width = "100px";
+    div.style.height = "100px";
     div.style.display = "flex";
     div.style.flexDirection = "column";
     div.style.justifyContent = "space-between";
     div.style.alignItems = "center";
-
+    div.style.backgroundColor = "#75FB9E"
     div.dataset.onlookComponentId = `div-${nanoid()}`
     return div
   }
@@ -191,10 +182,8 @@ export class CustomGridDiv extends CustomElement {
 
   getElement(): HTMLElement {
     const div = document.createElement('div');
-    div.style.width = "auto";
-    div.style.height = "auto";
-    div.style.minWidth = "10rem";
-    div.style.minHeight = "10rem";
+    div.style.width = "100px";
+    div.style.height = "100px";
     div.style.height = "auto";
     div.style.display = "grid";
     div.style.gridTemplateColumns = "repeat(3, 1fr)";

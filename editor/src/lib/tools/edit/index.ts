@@ -196,6 +196,7 @@ export class EditTool implements Tool {
 			newValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}`, componentId } as InsertRemoveVal,
 			oldValue: {}
 		});
+		this.simulateClick([el]);
 	};
 
 	copyElement = () => {
