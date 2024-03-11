@@ -20,9 +20,15 @@
 	let state = CallbackState.loading;
 
 	onMount(async () => {
-		if (!installationId || !projectId) {
+		if (!installationId) {
 			state = CallbackState.error;
-			errorMessage = 'Invalid installation id or project id';
+			errorMessage = 'Invalid installation id';
+			return;
+		}
+
+		if (!projectId) {
+			state = CallbackState.error;
+			errorMessage = 'Invalid project id';
 			return;
 		}
 

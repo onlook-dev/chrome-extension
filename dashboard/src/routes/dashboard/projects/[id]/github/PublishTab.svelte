@@ -15,6 +15,7 @@
 	import Restore from '~icons/ic/baseline-restore';
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
+	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 	export let project: Project;
 	export let userId: string;
 
@@ -245,6 +246,8 @@
 		<p class="text-center text-lg">No github config found</p>
 	{:else if hasActivities && !hasFilePaths}
 		<p class="text-center text-lg">Edited website not configured with Onlook</p>
+		<p class="text-center text-lg">Instructions for configuring website with Onlook below</p>
+		<ConfigureProjectInstructions />
 	{:else}
 		<p class="text-center text-lg">Nothing to publish</p>
 		<p class="text-center text-lg">Use the extension to make some edits!</p>

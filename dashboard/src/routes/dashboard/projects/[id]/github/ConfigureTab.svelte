@@ -148,6 +148,7 @@
 					on:input={(e) => {
 						if (!project?.githubSettings) return;
 						// @ts-ignore - This value exists
+						project.githubSettings.rootPath = e.target.value;
 						saved = false;
 					}}
 				/>
@@ -200,7 +201,6 @@
 	<button
 		class="btn btn-link mt-4"
 		on:click={() => {
-			console.log('projectsMapStore', $projectsMapStore);
 			window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
 		}}>Github Permissions</button
 	>
