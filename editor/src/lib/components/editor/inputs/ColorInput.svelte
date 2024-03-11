@@ -25,10 +25,17 @@
   </div>
 
   <input
-    class="w-[4rem] text-xs border-none text-text bg-transparent text-end focus:outline-none focus:ring-0"
+    class="w-[3.5rem] text-xs border-none text-text bg-transparent text-end focus:outline-none focus:ring-0"
     type="text"
     value={inputString}
     placeholder="--"
+    on:keydown={(e) => {
+      if (e.key === "Enter") {
+        console.log("blur");
+        e.currentTarget.blur();
+        return;
+      }
+    }}
     on:input={(event) => {
       inputString = event.currentTarget.value;
       updateElementStyle(elementStyle.key, event.currentTarget.value);

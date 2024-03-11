@@ -1,4 +1,7 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+
 <script lang="ts">
   import { TagMap } from "$lib/tools/selection/tag";
   import { ChevronDown } from "radix-icons-svelte";
@@ -118,8 +121,6 @@
       <!-- Nothing -->
     {:else if isText}
       <!-- Show text -->
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
         on:click={(e) => {
           select(e, node);
@@ -131,8 +132,6 @@
         {node.nodeValue}
       </div>
     {:else if isEmpty}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
         on:click={(e) => {
           select(e, node);
