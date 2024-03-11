@@ -7,6 +7,7 @@
 	import type { User } from '$shared/models/user';
 	import { getUserFromFirebase } from '$lib/storage/user';
 	import CopyIcon from '~icons/mdi/content-copy';
+	import { Share2 } from 'lucide-svelte';
 
 	export let teamId: string;
 
@@ -59,6 +60,22 @@
 		return user;
 	}
 
+	function showModal() {
+		const modal = document.getElementById(modalId) as HTMLDialogElement;
+		if (modal) {
+			modal.showModal();
+			modal.addEventListener(
+				'click',
+				(event) => {
+					if (event.target === modal) {
+						closeModal();
+					}
+				},
+				{ once: true }
+			);
+		}
+	}
+
 	function closeModal() {
 		const modal = document.getElementById(modalId) as HTMLDialogElement;
 		if (modal) {
@@ -67,45 +84,41 @@
 	}
 </script>
 
-<button
-	class="btn btn-outline"
-	on:click={() => {
-		// @ts-ignore - showModal() does not exist on HTMLElement
-		document?.getElementById(modalId)?.showModal();
-	}}>Share</button
->
+<div>
+	<button class="flex flex-row justify-center" on:click={showModal}>
+		<Share2 class="h-4 w-4 mr-2" /> Share project
+	</button>
 
-<!-- TODO: Add back this flow then ready for emails https://github.com/onlook-dev/monorepo/blob/013814645ceddd3a0d7ccc2140561050c826884d/dashboard-sveltekit/src/routes/dashboard/projects/%5Bid%5D/ShareModal.svelte -->
+	<dialog id={modalId} class="modal">
+		<div class="modal-box w-2/3 min-w-96">
+			<h2 class="font-bold text-lg">Share project</h2>
 
-<dialog id={modalId} class="modal">
-	<div class="modal-box w-2/3 min-w-96">
-		<h3 class="font-bold text-lg">Share project</h3>
+			<div class="flex flex-row space-x-2">
+				<button
+					class="modal-action btn btn-outline mb-2"
+					on:click={async () => {
+						try {
+							await navigator.clipboard.writeText(window.location.href);
+							closeModal();
+							toast.push('Link copied to clipboard');
+						} catch (err) {
+							toast.push('Failed to copy text: ' + err);
+						}
+					}}
+				>
+					<span>Copy link to share project</span><CopyIcon class="w-5 h-5" />
+				</button>
+			</div>
 
-		<div class="flex flex-row space-x-2">
-			<button
-				class="modal-action btn btn-outline mb-2"
-				on:click={async () => {
-					try {
-						await navigator.clipboard.writeText(window.location.href);
-						closeModal();
-						toast.push('Link copied to clipboard');
-					} catch (err) {
-						toast.push('Failed to copy text: ' + err);
-					}
-				}}
-			>
-				<span>Copy link to share project</span><CopyIcon class="w-5 h-5" />
-			</button>
+			<label for="access-input" class="label cursor-pointer">
+				<span class="label-text">Anyone with the link can access this project</span>
+			</label>
 		</div>
-
-		<label for="access-input" class="label cursor-pointer">
-			<span class="label-text">Anyone with the link can access this file</span>
-		</label>
-	</div>
-	<form method="dialog" class="modal-backdrop">
-		<button>close</button>
-	</form>
-</dialog>
+		<form method="dialog" class="modal-backdrop">
+			<button>close</button>
+		</form>
+	</dialog>
+</div>
 
 <style>
 	#share-modal {

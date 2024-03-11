@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import type { Project } from '$shared/models/project';
@@ -11,6 +11,7 @@
 	import PublishTab from './PublishTab.svelte';
 	import { githubConfig } from '$lib/utils/env';
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import { projectsMapStore } from '$lib/utils/store';
 
 	export let project: Project;
 	export let user: User;
@@ -22,7 +23,6 @@
 
 	const modalId = 'publish-modal';
 	let selectedTab = Tab.PUBLISH;
-	let unsubs: any[] = [];
 
 	onMount(async () => {
 		const projectId = $page.params.id;
@@ -34,10 +34,6 @@
 		if (!project.githubSettings) {
 			selectedTab = Tab.CONFIGURE;
 		}
-	});
-
-	onDestroy(() => {
-		unsubs.forEach((unsub: any) => unsub());
 	});
 
 	function showModal() {
@@ -66,13 +62,13 @@
 
 <div>
 	<button class="flex flex-row justify-center" on:click={showModal}>
-		<GitHub class="mr-2" /> Publish to Github
+		<GitHub class="mr-2" /> Pull Request
 	</button>
 	<dialog id={modalId} class="modal">
 		<div class="modal-box card w-full h-[60%] flex flex-col p-6">
-			<h2 class="text-xl font-semibold mb-3">Publish to Github</h2>
+			<h2 class="text-xl font-semibold mb-3">Send to Github</h2>
 
-			{#if project?.githubSettings?.auth || user?.githubAuthId}
+			{#if project?.installationId}
 				<div role="tablist" class="tabs tabs-bordered">
 					<input
 						type="radio"
@@ -98,7 +94,7 @@
 						bind:group={selectedTab}
 					/>
 					<div role="tabpanel" class="tab-content py-4">
-						<ConfigureTab bind:project bind:user />
+						<ConfigureTab bind:project />
 						<div class="collapse collapse-arrow border rounded-md mt-6">
 							<input type="checkbox" />
 							<div class="collapse-title">How to setup your repository</div>
@@ -113,11 +109,9 @@
 					<button
 						class="btn btn-primary"
 						on:click={() => {
-							window.open(
-								`${githubConfig.appUrl}/installations/new?state=${project?.id}`,
-								'_blank'
-							);
-						}}><GitHub class="h-5 w-5" />Connect Github Repos</button
+							console.log('projectMapStore', $projectsMapStore.get(project?.id));
+							window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
+						}}><GitHub class="h-5 w-5" />Connect project to Github</button
 					>
 				</div>
 			{/if}

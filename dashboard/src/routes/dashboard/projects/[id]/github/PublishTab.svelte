@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { exportToPRComments } from '$lib/github/github';
+	import { exportToPR } from '$lib/github/github';
 	import { DashboardRoutes, MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
@@ -13,9 +13,9 @@
 	import PullRequest from '~icons/ph/git-pull-request-bold';
 	import GitHub from '~icons/mdi/github';
 	import Restore from '~icons/ic/baseline-restore';
-	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
+	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 	export let project: Project;
 	export let userId: string;
 
@@ -23,6 +23,7 @@
 
 	let githubConfigured = false;
 	let hasActivities = false;
+	let hasFilePaths = false;
 	let isLoading = false;
 	let publishError = false;
 	let publishErrorMessage = '';
@@ -37,19 +38,22 @@
 
 	onMount(() => {
 		// Check each activities for a path
-		if (project?.activities && Object.keys(project.activities).length > 0) {
+		if (Object.keys(project.activities).length > 0) {
 			hasActivities = true;
 		}
+
 		Object.values(project.activities).forEach((activity) => {
 			if (activity.path) {
-				// If a path is found, open the modal
-				githubConfigured = true;
+				hasFilePaths = true;
 				return;
 			}
 		});
 
-		if (project?.githubHistoryIds?.length > 0) {
+		if (project?.installationId) {
 			githubConfigured = true;
+		}
+
+		if (project?.githubHistoryIds?.length > 0) {
 			getGithubHistoriesFromFirebase(project.githubHistoryIds)
 				.then((histories) => {
 					githubHistories = histories;
@@ -65,7 +69,7 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
-			prLink = await exportToPRComments(userId, project?.id, title, description);
+			prLink = await exportToPR(userId, project?.id, title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
 			publishErrorMessage = `Error publishing changes: ${JSON.stringify(error)}`;
@@ -141,11 +145,7 @@
 </script>
 
 <div class="flex flex-col items-center justify-center h-full mt-4">
-	{#if !hasActivities}
-		<p class="text-center text-gray-500">
-			Nothing to publish. <br />Try editing the project using the extension first.
-		</p>
-	{:else if githubConfigured}
+	{#if githubConfigured && hasActivities && hasFilePaths}
 		<label class="form-control w-full p-2">
 			<div class="label">
 				<span class="label-text">Title</span>
@@ -242,7 +242,14 @@
 				</div>
 			</div>
 		{/if}
-	{:else}
+	{:else if !githubConfigured}
+		<p class="text-center text-lg">No github config found</p>
+	{:else if hasActivities && !hasFilePaths}
+		<p class="text-center text-lg">Edited website not configured with Onlook</p>
+		<p class="text-center text-lg">Instructions for configuring website with Onlook below</p>
 		<ConfigureProjectInstructions />
+	{:else}
+		<p class="text-center text-lg">Nothing to publish</p>
+		<p class="text-center text-lg">Use the extension to make some edits!</p>
 	{/if}
 </div>

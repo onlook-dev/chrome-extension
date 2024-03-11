@@ -22,6 +22,7 @@
 	import type { Activity } from '$shared/models/activity';
 
 	let project: Project | undefined;
+
 	let user: User | null;
 	let unsubs: any[] = [];
 	let activeActivityId: string = '';
@@ -98,19 +99,21 @@
 			</div>
 
 			<div class="navbar-end space-x-2">
-				<ShareModal teamId={project.teamId} />
 				<div class="dropdown dropdown-end">
-					<button tabindex="0" class="btn btn-primary">Publish</button>
-					<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-					<ul
-						tabindex="0"
-						class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-					>
-						<li><PublishToGithubModal {project} {user} /></li>
+					<button class="btn btn-primary">Share</button>
+					<ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+						<li tabindex="-1"><PublishToGithubModal {project} {user} /></li>
+						<li><ShareModal teamId={project.teamId} /></li>
 						<div class="divider">Coming soon</div>
-						<li class="opacity-60"><button disabled><Linear /> Open Linear ticket</button></li>
-						<li class="opacity-60"><button disabled><Jira /> Open Jira ticket</button></li>
-						<li class="opacity-60"><button disabled><Slack /> Create Slack thread</button></li>
+						<li class="opacity-60">
+							<button disabled><Linear /> Open Linear ticket</button>
+						</li>
+						<li class="opacity-60">
+							<button disabled><Jira /> Open Jira ticket</button>
+						</li>
+						<li class="opacity-60">
+							<button disabled><Slack /> Create Slack thread</button>
+						</li>
 					</ul>
 				</div>
 			</div>

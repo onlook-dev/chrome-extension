@@ -4,44 +4,13 @@ import {
   FIREBASE_COLLECTION_PROJECTS,
   FIREBASE_COLLECTION_TEAMS,
 } from "../../shared/constants";
-import {Role, Team} from "../../shared/models/team";
 import {Project} from "../../shared/models/project";
-
-export async function duplicateTeam(
-  teamId: string,
-  userId: string,
-  newProjectId: string,
-  newTeamId: string
-): Promise<Team | undefined> {
-  const originalTeam = await admin
-    .firestore()
-    .collection(FIREBASE_COLLECTION_TEAMS)
-    .doc(teamId)
-    .get();
-
-  if (!originalTeam.exists) {
-    console.error("Original team not found");
-    return undefined;
-  }
-
-  const originalTeamData = originalTeam.data();
-
-  const newUsers = {[userId]: Role.ADMIN};
-
-  const newProjectIds = [newProjectId];
-
-  return {
-    ...originalTeamData,
-    id: newTeamId,
-    users: newUsers,
-    projectIds: newProjectIds,
-  } as Team;
-}
+import {Team} from "../../shared/models/team";
 
 export async function duplicateProject(
   projectId: string,
   newProjectId: string,
-  newTeamId: string
+  teamId: string
 ): Promise<Project | undefined> {
   const originalProject = await admin
     .firestore()
@@ -59,6 +28,54 @@ export async function duplicateProject(
   return {
     ...originalProjectData,
     id: newProjectId,
-    teamId: newTeamId,
+    teamId: teamId,
   } as Project;
+}
+
+export async function addProjectsToTeam(
+  teamId: string,
+  projectIds: string[]
+): Promise<Team | undefined> {
+  const team = admin
+    .firestore()
+    .collection(FIREBASE_COLLECTION_TEAMS)
+    .doc(teamId)
+    .get();
+
+  if (!team) {
+    console.error("Team not found");
+    return;
+  }
+
+  const teamData = (await team).data() as Team;
+
+  if (!teamData) {
+    console.error("Team data not found");
+    return;
+  }
+
+  const currentProjects = teamData.projectIds;
+
+  // Filter out projects already in the team
+  const newProjects = projectIds.filter(
+    (projectId) => !currentProjects.includes(projectId)
+  );
+
+  if (newProjects.length === 0) {
+    console.error("No new projects");
+    return;
+  }
+
+  await admin
+    .firestore()
+    .collection(FIREBASE_COLLECTION_TEAMS)
+    .doc(teamId)
+    .update({
+      projects: [...currentProjects, ...newProjects],
+    });
+
+  return {
+    ...teamData,
+    projects: [...currentProjects, ...newProjects],
+  } as Team;
 }

@@ -1,6 +1,5 @@
 import { getProjectFromFirebase } from '$lib/storage/project';
 import { getUserFromFirebase } from '$lib/storage/user';
-import { getGithubAuthFromFirebase } from '$lib/storage/github';
 import { getInstallationOctokit } from './installation';
 import { createCommit, prepareCommit } from './commits';
 import type { FileContentData } from '$shared/models/translation';
@@ -10,7 +9,7 @@ import { createOrGetPullRequest } from './pullRequests';
 // TODO: Should clean up if any steps fail
 // - Delete branch
 // - Delete PR
-export async function exportToPRComments(
+export async function exportToPR(
 	userId: string,
 	projectId: string,
 	title: string,
@@ -25,20 +24,17 @@ export async function exportToPRComments(
 
 	const project = await getProjectFromFirebase(projectId);
 
-	if (!user.githubAuthId && !project?.githubSettings?.auth) {
-		console.error('No github auth ID found');
-		throw 'export failed: no github auth ID found';
+	if (!project?.installationId) {
+		console.error('Project has no installation ID');
+		throw 'export failed: Project has no installation ID';
 	}
-
-	const { installationId } = await getGithubAuthFromFirebase(
-		user.githubAuthId ?? (project?.githubSettings?.auth as string)
-	);
 
 	if (!project.githubSettings) {
 		console.error('No github settings found for this project');
 		throw 'Export failed: No github settings found for this project';
 	}
 
+	const installationId = project.installationId;
 	const githubSettings = project.githubSettings;
 	const octokit = await getInstallationOctokit(installationId);
 

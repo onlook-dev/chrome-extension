@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
+	import { getProjectFromFirebase, postProjectToFirebase } from '$lib/storage/project';
+	import type { Project } from '$shared/models/project';
+	import { baseUrl } from '$lib/utils/env';
 
-	import type { GithubAuth } from '$shared/models/github';
-	import { userStore } from '$lib/utils/store';
-	import { postUserToFirebase } from '$lib/storage/user';
-	import { nanoid } from 'nanoid';
-	import { postGithubAuthToFirebase } from '$lib/storage/github';
-
-	let installationId = $page.url.searchParams.get('installation_id');
+	let installationId = $page.url.searchParams.get('installation_id') as string;
+	let projectId = $page.url.searchParams.get('state') as string;
 	let errorMessage = 'Saving project state failed';
+	let project: Project;
+	let unsubscribe = () => {};
 
 	enum CallbackState {
 		loading,
@@ -19,70 +19,34 @@
 
 	let state = CallbackState.loading;
 
-	onMount(() => {
-		state = CallbackState.loading;
+	onMount(async () => {
+		if (!installationId) {
+			state = CallbackState.error;
+			errorMessage = 'Invalid installation id';
+			return;
+		}
+
+		if (!projectId) {
+			state = CallbackState.error;
+			errorMessage = 'Invalid project id';
+			return;
+		}
+
+		project = await getProjectFromFirebase(projectId);
+
+		project.installationId = installationId;
+
+		await postProjectToFirebase(project);
+		openProject();
 	});
 
-	// Only run this if the state is loading, othewise as the store is updated it will rerun
-	$: $userStore &&
-		state === CallbackState.loading &&
-		(async () => {
-			const user = $userStore;
+	onDestroy(() => {
+		unsubscribe();
+	});
 
-			if (!user) {
-				state = CallbackState.error;
-				errorMessage = 'User not found';
-				return;
-			}
-
-			if (!installationId) {
-				state = CallbackState.error;
-				errorMessage = 'Missing parameters';
-				return;
-			}
-
-			// If the user has a github auth id we can update it with the new installation id
-			if (user.githubAuthId) {
-				const githubAuth = {
-					id: user.githubAuthId,
-					installationId: installationId
-				};
-
-				await postGithubAuthToFirebase(githubAuth);
-
-				state = CallbackState.success;
-
-				closeWindow();
-				return;
-			} else {
-				// Otherwise we need to create a new github auth
-				const githubAuth = {
-					id: nanoid(),
-					installationId: installationId
-				} as GithubAuth;
-
-				user.githubAuthId = githubAuth.id;
-				try {
-					await postGithubAuthToFirebase(githubAuth);
-					await postUserToFirebase(user);
-
-					state = CallbackState.success;
-
-					userStore.set(user);
-
-					closeWindow();
-				} catch (error) {
-					state = CallbackState.error;
-					errorMessage = error instanceof Error ? error.message : 'An error occurred';
-				}
-			}
-		})();
-
-	function closeWindow() {
-		// Wait 1 second
-		setTimeout(() => {
-			window.close();
-		}, 0);
+	function openProject() {
+		const dashboardUrl = `${baseUrl}/dashboard/projects/${projectId}`;
+		window.location.href = dashboardUrl;
 	}
 </script>
 
@@ -99,7 +63,7 @@
 			{:else if state === CallbackState.error}
 				<h1 class="card-title">Error: {errorMessage}</h1>
 			{:else}
-				<h1 class="card-title">Github authenticated!<br />You can close this tab</h1>
+				<h1 class="card-title">Github authenticated!<br /></h1>
 			{/if}
 		</div>
 	</div>
