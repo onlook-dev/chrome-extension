@@ -94,7 +94,7 @@
 						bind:group={selectedTab}
 					/>
 					<div role="tabpanel" class="tab-content py-4">
-						<ConfigureTab bind:project bind:user />
+						<ConfigureTab bind:project />
 						<div class="collapse collapse-arrow border rounded-md mt-6">
 							<input type="checkbox" />
 							<div class="collapse-title">How to setup your repository</div>
@@ -111,7 +111,7 @@
 						on:click={() => {
 							console.log('projectMapStore', $projectsMapStore.get(project?.id));
 							window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
-						}}><GitHub class="h-5 w-5" />Connect Github</button
+						}}><GitHub class="h-5 w-5" />Connect project to Github</button
 					>
 				</div>
 			{/if}

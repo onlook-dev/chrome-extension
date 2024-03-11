@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { exportToPRComments } from '$lib/github/github';
+	import { exportToPR } from '$lib/github/github';
 	import { DashboardRoutes, MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
@@ -68,7 +68,7 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
-			prLink = await exportToPRComments(userId, project?.id, title, description);
+			prLink = await exportToPR(userId, project?.id, title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
 			publishErrorMessage = `Error publishing changes: ${JSON.stringify(error)}`;

@@ -9,17 +9,21 @@ import {
 } from "../../shared/constants";
 import {Team, Role} from "../../shared/models/team";
 import type {User} from "../../shared/models/user";
-import {duplicateProject, duplicateTeam} from "../utils/helpers";
+import {addProjectsToTeam, duplicateProject} from "../utils/helpers";
 
 const isProd = admin.instanceId().app.options.projectId === "onlook-prod";
 
-const PROD_DEMO_TEAM_ID = "_BwuInlxDTyQ7uQpcPbZv";
-const PROD_DEMO_PROJECT_ID = "deoFqIQc9ajpTQ-BBNcSv";
-const DEV_DEMO_PROJECT_ID = "M3pT1cIGtZzMYr1-aK60a";
-const DEV_DEMO_TEAM_ID = "I2r7D7wAPnF9TFFOtOwp-";
+const DEV_PORTFOLIO_DEMO = "R9P9ESZDSJEotGheG7Tmg";
+const DEV_DASHBOARD_DEMO = "fSbhXa18h1eTp4l_H29P3";
 
-const DEMO_TEAM_ID = isProd ? PROD_DEMO_TEAM_ID : DEV_DEMO_TEAM_ID;
-const DEMO_PROJECT_ID = isProd ? PROD_DEMO_PROJECT_ID : DEV_DEMO_PROJECT_ID;
+const PROD_PORTFOLIO_DEMO = "R9P9ESZDSJEotGheG7Tmg";
+const PROD_DASHBOARD_DEMO = "fSbhXa18h1eTp4l_H29P3";
+
+const DEMO_PORTFOLIO = isProd ? PROD_PORTFOLIO_DEMO : DEV_PORTFOLIO_DEMO;
+const DEMO_DASHBOARD = isProd ? PROD_DASHBOARD_DEMO : DEV_DASHBOARD_DEMO;
+
+const demos = [DEMO_PORTFOLIO, DEMO_DASHBOARD];
+const demoProjects: string[] = [];
 
 export const createUser = functions.auth.user().onCreate(async (user) => {
   const defaultTeam = {
@@ -33,21 +37,28 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
     createdAt: new Date().toISOString(),
   } as Team;
 
-  const newTeamId = nanoid.nanoid();
-  const newProjectId = nanoid.nanoid();
+  // Duplicate demo projects
+  demos.forEach(async (demoId) => {
+    // Create new project id
+    const newProjectId = nanoid.nanoid();
 
-  const demoTeam = await duplicateTeam(
-    DEMO_TEAM_ID,
-    user.uid,
-    newProjectId,
-    newTeamId
-  );
+    // Duplicate project
+    const demoProject = await duplicateProject(
+      demoId,
+      newProjectId,
+      defaultTeam.id
+    );
 
-  const demoProject = await duplicateProject(
-    DEMO_PROJECT_ID,
-    newProjectId,
-    newTeamId
-  );
+    // Write to database
+    if (demoProject) {
+      await admin
+        .firestore()
+        .collection(FIREBASE_COLLECTION_PROJECTS)
+        .doc(demoProject.id)
+        .set(demoProject);
+      demoProjects.push(demoProject.id);
+    }
+  });
 
   // Create default team
   await admin
@@ -55,22 +66,6 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
     .collection(FIREBASE_COLLECTION_TEAMS)
     .doc(defaultTeam.id)
     .set(defaultTeam);
-
-  // Create demo team
-  if (demoTeam && demoProject) {
-    await admin
-      .firestore()
-      .collection(FIREBASE_COLLECTION_TEAMS)
-      .doc(demoTeam.id)
-      .set(demoTeam);
-
-    // Create demo project
-    await admin
-      .firestore()
-      .collection(FIREBASE_COLLECTION_PROJECTS)
-      .doc(demoProject.id)
-      .set(demoProject);
-  }
 
   // Create user
   await admin
@@ -82,8 +77,10 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
       name: user.displayName,
       email: user.email,
       profileImage: user.photoURL,
-      teamIds: [defaultTeam.id, ...(demoTeam?.id ? [demoTeam.id] : [])],
+      teamIds: [defaultTeam.id],
     });
+
+  await addProjectsToTeam(defaultTeam.id, demoProjects);
 });
 
 export const deleteUser = functions.auth.user().onDelete(async (user) => {

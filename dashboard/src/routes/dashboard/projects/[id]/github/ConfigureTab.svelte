@@ -1,18 +1,15 @@
 <script lang="ts">
 	import GitHub from '~icons/mdi/github';
 	import type { Project } from '$shared/models/project';
-	import type { User } from '$shared/models/user';
 	import type { GithubRepo, GithubSettings } from '$shared/models/github';
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
-	import { getGithubAuthFromFirebase } from '$lib/storage/github';
 	import { getRepoDefaults, getReposByInstallation } from '$lib/github/repos';
 	import { onMount } from 'svelte';
 	import { githubConfig } from '$lib/utils/env';
 	import Info from '~icons/akar-icons/info';
 
 	export let project: Project;
-	export let user: User;
 
 	let repositories: GithubRepo[] = [];
 	let loadingRepos = false;
@@ -62,7 +59,7 @@
 		project.githubSettings = {
 			repositoryName: repo.name,
 			owner: repo.owner,
-			rootPath: '/',
+			rootPath: '',
 			baseBranch: defaultBranch ?? 'main'
 		} as GithubSettings;
 
@@ -79,7 +76,18 @@
 
 	async function updateProject(project: Project) {
 		saved = true;
+
+		// Prevent footgun of having a leading or trailing slash
+		if (project?.githubSettings?.rootPath) {
+			let pathValue = project?.githubSettings?.rootPath;
+			pathValue = pathValue.replace(/^\/+|\/+$/g, '');
+
+			project.githubSettings.rootPath = pathValue;
+		}
+
+		saved = false;
 		await postProjectToFirebase(project);
+
 		projectsMapStore.update((projectsMap) => {
 			projectsMap.set(project.id, project);
 			return projectsMap;
@@ -140,7 +148,6 @@
 					on:input={(e) => {
 						if (!project?.githubSettings) return;
 						// @ts-ignore - This value exists
-						project.githubSettings.rootPath = e.target.value;
 						saved = false;
 					}}
 				/>

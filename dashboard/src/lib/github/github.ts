@@ -1,6 +1,5 @@
 import { getProjectFromFirebase } from '$lib/storage/project';
 import { getUserFromFirebase } from '$lib/storage/user';
-import { getGithubAuthFromFirebase } from '$lib/storage/github';
 import { getInstallationOctokit } from './installation';
 import { createCommit, prepareCommit } from './commits';
 import type { FileContentData } from '$shared/models/translation';
@@ -10,7 +9,7 @@ import { createOrGetPullRequest } from './pullRequests';
 // TODO: Should clean up if any steps fail
 // - Delete branch
 // - Delete PR
-export async function exportToPRComments(
+export async function exportToPR(
 	userId: string,
 	projectId: string,
 	title: string,
