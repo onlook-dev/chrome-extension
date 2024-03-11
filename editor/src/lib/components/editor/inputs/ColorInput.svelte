@@ -31,7 +31,6 @@
     placeholder="--"
     on:keydown={(e) => {
       if (e.key === "Enter") {
-        console.log("blur");
         e.currentTarget.blur();
         return;
       }
