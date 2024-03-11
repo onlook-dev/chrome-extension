@@ -11,7 +11,7 @@
     "playground": "cd playground && pnpm run dev",
     "dashboard": "cd dashboard && npm run dev",
     "extension": "cd extension && npm run dev",
-    "install": "cd dashboard && npm install && cd ../editor && npm install && cd ../extension && npm install",
+    "install": "cd dashboard && npm install && cd ../editor && npm install && cd ../extension && npm install && cd ../editor && npm install",
     "build": "cd editor && npm run build:cpy && cd ../extension && npm run build",
     "docker": "cd hosted && npm run build"
   },
