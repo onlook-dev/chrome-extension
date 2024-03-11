@@ -1,18 +1,15 @@
 <script lang="ts">
 	import GitHub from '~icons/mdi/github';
 	import type { Project } from '$shared/models/project';
-	import type { User } from '$shared/models/user';
 	import type { GithubRepo, GithubSettings } from '$shared/models/github';
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
-	import { getGithubAuthFromFirebase } from '$lib/storage/github';
 	import { getRepoDefaults, getReposByInstallation } from '$lib/github/repos';
 	import { onMount } from 'svelte';
 	import { githubConfig } from '$lib/utils/env';
 	import Info from '~icons/akar-icons/info';
 
 	export let project: Project;
-	export let user: User;
 
 	let repositories: GithubRepo[] = [];
 	let loadingRepos = false;
@@ -38,35 +35,31 @@
 		filteredRepositories = repositories.filter((repo) => repo.name !== selectedRepo?.name);
 	}
 
-	$: if (user?.githubAuthId) {
+	$: if (project.installationId) {
 		loadingRepos = true;
-		getGithubAuthFromFirebase(user.githubAuthId)
-			.then((auth) => {
-				return getReposByInstallation(auth.installationId);
-			})
+		getReposByInstallation(project.installationId)
 			.then(({ repos }) => {
 				repositories = repos;
 				filteredRepositories = repos;
 				loadingRepos = false;
-				console.log('Successfully got user repositories');
+				console.log('Successfully got repositories');
 			})
 			.catch((error) => {
-				console.error('Error fetching GitHub data:', error);
+				console.error('Error fetching repositories:', error);
 			});
 	}
 
 	async function connectRepoToProject(repo: GithubRepo) {
-		if (!project) return;
+		if (!project.installationId) {
+			console.error('No installation id found');
+		}
 
-		const githubAuth = await getGithubAuthFromFirebase(user?.githubAuthId as string);
-		const installationId = githubAuth.installationId;
-		const defaultBranch = await getRepoDefaults(installationId, repo);
+		const defaultBranch = await getRepoDefaults(project.installationId as string, repo);
 
 		project.githubSettings = {
-			auth: user?.githubAuthId,
 			repositoryName: repo.name,
 			owner: repo.owner,
-			rootPath: '/',
+			rootPath: '',
 			baseBranch: defaultBranch ?? 'main'
 		} as GithubSettings;
 
@@ -83,7 +76,18 @@
 
 	async function updateProject(project: Project) {
 		saved = true;
+
+		// Prevent footgun of having a leading or trailing slash
+		if (project?.githubSettings?.rootPath) {
+			let pathValue = project?.githubSettings?.rootPath;
+			pathValue = pathValue.replace(/^\/+|\/+$/g, '');
+
+			project.githubSettings.rootPath = pathValue;
+		}
+
+		saved = false;
 		await postProjectToFirebase(project);
+
 		projectsMapStore.update((projectsMap) => {
 			projectsMap.set(project.id, project);
 			return projectsMap;
@@ -197,7 +201,7 @@
 	<button
 		class="btn btn-link mt-4"
 		on:click={() => {
-			window.open(`${githubConfig.appUrl}/installations/new?state=${project?.id}`, '_blank');
+			window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
 		}}>Github Permissions</button
 	>
 </div>

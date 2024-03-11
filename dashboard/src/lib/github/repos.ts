@@ -5,7 +5,7 @@ export const getReposByInstallation = async (installationId: string) => {
   const octokit = await getInstallationOctokit(installationId);
 
   // Get the repositories accessible to the installation
-  console.log('Getting user repositories...');
+  console.log('Getting repositories...');
 
   // https://docs.github.com/en/rest/apps/installations?apiVersion=2022-11-28#list-repositories-accessible-to-the-app-installation
   const response = await octokit.request('GET /installation/repositories', {

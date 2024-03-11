@@ -6,7 +6,6 @@ export interface GithubAuth {
 }
 
 export interface GithubSettings {
-  auth: string;
   repositoryName: string;
   owner: string;
   rootPath: string;
