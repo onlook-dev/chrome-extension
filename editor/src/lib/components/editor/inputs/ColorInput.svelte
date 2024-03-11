@@ -3,6 +3,7 @@
   import type { ElementStyle } from "$lib/tools/selection/styles";
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
+  import { parse } from "culori";
 
   $: inputString = stringToHex(elementStyle.value);
 </script>
@@ -36,6 +37,10 @@
       }
     }}
     on:input={(event) => {
+      if (parse(event.currentTarget.value) === undefined) {
+        console.log("Invalid color");
+        return;
+      }
       inputString = event.currentTarget.value;
       updateElementStyle(elementStyle.key, event.currentTarget.value);
     }}
