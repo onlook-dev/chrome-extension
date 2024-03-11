@@ -1,33 +1,32 @@
 <script lang="ts">
+	import type { Project } from '$shared/models/project';
+	import type { GithubHistory } from '$shared/models/github';
+
 	import { onMount } from 'svelte';
+	import { nanoid } from 'nanoid';
+	import { toast } from '@zerodevx/svelte-toast';
 	import { exportToPR } from '$lib/github/github';
 	import { DashboardRoutes, MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
-	import { nanoid } from 'nanoid';
 	import { getGithubHistoriesFromFirebase, postGithubHistoryToFirebase } from '$lib/storage/github';
-
-	import type { Project } from '$shared/models/project';
-	import type { GithubHistory } from '$shared/models/github';
-
-	import PullRequest from '~icons/ph/git-pull-request-bold';
-	import GitHub from '~icons/mdi/github';
-	import Restore from '~icons/ic/baseline-restore';
 	import { baseUrl } from '$lib/utils/env';
-	import { toast } from '@zerodevx/svelte-toast';
+
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import GithubHistories from './GithubHistories.svelte';
+	import GitHub from '~icons/mdi/github';
+	import CodeChanges from './CodeChanges.svelte';
+
 	export let project: Project;
 	export let userId: string;
 
 	let githubHistories: GithubHistory[] = [];
-
 	let githubConfigured = false;
 	let hasActivities = false;
 	let hasFilePaths = false;
 	let isLoading = false;
 	let publishError = false;
 	let publishErrorMessage = '';
-	let historyOpen = true;
 	let errorMessage = '';
 	let prLink: string | undefined;
 
@@ -146,6 +145,7 @@
 
 <div class="flex flex-col items-center justify-center h-full mt-4">
 	{#if githubConfigured && hasActivities && hasFilePaths}
+		<CodeChanges projectId={project.id} {userId} />
 		<label class="form-control w-full p-2">
 			<div class="label">
 				<span class="label-text">Title</span>
@@ -188,60 +188,7 @@
 			</div>
 		</label>
 
-		{#if githubHistories.length > 0}
-			<div
-				class="collapse collapse-arrow border rounded-md mt-6 {historyOpen
-					? 'collapse-open'
-					: 'collapse-close'}"
-			>
-				<input type="checkbox" on:click={() => (historyOpen = !historyOpen)} />
-				<div class="collapse-title">Publish history ({githubHistories.length})</div>
-				<div class="collapse-content space-y-2">
-					{#each githubHistories as history}
-						<div class="flex flex-row max-w-[100%] items-center">
-							<p class="line-clamp-1 text-ellipsis max-w-[70%]">
-								{history.title}
-							</p>
-							<div class="ml-auto">
-								<div class="tooltip tooltip-left" data-tip="View pull request">
-									<button
-										class="btn btn-xs btn-square btn-ghost ml-auto"
-										on:click={() => window.open(history.pullRequestUrl, '_blank')}
-										><PullRequest class="w-4 h-4" /></button
-									>
-								</div>
-								<div class="tooltip tooltip-left" data-tip="Restore changes">
-									<button
-										class="btn btn-xs btn-square btn-ghost"
-										on:click={() => {
-											// @ts-ignore
-											document.getElementById('confirm_restore_modal').showModal();
-										}}><Restore class="w-4 h-4" /></button
-									>
-								</div>
-
-								<dialog id="confirm_restore_modal" class="modal">
-									<div class="modal-box">
-										<h3 class="font-bold text-lg">Restore changes?</h3>
-										<p class="py-4">This will overwrite your current activities.</p>
-										<div class="modal-action">
-											<form method="dialog">
-												<!-- if there is a button in form, it will close the modal -->
-												<button class="btn">Cancel</button>
-												<button
-													class="btn btn-error ml-2"
-													on:click={() => restoreActivities(history)}>Restore</button
-												>
-											</form>
-										</div>
-									</div>
-								</dialog>
-							</div>
-						</div>
-					{/each}
-				</div>
-			</div>
-		{/if}
+		<GithubHistories {githubHistories} {restoreActivities} />
 	{:else if !githubConfigured}
 		<p class="text-center text-lg">No github config found</p>
 	{:else if hasActivities && !hasFilePaths}

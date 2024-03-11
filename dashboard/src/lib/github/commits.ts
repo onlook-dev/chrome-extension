@@ -10,6 +10,7 @@ import { getTranslationsFromServer } from '$lib/translation/translation';
 import { getTranslationInput, updateContentChunk } from '$shared/translation';
 import { fetchFileFromPath, getPathInfo } from './files';
 import type { User } from '$shared/models/user';
+import cloneDeep from 'lodash/cloneDeep';
 
 export async function prepareCommit(
 	octokit: Octokit,
@@ -18,7 +19,10 @@ export async function prepareCommit(
 	branch: string,
 	rootPath: string,
 	activities: Record<string, Activity>
-): Promise<Map<string, FileContentData>> {
+): Promise<{
+	oldMap: Map<string, FileContentData>;
+	newMap: Map<string, FileContentData>;
+}> {
 	const fileDataMap = new Map<string, FileContentData>();
 	const fetchPromises: Promise<void>[] = [];
 	const translationInputs: TranslationInput[] = [];
@@ -71,6 +75,11 @@ export async function prepareCommit(
 	const translationOutput = await getTranslationsFromServer(translationInputs);
 	console.log('translationOutput', translationOutput);
 
+	const clonedFileDataMap = new Map();
+	fileDataMap.forEach((value, key) => {
+		clonedFileDataMap.set(key, cloneDeep(value));
+	});
+
 	// Write translations back into files
 	translationOutput.forEach((translation: TranslationOutput) => {
 		const fileContentData = fileDataMap.get(translation.pathInfo.path);
@@ -88,7 +97,10 @@ export async function prepareCommit(
 	});
 
 	console.log('fileDataMap after', fileDataMap);
-	return fileDataMap;
+	return {
+		oldMap: clonedFileDataMap,
+		newMap: fileDataMap,
+	};
 }
 
 export async function createCommit(

@@ -9,6 +9,47 @@ import { createOrGetPullRequest } from './pullRequests';
 // TODO: Should clean up if any steps fail
 // - Delete branch
 // - Delete PR
+
+export async function createCodeChanges(
+	userId: string,
+	projectId: string
+): Promise<{
+	oldMap: Map<string, FileContentData>
+	newMap: Map<string, FileContentData>
+}> {
+	const user = await getUserFromFirebase(userId);
+
+	if (!user) {
+		console.error('No user found');
+		throw 'Export failed: No user found';
+	}
+
+	const project = await getProjectFromFirebase(projectId);
+
+	if (!project?.installationId) {
+		console.error('Project has no installation ID');
+		throw 'Export failed: Project has no installation ID';
+	}
+
+	if (!project.githubSettings) {
+		console.error('No github settings found for this project');
+		throw 'Export failed: No github settings found for this project';
+	}
+
+	const installationId = project.installationId;
+	const githubSettings = project.githubSettings;
+	const octokit = await getInstallationOctokit(installationId);
+
+	return await prepareCommit(
+		octokit,
+		githubSettings.owner,
+		githubSettings.repositoryName,
+		githubSettings.baseBranch,
+		githubSettings.rootPath,
+		project.activities
+	);
+}
+
 export async function exportToPR(
 	userId: string,
 	projectId: string,
@@ -38,14 +79,14 @@ export async function exportToPR(
 	const githubSettings = project.githubSettings;
 	const octokit = await getInstallationOctokit(installationId);
 
-	const commitDetails: Map<string, FileContentData> = await prepareCommit(
+	const commitDetails: Map<string, FileContentData> = (await prepareCommit(
 		octokit,
 		githubSettings.owner,
 		githubSettings.repositoryName,
 		githubSettings.baseBranch,
 		githubSettings.rootPath,
 		project.activities
-	);
+	)).newMap;
 
 	if (commitDetails.size === 0) {
 		console.error('No commit details found');

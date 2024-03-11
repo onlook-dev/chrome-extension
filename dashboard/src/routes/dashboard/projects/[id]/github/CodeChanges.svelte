@@ -1,0 +1,31 @@
+<script lang="ts">
+	import { createCodeChanges } from '$lib/github/github';
+	import { createPatch } from 'diff';
+	import { html } from 'diff2html';
+	import 'diff2html/bundles/css/diff2html.min.css'; // Import the CSS for diff2html
+
+	export let userId: string;
+	export let projectId: string;
+	let diffHtmls: string[] = [];
+
+	async function createCodeChange() {
+		const { oldMap, newMap } = await createCodeChanges(userId, projectId);
+		console.log(oldMap, newMap);
+
+		oldMap.forEach((value, key) => {
+			const oldFile = value.content ?? '';
+			const newFile = newMap.get(key)?.content ?? '';
+			const diffString = createPatch(key, oldFile, newFile, '', '', { context: 0 });
+			const diffHtml = html(diffString, { drawFileList: false, matching: 'lines' });
+			diffHtmls = [...diffHtmls, diffHtml];
+		});
+	}
+</script>
+
+<div class="w-full flex flex-col">
+	{#each diffHtmls as diff}
+		{@html diff}
+	{/each}
+
+	<button class="ml-auto btn btn-primary" on:click={createCodeChange}>Create changes</button>
+</div>

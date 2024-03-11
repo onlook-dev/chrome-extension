@@ -61,7 +61,7 @@
 </script>
 
 <div>
-	<button class="flex flex-row justify-start" on:click={showModal}>
+	<button class="flex flex-row justify-center" on:click={showModal}>
 		<GitHub class="mr-2" /> Pull Request
 	</button>
 	<dialog id={modalId} class="modal">
