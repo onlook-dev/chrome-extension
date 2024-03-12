@@ -2,17 +2,6 @@ import OpenAI from 'openai';
 import { openAi } from '$lib/utils/serverEnv';
 import { TAILWIND_PROMPT } from '$lib/translation/prompt.js';
 
-import adapter from '@sveltejs/adapter-vercel';
-
-// This function can run for a maximum of 30 seconds
-export default {
-	kit: {
-		adapter: adapter({
-			maxDuration: 30
-		})
-	}
-};
-
 const systemMessage = {
 	role: 'system',
 	content: TAILWIND_PROMPT
