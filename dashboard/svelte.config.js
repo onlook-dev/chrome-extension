@@ -1,6 +1,6 @@
-import adapter from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { onlookPreprocess } from '@onlook/svelte';
+import adapter from '@sveltejs/adapter-vercel';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -8,7 +8,9 @@ const config = {
 	// for more information about preprocessors
 	preprocess: [vitePreprocess(), onlookPreprocess({ root: process.cwd() })],
 	kit: {
-		adapter: adapter()
+		adapter: adapter({
+			maxDuration: 30
+		})
 	}
 };
 

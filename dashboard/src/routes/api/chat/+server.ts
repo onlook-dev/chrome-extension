@@ -33,9 +33,9 @@ export const POST = async ({ request }) => {
 		stream: true
 	});
 
-	let response = ''
+	let response = '';
 	for await (const chunk of stream) {
-		response += chunk.choices[0]?.delta?.content || "";
+		response += chunk.choices[0]?.delta?.content || '';
 	}
 	return new Response(JSON.stringify(response));
 };
