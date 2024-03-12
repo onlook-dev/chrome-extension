@@ -2,9 +2,10 @@ import {
 	DASHBOARD_AUTH,
 	DashboardRoutes,
 	EDIT_EVENT,
+	EDIT_PROJECT,
 	OPEN_PROJECT,
 } from '$shared/constants'
-import { authUserBucket, getActiveProject } from '$lib/utils/localstorage'
+import { authUserBucket, getActiveProject, getProjectById, setActiveProject } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
 	activityInspectStream,
@@ -13,12 +14,14 @@ import {
 	getScreenshotStream,
 	sendOpenUrlRequest,
 	sendSaveProject,
-	sendEditEvent
+	sendEditEvent,
+	sendEditProjectRequest
 } from '$lib/utils/messaging'
 import type { Activity } from '$shared/models/activity'
 import type { EditEvent, } from '$shared/models/editor'
 import { baseUrl } from '$lib/utils/env'
 import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
+import type { Project } from '$shared/models/project'
 
 function simulateEventOnSelector(
 	selector: string,
@@ -96,6 +99,15 @@ export function setupListeners() {
 				sendSaveProject(project)
 				sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project?.id}`)
 			})
+			return
+		}
+
+		if (message.type === EDIT_PROJECT) {
+			if (message.project) {
+				let project = message.project as Project
+				setActiveProject(project.id)
+				sendEditProjectRequest({ project, enable: true })
+			}
 		}
 	})
 

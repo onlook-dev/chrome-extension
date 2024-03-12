@@ -1,4 +1,4 @@
-import { CustomButton, CustomColumnDiv, CustomDiv, CustomElement, CustomGridDiv, CustomImage, CustomInput, CustomRowDiv, CustomText } from "./custom";
+import { CustomButton, CustomColumnDiv, CustomDiv, CustomElement, CustomImage, CustomInput, CustomRowDiv, CustomText } from "./custom";
 
 export class ElementsManager {
   elements: Record<string, CustomElement>;
@@ -13,7 +13,6 @@ export class ElementsManager {
       new CustomDiv(),
       new CustomRowDiv(),
       new CustomColumnDiv(),
-      new CustomGridDiv(),
     ]
   }
   constructor() {

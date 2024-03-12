@@ -6,6 +6,7 @@
   import type { EditTool } from "$lib/tools/edit";
 
   export let editTool: EditTool;
+  let isInputFocused = false;
 </script>
 
 <div
@@ -14,7 +15,10 @@
       top: 0,
       left: 0,
     },
+    disabled: isInputFocused,
   }}
+  on:focusin={() => (isInputFocused = true)}
+  on:focusout={() => (isInputFocused = false)}
   class="fixed top-10 left-[calc(260px+20px)] {$elementsPanelVisible
     ? 'visible'
     : 'invisible'}"

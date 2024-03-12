@@ -54,12 +54,23 @@
       value={isEmpty() ? "" : parsedNumber}
       {step}
       on:keydown={(e) => {
+        if (e.key === "Enter") {
+          e.currentTarget.blur();
+          return;
+        }
         if (e.shiftKey) step = 10;
       }}
       on:keyup={(e) => {
         if (!e.shiftKey) step = 1;
       }}
       on:input={(e) => {
+        if (
+          e.currentTarget.value &&
+          e.currentTarget.value !== "" &&
+          (parsedUnit === auto || parsedUnit === "")
+        ) {
+          parsedUnit = "px";
+        }
         const stringValue = parsedValueToString(
           e.currentTarget.value,
           parsedUnit

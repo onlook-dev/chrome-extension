@@ -15,7 +15,7 @@
     MagnifyingGlass,
     Input,
   } from "radix-icons-svelte";
-  import { fade } from "svelte/transition";
+  import { fade, slide } from "svelte/transition";
 
   export let editTool: EditTool;
   let elementManager: ElementsManager = new ElementsManager();
@@ -47,9 +47,15 @@
     />
   </label>
   <div class="overflow-auto h-[calc(60vh-7rem)]">
+    {#if Object.keys(defaultElements).length === 0}
+      <p class="mt-4 text-center opacity-60" transition:slide>
+        We don’t have that element yet, try something else
+      </p>
+    {/if}
+
     {#each Object.entries(defaultElements) as [key, elements]}
-      <p class="opacity-30 my-1">{key}</p>
-      <div>
+      <p class="opacity-30 my-1" transition:slide>{key}</p>
+      <div transition:slide>
         {#each elements as element}
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -58,6 +64,7 @@
             element.type
               ? 'bg-red/20'
               : ''}"
+            transition:slide
             on:mouseenter={() => (hovered = element.type)}
             on:mouseleave={() => (hovered = undefined)}
             on:click={() => {
@@ -110,7 +117,7 @@
               {/if}
             </div>
             {#if hovered == element.type}
-              <div transition:fade={{ duration: 300 }}>
+              <div transition:fade={{ duration: 200 }}>
                 <Plus class="w-4 h-4 text-red" />
               </div>
             {/if}

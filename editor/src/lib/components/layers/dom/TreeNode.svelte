@@ -1,4 +1,7 @@
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+
 <script lang="ts">
   import { TagMap } from "$lib/tools/selection/tag";
   import { ChevronDown } from "radix-icons-svelte";
@@ -54,11 +57,11 @@
   $: childrenSelectedClass = isSelected
     ? "bg-[#38040c] rounded-b rounded-t-none font-normal text-white/60"
     : "";
-  $: iconClass = `h-3 w-3 ml-1 mr-2 ${isSelected ? "text-white" : "text-red"}`;
+  $: iconClass = `shrink-0 h-3 w-3 ml-1 mr-2 ${isSelected ? "text-white" : "text-red"}`;
   $: if (isSelected && !selfSelected) {
     nodeRef?.scrollIntoView({
       behavior: "smooth",
-      block: "center",
+      block: "start",
       inline: "start",
     });
     selfSelected = false;
@@ -118,8 +121,6 @@
       <!-- Nothing -->
     {:else if isText}
       <!-- Show text -->
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
         on:click={(e) => {
           select(e, node);
@@ -128,11 +129,9 @@
         on:mouseover={(e) => mouseEnter(e, node)}
         class=" {hoverClass} {selectedClass} {paddingY}"
       >
-        {'"' + node.nodeValue + '"'}
+        {node.nodeValue}
       </div>
     {:else if isEmpty}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
         on:click={(e) => {
           select(e, node);
@@ -156,7 +155,9 @@
         class=" {hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
       >
         <Text class={iconClass} />
-        {node.firstChild.nodeValue || name}
+        <span class="text-ellipsis overflow-hidden">
+          {node.firstChild.nodeValue || name}
+        </span>
       </div>
     {:else}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
