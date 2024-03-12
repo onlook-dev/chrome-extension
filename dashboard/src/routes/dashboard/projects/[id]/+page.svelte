@@ -6,7 +6,12 @@
 	import type { Project } from '$shared/models/project';
 	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
-	import { DashboardRoutes, DashboardSearchParams, MAX_TITLE_LENGTH } from '$shared/constants';
+	import {
+		DashboardRoutes,
+		DashboardSearchParams,
+		EDIT_PROJECT,
+		MAX_TITLE_LENGTH
+	} from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 
 	import { truncateString } from '$shared/helpers';
@@ -17,7 +22,9 @@
 	import ShareModal from './ShareModal.svelte';
 	import Slack from '~icons/devicon/slack';
 	import Jira from '~icons/logos/jira';
+	import Edit from '~icons/bxs/edit';
 	import Linear from '~icons/logos/linear-icon';
+
 	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
 	import type { Activity } from '$shared/models/activity';
 
@@ -80,6 +87,17 @@
 	onDestroy(() => {
 		unsubs.forEach((unsub: any) => unsub());
 	});
+
+	function requestEditProject() {
+		console.log('requestEditProject');
+		window.postMessage(
+			{
+				type: EDIT_PROJECT,
+				project: project
+			},
+			window.location.origin
+		);
+	}
 </script>
 
 <div class="flex h-screen w-screen flex-col">
@@ -99,6 +117,9 @@
 			</div>
 
 			<div class="navbar-end space-x-2">
+				<button class="btn btn-outline color-red-500" on:click={requestEditProject}
+					><Edit /> Edit project</button
+				>
 				<div class="dropdown dropdown-end">
 					<button class="btn btn-primary">Share</button>
 					<ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">

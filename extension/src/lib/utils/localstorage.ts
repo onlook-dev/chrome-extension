@@ -53,6 +53,10 @@ export const getActiveProject = async (): Promise<Project> => {
 	return getProjectById(activeProjectId)
 }
 
+export const setActiveProject = async (projectId: string) => {
+	popupStateBucket.set({ activeProjectId: projectId })
+}
+
 export const getProjectById = async (projectId: string): Promise<Project> => {
 	const projectsMap = new Map(Object.entries(await projectsMapBucket.get()))
 	return projectsMap.get(projectId)

@@ -15,6 +15,7 @@ export const MAX_DESCRIPTION_LENGTH = 250;
 export const DASHBOARD_AUTH = "DASHBOARD_AUTH";
 export const EDIT_EVENT = "EDIT_EVENT";
 export const OPEN_PROJECT = "OPEN_PROJECT";
+export const EDIT_PROJECT = "EDIT_PROJECT";
 
 // Links
 export const SUPPORT_LINK = "mailto:support@onlook.dev";
