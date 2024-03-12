@@ -71,11 +71,11 @@ export async function addProjectsToTeam(
 		.collection(FIREBASE_COLLECTION_TEAMS)
 		.doc(teamId)
 		.update({
-			projects: [...currentProjects, ...newProjects]
+			projectIds: [...currentProjects, ...newProjects]
 		});
 
 	return {
 		...teamData,
-		projects: [...currentProjects, ...newProjects]
+		projectIds: [...currentProjects, ...newProjects]
 	} as Team;
 }

@@ -23,12 +23,17 @@ export async function prepareCommit(
 	const fetchPromises: Promise<void>[] = [];
 	const translationInputs: TranslationInput[] = [];
 
-	// Get corresponding File for each activity
-	Object.values(activities).forEach((activity: Activity) => {
+	// Remove activities without a path
+	const filteredActivities = Object.values(activities).filter(
+		(activity: Activity) => activity.path
+	);
+
+	filteredActivities.forEach((activity: Activity) => {
 		if (!activity.path) {
 			console.error('No path found for activity');
 			return;
 		}
+
 		const pathInfo = getPathInfo(activity.path, rootPath);
 		if (!fileDataMap.has(pathInfo.path)) {
 			const fetchPromise = fetchFileFromPath(octokit, owner, repo, branch, pathInfo.path).then(
