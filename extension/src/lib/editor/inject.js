@@ -1,10 +1,10 @@
 // @ts-ignore - Browser exists in context 
 var platform = typeof browser === 'undefined' ? chrome : browser
 
-const script = document.createElement('script')
-script.type = 'module'
-script.src = platform.runtime.getURL('src/lib/editor/bundle.min.js')
-document.body.appendChild(script)
+const onlookScript = document.createElement('script')
+onlookScript.type = 'module'
+onlookScript.src = platform.runtime.getURL('src/lib/editor/bundle.min.js')
+document.body.appendChild(onlookScript)
 
-const onlook = document.createElement('onlook-toolbar')
-document.body.append(onlook)
+const onlookToolbar = document.createElement('onlook-toolbar')
+document.body.append(onlookToolbar)
