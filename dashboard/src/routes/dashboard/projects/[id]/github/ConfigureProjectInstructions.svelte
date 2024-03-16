@@ -3,7 +3,7 @@
 	import SvelteCodeblock from './SvelteCodeblock.svelte';
 </script>
 
-<div class="text-start max-w-[100%] space-y-4 my-4">
+<div class="text-start space-y-4 my-4 w-full p-8">
 	<div>
 		<p class="mt-3 font-semibold">1. Install the onlook library:</p>
 		<div role="tablist" class="tabs tabs-bordered">

@@ -25,7 +25,6 @@
 	import Edit from '~icons/bxs/edit';
 	import Linear from '~icons/logos/linear-icon';
 
-	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
 	import type { Activity } from '$shared/models/activity';
 
 	let project: Project | undefined;
@@ -122,7 +121,9 @@
 				<div class="dropdown dropdown-end">
 					<button class="btn btn-primary">Share</button>
 					<ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-						<li tabindex="-1"><PublishToGithubModal {project} {user} /></li>
+						<li tabindex="-1">
+							<button on:click={() => goto(`${$page.url}${DashboardRoutes.GITHUB}`)}>Github</button>
+						</li>
 						<li><ShareModal teamId={project.teamId} /></li>
 						<div class="divider">Coming soon</div>
 						<li class="opacity-60">

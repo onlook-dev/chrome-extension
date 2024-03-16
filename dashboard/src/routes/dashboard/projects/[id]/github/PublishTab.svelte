@@ -143,9 +143,8 @@
 	}
 </script>
 
-<div class="flex flex-col items-center justify-center h-full mt-4">
+<div class="flex flex-col items-center justify-center h-full w-full mt-4">
 	{#if githubConfigured && hasActivities && hasFilePaths}
-		<CodeChanges projectId={project.id} {userId} />
 		<label class="form-control w-full p-2">
 			<div class="label">
 				<span class="label-text">Title</span>

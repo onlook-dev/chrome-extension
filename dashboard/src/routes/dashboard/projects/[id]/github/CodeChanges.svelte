@@ -21,10 +21,10 @@
 	}
 </script>
 
-<div class="w-full flex flex-col">
+<div class="w-full h-full flex flex-col items-center justify-center">
 	{#each diffHtmls as diff}
 		{@html diff}
 	{/each}
 
-	<button class="ml-auto btn btn-primary" on:click={createCodeChange}>Create changes</button>
+	<button class="btn btn-primary" on:click={createCodeChange}>Create changes</button>
 </div>
