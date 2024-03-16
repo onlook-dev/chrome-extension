@@ -95,6 +95,7 @@ const setListeners = () => {
 		getTabState(tabId).then(tabState => {
 			if (!tabState) return
 			getActiveProject().then(activeProject => {
+				if (!activeProject) return
 				if (tabState.projectId == activeProject.id) postProjectToFirebase(activeProject)
 			})
 		})
@@ -135,6 +136,7 @@ const setListeners = () => {
 
 	// Start editing request from popup
 	editProjectRequestStream.subscribe(([{ project, enable }]) => {
+		console.log('Edit project request', project, enable)
 		// Get tab if same host using pattern matching
 		const searchUrl = new URL(project.hostUrl).origin + '/*'
 

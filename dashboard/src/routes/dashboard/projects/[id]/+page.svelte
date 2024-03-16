@@ -89,7 +89,6 @@
 	});
 
 	function requestEditProject() {
-		console.log('requestEditProject');
 		window.postMessage(
 			{
 				type: EDIT_PROJECT,

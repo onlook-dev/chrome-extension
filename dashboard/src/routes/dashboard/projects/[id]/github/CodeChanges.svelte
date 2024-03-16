@@ -10,7 +10,6 @@
 
 	async function createCodeChange() {
 		const { oldMap, newMap } = await createCodeChanges(userId, projectId);
-		console.log(oldMap, newMap);
 
 		oldMap.forEach((value, key) => {
 			const oldFile = value.content ?? '';
