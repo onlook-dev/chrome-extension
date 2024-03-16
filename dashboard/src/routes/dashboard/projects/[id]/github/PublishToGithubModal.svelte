@@ -94,7 +94,7 @@
 						bind:group={selectedTab}
 					/>
 					<div role="tabpanel" class="tab-content py-4">
-						<ConfigureTab bind:project />
+						<ConfigureTab {project} />
 						<div class="collapse collapse-arrow border rounded-md mt-6">
 							<input type="checkbox" />
 							<div class="collapse-title">How to setup your repository</div>
