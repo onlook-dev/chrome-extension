@@ -65,7 +65,7 @@
           </Tabs.Trigger>
         </Tabs.List>
         <Separator class="mt-1" />
-        <div class="h-[calc(60vh-4rem)] overflow-auto">
+        <div class="flex h-[calc(60vh-4rem)] overflow-auto">
           <Tabs.Content value={TabValue.LAYERS}
             ><LayersTab {editTool} />
           </Tabs.Content>

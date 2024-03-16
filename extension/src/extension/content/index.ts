@@ -5,7 +5,7 @@ import {
 	EDIT_PROJECT,
 	OPEN_PROJECT,
 } from '$shared/constants'
-import { authUserBucket, getActiveProject, getProjectById, popupStateBucket, setActiveProject } from '$lib/utils/localstorage'
+import { authUserBucket, getActiveProject, popupStateBucket, setActiveProject } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
 	activityInspectStream,
