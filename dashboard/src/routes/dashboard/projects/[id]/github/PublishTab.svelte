@@ -15,10 +15,11 @@
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
 	import GithubHistories from './GithubHistories.svelte';
 	import GitHub from '~icons/mdi/github';
-	import CodeChanges from './CodeChanges.svelte';
+	import type { FileContentData } from '$shared/models/translation';
 
 	export let project: Project;
 	export let userId: string;
+	export let changesMap = new Map<string, FileContentData>();
 
 	let githubHistories: GithubHistory[] = [];
 	let githubConfigured = false;

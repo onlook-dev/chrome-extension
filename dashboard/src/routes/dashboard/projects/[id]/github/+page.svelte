@@ -15,9 +15,11 @@
 	import { getProjectFromFirebase } from '$lib/storage/project';
 	import { Steps } from 'svelte-steps';
 	import CodeChanges from './CodeChanges.svelte';
+	import type { FileContentData } from '$shared/models/translation';
 
 	let project: Project | undefined;
 	let user: User | undefined;
+	let changesMap = new Map<string, FileContentData>();
 
 	let steps = [
 		{ text: 'Connect Github' },
@@ -74,9 +76,9 @@
 			{:else if currentStep === 1}
 				<ConfigureProjectInstructions />
 			{:else if currentStep === 2}
-				<CodeChanges projectId={project.id} userId={user.id} />
+				<CodeChanges projectId={project.id} userId={user.id} bind:changesMap />
 			{:else if currentStep === 3}
-				<PublishTab {project} userId={user.id} />
+				<PublishTab {project} userId={user.id} {changesMap} />
 			{/if}
 		{/if}
 	</div>

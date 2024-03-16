@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { createCodeChanges } from '$lib/github/github';
+	import type { FileContentData } from '$shared/models/translation';
 	import { createPatch } from 'diff';
 	import { html } from 'diff2html';
 	import 'diff2html/bundles/css/diff2html.min.css'; // Import the CSS for diff2html
 
 	export let userId: string;
 	export let projectId: string;
+	export let changesMap = new Map<string, FileContentData>();
 	let diffHtmls: string[] = [];
 
 	async function createCodeChange() {
@@ -18,6 +20,7 @@
 			const diffHtml = html(diffString, { drawFileList: false, matching: 'lines' });
 			diffHtmls = [...diffHtmls, diffHtml];
 		});
+		changesMap = newMap;
 	}
 </script>
 
