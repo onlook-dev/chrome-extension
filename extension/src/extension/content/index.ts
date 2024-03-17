@@ -5,7 +5,7 @@ import {
 	EDIT_PROJECT,
 	OPEN_PROJECT,
 } from '$shared/constants'
-import { authUserBucket, getActiveProject, getProjectById, setActiveProject } from '$lib/utils/localstorage'
+import { authUserBucket, getActiveProject, getProjectById, popupStateBucket, setActiveProject } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
 	activityInspectStream,
@@ -22,6 +22,7 @@ import type { EditEvent, } from '$shared/models/editor'
 import { baseUrl } from '$lib/utils/env'
 import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
 import type { Project } from '$shared/models/project'
+import { PopupRoutes } from '$lib/utils/constants'
 
 function simulateEventOnSelector(
 	selector: string,
@@ -106,6 +107,7 @@ export function setupListeners() {
 			if (message.project) {
 				let project = message.project as Project
 				setActiveProject(project.id)
+				popupStateBucket.set({ activeRoute: PopupRoutes.PROJECT, activeProjectId: project.id })
 				sendEditProjectRequest({ project, enable: true })
 			}
 		}
