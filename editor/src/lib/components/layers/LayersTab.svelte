@@ -73,7 +73,7 @@
   {/if}
 </div>
 <Separator />
-<div class="h-[4rem] flex items-center text-xs">
+<div class="mt-4 items-center text-xs">
   <button
     class="rounded h-8 text-red w-full bg-red/20 hover:bg-red/25 transition flex items-center justify-center space-x-2"
     on:click={() => {
