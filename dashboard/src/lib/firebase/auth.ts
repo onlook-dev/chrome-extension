@@ -14,7 +14,6 @@ export function subscribeToFirebaseAuthChanges() {
 		if (user) {
 			setStoreUser(user);
 		} else {
-			console.log('User signed out');
 			// Clear data when signed out
 			userStore.set(undefined);
 			usersMapStore.set(new Map());
