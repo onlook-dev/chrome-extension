@@ -39,7 +39,7 @@
     "typescript": "^5.0.0",
     "unplugin-icons": "^0.18.1",
     "vite": "^5.0.3",
-    "@onlook/svelte": "^1.0.7"
+    "@onlook/svelte": "^1.1.0"
   },
   "type": "module",
   "dependencies": {

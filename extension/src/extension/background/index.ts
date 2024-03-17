@@ -95,6 +95,7 @@ const setListeners = () => {
 		getTabState(tabId).then(tabState => {
 			if (!tabState) return
 			getActiveProject().then(activeProject => {
+				if (!activeProject) return
 				if (tabState.projectId == activeProject.id) postProjectToFirebase(activeProject)
 			})
 		})
