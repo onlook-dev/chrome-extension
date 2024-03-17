@@ -43,6 +43,7 @@
     "@onlook/svelte": "^1.1.0",
     "@zerodevx/svelte-toast": "^0.9.5",
     "clsx": "^2.1.0",
+    "firebase": "^10.9.0",
     "svelte-radix": "^1.1.0",
     "tailwind-merge": "^2.2.2",
     "tailwind-variants": "^0.2.1"
