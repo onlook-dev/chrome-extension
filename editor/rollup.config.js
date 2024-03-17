@@ -54,7 +54,6 @@ export default {
 		typescript({
 			tsconfig: './tsconfig.json',
 			sourceMap: false,
-			inlineSources: !production
 		}),
 		svelte({
 			preprocess: sveltePreprocess({

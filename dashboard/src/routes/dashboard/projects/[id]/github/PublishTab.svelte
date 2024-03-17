@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { exportToPR } from '$lib/github/github';
+	import { GitHubService } from '$lib/github';
 	import { DashboardRoutes, MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
 	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
@@ -16,11 +16,13 @@
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import type { User } from '$shared/models/user';
+
 	export let project: Project;
-	export let userId: string;
+	export let user: User;
 
+	let githubService: GitHubService;
 	let githubHistories: GithubHistory[] = [];
-
 	let githubConfigured = false;
 	let hasActivities = false;
 	let hasFilePaths = false;
@@ -49,11 +51,12 @@
 			}
 		});
 
-		if (project?.installationId) {
+		if (project.installationId) {
+			githubService = new GitHubService(project.installationId, user);
 			githubConfigured = true;
 		}
 
-		if (project?.githubHistoryIds?.length > 0) {
+		if (project.githubHistoryIds?.length > 0) {
 			getGithubHistoriesFromFirebase(project.githubHistoryIds)
 				.then((histories) => {
 					githubHistories = histories;
@@ -69,7 +72,7 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
-			prLink = await exportToPR(userId, project?.id, title, description);
+			prLink = await githubService.publishProjectToGitHub(project, title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
 			publishErrorMessage = `Error publishing changes: ${JSON.stringify(error)}`;
@@ -85,7 +88,7 @@
 				id: nanoid(),
 				title,
 				description,
-				userId,
+				userId: user.id,
 				projectId: project.id,
 				createdAt: new Date().toISOString(),
 				pullRequestUrl: prLink,

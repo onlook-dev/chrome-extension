@@ -25,6 +25,16 @@
 	onDestroy(() => {
 		unsubs.forEach((unsub: any) => unsub());
 	});
+
+	function formatHost(host: string | undefined) {
+		if (!host) return '';
+		try {
+			const url = new URL(host);
+			return url.hostname;
+		} catch (error) {
+			return host;
+		}
+	}
 </script>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
@@ -58,7 +68,7 @@
 					</div>
 					<div class="text-left overflow-x-hidden">
 						<p class="text-sm font-semibold truncate">{project?.name}</p>
-						<p class="text-xs opacity-70 truncate">{project?.hostUrl}</p>
+						<p class="text-xs opacity-70 truncate">{formatHost(project?.hostUrl)}</p>
 					</div>
 				</div>
 			</button>
