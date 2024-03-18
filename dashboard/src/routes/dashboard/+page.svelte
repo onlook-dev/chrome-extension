@@ -4,9 +4,8 @@
 	import { page } from '$app/stores';
 
 	import { auth } from '$lib/firebase/firebase';
-	import { DashboardRoutes, DashboardSearchParams } from '$shared/constants';
+	import { DashboardRoutes, DashboardSearchParams, FirestoreCollections } from '$shared/constants';
 	import { paymentsMapStore, teamsMapStore, userStore } from '$lib/utils/store';
-	import { subscribeToTeam } from '$lib/storage/team';
 	import type { User } from '$shared/models/user';
 
 	import AvatarDropdown from './AvatarDropdown.svelte';
@@ -14,8 +13,12 @@
 	import SideBarLine from '~icons/ri/side-bar-line';
 	import NewTeamModal from './NewTeamModal.svelte';
 	import PlanModal from './PlanModal.svelte';
-	import { subscribeToPayment } from '$lib/storage/payment';
+	import { FirebaseService } from '$lib/storage';
+	import type { Team } from '$shared/models/team';
+	import type { Payment } from '$shared/models/payment';
 
+	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
+	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
 	const dashboardDrawerId = 'dashboard-drawer';
 	let user: User | null;
 	let activeTeamId: string = '';
@@ -42,16 +45,18 @@
 			unsubs.forEach((unsub: any) => unsub());
 
 			user?.teamIds.forEach((teamId) => {
-				subscribeToTeam(teamId, (firebaseTeam) => {
-					teamsMapStore.update((map) => map.set(teamId, firebaseTeam));
-					if (firebaseTeam.paymentId) {
-						subscribeToPayment(firebaseTeam.paymentId, (payment) => {
-							paymentsMapStore.update((map) => map.set(payment.id, payment));
-						});
-					}
-				}).then((unsubscribe) => {
-					unsubs.push(unsubscribe);
-				});
+				teamService
+					.subscribe(teamId, (firebaseTeam) => {
+						teamsMapStore.update((map) => map.set(teamId, firebaseTeam));
+						if (firebaseTeam.paymentId) {
+							paymentService.subscribe(firebaseTeam.paymentId, (payment) => {
+								paymentsMapStore.update((map) => map.set(payment.id, payment));
+							});
+						}
+					})
+					.then((unsubscribe) => {
+						unsubs.push(unsubscribe);
+					});
 			});
 		});
 	});

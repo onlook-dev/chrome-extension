@@ -1,14 +1,15 @@
+import { FirebaseService } from '$lib/storage';
 import {
 	getPaymentFromSessionId,
 	getPaymentFromSubscriptionId,
-	postPaymentToFirebase,
 	setPaymentStatus
 } from '$lib/storage/payment';
-import { getTeamFromPaymentId, postTeamToFirebase, setTeamTier } from '$lib/storage/team';
+import { getTeamFromPaymentId, setTeamTier } from '$lib/storage/team';
 import { stripeConfig, tierMapping } from '$lib/utils/env';
 import { paymentsMapStore, teamsMapStore } from '$lib/utils/store';
-import { PaymentStatus } from '$shared/models/payment';
-import type { Tier } from '$shared/models/team';
+import { FirestoreCollections } from '$shared/constants';
+import { PaymentStatus, type Payment } from '$shared/models/payment';
+import type { Team, Tier } from '$shared/models/team';
 import Stripe from 'stripe';
 
 export const stripe = new Stripe(stripeConfig.stripeKey, {
@@ -62,8 +63,10 @@ export async function handleCheckoutSessionCompleted(event: Stripe.Event) {
 		paymentsMapStore.update((payments) => payments.set(payment.id, payment));
 		teamsMapStore.update((teams) => teams.set(team.id, team));
 
-		await postTeamToFirebase(team);
-		await postPaymentToFirebase(payment);
+		const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
+		const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
+		await teamService.post(team);
+		await paymentService.post(payment);
 
 		return;
 	} else {
@@ -108,8 +111,10 @@ export async function handleSubscriptionDeleted(event: Stripe.Event) {
 	paymentsMapStore.update((payments) => payments.set(payment.id, payment));
 	teamsMapStore.update((teams) => teams.set(team.id, team));
 
+	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
+
 	await setTeamTier(team.id, team.tier);
-	await postPaymentToFirebase(payment);
+	await paymentService.post(payment);
 
 	return;
 }

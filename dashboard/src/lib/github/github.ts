@@ -1,10 +1,12 @@
-import { getProjectFromFirebase } from '$lib/storage/project';
-import { getUserFromFirebase } from '$lib/storage/user';
 import { getInstallationOctokit } from './installation';
 import { createCommit, prepareCommit } from './commits';
 import type { FileContentData } from '$shared/models/translation';
 import { createOrGetBranch } from './branches';
 import { createOrGetPullRequest } from './pullRequests';
+import { FirestoreCollections } from '$shared/constants';
+import type { Project } from '$shared/models/project';
+import { FirebaseService } from '$lib/storage';
+import type { User } from '$shared/models/user';
 
 // TODO: Should clean up if any steps fail
 // - Delete branch
@@ -15,14 +17,16 @@ export async function exportToPR(
 	title: string,
 	description: string
 ): Promise<string> {
-	const user = await getUserFromFirebase(userId);
+	const userService = new FirebaseService<User>(FirestoreCollections.USERS);
+	const user = await userService.get(userId);
 
 	if (!user) {
 		console.error('No user found');
 		return 'Export failed: no user found';
 	}
 
-	const project = await getProjectFromFirebase(projectId);
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
+	const project = await projectService.get(projectId);
 
 	if (!project?.installationId) {
 		console.error('Project has no installation ID');

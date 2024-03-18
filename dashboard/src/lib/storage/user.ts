@@ -1,30 +1,9 @@
-import {
-	getObjectFromCollection,
-	postObjectToCollection,
-	subscribeToDocument
-} from '$lib/firebase/firestore';
-import type { User } from '$shared/models/user';
-import { MessageTypes, FirestoreCollections } from '$shared/constants';
+
+import { FirestoreCollections, MessageTypes } from '$shared/constants';
 import { userStore } from '$lib/utils/store';
 import type { User as FirebaseUser } from 'firebase/auth';
-
-export async function getUserFromFirebase(userId: string): Promise<User | undefined> {
-	const userData = await getObjectFromCollection(FirestoreCollections.USERS, userId);
-	if (!userData) return undefined;
-	console.log('Got firebase user');
-	return userData as User;
-}
-
-export async function postUserToFirebase(user: User) {
-	const objectId = await postObjectToCollection(FirestoreCollections.USERS, user, user.id);
-	console.log('Posted firebase user');
-	return objectId;
-}
-
-export async function subscribeToUser(userId: string, callback: (data: User) => void) {
-	const unsubscribe = await subscribeToDocument(FirestoreCollections.USERS, userId, callback);
-	return unsubscribe;
-}
+import { FirebaseService } from '.';
+import type { User } from '$shared/models/user';
 
 export async function setStoreUser(authUser: FirebaseUser) {
 	// Send authUser to extension
@@ -36,8 +15,9 @@ export async function setStoreUser(authUser: FirebaseUser) {
 		window.location.origin
 	);
 
+	const userServices = new FirebaseService<User>(FirestoreCollections.USERS);
 	// Listen and update user from remote
-	subscribeToUser(authUser.uid, (user) => {
+	userServices.subscribe(authUser.uid, (user) => {
 		userStore.set(user);
 	});
 }

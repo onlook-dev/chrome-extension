@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
-	import { getProjectFromFirebase, postProjectToFirebase } from '$lib/storage/project';
 	import type { Project } from '$shared/models/project';
 	import { baseUrl } from '$lib/utils/env';
+	import { FirebaseService } from '$lib/storage';
+	import { FirestoreCollections } from '$shared/constants';
 
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	let installationId = $page.url.searchParams.get('installation_id') as string;
 	let projectId = $page.url.searchParams.get('state') as string;
 	let errorMessage = 'Saving project state failed';
@@ -32,11 +34,10 @@
 			return;
 		}
 
-		project = await getProjectFromFirebase(projectId);
-
+		project = await projectService.get(projectId);
 		project.installationId = installationId;
 
-		await postProjectToFirebase(project);
+		projectService.post(project);
 		openProject();
 	});
 

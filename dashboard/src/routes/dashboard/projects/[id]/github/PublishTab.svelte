@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { exportToPR } from '$lib/github/github';
-	import { DashboardRoutes, MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
-	import { postProjectToFirebase } from '$lib/storage/project';
+	import {
+		DashboardRoutes,
+		FirestoreCollections,
+		MAX_DESCRIPTION_LENGTH,
+		MAX_TITLE_LENGTH
+	} from '$shared/constants';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
-	import { getGithubHistoriesFromFirebase, postGithubHistoryToFirebase } from '$lib/storage/github';
 
 	import type { Project } from '$shared/models/project';
 	import type { GithubHistory } from '$shared/models/github';
@@ -16,11 +19,16 @@
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import { FirebaseService } from '$lib/storage';
 	export let project: Project;
 	export let userId: string;
 
-	let githubHistories: GithubHistory[] = [];
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
+	const githubHistoryService = new FirebaseService<GithubHistory>(
+		FirestoreCollections.GITHUB_HISTORY
+	);
 
+	let githubHistories: GithubHistory[] = [];
 	let githubConfigured = false;
 	let hasActivities = false;
 	let hasFilePaths = false;
@@ -54,9 +62,9 @@
 		}
 
 		if (project?.githubHistoryIds?.length > 0) {
-			getGithubHistoriesFromFirebase(project.githubHistoryIds)
+			Promise.all(project.githubHistoryIds.map((id) => githubHistoryService.get(id)))
 				.then((histories) => {
-					githubHistories = histories;
+					githubHistories = histories.filter((history) => history !== null) as GithubHistory[];
 				})
 				.catch((error) => {
 					console.error('Error loading github history:', error);
@@ -109,8 +117,8 @@
 			});
 
 			// Save project and github history
-			postGithubHistoryToFirebase(githubHistory);
-			postProjectToFirebase(project);
+			githubHistoryService.post(githubHistory);
+			projectService.post(project);
 			projectsMapStore.update((projectsMap) => {
 				projectsMap.set(project.id, project);
 				return projectsMap;
@@ -124,7 +132,7 @@
 		}
 
 		project.activities = history.activityHistory;
-		postProjectToFirebase(project);
+		projectService.post(project);
 		projectsMapStore.update((projectsMap) => {
 			projectsMap.set(project.id, project);
 			return projectsMap;

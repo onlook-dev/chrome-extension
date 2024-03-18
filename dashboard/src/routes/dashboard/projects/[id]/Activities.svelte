@@ -5,11 +5,10 @@
 	import type { Activity, ChangeValues } from '$shared/models/activity';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 	import { jsToCssProperty } from '$shared/helpers';
-	import { postProjectToFirebase } from '$lib/storage/project';
 	import GitHub from '~icons/mdi/github';
 	import ItemHeader from './ItemHeader.svelte';
 	import Trash from '~icons/material-symbols/delete';
-	import { DashboardRoutes, DashboardSearchParams } from '$shared/constants';
+	import { DashboardRoutes, DashboardSearchParams, FirestoreCollections } from '$shared/constants';
 
 	import { CodeBlock, storeHighlightJs } from '@skeletonlabs/skeleton';
 	import hljs from 'highlight.js/lib/core';
@@ -19,12 +18,14 @@
 	import shell from 'highlight.js/lib/languages/shell';
 	import 'highlight.js/styles/github.css';
 	import { goto } from '$app/navigation';
+	import { FirebaseService } from '$lib/storage';
 
 	export let project: Project;
 	export let activeActivityId: string;
 
 	const modalId = 'delete-activity-modal';
 	let activities: Activity[];
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 
 	onMount(() => {
 		// Get active activity from params
@@ -48,7 +49,7 @@
 			Object.entries(project.activities).filter(([key, value]) => key !== activity.selector)
 		);
 
-		postProjectToFirebase(project);
+		projectService.post(project);
 		projectsMapStore.update((projectsMap) => {
 			projectsMap.set(project.id, project);
 			return projectsMap;

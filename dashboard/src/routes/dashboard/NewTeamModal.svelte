@@ -3,11 +3,12 @@
 	import { teamsMapStore, userStore } from '$lib/utils/store';
 	import { Role, type Team } from '$shared/models/team';
 	import { nanoid } from 'nanoid';
-	import { postTeamToFirebase } from '$lib/storage/team';
-	import { MAX_TITLE_LENGTH } from '$shared/constants';
+	import { FirestoreCollections, MAX_TITLE_LENGTH } from '$shared/constants';
+	import { FirebaseService } from '$lib/storage';
 
-	let plan = Tier.FREE;
 	const modalId = 'new-team-modal';
+	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
+	let plan = Tier.FREE;
 	let teamName = '';
 	let nameError = false;
 
@@ -36,7 +37,7 @@
 		});
 
 		// Save to firebase. Firebase function will update user.
-		postTeamToFirebase(newTeam);
+		teamService.post(newTeam);
 	}
 
 	function showModal() {
