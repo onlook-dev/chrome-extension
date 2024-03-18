@@ -1,7 +1,6 @@
-import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, type User } from 'firebase/auth'
+import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, type User as AuthUser } from 'firebase/auth'
 import { auth } from './firebase'
 import { UserImpl as FirebaseUserImpl } from '@firebase/auth/internal'
-import { setBucketUser } from '../storage/user'
 import {
 	authUserBucket,
 	popupStateBucket,
@@ -10,20 +9,28 @@ import {
 	userBucket,
 	tabsMapBucket
 } from '$lib/utils/localstorage'
+import { FirebaseService } from '$lib/storage'
+import { FirestoreCollections } from '$shared/constants'
+import type { User } from '$shared/models/user'
 
 // Use firebase user from dashboard
 export function signInUser(userJson: string) {
 	const userData = JSON.parse(userJson)
-	const user: User = FirebaseUserImpl._fromJSON(auth as any, userData)
+	const user: AuthUser = FirebaseUserImpl._fromJSON(auth as any, userData)
 	auth.updateCurrentUser(user).catch(err => {
 		alert(`Sign in failed: ${JSON.stringify(err)}`)
 	})
 }
 
+
 export function subscribeToFirebaseAuthChanges() {
-	auth.onAuthStateChanged(user => {
-		if (user) {
-			setBucketUser(user)
+	auth.onAuthStateChanged(authUser => {
+		if (authUser) {
+			const userService = new FirebaseService<User>(FirestoreCollections.USERS)
+			userService.subscribe(authUser.uid, user => {
+				userBucket.set({ user })
+			})
+
 		} else {
 			console.log('User signed out')
 			// Clear data when signed out

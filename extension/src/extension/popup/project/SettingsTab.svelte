@@ -7,10 +7,12 @@
 		getTeamById
 	} from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
-	import { deleteProjectFromFirebase, postProjectToFirebase } from '$lib/storage/project'
+	import { FirebaseService } from '$lib/storage'
+	import { FirestoreCollections } from '$shared/constants'
 
 	export let project: Project
 	const modalId = 'delete-project-modal'
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
 
 	function showModal() {
 		const modal = document.getElementById(modalId) as HTMLDialogElement
@@ -36,7 +38,8 @@
 	}
 
 	function deleteProject() {
-		deleteProjectFromFirebase(project.id)
+		projectService
+			.delete(project.id)
 			.then(() => {
 				popupStateBucket.get().then(({ activeTeamId }) => {
 					// Remove project from team locally
@@ -70,7 +73,7 @@
 				}}
 				on:blur={e => {
 					projectsMapBucket.set({ [project.id]: project })
-					postProjectToFirebase(project)
+					projectService.post(project)
 				}}
 			/>
 		</div>
@@ -87,7 +90,7 @@
 				}}
 				on:blur={e => {
 					projectsMapBucket.set({ [project.id]: project })
-					postProjectToFirebase(project)
+					projectService.post(project)
 				}}
 			/>
 		</div>
