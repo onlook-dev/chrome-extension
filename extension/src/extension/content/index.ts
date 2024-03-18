@@ -1,9 +1,6 @@
 import {
-	DASHBOARD_AUTH,
-	DashboardRoutes,
-	EDIT_EVENT,
-	EDIT_PROJECT,
-	OPEN_PROJECT,
+	MessageTypes,
+	DashboardRoutes
 } from '$shared/constants'
 import { authUserBucket, getActiveProject, getProjectById, popupStateBucket, setActiveProject } from '$lib/utils/localstorage'
 import {
@@ -84,18 +81,18 @@ export function setupListeners() {
 
 		const message = event.data
 
-		if (message.type === DASHBOARD_AUTH && event.origin === baseUrl && message.user) {
+		if (message.type === MessageTypes.DASHBOARD_AUTH && event.origin === baseUrl && message.user) {
 			authUserBucket.set({ authUser: message.user })
 			return
 		}
 
-		if (message.type === EDIT_EVENT) {
+		if (message.type === MessageTypes.EDIT_EVENT) {
 			const editorStyleChange = message.detail as EditEvent
 			sendEditEvent(editorStyleChange)
 			return
 		}
 
-		if (message.type === OPEN_PROJECT) {
+		if (message.type === MessageTypes.OPEN_PROJECT) {
 			getActiveProject().then(project => {
 				sendSaveProject(project)
 				sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project?.id}`)
@@ -103,7 +100,7 @@ export function setupListeners() {
 			return
 		}
 
-		if (message.type === EDIT_PROJECT) {
+		if (message.type === MessageTypes.EDIT_PROJECT) {
 			if (message.project) {
 				let project = message.project as Project
 				setActiveProject(project.id)

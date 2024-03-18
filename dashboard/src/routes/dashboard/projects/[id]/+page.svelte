@@ -9,7 +9,7 @@
 	import {
 		DashboardRoutes,
 		DashboardSearchParams,
-		EDIT_PROJECT,
+		MessageTypes,
 		MAX_TITLE_LENGTH
 	} from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
@@ -92,7 +92,7 @@
 		console.log('requestEditProject');
 		window.postMessage(
 			{
-				type: EDIT_PROJECT,
+				type: MessageTypes.EDIT_PROJECT,
 				project: project
 			},
 			window.location.origin

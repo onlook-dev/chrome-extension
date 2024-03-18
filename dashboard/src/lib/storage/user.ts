@@ -4,7 +4,7 @@ import {
 	subscribeToDocument
 } from '$lib/firebase/firestore';
 import type { User } from '$shared/models/user';
-import { DASHBOARD_AUTH, FirestoreCollections } from '$shared/constants';
+import { MessageTypes, FirestoreCollections } from '$shared/constants';
 import { userStore } from '$lib/utils/store';
 import type { User as FirebaseUser } from 'firebase/auth';
 
@@ -30,7 +30,7 @@ export async function setStoreUser(authUser: FirebaseUser) {
 	// Send authUser to extension
 	window.postMessage(
 		{
-			type: DASHBOARD_AUTH,
+			type: MessageTypes.DASHBOARD_AUTH,
 			user: JSON.stringify(authUser.toJSON())
 		},
 		window.location.origin
