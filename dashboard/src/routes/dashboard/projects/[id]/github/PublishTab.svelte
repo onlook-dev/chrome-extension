@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { exportToPR } from '$lib/github/github';
-	import { DashboardRoutes, MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from '$shared/constants';
-	import { postProjectToFirebase } from '$lib/storage/project';
+	import {
+		DashboardRoutes,
+		FirestoreCollections,
+		MAX_DESCRIPTION_LENGTH,
+		MAX_TITLE_LENGTH
+	} from '$shared/constants';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
 	import { getGithubHistoriesFromFirebase, postGithubHistoryToFirebase } from '$lib/storage/github';
@@ -16,11 +20,12 @@
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import { FirebaseService } from '$lib/storage';
 	export let project: Project;
 	export let userId: string;
 
 	let githubHistories: GithubHistory[] = [];
-
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	let githubConfigured = false;
 	let hasActivities = false;
 	let hasFilePaths = false;
@@ -110,7 +115,7 @@
 
 			// Save project and github history
 			postGithubHistoryToFirebase(githubHistory);
-			postProjectToFirebase(project);
+			projectService.post(project);
 			projectsMapStore.update((projectsMap) => {
 				projectsMap.set(project.id, project);
 				return projectsMap;
@@ -124,7 +129,7 @@
 		}
 
 		project.activities = history.activityHistory;
-		postProjectToFirebase(project);
+		projectService.post(project);
 		projectsMapStore.update((projectsMap) => {
 			projectsMap.set(project.id, project);
 			return projectsMap;

@@ -4,13 +4,13 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	import type { Project } from '$shared/models/project';
-	import { subscribeToProject } from '$lib/storage/project';
 	import { getUserFromFirebase } from '$lib/storage/user';
 	import {
 		DashboardRoutes,
 		DashboardSearchParams,
 		MessageTypes,
-		MAX_TITLE_LENGTH
+		MAX_TITLE_LENGTH,
+		FirestoreCollections
 	} from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 
@@ -27,6 +27,7 @@
 
 	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
 	import type { Activity } from '$shared/models/activity';
+	import { FirebaseService } from '$lib/storage';
 
 	let project: Project | undefined;
 
@@ -62,25 +63,28 @@
 		if ($projectsMapStore.has(projectId)) {
 			project = $projectsMapStore.get(projectId);
 		} else {
-			subscribeToProject(projectId, async (firebaseProject) => {
-				$projectsMapStore.set(projectId, firebaseProject);
-				projectsMapStore.set($projectsMapStore);
-				project = firebaseProject;
+			const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
+			projectService
+				.subscribe(projectId, async (firebaseProject) => {
+					$projectsMapStore.set(projectId, firebaseProject);
+					projectsMapStore.set($projectsMapStore);
+					project = firebaseProject;
 
-				// Get store users from activities and comments
-				const userIds = Object.values(project.activities)
-					.map((item) => item.userId)
-					.concat(project.comments.map((item) => item.userId));
+					// Get store users from activities and comments
+					const userIds = Object.values(project.activities)
+						.map((item) => item.userId)
+						.concat(project.comments.map((item) => item.userId));
 
-				for (const userId of userIds) {
-					if (!$usersMapStore.has(userId)) {
-						const user = await getUserFromFirebase(userId);
-						user && usersMapStore.update((map) => map.set(userId, user));
+					for (const userId of userIds) {
+						if (!$usersMapStore.has(userId)) {
+							const user = await getUserFromFirebase(userId);
+							user && usersMapStore.update((map) => map.set(userId, user));
+						}
 					}
-				}
-			}).then((unsubscribe) => {
-				unsubs.push(unsubscribe);
-			});
+				})
+				.then((unsubscribe) => {
+					unsubs.push(unsubscribe);
+				});
 		}
 	});
 

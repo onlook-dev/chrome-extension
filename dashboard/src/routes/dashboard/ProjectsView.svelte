@@ -1,24 +1,28 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { onDestroy } from 'svelte';
-	import { subscribeToProject } from '$lib/storage/project';
-	import { DashboardRoutes } from '$shared/constants';
+	import { DashboardRoutes, FirestoreCollections } from '$shared/constants';
 	import { projectsMapStore } from '$lib/utils/store';
 	import type { Team } from '$shared/models/team';
 
 	import ArrowUp from '~icons/mingcute/arrow-up-fill';
 	import PinImage from '$lib/assets/tip-pin.png';
+	import { FirebaseService } from '$lib/storage';
+	import type { Project } from '$shared/models/project';
 
 	export let team: Team | undefined;
 	let unsubs: any[] = [];
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 
 	$: team?.projectIds.forEach((projectId) => {
 		if (!$projectsMapStore.has(projectId)) {
-			subscribeToProject(projectId, (firebaseProject) => {
-				projectsMapStore.update((map) => map.set(projectId, firebaseProject));
-			}).then((unsubscribe) => {
-				unsubs.push(unsubscribe);
-			});
+			projectService
+				.subscribe(projectId, (firebaseProject) => {
+					projectsMapStore.update((map) => map.set(projectId, firebaseProject));
+				})
+				.then((unsubscribe) => {
+					unsubs.push(unsubscribe);
+				});
 		}
 	});
 

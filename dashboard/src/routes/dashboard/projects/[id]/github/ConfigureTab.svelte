@@ -2,15 +2,17 @@
 	import GitHub from '~icons/mdi/github';
 	import type { Project } from '$shared/models/project';
 	import type { GithubRepo, GithubSettings } from '$shared/models/github';
-	import { postProjectToFirebase } from '$lib/storage/project';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { getRepoDefaults, getReposByInstallation } from '$lib/github/repos';
 	import { onMount } from 'svelte';
 	import { githubConfig } from '$lib/utils/env';
 	import Info from '~icons/akar-icons/info';
+	import { FirebaseService } from '$lib/storage';
+	import { FirestoreCollections } from '$shared/constants';
 
 	export let project: Project;
 
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	let repositories: GithubRepo[] = [];
 	let loadingRepos = false;
 	let filteredRepositories: GithubRepo[] = [];
@@ -86,7 +88,7 @@
 		}
 
 		saved = false;
-		await postProjectToFirebase(project);
+		await projectService.post(project);
 
 		projectsMapStore.update((projectsMap) => {
 			projectsMap.set(project.id, project);
