@@ -1,12 +1,21 @@
 // Firestore collections
-export const FIREBASE_COLLECTION_PROJECTS = "projects";
-export const FIREBASE_COLLECTION_USERS = "users";
-export const FIREBASE_COLLECTION_TEAMS = "teams";
-export const FIREBASE_FOLDER_IMAGES = "images";
-export const FIREBASE_COLLECTION_PAYMENTS = "payments";
-export const FIREBASE_COLLECTION_GITHUB = "github";
-export const FIREBASE_COLLECTION_GITHUB_HISTORY = "github_history";
-export const FIREBASE_COLLECTION_CODE_CHANGE = "code_change";
+export enum FirestoreCollections {
+  PROJECTS = "projects",
+  USERS = "users",
+  TEAMS = "teams",
+  PAYMENTS = "payments",
+  GITHUB = "github",
+  GITHUB_HISTORY = "github_history",
+  CODE_CHANGE = "code_change",
+}
+// export const FIREBASE_COLLECTION_PROJECTS = "projects";
+// export const FIREBASE_COLLECTION_USERS = "users";
+// export const FIREBASE_COLLECTION_TEAMS = "teams";
+// export const FIREBASE_FOLDER_IMAGES = "images";
+// export const FIREBASE_COLLECTION_PAYMENTS = "payments";
+// export const FIREBASE_COLLECTION_GITHUB = "github";
+// export const FIREBASE_COLLECTION_GITHUB_HISTORY = "github_history";
+// export const FIREBASE_COLLECTION_CODE_CHANGE = "code_change";
 
 // Settings
 export const MAX_TITLE_LENGTH = 50;

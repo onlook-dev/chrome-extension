@@ -2,13 +2,13 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 
 import {
-  FIREBASE_COLLECTION_USERS,
-  FIREBASE_COLLECTION_TEAMS,
+  FirestoreCollections.USERS,
+  FirestoreCollections.TEAMS,
 } from "../../shared/constants";
-import {Team} from "../../shared/models/team";
+import { Team } from "../../shared/models/team";
 
 export const createTeam = functions.firestore
-  .document(`${FIREBASE_COLLECTION_TEAMS}/{teamId}`)
+  .document(`${FirestoreCollections.TEAMS}/{teamId}`)
   .onCreate(async (snapshot, context) => {
     const teamData = snapshot.data() as Team;
 
@@ -17,7 +17,7 @@ export const createTeam = functions.firestore
     userIds.forEach((userId) => {
       const userRef = admin
         .firestore()
-        .collection(FIREBASE_COLLECTION_USERS)
+        .collection(FirestoreCollections.USERS)
         .doc(userId);
 
       userRef.update({
@@ -27,7 +27,7 @@ export const createTeam = functions.firestore
   });
 
 export const deleteTeam = functions.firestore
-  .document(`${FIREBASE_COLLECTION_TEAMS}/{teamId}`)
+  .document(`${FirestoreCollections.TEAMS}/{teamId}`)
   .onDelete(async (snapshot, context) => {
     const teamData = snapshot.data() as Team;
 
@@ -36,7 +36,7 @@ export const deleteTeam = functions.firestore
     userIds.forEach((userId) => {
       const userRef = admin
         .firestore()
-        .collection(FIREBASE_COLLECTION_USERS)
+        .collection(FirestoreCollections.USERS)
         .doc(userId);
 
       userRef.update({
@@ -46,12 +46,12 @@ export const deleteTeam = functions.firestore
   });
 
 export const addUserToTeam = functions.https.onCall(async (data) => {
-  const {userId, teamId, role} = data;
+  const { userId, teamId, role } = data;
 
   // Update team with user id and role
   const teamRef = admin
     .firestore()
-    .collection(FIREBASE_COLLECTION_TEAMS)
+    .collection(FirestoreCollections.TEAMS)
     .doc(teamId);
   const teamUpdate = {
     [`users.${userId}`]: role,
@@ -63,7 +63,7 @@ export const addUserToTeam = functions.https.onCall(async (data) => {
   // Update user with team id
   const userRef = admin
     .firestore()
-    .collection(FIREBASE_COLLECTION_USERS)
+    .collection(FirestoreCollections.USERS)
     .doc(userId);
   await userRef.update({
     teamIds: admin.firestore.FieldValue.arrayUnion(teamId),

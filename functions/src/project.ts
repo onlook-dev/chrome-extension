@@ -2,18 +2,18 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 
 import {
-  FIREBASE_COLLECTION_PROJECTS,
-  FIREBASE_COLLECTION_TEAMS,
+  FirestoreCollections.PROJECTS,
+  FirestoreCollections.TEAMS,
 } from "../../shared/constants";
-import type {Project} from "../../shared/models/project";
+import type { Project } from "../../shared/models/project";
 
 export const createProject = functions.firestore
-  .document(`${FIREBASE_COLLECTION_PROJECTS}/{projectId}`)
+  .document(`${FirestoreCollections.PROJECTS}/{projectId}`)
   .onCreate(async (snapshot, context) => {
     const projectData = snapshot.data() as Project;
     const teamRef = admin
       .firestore()
-      .collection(FIREBASE_COLLECTION_TEAMS)
+      .collection(FirestoreCollections.TEAMS)
       .doc(projectData.teamId);
 
     await teamRef.update({
@@ -24,14 +24,14 @@ export const createProject = functions.firestore
   });
 
 export const deleteProject = functions.firestore
-  .document(`${FIREBASE_COLLECTION_PROJECTS}/{projectId}`)
+  .document(`${FirestoreCollections.PROJECTS}/{projectId}`)
   .onDelete(async (snapshot, context) => {
     const projectData = snapshot.data() as Project;
 
     // Delete project from team
     const teamRef = admin
       .firestore()
-      .collection(FIREBASE_COLLECTION_TEAMS)
+      .collection(FirestoreCollections.TEAMS)
       .doc(projectData.teamId);
 
     await teamRef.update({

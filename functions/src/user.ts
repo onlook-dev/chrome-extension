@@ -3,13 +3,13 @@ import * as functions from "firebase-functions";
 import * as nanoid from "nanoid";
 
 import {
-  FIREBASE_COLLECTION_USERS,
-  FIREBASE_COLLECTION_TEAMS,
-  FIREBASE_COLLECTION_PROJECTS,
+  FirestoreCollections.USERS,
+  FirestoreCollections.TEAMS,
+  FirestoreCollections.PROJECTS,
 } from "../../shared/constants";
-import {Team, Role} from "../../shared/models/team";
-import type {User} from "../../shared/models/user";
-import {addProjectsToTeam, duplicateProject} from "../utils/helpers";
+import { Team, Role } from "../../shared/models/team";
+import type { User } from "../../shared/models/user";
+import { addProjectsToTeam, duplicateProject } from "../utils/helpers";
 
 const isProd = admin.instanceId().app.options.projectId === "onlook-prod";
 
@@ -53,7 +53,7 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
     if (demoProject) {
       await admin
         .firestore()
-        .collection(FIREBASE_COLLECTION_PROJECTS)
+        .collection(FirestoreCollections.PROJECTS)
         .doc(demoProject.id)
         .set(demoProject);
       demoProjects.push(demoProject.id);
@@ -63,14 +63,14 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
   // Create default team
   await admin
     .firestore()
-    .collection(FIREBASE_COLLECTION_TEAMS)
+    .collection(FirestoreCollections.TEAMS)
     .doc(defaultTeam.id)
     .set(defaultTeam);
 
   // Create user
   await admin
     .firestore()
-    .collection(FIREBASE_COLLECTION_USERS)
+    .collection(FirestoreCollections.USERS)
     .doc(user.uid)
     .set({
       id: user.uid,
@@ -86,7 +86,7 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
 export const deleteUser = functions.auth.user().onDelete(async (user) => {
   const userRef = admin
     .firestore()
-    .collection(FIREBASE_COLLECTION_USERS)
+    .collection(FirestoreCollections.USERS)
     .doc(user.uid);
   const userData: User = (await userRef.get()).data() as User;
 
@@ -95,7 +95,7 @@ export const deleteUser = functions.auth.user().onDelete(async (user) => {
     teamIds.forEach(async (teamId) => {
       const teamRef = admin
         .firestore()
-        .collection(FIREBASE_COLLECTION_TEAMS)
+        .collection(FirestoreCollections.TEAMS)
         .doc(teamId);
       const teamData = (await teamRef.get()).data();
 
