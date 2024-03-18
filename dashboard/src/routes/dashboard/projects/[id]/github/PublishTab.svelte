@@ -20,7 +20,7 @@
 	import PullRequest from '~icons/ph/git-pull-request-bold';
 	import GitHub from '~icons/mdi/github';
 	import Restore from '~icons/ic/baseline-restore';
-	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
 
 	export let project: Project;
 	export let user: User;

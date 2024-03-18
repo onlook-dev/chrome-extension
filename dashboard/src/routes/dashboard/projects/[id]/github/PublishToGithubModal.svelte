@@ -10,7 +10,7 @@
 	import ConfigureTab from './ConfigureTab.svelte';
 	import PublishTab from './PublishTab.svelte';
 	import { githubConfig } from '$lib/utils/env';
-	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
 	import { projectsMapStore } from '$lib/utils/store';
 
 	export let project: Project;
