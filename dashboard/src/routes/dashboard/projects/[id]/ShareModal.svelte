@@ -3,7 +3,6 @@
 	import { teamsMapStore, usersMapStore } from '$lib/utils/store';
 	import { onMount } from 'svelte';
 	import type { Team } from '$shared/models/team';
-	import { getTeamFromFirebase } from '$lib/storage/team';
 	import type { User } from '$shared/models/user';
 	import CopyIcon from '~icons/mdi/content-copy';
 	import { Share2 } from 'lucide-svelte';
@@ -12,6 +11,7 @@
 
 	export let teamId: string;
 	const userService = new FirebaseService<User>(FirestoreCollections.USERS);
+	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	const modalId = 'share-modal';
 	let team: Team | undefined;
 	let users: DiplayUser[] = [];
@@ -27,7 +27,7 @@
 		team = $teamsMapStore.get(teamId);
 		// If not in map, get from firebase
 		if (!team) {
-			const firebaseTeam = await getTeamFromFirebase(teamId);
+			const firebaseTeam = await teamService.get(teamId);
 			if (firebaseTeam) {
 				team = firebaseTeam;
 				teamsMapStore.update((map) => map.set(teamId, firebaseTeam));

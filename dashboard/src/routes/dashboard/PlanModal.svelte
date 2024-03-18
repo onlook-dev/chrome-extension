@@ -5,13 +5,15 @@
 	import { PaymentStatus, type Payment } from '$shared/models/payment';
 	import { nanoid } from 'nanoid';
 	import { Tier } from '$shared/models/team';
-	import { postPaymentToFirebase } from '$lib/storage/payment';
 	import { getStripeSubscriptionEnd } from '$lib/stripe/stripe';
 	import PlanFeatureRow from './PlanFeatureRow.svelte';
+	import { FirebaseService } from '$lib/storage';
+	import { FirestoreCollections } from '$shared/constants';
 
 	export let teamId: string;
-	let subscriptionEnd = '';
 	const modalId = 'plan-modal';
+	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
+	let subscriptionEnd = '';
 	let loading = false;
 
 	$: plan = $teamsMapStore.get(teamId)?.tier ?? Tier.FREE;
@@ -33,7 +35,7 @@
 			return teams;
 		});
 
-		await postPaymentToFirebase(newPayment);
+		await paymentService.post(newPayment);
 		await setTeamPaymentId(teamId, newPayment.id);
 	}
 
