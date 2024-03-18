@@ -22,7 +22,6 @@ export function signInUser(userJson: string) {
 	})
 }
 
-
 export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged(authUser => {
 		if (authUser) {
