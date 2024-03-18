@@ -19,12 +19,13 @@
 	import SettingsTab from './SettingsTab.svelte'
 	import ActivitiesTab from './ActivitiesTab.svelte'
 	import CommentsTab from './CommentsTab.svelte'
-	import { postProjectToFirebase } from '$lib/storage/project'
 	import { truncateString } from '$shared/helpers'
 	import { baseUrl } from '$lib/utils/env'
-	import { DashboardRoutes } from '$shared/constants'
+	import { DashboardRoutes, FirestoreCollections } from '$shared/constants'
+	import { FirebaseService } from '$lib/storage'
 
 	const tabsName = 'project-tabs-id'
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
 	let saved = false
 	let project: Project | undefined
 	let projectInjected: boolean = false
@@ -39,7 +40,7 @@
 	function returnToDashboard() {
 		if (project) {
 			sendEditProjectRequest({ project, enable: false })
-			postProjectToFirebase(project)
+			projectService.post(project)
 		}
 		popupStateBucket.set({ activeRoute: PopupRoutes.DASHBOARD, activeProjectId: '' })
 	}
@@ -59,7 +60,7 @@
 	function toggleEditing() {
 		if (project) {
 			sendEditProjectRequest({ project, enable: !projectInjected })
-			postProjectToFirebase(project)
+			projectService.post(project)
 		}
 	}
 </script>
@@ -89,7 +90,7 @@
 						publishing = true
 						if (project) {
 							sendEditProjectRequest({ project, enable: false })
-							postProjectToFirebase(project).then(() => {
+							projectService.post(project).then(() => {
 								publishing = false
 								sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project?.id}`)
 							})

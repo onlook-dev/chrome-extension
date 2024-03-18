@@ -16,11 +16,13 @@
 	import ItemHeader from './ItemHeader.svelte'
 	import ClockArrow from '~icons/mdi/clock-arrow'
 	import Trash from '~icons/material-symbols/delete'
-	import { postProjectToFirebase } from '$lib/storage/project'
+	import { FirebaseService } from '$lib/storage'
+	import { FirestoreCollections } from '$shared/constants'
 
 	export let project: Project
 
 	const modalId = 'delete-activity-modal'
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
 	let activities: Activity[] = []
 	let usersMap: Map<string, User> = new Map()
 
@@ -43,7 +45,7 @@
 		)
 
 		sendActivityRevert(activity)
-		postProjectToFirebase(project)
+		projectService.post(project)
 		projectsMapBucket.set({ [project.id]: project })
 		project = { ...project }
 		closeModal()

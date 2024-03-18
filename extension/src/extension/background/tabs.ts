@@ -1,5 +1,4 @@
 import { storeImageUri } from '$lib/firebase/functions'
-import { postProjectToFirebase } from '$lib/storage/project'
 import { debounce } from '$shared/helpers'
 import {
 	getActiveProject,
@@ -12,6 +11,8 @@ import { toggleProjectTab } from '$lib/editor'
 import type { HostData } from '$shared/models/hostData'
 import type { Project } from '$shared/models/project'
 import { MessageReceiver, sendApplyProjectChanges } from '$lib/utils/messaging'
+import { FirebaseService } from '$lib/storage'
+import { FirestoreCollections } from '$shared/constants'
 
 export const updateProjectTabHostWithDebounce = debounce((tab: chrome.tabs.Tab) => {
 	updateProjectTabHostData(tab)
@@ -50,7 +51,8 @@ async function updateProjectTabHostData(tab: chrome.tabs.Tab) {
 	activeProject.hostData = hostData
 
 	// Save project
-	postProjectToFirebase(activeProject)
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
+	projectService.post(activeProject)
 	projectsMapBucket.set({ [activeProject.id]: activeProject })
 	console.log('Updated project with host data')
 }

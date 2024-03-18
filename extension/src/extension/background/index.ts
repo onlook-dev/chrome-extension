@@ -1,4 +1,4 @@
-import { DashboardRoutes } from '$shared/constants'
+import { DashboardRoutes, FirestoreCollections } from '$shared/constants'
 import { baseUrl } from '$lib/utils/env'
 import {
 	activityInspectStream,
@@ -29,20 +29,23 @@ import {
 	popupStateBucket
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
-import { subscribeToUser } from '$lib/storage/user'
-import { subscribeToTeam } from '$lib/storage/team'
-import { postProjectToFirebase, subscribeToProject } from '$lib/storage/project'
 import { forwardToActiveProjectTab, updateTabActiveState } from './tabs'
 import { changeQueue, processChangeQueue } from './editEvents'
 
 import type { Team } from '$shared/models/team'
 import type { Activity } from '$shared/models/activity'
 import type { Comment } from '$shared/models/comment'
+import { FirebaseService } from '$lib/storage'
+import type { Project } from '$shared/models/project'
+import type { User } from '$shared/models/user'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
 let userSubs: (() => void)[] = []
 let activeProjectSub: (() => void) | null = null
+const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
+const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS)
+const userService = new FirebaseService<User>(FirestoreCollections.USERS)
 
 function setDefaultMaps() {
 	teamsMapBucket.set({})
@@ -96,7 +99,7 @@ const setListeners = () => {
 			if (!tabState) return
 			getActiveProject().then(activeProject => {
 				if (!activeProject) return
-				if (tabState.projectId == activeProject.id) postProjectToFirebase(activeProject)
+				if (tabState.projectId == activeProject.id) projectService.post(activeProject)
 			})
 		})
 		saveTabState(tabId, {
@@ -130,7 +133,7 @@ const setListeners = () => {
 	})
 
 	saveProjectStream.subscribe(([project, sender]) => {
-		postProjectToFirebase(project)
+		projectService.post(project)
 		projectsMapBucket.set({ [project.id]: project })
 	})
 
@@ -189,7 +192,7 @@ const setListeners = () => {
 		teamSubs.forEach(unsubscribe => unsubscribe())
 
 		for (const teamId of teamsNotInMap) {
-			subscribeToTeam(teamId, async team => {
+			teamService.subscribe(teamId, async team => {
 				if (!team) return
 				teamsMapBucket.set({ [team.id]: team })
 			}).then(unsubscribe => {
@@ -213,7 +216,7 @@ const setListeners = () => {
 
 		for (const projectId of projectsNotInMap) {
 			console.log('Subscribing to project', projectId)
-			subscribeToProject(projectId, async project => {
+			projectService.subscribe(projectId, async project => {
 				if (!project) return
 				projectsMapBucket.set({ [project.id]: project })
 			}).then(unsubscribe => {
@@ -245,7 +248,7 @@ const setListeners = () => {
 		userSubs.forEach(unsubscribe => unsubscribe())
 
 		for (const userId of usersNotInMap) {
-			subscribeToUser(userId, async user => {
+			userService.subscribe(userId, async user => {
 				if (!user) return
 				usersMapBucket.set({ [user.id]: user })
 			}).then(unsubscribe => {
@@ -262,7 +265,7 @@ const setListeners = () => {
 			activeProjectSub = null
 		}
 
-		subscribeToProject(activeProjectId, async project => {
+		projectService.subscribe(activeProjectId, async project => {
 			if (!project) return
 			projectsMapBucket.set({ [project.id]: project })
 		}).then(unsubscribe => {

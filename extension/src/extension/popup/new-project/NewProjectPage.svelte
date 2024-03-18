@@ -10,12 +10,13 @@
 	} from '$lib/utils/localstorage'
 	import type { Project } from '$shared/models/project'
 	import type { HostData } from '$shared/models/hostData'
-	import { MAX_TITLE_LENGTH } from '$shared/constants'
+	import { FirestoreCollections, MAX_TITLE_LENGTH } from '$shared/constants'
 
 	import { nanoid } from 'nanoid'
 	import validUrl from 'valid-url'
-	import { postProjectToFirebase } from '$lib/storage/project'
+	import { FirebaseService } from '$lib/storage'
 
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
 	let projectName = ''
 	let projectUrl = ''
 	let nameError = false
@@ -72,7 +73,7 @@
 		popupStateBucket.set({ activeRoute: PopupRoutes.PROJECT, activeProjectId: newProject.id })
 
 		// Save to Firebase
-		postProjectToFirebase(newProject)
+		projectService.post(newProject)
 	}
 </script>
 
