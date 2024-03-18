@@ -1,5 +1,6 @@
 import type { Octokit } from "@octokit/core";
 import type { FileContentData, PathInfo } from "$shared/models/translation";
+
 import { Endpoints } from "@octokit/types";
 
 type GetContentsResponse = Endpoints["GET /repos/{owner}/{repo}/contents/{path}"]["response"];

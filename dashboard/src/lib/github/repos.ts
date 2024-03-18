@@ -1,7 +1,7 @@
 import type { Octokit } from '@octokit/core';
-import { Endpoints } from '@octokit/types';
 import type { GithubRepo } from "$shared/models/github";
 import { getInstallationOctokit } from "./installation";
+import { Endpoints } from '@octokit/types';
 
 type ListInstallationReposResponse = Endpoints["GET /installation/repositories"]["response"];
 type GetRepoResponse = Endpoints["GET /repos/{owner}/{repo}"]["response"];
