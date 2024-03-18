@@ -9,7 +9,6 @@
 	} from '$shared/constants';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
-	import { getGithubHistoriesFromFirebase, postGithubHistoryToFirebase } from '$lib/storage/github';
 
 	import type { Project } from '$shared/models/project';
 	import type { GithubHistory } from '$shared/models/github';
@@ -24,8 +23,12 @@
 	export let project: Project;
 	export let userId: string;
 
-	let githubHistories: GithubHistory[] = [];
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
+	const githubHistoryService = new FirebaseService<GithubHistory>(
+		FirestoreCollections.GITHUB_HISTORY
+	);
+
+	let githubHistories: GithubHistory[] = [];
 	let githubConfigured = false;
 	let hasActivities = false;
 	let hasFilePaths = false;
@@ -59,9 +62,9 @@
 		}
 
 		if (project?.githubHistoryIds?.length > 0) {
-			getGithubHistoriesFromFirebase(project.githubHistoryIds)
+			Promise.all(project.githubHistoryIds.map((id) => githubHistoryService.get(id)))
 				.then((histories) => {
-					githubHistories = histories;
+					githubHistories = histories.filter((history) => history !== null) as GithubHistory[];
 				})
 				.catch((error) => {
 					console.error('Error loading github history:', error);
@@ -114,7 +117,7 @@
 			});
 
 			// Save project and github history
-			postGithubHistoryToFirebase(githubHistory);
+			githubHistoryService.post(githubHistory);
 			projectService.post(project);
 			projectsMapStore.update((projectsMap) => {
 				projectsMap.set(project.id, project);
