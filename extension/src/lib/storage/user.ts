@@ -5,24 +5,24 @@ import {
 	subscribeToDocument
 } from '../firebase/firestore'
 import type { User } from '../../../../shared/models/user'
-import { FIREBASE_COLLECTION_USERS } from '$shared/constants'
+import { FirestoreCollections } from '$shared/constants'
 import { userBucket } from '$lib/utils/localstorage'
 
 export async function getUserFromFirebase(userId: string): Promise<User | undefined> {
 	console.log('Fetching firebase user')
-	const userData = await getObjectFromCollection(FIREBASE_COLLECTION_USERS, userId)
+	const userData = await getObjectFromCollection(FirestoreCollections.USERS, userId)
 	if (!userData) return undefined
 	return userData as User
 }
 
 export async function postUserToFirebase(user: User) {
-	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_USERS, user, user.id)
+	const objectId = await postObjectToCollection(FirestoreCollections.USERS, user, user.id)
 	console.log('Posted firebase user')
 	return
 }
 
 export async function subscribeToUser(userId: string, callback: (data: User) => void) {
-	const unsubscribe = await subscribeToDocument(FIREBASE_COLLECTION_USERS, userId, callback)
+	const unsubscribe = await subscribeToDocument(FirestoreCollections.USERS, userId, callback)
 	return unsubscribe
 }
 

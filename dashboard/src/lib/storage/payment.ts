@@ -4,17 +4,17 @@ import {
 	postObjectToCollection,
 	subscribeToDocument
 } from '$lib/firebase/firestore';
-import { FIREBASE_COLLECTION_PAYMENTS } from '$shared/constants';
+import { FirestoreCollections } from '$shared/constants';
 import type { Payment, PaymentStatus } from '$shared/models/payment';
 
 export async function getPaymentFromFirebase(paymentId: string): Promise<Payment> {
-	const paymentData = await getObjectFromCollection(FIREBASE_COLLECTION_PAYMENTS, paymentId);
+	const paymentData = await getObjectFromCollection(FirestoreCollections.PAYMENTS, paymentId);
 	return paymentData as Payment;
 }
 
 export async function getPaymentFromSessionId(checkoutSessionId: string): Promise<Payment> {
 	const paymentData = await getObjectFromCollectionWhere(
-		FIREBASE_COLLECTION_PAYMENTS,
+		FirestoreCollections.PAYMENTS,
 		'checkoutSessionId',
 		checkoutSessionId
 	);
@@ -23,7 +23,7 @@ export async function getPaymentFromSessionId(checkoutSessionId: string): Promis
 
 export async function getPaymentFromSubscriptionId(subscriptionId: string): Promise<Payment> {
 	const paymentData = await getObjectFromCollectionWhere(
-		FIREBASE_COLLECTION_PAYMENTS,
+		FirestoreCollections.PAYMENTS,
 		'subscriptionId',
 		subscriptionId
 	);
@@ -31,7 +31,7 @@ export async function getPaymentFromSubscriptionId(subscriptionId: string): Prom
 }
 
 export async function postPaymentToFirebase(payment: Payment) {
-	const objectId = await postObjectToCollection(FIREBASE_COLLECTION_PAYMENTS, payment, payment.id);
+	const objectId = await postObjectToCollection(FirestoreCollections.PAYMENTS, payment, payment.id);
 	console.log('Posted firebase payment with ID', objectId);
 	return;
 }
@@ -40,7 +40,7 @@ export async function subscribeToPayment(
 	paymentId: string,
 	callback: (data: Payment) => void
 ): Promise<() => void> {
-	const unsubscribe = await subscribeToDocument(FIREBASE_COLLECTION_PAYMENTS, paymentId, callback);
+	const unsubscribe = await subscribeToDocument(FirestoreCollections.PAYMENTS, paymentId, callback);
 	return unsubscribe;
 }
 

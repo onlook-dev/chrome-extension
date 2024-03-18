@@ -26,9 +26,5 @@
   "homepage": "https://github.com/onlook-dev/monorepo#readme",
   "devDependencies": {
     "concurrently": "^8.2.2"
-  },
-  "dependencies": {
-    "@sveltejs/adapter-vercel": "^5.1.1",
-    "ai": "^2.2.36"
   }
 }

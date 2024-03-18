@@ -1,8 +1,8 @@
 import * as admin from 'firebase-admin';
 
 import {
-	FIREBASE_COLLECTION_PROJECTS,
-	FIREBASE_COLLECTION_TEAMS
+	FirestoreCollections.PROJECTS,
+	FirestoreCollections.TEAMS
 } from '../../shared/constants';
 import { Project } from '../../shared/models/project';
 import { Team } from '../../shared/models/team';
@@ -14,7 +14,7 @@ export async function duplicateProject(
 ): Promise<Project | undefined> {
 	const originalProject = await admin
 		.firestore()
-		.collection(FIREBASE_COLLECTION_PROJECTS)
+		.collection(FirestoreCollections.PROJECTS)
 		.doc(projectId)
 		.get();
 
@@ -38,7 +38,7 @@ export async function addProjectsToTeam(
 ): Promise<Team | undefined> {
 	const team = admin
 		.firestore()
-		.collection(FIREBASE_COLLECTION_TEAMS)
+		.collection(FirestoreCollections.TEAMS)
 		.doc(teamId)
 		.get();
 
@@ -68,7 +68,7 @@ export async function addProjectsToTeam(
 
 	await admin
 		.firestore()
-		.collection(FIREBASE_COLLECTION_TEAMS)
+		.collection(FirestoreCollections.TEAMS)
 		.doc(teamId)
 		.update({
 			projectIds: [...currentProjects, ...newProjects]

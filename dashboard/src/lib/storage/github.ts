@@ -3,17 +3,17 @@ import {
 	postObjectToCollection,
 	subscribeToDocument
 } from '$lib/firebase/firestore';
-import { FIREBASE_COLLECTION_GITHUB, FIREBASE_COLLECTION_GITHUB_HISTORY } from '$shared/constants';
+import { FirestoreCollections } from '$shared/constants';
 import type { GithubAuth, GithubHistory } from '$shared/models/github';
 
 export async function getGithubAuthFromFirebase(authId: string): Promise<GithubAuth> {
-	const githubAuthData = await getObjectFromCollection(FIREBASE_COLLECTION_GITHUB, authId);
+	const githubAuthData = await getObjectFromCollection(FirestoreCollections.GITHUB, authId);
 	return githubAuthData as GithubAuth;
 }
 
 export async function postGithubAuthToFirebase(githubAuth: GithubAuth) {
 	const objectId = await postObjectToCollection(
-		FIREBASE_COLLECTION_GITHUB,
+		FirestoreCollections.GITHUB,
 		githubAuth,
 		githubAuth.id
 	);
@@ -25,7 +25,7 @@ export async function getGithubHistoryFromFirebase(
 	githubHistoryId: string
 ): Promise<GithubHistory> {
 	const githubHistoryData = await getObjectFromCollection(
-		FIREBASE_COLLECTION_GITHUB_HISTORY,
+		FirestoreCollections.GITHUB_HISTORY,
 		githubHistoryId
 	);
 	return githubHistoryData as GithubHistory;
@@ -33,7 +33,7 @@ export async function getGithubHistoryFromFirebase(
 
 export async function postGithubHistoryToFirebase(githubHistory: GithubHistory) {
 	const objectId = await postObjectToCollection(
-		FIREBASE_COLLECTION_GITHUB_HISTORY,
+		FirestoreCollections.GITHUB_HISTORY,
 		githubHistory,
 		githubHistory.id
 	);
@@ -55,7 +55,7 @@ export async function subscribeToGithubHistory(
 	callback: (data: GithubHistory) => void
 ): Promise<() => void> {
 	const unsubscribe = await subscribeToDocument(
-		FIREBASE_COLLECTION_GITHUB_HISTORY,
+		FirestoreCollections.GITHUB_HISTORY,
 		githubHistoryId,
 		callback
 	);
