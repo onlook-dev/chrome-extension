@@ -1,5 +1,5 @@
 import { EditType, type EditEvent, type InsertRemoveVal } from '$shared/models/editor'
-import type { Activity, ChangeValues } from '$shared/models/activity'
+import { ActivityStatus, type Activity, type ChangeValues } from '$shared/models/activity'
 import { convertEditEventToStyleChangeMap } from '$shared/translation'
 import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { sendGetScreenshotRequest } from '$lib/utils/messaging'
@@ -31,6 +31,8 @@ async function processEditEvent(editEvent: EditEvent) {
 			projectId: activeProject.id,
 			eventData: [],
 			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+			status: ActivityStatus.EDITED,
 			selector: editEvent.selector,
 			path: editEvent.path,
 			styleChanges: {},
@@ -64,7 +66,8 @@ async function processEditEvent(editEvent: EditEvent) {
 	}
 
 	activity.path = editEvent.path ?? activity.path
-	activity.createdAt = new Date().toISOString()
+	activity.updatedAt = new Date().toISOString()
+	activity.status = ActivityStatus.EDITED
 	activeProject.activities[editEvent.selector] = activity
 
 	// Update project

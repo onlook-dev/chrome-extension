@@ -33,8 +33,8 @@
 
 	$: activities = Object.values(project.activities).sort(
 		(a, b) =>
-			new Date(b.creationTime ?? b.createdAt).getTime() -
-			new Date(a.creationTime ?? a.createdAt).getTime()
+			new Date(b.updatedAt ?? b.createdAt).getTime() -
+			new Date(a.updatedAt ?? a.createdAt).getTime()
 	)
 
 	let deleteActivity = (activity: Activity) => {
@@ -96,7 +96,7 @@
 			<ItemHeader
 				profileImageUrl={usersMap.get(activity.userId)?.profileImage}
 				userName={usersMap.get(activity.userId)?.name}
-				createdAt={activity.creationTime ?? activity.createdAt}
+				createdAt={activity.updatedAt ?? activity.createdAt}
 			>
 				<div class="tooltip tooltip-left" data-tip="View original">
 					<button

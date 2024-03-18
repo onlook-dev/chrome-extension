@@ -39,8 +39,8 @@
 
 	$: activities = Object.values(project.activities).sort(
 		(a, b) =>
-			new Date(b.creationTime ?? b.createdAt).getTime() -
-			new Date(a.creationTime ?? a.createdAt).getTime()
+			new Date(b.updatedAt ?? b.createdAt).getTime() -
+			new Date(a.updatedAt ?? a.createdAt).getTime()
 	);
 
 	function deleteActivity(activity: Activity) {
@@ -126,7 +126,7 @@
 			<ItemHeader
 				profileImageUrl={$usersMapStore.get(activity.userId)?.profileImage}
 				userName={$usersMapStore.get(activity.userId)?.name}
-				createdAt={activity.creationTime ?? activity.createdAt}
+				createdAt={activity.updatedAt ?? activity.createdAt}
 			>
 				{#if project?.githubSettings && activity?.path}
 					<div class="tooltip tooltip-left" data-tip="View in GitHub">

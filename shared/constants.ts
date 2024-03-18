@@ -6,6 +6,7 @@ export const FIREBASE_FOLDER_IMAGES = "images";
 export const FIREBASE_COLLECTION_PAYMENTS = "payments";
 export const FIREBASE_COLLECTION_GITHUB = "github";
 export const FIREBASE_COLLECTION_GITHUB_HISTORY = "github_history";
+export const FIREBASE_COLLECTION_CODE_CHANGE = "code_change";
 
 // Settings
 export const MAX_TITLE_LENGTH = 50;
