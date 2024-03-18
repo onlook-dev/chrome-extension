@@ -51,7 +51,6 @@
     "css-to-tailwind-translator": "^1.2.8",
     "firebase": "^10.7.1",
     "highlight.js": "^11.9.0",
-    "lucide-svelte": "^0.354.0",
     "nanoid": "^5.0.4",
     "openai": "^4.28.0",
     "stripe": "^14.12.0",

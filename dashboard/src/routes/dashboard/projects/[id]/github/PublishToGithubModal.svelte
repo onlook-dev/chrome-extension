@@ -81,7 +81,7 @@
 						disabled={!project?.githubSettings}
 					/>
 					<div role="tabpanel" class="tab-content py-4 overflow-auto">
-						<PublishTab {project} userId={user.id} />
+						<PublishTab {project} {user} />
 					</div>
 
 					<input

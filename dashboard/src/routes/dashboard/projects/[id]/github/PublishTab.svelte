@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { exportToPR } from '$lib/github/github';
 	import {
 		DashboardRoutes,
 		FirestoreCollections,
@@ -9,20 +8,23 @@
 	} from '$shared/constants';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
-
 	import type { Project } from '$shared/models/project';
 	import type { GithubHistory } from '$shared/models/github';
+	import type { User } from '$shared/models/user';
+	import { baseUrl } from '$lib/utils/env';
+	import { toast } from '@zerodevx/svelte-toast';
+	import { FirebaseService } from '$lib/storage';
+	import { GithubService } from '$lib/github';
 
 	import PullRequest from '~icons/ph/git-pull-request-bold';
 	import GitHub from '~icons/mdi/github';
 	import Restore from '~icons/ic/baseline-restore';
-	import { baseUrl } from '$lib/utils/env';
-	import { toast } from '@zerodevx/svelte-toast';
 	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
-	import { FirebaseService } from '$lib/storage';
-	export let project: Project;
-	export let userId: string;
 
+	export let project: Project;
+	export let user: User;
+
+	let githubService: GithubService;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	const githubHistoryService = new FirebaseService<GithubHistory>(
 		FirestoreCollections.GITHUB_HISTORY
@@ -44,6 +46,11 @@
 	let title = '';
 	let description = '';
 
+	$: if (project?.installationId) {
+		githubService = new GithubService(project.installationId);
+		githubConfigured = true;
+	}
+
 	onMount(() => {
 		// Check each activities for a path
 		if (Object.keys(project.activities).length > 0) {
@@ -56,10 +63,6 @@
 				return;
 			}
 		});
-
-		if (project?.installationId) {
-			githubConfigured = true;
-		}
 
 		if (project?.githubHistoryIds?.length > 0) {
 			Promise.all(project.githubHistoryIds.map((id) => githubHistoryService.get(id)))
@@ -77,7 +80,7 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
-			prLink = await exportToPR(userId, project?.id, title, description);
+			prLink = await githubService.publishProjectToGitHub(project, title, description, user);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
 			publishErrorMessage = `Error publishing changes: ${JSON.stringify(error)}`;
@@ -93,7 +96,7 @@
 				id: nanoid(),
 				title,
 				description,
-				userId,
+				userId: user.id,
 				projectId: project.id,
 				createdAt: new Date().toISOString(),
 				pullRequestUrl: prLink,
