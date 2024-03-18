@@ -11,8 +11,8 @@ export interface Activity {
   visible: boolean;
   previewImage?: string;
 
-  creationTime?: string; // Old, migrating
-  createdAt: string; // New, migrating
+  createdAt: string;
+  updatedAt?: string;
 
   // TODO: Handle content changes + structure changes
   styleChanges: Record<string, ChangeValues>;
@@ -34,7 +34,6 @@ export interface ChangeValues {
 }
 
 export enum ActivityStatus {
-  CREATED = 'CREATED',
   EDITED = 'EDITED',
   TRANSLATION_IN_PROGRESS = 'TRANSLATION_IN_PROGRESS',
   TRANSLATION_SUCCESS = 'TRANSLATION_SUCCESS',
@@ -42,4 +41,5 @@ export enum ActivityStatus {
   PUBLISH_IN_PROGRESS = 'PUBLISH_IN_PROGRESS',
   PUBLISH_SUCCESS = 'PUBLISH_SUCCESS',
   PUBLISH_FAILED = 'PUBLISH_FAILED',
+  ARCHIVED = 'ARCHIVED',
 }
