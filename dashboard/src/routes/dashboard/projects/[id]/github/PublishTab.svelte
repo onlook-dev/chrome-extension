@@ -8,13 +8,14 @@
 	} from '$shared/constants';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
-	import type { Project } from '$shared/models/project';
-	import type { GithubHistory } from '$shared/models/github';
-	import type { User } from '$shared/models/user';
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { FirebaseService } from '$lib/storage';
 	import { GithubService } from '$lib/github';
+
+	import type { Project } from '$shared/models/project';
+	import type { GithubHistory } from '$shared/models/github';
+	import type { User } from '$shared/models/user';
 
 	import PullRequest from '~icons/ph/git-pull-request-bold';
 	import GitHub from '~icons/mdi/github';

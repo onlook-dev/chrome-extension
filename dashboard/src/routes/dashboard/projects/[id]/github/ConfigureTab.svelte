@@ -1,14 +1,16 @@
 <script lang="ts">
-	import GitHub from '~icons/mdi/github';
-	import type { Project } from '$shared/models/project';
-	import type { GithubRepo, GithubSettings } from '$shared/models/github';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { getRepoDefaults, getReposByInstallation } from '$lib/github/repos';
 	import { onMount } from 'svelte';
 	import { githubConfig } from '$lib/utils/env';
-	import Info from '~icons/akar-icons/info';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
+
+	import type { Project } from '$shared/models/project';
+	import type { GithubRepo, GithubSettings } from '$shared/models/github';
+
+	import GitHub from '~icons/mdi/github';
+	import Info from '~icons/akar-icons/info';
 
 	export let project: Project;
 
