@@ -4,7 +4,6 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	import type { Project } from '$shared/models/project';
-	import { getUserFromFirebase } from '$lib/storage/user';
 	import {
 		DashboardRoutes,
 		DashboardSearchParams,
@@ -30,6 +29,8 @@
 	import { FirebaseService } from '$lib/storage';
 
 	let project: Project | undefined;
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
+	const userService = new FirebaseService<User>(FirestoreCollections.USERS);
 
 	let user: User | null;
 	let unsubs: any[] = [];
@@ -63,7 +64,6 @@
 		if ($projectsMapStore.has(projectId)) {
 			project = $projectsMapStore.get(projectId);
 		} else {
-			const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 			projectService
 				.subscribe(projectId, async (firebaseProject) => {
 					$projectsMapStore.set(projectId, firebaseProject);
@@ -77,7 +77,7 @@
 
 					for (const userId of userIds) {
 						if (!$usersMapStore.has(userId)) {
-							const user = await getUserFromFirebase(userId);
+							const user = await userService.get(userId);
 							user && usersMapStore.update((map) => map.set(userId, user));
 						}
 					}

@@ -12,6 +12,12 @@ export async function getTeamFromFirebase(teamId: string): Promise<Team> {
 	return teamData as Team;
 }
 
+export async function postTeamToFirebase(team: Team) {
+	const objectId = await postObjectToCollection(FirestoreCollections.TEAMS, team, team.id);
+	console.log('Posted firebase team');
+	return objectId;
+}
+
 export async function getTeamFromPaymentId(paymentId: string): Promise<Team> {
 	const teamData = await getObjectFromCollectionWhere(
 		FirestoreCollections.TEAMS,
@@ -21,11 +27,6 @@ export async function getTeamFromPaymentId(paymentId: string): Promise<Team> {
 	return teamData as Team;
 }
 
-export async function postTeamToFirebase(team: Team) {
-	const objectId = await postObjectToCollection(FirestoreCollections.TEAMS, team, team.id);
-	console.log('Posted firebase team');
-	return objectId;
-}
 
 export async function subscribeToTeam(
 	teamId: string,
