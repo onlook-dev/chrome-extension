@@ -1,5 +1,7 @@
-import type { Activity } from '$shared/models/activity';
 import type { Octokit } from '@octokit/core';
+import { Endpoints } from '@octokit/types';
+
+import type { Activity } from '$shared/models/activity';
 import type { TreeItem } from '$shared/models/github';
 import type {
 	FileContentData,
@@ -11,6 +13,11 @@ import { getTranslationInput, updateContentChunk } from '$shared/translation';
 import { fetchFileFromPath, getPathInfo } from './files';
 import type { User } from '$shared/models/user';
 
+type GetRefResponse = Endpoints["GET /repos/{owner}/{repo}/git/ref/{ref}"]["response"];
+type CreateTreeResponse = Endpoints["POST /repos/{owner}/{repo}/git/trees"]["response"];
+type CreateCommitResponse = Endpoints["POST /repos/{owner}/{repo}/git/commits"]["response"];
+
+// TODO: this is translation funcs and should be refactored
 export async function prepareCommit(
 	octokit: Octokit,
 	owner: string,
@@ -109,13 +116,13 @@ export async function createCommit(
 		// Preparing the tree for the commit
 		const trees: TreeItem[] = files.map((file) => ({
 			path: file.path,
-			mode: '100644', // mode is explicitly typed
-			type: 'blob', // type is explicitly typed
+			mode: '100644', // file mode for a blob (file content)
+			type: 'blob', // specifying the type as a blob (file content)
 			content: file.content
 		}));
 
 		// Getting the SHA of the latest commit on the branch
-		const latestCommit = await octokit.request(`GET /repos/{owner}/{repo}/git/ref/{ref}`, {
+		const latestCommit: GetRefResponse = await octokit.request('GET /repos/{owner}/{repo}/git/ref/{ref}', {
 			owner,
 			repo,
 			ref: `heads/${branch}`
@@ -123,7 +130,7 @@ export async function createCommit(
 		const latestCommitSha = latestCommit.data.object.sha;
 
 		// Creating a new tree in the repository
-		const treeResponse = await octokit.request(`POST /repos/{owner}/{repo}/git/trees`, {
+		const treeResponse: CreateTreeResponse = await octokit.request('POST /repos/{owner}/{repo}/git/trees', {
 			owner,
 			repo,
 			tree: trees,
@@ -131,7 +138,7 @@ export async function createCommit(
 		});
 
 		// Creating the commit pointing to the new tree
-		const commitResponse = await octokit.request(`POST /repos/{owner}/{repo}/git/commits`, {
+		const commitResponse: CreateCommitResponse = await octokit.request('POST /repos/{owner}/{repo}/git/commits', {
 			owner,
 			repo,
 			message: title,
@@ -148,10 +155,11 @@ export async function createCommit(
 		});
 
 		// Updating the reference of the branch to point to the new commit
-		await octokit.request(`PATCH /repos/{owner}/{repo}/git/refs/heads/${branch}`, {
+		await octokit.request('PATCH /repos/{owner}/{repo}/git/refs/heads/{branch}', {
 			owner,
 			repo,
-			sha: commitResponse.data.sha
+			sha: commitResponse.data.sha,
+			branch
 		});
 
 		return commitResponse.data.sha;

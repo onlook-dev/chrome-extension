@@ -22,7 +22,7 @@ export async function fetchFileFromPath(
   branch: string,
   path: string): Promise<FileContentData | undefined> {
   try {
-    // @ts-ignore
+    // @ts-ignore - status is wrong type
     const contentResponse: GetContentsResponse = await octokit.request(`GET /repos/{owner}/{repo}/contents/{path}?ref={branch}`, {
       owner,
       repo,
