@@ -2,12 +2,12 @@
 	import { toast } from '@zerodevx/svelte-toast';
 	import { teamsMapStore, usersMapStore } from '$lib/utils/store';
 	import { onMount } from 'svelte';
+	import { FirebaseService } from '$lib/storage';
+	import { FirestoreCollections } from '$shared/constants';
 	import type { Team } from '$shared/models/team';
 	import type { User } from '$shared/models/user';
 	import CopyIcon from '~icons/mdi/content-copy';
-	import { Share2 } from 'lucide-svelte';
-	import { FirebaseService } from '$lib/storage';
-	import { FirestoreCollections } from '$shared/constants';
+	import Share from '~icons/solar/share-outline';
 
 	export let teamId: string;
 	const userService = new FirebaseService<User>(FirestoreCollections.USERS);
@@ -87,7 +87,7 @@
 
 <div>
 	<button class="flex flex-row justify-center" on:click={showModal}>
-		<Share2 class="h-4 w-4 mr-2" /> Share project
+		<Share class="h-4 w-4 mr-2" /> Share project
 	</button>
 
 	<dialog id={modalId} class="modal">

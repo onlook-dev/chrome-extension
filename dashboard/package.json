@@ -45,12 +45,12 @@
   "dependencies": {
     "@octokit/auth-app": "^6.0.3",
     "@octokit/core": "^5.1.0",
+    "@octokit/types": "^12.6.0",
     "@skeletonlabs/skeleton": "^2.7.1",
     "@sveltejs/adapter-vercel": "^5.1.1",
     "css-to-tailwind-translator": "^1.2.8",
     "firebase": "^10.7.1",
     "highlight.js": "^11.9.0",
-    "lucide-svelte": "^0.354.0",
     "nanoid": "^5.0.4",
     "openai": "^4.28.0",
     "stripe": "^14.12.0",

@@ -1,6 +1,6 @@
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+
 import { auth } from './firebase';
-import { setStoreUser } from '$lib/storage/user';
 import {
 	githubHistoryMapStore,
 	projectsMapStore,
@@ -8,11 +8,27 @@ import {
 	userStore,
 	usersMapStore
 } from '$lib/utils/store';
+import { FirestoreCollections, MessageTypes } from '$shared/constants';
+import { FirebaseService } from '$lib/storage';
+import type { User } from '$shared/models/user';
 
 export function subscribeToFirebaseAuthChanges() {
-	auth.onAuthStateChanged((user) => {
-		if (user) {
-			setStoreUser(user);
+	auth.onAuthStateChanged((authUser) => {
+		if (authUser) {
+			// Send authUser to extension
+			window.postMessage(
+				{
+					type: MessageTypes.DASHBOARD_AUTH,
+					user: JSON.stringify(authUser.toJSON())
+				},
+				window.location.origin
+			);
+
+			const userServices = new FirebaseService<User>(FirestoreCollections.USERS);
+			// Listen and update user from remote
+			userServices.subscribe(authUser.uid, (user) => {
+				userStore.set(user);
+			});
 		} else {
 			console.log('User signed out');
 			// Clear data when signed out

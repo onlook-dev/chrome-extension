@@ -10,9 +10,14 @@
 		"sourceMap": true,
 		"strict": true,
 		"moduleResolution": "bundler",
+		"verbatimModuleSyntax": false,
 		"paths": {
-			"$*": ["./src/*"],
-			"$shared/*": ["../shared/*"]
+			"$*": [
+				"./src/*"
+			],
+			"$shared/*": [
+				"../shared/*"
+			]
 		}
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
