@@ -23,11 +23,11 @@ export async function createOrGetBranch(
       console.log('Branch already exists:', newBranch);
       return true;
     } catch (branchDoesNotExistError) {
+      // If the branch does not exist, GitHub API will throw a 404 error, which is caught here.
       if (!(branchDoesNotExistError instanceof RequestError && branchDoesNotExistError.status === 404)) {
         console.error('Error checking branch existence:', branchDoesNotExistError);
         return false;
       }
-      // If the branch does not exist, GitHub API will throw a 404 error, which is caught here.
     }
 
     // Get the latest commit SHA of the base branch if the new branch does not exist

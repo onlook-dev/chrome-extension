@@ -1,39 +1,39 @@
+import type { Octokit } from '@octokit/core';
+import { Endpoints } from '@octokit/types';
 import type { GithubRepo } from "$shared/models/github";
 import { getInstallationOctokit } from "./installation";
 
-export const getReposByInstallation = async (installationId: string) => {
-  const octokit = await getInstallationOctokit(installationId);
+type ListInstallationReposResponse = Endpoints["GET /installation/repositories"]["response"];
+type GetRepoResponse = Endpoints["GET /repos/{owner}/{repo}"]["response"];
 
-  // Get the repositories accessible to the installation
+export const getReposByInstallation = async (installationId: string): Promise<{ repos: GithubRepo[] }> => {
+  const octokit: Octokit = await getInstallationOctokit(installationId);
   console.log('Getting repositories...');
 
-  // https://docs.github.com/en/rest/apps/installations?apiVersion=2022-11-28#list-repositories-accessible-to-the-app-installation
-  const response = await octokit.request('GET /installation/repositories', {
+  const response: ListInstallationReposResponse = await octokit.request('GET /installation/repositories', {
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
     }
   });
 
-  const repos = response.data.repositories.map((repo) => {
-    return {
-      id: repo.id,
-      name: repo.name,
-      owner: repo.owner.login
-    };
-  });
+  const repos: GithubRepo[] = response.data.repositories.map((repo) => ({
+    id: repo.id.toString(), // Assuming your GithubRepo type expects a string for id
+    name: repo.name,
+    owner: repo.owner.login,
+    // Include any other fields your GithubRepo type may require
+  }));
 
   return { repos };
 };
-
 
 export async function getRepoDefaults(
   installationId: string,
   repo: GithubRepo
 ): Promise<string | null> {
-  const octokit = await getInstallationOctokit(installationId);
+  const octokit: Octokit = await getInstallationOctokit(installationId);
 
   try {
-    const repoSettings = await octokit.request('GET /repos/{owner}/{repo}', {
+    const repoSettings: GetRepoResponse = await octokit.request('GET /repos/{owner}/{repo}', {
       owner: repo.owner,
       repo: repo.name
     });
@@ -41,11 +41,7 @@ export async function getRepoDefaults(
     const defaultBranch = repoSettings.data.default_branch;
     console.log('defaultBranch:', defaultBranch);
 
-    if (!defaultBranch) {
-      return null;
-    }
-
-    return defaultBranch;
+    return defaultBranch || null;
   } catch (error) {
     console.error('Error fetching repository details:', error);
     return null;
