@@ -23,7 +23,6 @@
 	export let project: Project;
 	export let activeActivityId: string;
 
-	const modalId = 'delete-activity-modal';
 	let activities: Activity[];
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 
@@ -44,7 +43,7 @@
 			new Date(a.updatedAt ?? a.createdAt).getTime()
 	);
 
-	function deleteActivity(activity: Activity) {
+	function deleteActivity(activity: Activity, modalId: string) {
 		project.activities = Object.fromEntries(
 			Object.entries(project.activities).filter(([key, value]) => value.id !== activity.id)
 		);
@@ -55,10 +54,10 @@
 			return projectsMap;
 		});
 		project = { ...project };
-		closeModal();
+		closeModal(modalId);
 	}
 
-	function showModal() {
+	function showModal(modalId: string) {
 		const modal = document.getElementById(modalId) as HTMLDialogElement;
 		if (modal) {
 			modal.showModal();
@@ -66,7 +65,7 @@
 				'click',
 				(event) => {
 					if (event.target === modal) {
-						closeModal();
+						closeModal(modalId);
 					}
 				},
 				{ once: true }
@@ -74,7 +73,7 @@
 		}
 	}
 
-	function closeModal() {
+	function closeModal(modalId: string) {
 		const modal = document.getElementById(modalId) as HTMLDialogElement;
 		if (modal) {
 			modal.close();
@@ -149,16 +148,26 @@
 					</div>
 				{/if}
 				<div class="tooltip tooltip-left" data-tip="Delete activity">
-					<button on:click={showModal} class="btn btn-sm btn-square btn-ghost">
+					<button
+						on:click={() => {
+							showModal(activity.id);
+						}}
+						class="btn btn-sm btn-square btn-ghost"
+					>
 						<Trash />
 					</button>
-					<dialog id={modalId} class="modal">
+					<dialog id={activity.id} class="modal">
 						<div class="modal-box">
 							<h3 class="font-bold text-lg">Delete activity?</h3>
 							<p class="py-4">Deleted activities can NOT be restored. Continue?</p>
 							<div class="modal-action space-x-2">
-								<button class="btn" on:click={closeModal}>Cancel</button>
-								<button class="btn btn-error" on:click={() => deleteActivity(activity)}
+								<button
+									class="btn"
+									on:click={() => {
+										closeModal(activity.id);
+									}}>Cancel</button
+								>
+								<button class="btn btn-error" on:click={() => deleteActivity(activity, activity.id)}
 									>Delete</button
 								>
 							</div>
