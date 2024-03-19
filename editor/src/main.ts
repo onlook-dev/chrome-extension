@@ -11,6 +11,8 @@ class OnlookToolbar extends HTMLElement {
 		this.style.position = 'fixed';
 		this.style.zIndex = '9999';
 		this.setAttribute(DATA_ONLOOK_IGNORE, 'true');
+		this.setAttribute('popover', 'manual');
+
 		// Attaches a shadow DOM
 		const shadowRoot = this.attachShadow({ mode: 'open' });
 
@@ -33,7 +35,9 @@ class OnlookToolbar extends HTMLElement {
 		this.app.handleValueUpdate(name, oldValue, newValue);
 	}
 
-	connectedCallback() { }
+	connectedCallback() {
+		this.togglePopover(true);
+	}
 }
 
 function injectGlobalStyles() {

@@ -16,7 +16,7 @@ function addCustomElements() {
 }
 
 // Initialize MutationObserver
-const observer = new MutationObserver(function (mutations) {
+const toolbarMutationObserver = new MutationObserver(function (mutations) {
   mutations.forEach(function (mutation) {
     if (mutation.addedNodes.length || mutation.removedNodes.length) {
       // Rerun adding custom element if children are mutated
@@ -26,7 +26,7 @@ const observer = new MutationObserver(function (mutations) {
 });
 
 // Start observing the body for changes in children
-observer.observe(document.body, { childList: true });
+toolbarMutationObserver.observe(document.body, { childList: true });
 
 // Also run the function initially in case the DOM is already in the desired state
 addCustomElements();
