@@ -19,7 +19,7 @@
 
 	import GitHub from '~icons/mdi/github';
 	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
-	import GithubHistories from './GithubHistories.svelte';
+	import HistoriesView from './HistoriesView.svelte';
 
 	export let project: Project;
 	export let user: User;
@@ -31,11 +31,6 @@
 	);
 
 	let githubHistories: GithubHistory[] = [];
-	let githubConfigured = false;
-	let hasActivities = false;
-	let hasFilePaths = false;
-	let isLoading = false;
-	let publishError = false;
 	let publishErrorMessage = '';
 	let errorMessage = '';
 	let prLink: string | undefined;
@@ -44,6 +39,14 @@
 	let descriptionPlaceholder = 'Describe your changes here';
 	let title = '';
 	let description = '';
+
+	// States
+	let githubConfigured = false;
+	let hasActivities = false;
+	let hasFilePaths = false;
+	let isLoading = false;
+	let publishError = false;
+	let translatingChanges = true;
 
 	$: if (project?.installationId) {
 		githubService = new GithubService(project.installationId);
@@ -178,13 +181,19 @@
 				placeholder={descriptionPlaceholder}
 				maxlength={MAX_DESCRIPTION_LENGTH}
 			></textarea>
-			<div class="mt-6 ml-auto">
+			<div class="mt-6 flex items-center justify-end">
 				{#if errorMessage}
 					<p class="text-xs text-error">{errorMessage}</p>
 				{:else}
+					{#if translatingChanges}
+						<div class="flex flex-col mr-8 flex-grow space-y-2">
+							<progress class="progress progress-success w-2/3" value="2" max="3"></progress>
+							<p>2/3 changes translated</p>
+						</div>
+					{/if}
 					<button
 						class="btn btn-primary"
-						disabled={!hasActivities || isLoading}
+						disabled={!hasActivities || isLoading || translatingChanges}
 						on:click={handlePublishClick}
 					>
 						{#if isLoading}
@@ -198,7 +207,7 @@
 			</div>
 		</label>
 
-		<GithubHistories {githubHistories} {restoreActivities} />
+		<HistoriesView {githubHistories} {restoreActivities} />
 	{:else if !githubConfigured}
 		<p class="text-center text-lg">No github config found</p>
 	{:else if hasActivities && !hasFilePaths}
