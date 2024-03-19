@@ -15,9 +15,8 @@
   let previousTool: ToolName | undefined = ToolName.EDIT;
 
   onMount(() => {
-    dialogRef.togglePopover(false);
     dialogRef.togglePopover(true);
-    dialogRef.querySelector("::backdrop")?.remove();
+    dialogRef.show();
   });
 
   window.addEventListener("beforeunload", function (e) {
@@ -38,6 +37,12 @@
   }
 </script>
 
-<dialog bind:this={dialogRef} id={ONLOOK_TOOLBAR}>
+<dialog bind:this={dialogRef} popover="manual" id={ONLOOK_TOOLBAR}>
   <Toolbar bind:this={toolbarRef} />
 </dialog>
+
+<style>
+  #onlook-toolbar::backdrop {
+    visibility: hidden;
+  }
+</style>
