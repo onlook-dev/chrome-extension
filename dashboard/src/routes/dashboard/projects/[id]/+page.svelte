@@ -125,7 +125,7 @@
 					><Edit /> Edit project</button
 				>
 				<div class="dropdown dropdown-end">
-					<button class="btn btn-primary">Share</button>
+					<button class="btn btn-primary">Share and Publish</button>
 					<ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
 						<li tabindex="-1"><PublishToGithubModal {project} {user} /></li>
 						<li><ShareModal teamId={project.teamId} /></li>
