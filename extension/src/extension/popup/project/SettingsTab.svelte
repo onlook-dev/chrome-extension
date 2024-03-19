@@ -9,6 +9,7 @@
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { FirebaseService } from '$lib/storage'
 	import { FirestoreCollections } from '$shared/constants'
+	import { sendEditProjectRequest } from '$lib/utils/messaging'
 
 	export let project: Project
 	const modalId = 'delete-project-modal'
@@ -41,6 +42,7 @@
 		projectService
 			.delete(project.id)
 			.then(() => {
+				sendEditProjectRequest({ project, enable: false })
 				popupStateBucket.get().then(({ activeTeamId }) => {
 					// Remove project from team locally
 					getTeamById(activeTeamId).then(team => {
