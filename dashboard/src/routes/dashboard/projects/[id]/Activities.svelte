@@ -46,7 +46,7 @@
 
 	function deleteActivity(activity: Activity) {
 		project.activities = Object.fromEntries(
-			Object.entries(project.activities).filter(([key, value]) => key !== activity.selector)
+			Object.entries(project.activities).filter(([key, value]) => value.id !== activity.id)
 		);
 
 		projectService.post(project);
