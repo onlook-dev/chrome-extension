@@ -1,4 +1,4 @@
-import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ID } from "$lib/constants";
+import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ID, ONLOOK_TOOLBAR } from "$lib/constants";
 
 interface Rect {
     element: HTMLElement;
@@ -92,8 +92,9 @@ export class OverlayManager {
         this.clickedRects = [];
         this.parentRect = new ParentRect();
 
-        document.body.appendChild(this.hoverRect.element)
-        document.body.appendChild(this.parentRect.element)
+        const onlookToolbar = document.querySelector(ONLOOK_TOOLBAR)
+        onlookToolbar.appendChild(this.hoverRect.element)
+        onlookToolbar.appendChild(this.parentRect.element)
     }
 
     clear = () => {

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { ToolName } from "$lib/tools";
   import { historyStore } from "$lib/tools/edit/history";
   import "./app.pcss";
@@ -10,14 +9,8 @@
     ONLOOK_TOOLBAR,
   } from "./lib/constants";
 
-  let dialogRef: HTMLDialogElement;
   let toolbarRef: Toolbar;
   let previousTool: ToolName | undefined = ToolName.EDIT;
-
-  onMount(() => {
-    dialogRef.togglePopover(true);
-    dialogRef.show();
-  });
 
   window.addEventListener("beforeunload", function (e) {
     // If changes in page, prompt user before reload
@@ -37,12 +30,6 @@
   }
 </script>
 
-<dialog bind:this={dialogRef} popover="manual" id={ONLOOK_TOOLBAR}>
+<div id={ONLOOK_TOOLBAR}>
   <Toolbar bind:this={toolbarRef} />
-</dialog>
-
-<style>
-  #onlook-toolbar::backdrop {
-    visibility: hidden;
-  }
-</style>
+</div>

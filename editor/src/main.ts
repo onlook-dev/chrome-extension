@@ -8,8 +8,14 @@ class OnlookToolbar extends HTMLElement {
 	app: any;
 	constructor() {
 		super();
-		this.style.position = 'sticky';
+		this.style.position = 'fixed';
 		this.style.zIndex = '2147483647';
+		this.style.backgroundColor = 'transparent';
+		this.style.pointerEvents = 'none';
+		this.style.width = '100%';
+		this.style.height = '100%';
+		this.popover = 'manual';
+
 		this.setAttribute(DATA_ONLOOK_IGNORE, 'true');
 
 		// Attaches a shadow DOM
@@ -33,11 +39,18 @@ class OnlookToolbar extends HTMLElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		this.app.handleValueUpdate(name, oldValue, newValue);
 	}
+
+	connectedCallback() {
+		this.togglePopover(true);
+	}
 }
 
 function injectGlobalStyles() {
 	const style = document.createElement('style');
 	style.textContent = `
+						${ONLOOK_TOOLBAR}::backdrop {
+                outline: 2px solid #00ff94;
+            }
             .${ONLOOK_EDITABLE} {
                 outline: 2px solid #00ff94;
             }
