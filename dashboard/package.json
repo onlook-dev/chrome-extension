@@ -43,6 +43,8 @@
   },
   "type": "module",
   "dependencies": {
+    "@langchain/core": "^0.1.49",
+    "@langchain/openai": "^0.0.22",
     "@octokit/auth-app": "^6.0.3",
     "@octokit/core": "^5.1.0",
     "@octokit/types": "^12.6.0",
@@ -52,9 +54,9 @@
     "firebase": "^10.7.1",
     "highlight.js": "^11.9.0",
     "nanoid": "^5.0.4",
-    "openai": "^4.28.0",
     "stripe": "^14.12.0",
-    "theme-change": "^2.5.0"
+    "theme-change": "^2.5.0",
+    "zod-to-json-schema": "^3.22.4"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.6.1"
