@@ -42,8 +42,10 @@ export class SelectorEngine {
     const target = deepElementFromPoint(e.clientX, e.clientY);
     if (isOffBounds(target)) return;
 
-    e.preventDefault();
-    e.stopPropagation();
+    if (!e.metaKey) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
 
     if (this.editing) return;
 
