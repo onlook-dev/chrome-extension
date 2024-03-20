@@ -37,7 +37,7 @@
 		project = await projectService.get(projectId);
 		project.installationId = installationId;
 
-		projectService.post(project);
+		await projectService.post(project);
 		openProject();
 	});
 
