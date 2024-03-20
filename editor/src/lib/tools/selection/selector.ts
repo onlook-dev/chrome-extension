@@ -23,13 +23,15 @@ export class SelectorEngine {
     return get(this.editingStore);
   }
 
-  handleMouseOver = (e) => {
+  handleMouseOver = (e: MouseEvent) => {
     const target = deepElementFromPoint(e.clientX, e.clientY);
     if (isOffBounds(target)) return;
     if (this.editing) return;
 
-    e.preventDefault();
-    e.stopPropagation();
+    if (!e.metaKey) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
 
     this.hoveredStore.set(target);
   }
@@ -42,8 +44,10 @@ export class SelectorEngine {
     const target = deepElementFromPoint(e.clientX, e.clientY);
     if (isOffBounds(target)) return;
 
-    e.preventDefault();
-    e.stopPropagation();
+    if (!e.metaKey) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
 
     if (this.editing) return;
 
