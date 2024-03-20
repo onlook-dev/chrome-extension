@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@iconify/json": "^2.2.164",
+    "@onlook/svelte": "^1.1.0",
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-auto": "^3.0.0",
     "@sveltejs/kit": "^2.0.0",
@@ -25,6 +26,7 @@
     "@typescript-eslint/parser": "^6.0.0",
     "@zerodevx/svelte-toast": "^0.9.5",
     "autoprefixer": "^10.4.16",
+    "bun-types": "^1.0.33",
     "daisyui": "latest",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
@@ -38,8 +40,7 @@
     "tslib": "^2.4.1",
     "typescript": "^5.0.0",
     "unplugin-icons": "^0.18.1",
-    "vite": "^5.0.3",
-    "@onlook/svelte": "^1.1.0"
+    "vite": "^5.0.3"
   },
   "type": "module",
   "dependencies": {
