@@ -1,11 +1,6 @@
-import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 import { CustomOctokit } from "./octokit";
 import type { TreeItem } from '$shared/models/github';
 import type { FileContentData } from '$shared/models/translation';
-
-type GetRefResponse = RestEndpointMethodTypes["git"]["getRef"]["response"];
-type CreateTreeResponse = RestEndpointMethodTypes["git"]["createTree"]["response"];
-type CreateCommitResponse = RestEndpointMethodTypes["git"]["createCommit"]["response"];
 
 export async function createCommit(
 	octokit: CustomOctokit,
@@ -27,7 +22,7 @@ export async function createCommit(
 		}));
 
 		// Getting the SHA of the latest commit on the branch
-		const latestCommit: GetRefResponse = await octokit.rest.git.getRef({
+		const latestCommit = await octokit.rest.git.getRef({
 			owner,
 			repo,
 			ref: `heads/${branch}`
@@ -36,7 +31,7 @@ export async function createCommit(
 		const latestCommitSha = latestCommit.data.object.sha;
 
 		// Creating a new tree in the repository
-		const treeResponse: CreateTreeResponse = await octokit.rest.git.createTree({
+		const treeResponse = await octokit.rest.git.createTree({
 			owner,
 			repo,
 			base_tree: latestCommitSha,
@@ -44,7 +39,7 @@ export async function createCommit(
 		});
 
 		// Creating the commit pointing to the new tree
-		const commitResponse: CreateCommitResponse = await octokit.rest.git.createCommit({
+		const commitResponse = await octokit.rest.git.createCommit({
 			owner,
 			repo,
 			message,

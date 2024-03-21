@@ -1,7 +1,4 @@
 import { CustomOctokit } from "./octokit";
-import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
-
-type GetRefResponse = RestEndpointMethodTypes["git"]["getRef"]["response"];
 
 async function branchExists(
   octokit: CustomOctokit,
@@ -33,7 +30,7 @@ export async function createNewBranch(
   newBranch: string
 ) {
   // Get the SHA of the default branch's latest commit
-  const baseBranchResponse: GetRefResponse = await octokit.rest.git.getRef({
+  const baseBranchResponse = await octokit.rest.git.getRef({
     owner,
     repo,
     ref: `heads/${baseBranch}`
@@ -42,7 +39,7 @@ export async function createNewBranch(
   const sha = baseBranchResponse.data.object.sha;
 
   // Create the new branch with the latest commit SHA of the base branch
-  await octokit.request(`POST /repos/{owner}/{repo}/git/refs`, {
+  await octokit.rest.git.createRef({
     owner,
     repo,
     ref: `refs/heads/${newBranch}`,

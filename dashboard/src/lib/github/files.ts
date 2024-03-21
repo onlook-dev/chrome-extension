@@ -1,8 +1,5 @@
 import type { FileContentData } from "$shared/models/translation";
-import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 import type { CustomOctokit } from './octokit';
-
-type GetContentsResponse = RestEndpointMethodTypes["repos"]["getContent"]["response"];
 
 export async function fetchFileFromPath(
   octokit: CustomOctokit,
@@ -11,7 +8,7 @@ export async function fetchFileFromPath(
   branch: string,
   path: string): Promise<FileContentData | undefined> {
   try {
-    const contentResponse: GetContentsResponse = await octokit.rest.repos.getContent({
+    const contentResponse = await octokit.rest.repos.getContent({
       owner,
       repo,
       ref: branch,
