@@ -11,7 +11,6 @@
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { FirebaseService } from '$lib/storage';
-	import { GithubService } from '$lib/github';
 
 	import type { Project } from '$shared/models/project';
 	import type { GithubHistory } from '$shared/models/github';
@@ -20,11 +19,11 @@
 	import GitHub from '~icons/mdi/github';
 	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
 	import HistoriesView from './HistoriesView.svelte';
+	import { ProjectPubllisher } from '$lib/publish';
 
 	export let project: Project;
 	export let user: User;
 
-	let githubService: GithubService;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	const githubHistoryService = new FirebaseService<GithubHistory>(
 		FirestoreCollections.GITHUB_HISTORY
@@ -49,7 +48,6 @@
 	let translatingChanges = true;
 
 	$: if (project?.installationId) {
-		githubService = new GithubService(project.installationId);
 		githubConfigured = true;
 	}
 
@@ -82,6 +80,7 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
+			const projectPublisher = new ProjectPubllisher(project, user);
 			prLink = await githubService.publishProjectToGitHub(project, title, description, user);
 		} catch (error) {
 			console.error('Error publishing changes:', error);

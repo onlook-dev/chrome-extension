@@ -10,16 +10,11 @@ import { z } from "zod";
  */
 
 class TranslationTool extends StructuredTool {
-  schema = z.object({
-    code: z.string().describe("The code chunk to modify."),
-    css: z.string().describe("The CSS properties to apply to the code."),
-    framework: z.string().describe("The suffix which indicates the framewor of the code"),
-  });
-
   name = "modify_code";
-
   description = "A tool to modify code based on CSS properties.";
-
+  schema = z.object({
+    code: z.string().describe("The modified code chunk with the style changes implemented."),
+  });
   async _call(params: z.infer<typeof this.schema>) {
     return "The answer";
   }

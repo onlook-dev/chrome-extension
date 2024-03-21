@@ -30,7 +30,7 @@ class TranslationService {
   }
 
   private getPromptService() {
-    const template = `Given the following code chunk and new CSS properties, return the modified code chunk with the CSS changes implemented.Adapt to the style of the code as much as possible, use TailwindCss when appropriate.\n\nCSS: {${this.inputs.css}}\n\nCode: {${this.inputs.code}}\n\nFramework: {${this.inputs.framework}}`;
+    const template = `Given the following code chunk and new style changes in CSS, return the modified code chunk with the style changes implemented. Adapt to the style of the code as much as possible, use TailwindCss when appropriate.\n\nCSS: {${this.inputs.css}}\n\nCode: {${this.inputs.code}}\n\nFramework: {${this.inputs.framework}}`;
     const service = new GenericPromptService(template, this.inputs);
     return service;
   }

@@ -5,17 +5,6 @@ import { Endpoints } from "@octokit/types";
 
 type GetContentsResponse = Endpoints["GET /repos/{owner}/{repo}/contents/{path}"]["response"];
 
-export function getPathInfo(activityPath: string, rootPath: string): PathInfo {
-  const [filePath, startLine, endLine] = activityPath.split(':');
-  return {
-    path: rootPath === '.' || rootPath === '' || rootPath === '/'
-      ? `${filePath}`
-      : `${rootPath}/${filePath}`,
-    startLine: parseInt(startLine),
-    endLine: parseInt(endLine),
-  };
-}
-
 export async function fetchFileFromPath(
   octokit: Octokit,
   owner: string,
