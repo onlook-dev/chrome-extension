@@ -71,9 +71,10 @@ export class ProjectPublisher {
      3. Create or get pull request
      4. Return pull request url
    */
-    const branchName = `onlook-${this.project.id}`;
-    await this.githubService.createOrGetBranch(branchName);
+    const projectBranch = `onlook-${this.project.id}`;
+    await this.githubService.createOrGetBranch(projectBranch);
     await this.githubService.createCommitFromFiles(
+      projectBranch,
       this.user.name,
       this.user.email,
       title,
@@ -82,7 +83,7 @@ export class ProjectPublisher {
     return await this.githubService.createOrGetPullRequest(
       title,
       description,
-      branchName
+      projectBranch
     );
   }
 

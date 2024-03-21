@@ -14,7 +14,8 @@
     "install": "cd dashboard && npm install && cd ../extension && npm install && cd ../editor && npm install",
     "build": "cd editor && npm run build:cpy && cd ../extension && npm run build",
     "docker": "cd hosted && npm run build",
-    "check": "cd dashboard && npm run check && cd ../editor && npm run check && cd ../extension && npm run check "
+    "check": "cd dashboard && npm run check && cd ../editor && npm run check && cd ../extension && npm run check",
+    "test": "cd dashboard && bun test && cd ../editor && bun test && cd ../extension && bun test"
   },
   "repository": {
     "type": "git",

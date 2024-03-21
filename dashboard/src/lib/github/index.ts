@@ -36,6 +36,7 @@ export class GithubService {
   }
 
   createCommitFromFiles(
+    branch: string,
     authorName: string,
     authorEmail: string,
     message: string,
@@ -45,7 +46,7 @@ export class GithubService {
       this.octokit,
       this.owner,
       this.repo,
-      this.baseBranch,
+      branch,
       authorName,
       authorEmail,
       message,
