@@ -1,3 +1,5 @@
+import { Activity } from "./activity";
+
 export interface FileContentData {
   path: string;
   content: string;
@@ -15,3 +17,9 @@ export type TranslationInput = {
   css: string;
   code: string;
 }
+
+export interface ProcessedActivity {
+  activity: Activity;
+  pathInfo: PathInfo;
+}
+

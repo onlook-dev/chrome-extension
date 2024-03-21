@@ -4,7 +4,7 @@ import { JsonOutputToolsParser } from "@langchain/core/output_parsers/openai_too
 import { Runnable } from "@langchain/core/runnables";
 import { GenericPromptService } from "./prompt";
 
-class TranslationService {
+export class TranslationService {
   private openAi: Runnable;
   private promptService: GenericPromptService<any>;
 
@@ -38,7 +38,6 @@ class TranslationService {
   async getTranslation(variables: typeof this.inputs) {
     const prompt = await this.promptService.getPrompt(variables);
     const response = await this.openAi.invoke(prompt);
-    console.log(response);
     return response;
   }
 }

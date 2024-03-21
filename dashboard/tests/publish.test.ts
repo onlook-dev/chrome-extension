@@ -2,7 +2,8 @@
 import { expect, test, describe } from 'bun:test';
 import { filterActivitiesWithoutPath } from '$lib/publish/helpers';
 
-describe('ProjectPublisher', () => {
+describe('ProjectPublisher helpers', () => {
+
   test('should filter activities correctly', () => {
     // Setup
     const activities = {
