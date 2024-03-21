@@ -23,7 +23,7 @@ export class TranslationService {
   private getModel() {
     return new ChatOpenAI({
       openAIApiKey: openAiConfig.apiKey,
-      modelName: "gpt-3.5-turbo-0125",
+      modelName: "gpt-4-0125-preview",
       temperature: 0,
     }).bind({
       tools: [translationTool],
@@ -34,8 +34,9 @@ export class TranslationService {
     }));
   }
 
+  // TODO: Add examples
   private getPromptService() {
-    const template = `Given the following code chunk and new style changes in CSS, return the modified code chunk with the style changes implemented. Adapt to the style of the code as much as possible, use TailwindCss when appropriate.\n\nCSS: {${this.inputs.css}}\n\nCode: {${this.inputs.code}}\n\nFramework: {${this.inputs.framework}}`;
+    const template = `Given code chunk, framework, and new style changes in CSS, return the code chunk updated the style changes implemented. Adapt to the style of the code as much as possible, use TailwindCSS to update class or className when appropriate. Do not make unecessary changes like closing the tag, leave the rest as is.\n\nCSS: {${this.inputs.css}}\n\nCode: {${this.inputs.code}}\n\nFramework: {${this.inputs.framework}}`;
     const service = new GenericPromptService(template, this.inputs);
     return service;
   }
