@@ -15,13 +15,10 @@ export class ProjectPublisher {
 
   constructor(private project: Project, private user: User) {
     if (!this.project.installationId) {
-      console.error('Project has no installation ID');
       throw 'Publish failed: Project has no installation ID';
     }
 
     if (!this.project.githubSettings) {
-
-      console.error('No github settings found for this project');
       throw 'Publish failed: No github settings found for this project';
     }
 
@@ -72,20 +69,21 @@ export class ProjectPublisher {
      1. Create or get branch
      2. Add commit to branch
      3. Create or get pull request
+     4. Return pull request url
    */
-
     const branchName = `onlook-${this.project.id}`;
     await this.githubService.createOrGetBranch(branchName);
-
-    const commitId = await this.githubService.createCommitFromFiles(
+    await this.githubService.createCommitFromFiles(
       this.user.name,
       this.user.email,
       title,
-      Object.values(this.filesMap));
-
-
-    const pullRequestUrl = ''
-    return pullRequestUrl
+      Array.from(this.filesMap.values())
+    );
+    return await this.githubService.createOrGetPullRequest(
+      title,
+      description,
+      branchName
+    );
   }
 
   async updateFileWithActivity(processed: ProcessedActivity, fileContent: FileContentData) {
@@ -121,12 +119,11 @@ export class ProjectPublisher {
     */
 
     let fileContent = this.filesMap.get(processed.pathInfo.path);
-    // If item in cache, return it
     if (fileContent) return fileContent;
 
     fileContent = await this.githubService.fetchFileFromPath(processed.pathInfo.path);
-
     if (!fileContent) throw new Error(`File content not found for path: ${processed.pathInfo.path}`);
+
     this.filesMap.set(processed.pathInfo.path, fileContent);
     return fileContent;
   }

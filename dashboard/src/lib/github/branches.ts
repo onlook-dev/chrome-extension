@@ -54,14 +54,10 @@ export async function createOrGetBranch(
   baseBranch: string,
   newBranch: string
 ): Promise<void> {
-  try {
-    // Check if the new branch already exists
-    const exists = await branchExists(octokit, owner, repo, newBranch);
-    if (exists) return;
+  // Check if the new branch already exists
+  const exists = await branchExists(octokit, owner, repo, newBranch);
+  if (exists) return;
 
-    // Create the new branch
-    await createNewBranch(octokit, owner, repo, baseBranch, newBranch);
-  } catch (e) {
-    throw `Failed to create or get branch. ${e}`;
-  }
+  // Create the new branch
+  await createNewBranch(octokit, owner, repo, baseBranch, newBranch);
 }

@@ -46,7 +46,6 @@
 				repositories = repos;
 				filteredRepositories = repos;
 				loadingRepos = false;
-				console.log('Successfully got repositories');
 			})
 			.catch((error) => {
 				console.error('Error fetching repositories:', error);

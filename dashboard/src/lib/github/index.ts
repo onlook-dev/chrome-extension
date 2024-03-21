@@ -1,10 +1,9 @@
-import { getInstallationOctokit } from './installation';
 import { fetchFileFromPath } from './files';
 import { createOrGetBranch } from "./branches";
 import { FileContentData } from "$shared/models/translation";
 import { createCommit } from "./commits";
-import { CustomOctokit } from "./octokit";
-
+import { CustomOctokit, getOctokitByInstallationId } from "./octokit";
+import { createOrGetPullRequest } from "./pullRequests";
 export class GithubService {
   octokit: CustomOctokit;
 
@@ -14,7 +13,7 @@ export class GithubService {
     private repo: string,
     private baseBranch: string,
   ) {
-    this.octokit = getInstallationOctokit(this.installationId);
+    this.octokit = getOctokitByInstallationId(this.installationId);
   }
 
   fetchFileFromPath(path: string) {
@@ -51,6 +50,22 @@ export class GithubService {
       authorEmail,
       message,
       files
+    )
+  }
+
+  createOrGetPullRequest(
+    title: string,
+    description: string,
+    newBranch: string
+  ) {
+    return createOrGetPullRequest(
+      this.octokit,
+      this.owner,
+      this.repo,
+      this.baseBranch,
+      title,
+      description,
+      newBranch
     )
   }
 }
