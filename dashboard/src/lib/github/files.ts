@@ -1,23 +1,21 @@
-import type { Octokit } from "@octokit/core";
-import type { FileContentData, PathInfo } from "$shared/models/translation";
+import type { FileContentData } from "$shared/models/translation";
+import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
+import type { CustomOctokit } from './octokit';
 
-import { Endpoints } from "@octokit/types";
-
-type GetContentsResponse = Endpoints["GET /repos/{owner}/{repo}/contents/{path}"]["response"];
+type GetContentsResponse = RestEndpointMethodTypes["repos"]["getContent"]["response"];
 
 export async function fetchFileFromPath(
-  octokit: Octokit,
+  octokit: CustomOctokit,
   owner: string,
   repo: string,
   branch: string,
   path: string): Promise<FileContentData | undefined> {
   try {
-    // @ts-ignore - status is wrong type
-    const contentResponse: GetContentsResponse = await octokit.request(`GET /repos/{owner}/{repo}/contents/{path}?ref={branch}`, {
+    const contentResponse: GetContentsResponse = await octokit.rest.repos.getContent({
       owner,
       repo,
+      ref: branch,
       path,
-      branch
     });
 
     if ('content' in contentResponse.data && contentResponse.data.content) {

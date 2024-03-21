@@ -1,11 +1,11 @@
-import type { Octokit } from "@octokit/core";
-import { Endpoints } from "@octokit/types";
+import type { CustomOctokit } from "./octokit";
+import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
-type ListPullsResponse = Endpoints["GET /repos/{owner}/{repo}/pulls"]["response"];
-type CreatePullResponse = Endpoints["POST /repos/{owner}/{repo}/pulls"]["response"];
+type CreatePullResponse = RestEndpointMethodTypes["pulls"]["create"]["response"];
+type ListPullsResponse = RestEndpointMethodTypes["pulls"]["list"]["response"];
 
 export async function createOrGetPullRequest(
-  octokit: Octokit,
+  octokit: CustomOctokit,
   owner: string,
   repositoryName: string,
   baseBranch: string,
@@ -14,7 +14,7 @@ export async function createOrGetPullRequest(
   newBranch: string,
 ): Promise<{ pullRequestNumber: number, pullRequestUrl: string }> {
   // Check if a PR already exists
-  const existingPRs: ListPullsResponse = await octokit.request(`GET /repos/{owner}/{repo}/pulls`, {
+  const existingPRs: ListPullsResponse = await octokit.rest.pulls.list({
     owner,
     repo: repositoryName,
     head: `${owner}:${newBranch}`,
@@ -30,7 +30,7 @@ export async function createOrGetPullRequest(
     pullRequestUrl = existingPRs.data[0].html_url;
   } else {
     // Create a new PR
-    const pullRequest: CreatePullResponse = await octokit.request(`POST /repos/{owner}/{repo}/pulls`, {
+    const pullRequest: CreatePullResponse = await octokit.rest.pulls.create({
       owner,
       repo: repositoryName,
       title,

@@ -1,16 +1,16 @@
-import type { Octokit } from '@octokit/core';
-import type { GithubRepo } from "$shared/models/github";
+import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 import { getInstallationOctokit } from "./installation";
-import { Endpoints } from '@octokit/types';
+import type { GithubRepo } from "$shared/models/github";
+import type { CustomOctokit } from "./octokit";
 
-type ListInstallationReposResponse = Endpoints["GET /installation/repositories"]["response"];
-type GetRepoResponse = Endpoints["GET /repos/{owner}/{repo}"]["response"];
+type ListInstallationReposResponse = RestEndpointMethodTypes["apps"]["listReposAccessibleToInstallation"]["response"];
+type GetRepoResponse = RestEndpointMethodTypes["repos"]["get"]["response"];
 
 export const getReposByInstallation = async (installationId: string): Promise<{ repos: GithubRepo[] }> => {
-  const octokit: Octokit = await getInstallationOctokit(installationId);
-  console.log('Getting repositories...');
+  const octokit: CustomOctokit = await getInstallationOctokit(installationId);
 
-  const response: ListInstallationReposResponse = await octokit.request('GET /installation/repositories', {
+  const response: ListInstallationReposResponse = await octokit.rest.apps.listReposAccessibleToInstallation({
+    installation_id: parseInt(installationId),
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
     }
@@ -30,10 +30,10 @@ export async function getRepoDefaults(
   installationId: string,
   repo: GithubRepo
 ): Promise<string | null> {
-  const octokit: Octokit = await getInstallationOctokit(installationId);
+  const octokit: CustomOctokit = await getInstallationOctokit(installationId);
 
   try {
-    const repoSettings: GetRepoResponse = await octokit.request('GET /repos/{owner}/{repo}', {
+    const repoSettings: GetRepoResponse = await octokit.rest.repos.get({
       owner: repo.owner,
       repo: repo.name
     });

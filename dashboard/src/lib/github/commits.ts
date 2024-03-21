@@ -1,15 +1,14 @@
-import type { Octokit } from '@octokit/core';
+import { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
+import { CustomOctokit } from "./octokit";
 import type { TreeItem } from '$shared/models/github';
 import type { FileContentData } from '$shared/models/translation';
 
-import { Endpoints } from '@octokit/types';
-
-type GetRefResponse = Endpoints["GET /repos/{owner}/{repo}/git/ref/{ref}"]["response"];
-type CreateTreeResponse = Endpoints["POST /repos/{owner}/{repo}/git/trees"]["response"];
-type CreateCommitResponse = Endpoints["POST /repos/{owner}/{repo}/git/commits"]["response"];
+type GetRefResponse = RestEndpointMethodTypes["git"]["getRef"]["response"];
+type CreateTreeResponse = RestEndpointMethodTypes["git"]["createTree"]["response"];
+type CreateCommitResponse = RestEndpointMethodTypes["git"]["createCommit"]["response"];
 
 export async function createCommit(
-	octokit: Octokit,
+	octokit: CustomOctokit,
 	owner: string,
 	repo: string,
 	branch: string,
@@ -28,23 +27,24 @@ export async function createCommit(
 		}));
 
 		// Getting the SHA of the latest commit on the branch
-		const latestCommit: GetRefResponse = await octokit.request('GET /repos/{owner}/{repo}/git/ref/{ref}', {
+		const latestCommit: GetRefResponse = await octokit.rest.git.getRef({
 			owner,
 			repo,
 			ref: `heads/${branch}`
 		});
+
 		const latestCommitSha = latestCommit.data.object.sha;
 
 		// Creating a new tree in the repository
-		const treeResponse: CreateTreeResponse = await octokit.request('POST /repos/{owner}/{repo}/git/trees', {
+		const treeResponse: CreateTreeResponse = await octokit.rest.git.createTree({
 			owner,
 			repo,
-			tree: trees,
-			base_tree: latestCommitSha // Use the latest commit SHA as the base tree
+			base_tree: latestCommitSha,
+			tree: trees
 		});
 
 		// Creating the commit pointing to the new tree
-		const commitResponse: CreateCommitResponse = await octokit.request('POST /repos/{owner}/{repo}/git/commits', {
+		const commitResponse: CreateCommitResponse = await octokit.rest.git.createCommit({
 			owner,
 			repo,
 			message,
@@ -52,20 +52,16 @@ export async function createCommit(
 			parents: [latestCommitSha],
 			author: {
 				name: authorName,
-				email: authorEmail,
-				date: new Date().toISOString()
+				email: authorEmail
 			},
-			headers: {
-				'X-GitHub-Api-Version': '2022-11-28'
-			}
 		});
 
 		// Updating the reference of the branch to point to the new commit
-		await octokit.request('PATCH /repos/{owner}/{repo}/git/refs/heads/{branch}', {
+		await octokit.rest.git.updateRef({
 			owner,
 			repo,
-			sha: commitResponse.data.sha,
-			branch
+			ref: `heads/${branch}`,
+			sha: commitResponse.data.sha
 		});
 
 		return commitResponse.data.sha;

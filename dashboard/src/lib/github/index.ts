@@ -1,12 +1,12 @@
-import { Octokit } from "@octokit/core";
 import { getInstallationOctokit } from './installation';
 import { fetchFileFromPath } from './files';
 import { createOrGetBranch } from "./branches";
 import { FileContentData } from "$shared/models/translation";
 import { createCommit } from "./commits";
+import { CustomOctokit } from "./octokit";
 
 export class GithubService {
-  octokit: Octokit;
+  octokit: CustomOctokit;
 
   constructor(
     private installationId: string,

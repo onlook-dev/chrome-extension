@@ -76,6 +76,7 @@ export class ProjectPublisher {
 
     const branchName = `onlook-${this.project.id}`;
     await this.githubService.createOrGetBranch(branchName);
+
     const commitId = await this.githubService.createCommitFromFiles(
       this.user.name,
       this.user.email,
