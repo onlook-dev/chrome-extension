@@ -17,6 +17,15 @@ export class GithubService {
     this.octokit = getInstallationOctokit(this.installationId);
   }
 
+  fetchFileFromPath(
+    owner: string,
+    repo: string,
+    branch: string,
+    path: string
+  ) {
+    return fetchFileFromPath(this.octokit, owner, repo, branch, path);
+  }
+
   // async getFileMapFromActivities(
   //   octokit: Octokit,
   //   owner: string,

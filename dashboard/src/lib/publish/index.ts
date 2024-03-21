@@ -29,66 +29,70 @@ export class ProjectPubllisher {
     this.githubSettings = this.project.githubSettings;
   }
 
-  async publishFilesToGitHub(
-    project: Project,
-    title: string,
-    description: string,
-    files: FileContentData[],
-  ): Promise<string> {
+  async publish() {
 
-    if (!project?.installationId) {
-      console.error('Project has no installation ID');
-      throw 'Export failed: Project has no installation ID';
-    }
-
-    if (!project.githubSettings) {
-      console.error('No github settings found for this project');
-      throw 'Export failed: No github settings found for this project';
-    }
-
-    const githubSettings = project.githubSettings;
-
-    console.log('prepared new commit');
-
-    const branchName = `onlook-${project.id}`;
-    const branchFound = await createOrGetBranch(
-      this.octokit,
-      githubSettings.owner,
-      githubSettings.repositoryName,
-      githubSettings.baseBranch,
-      branchName
-    );
-
-    if (!branchFound) {
-      console.error('Failed to create or fetch branch');
-      throw 'Export failed: Failed to create or fetch branch';
-    }
-
-    const commitId = await createCommit(
-      this.octokit,
-      githubSettings.owner,
-      githubSettings.repositoryName,
-      branchName,
-      files,
-      user,
-      title
-    );
-
-    console.log('created new commit');
-
-    const { pullRequestNumber, pullRequestUrl } = await createOrGetPullRequest(
-      this.octokit,
-      githubSettings.owner,
-      githubSettings.repositoryName,
-      githubSettings.baseBranch,
-      title,
-      description,
-      branchName
-    );
-
-    console.log('created new pr: ', pullRequestUrl);
-    return pullRequestUrl;
   }
+
+  // async publishFilesToGitHub(
+  //   project: Project,
+  //   title: string,
+  //   description: string,
+  //   files: FileContentData[],
+  // ): Promise<string> {
+
+  //   if (!project?.installationId) {
+  //     console.error('Project has no installation ID');
+  //     throw 'Export failed: Project has no installation ID';
+  //   }
+
+  //   if (!project.githubSettings) {
+  //     console.error('No github settings found for this project');
+  //     throw 'Export failed: No github settings found for this project';
+  //   }
+
+  //   const githubSettings = project.githubSettings;
+
+  //   console.log('prepared new commit');
+
+  //   const branchName = `onlook-${project.id}`;
+  //   const branchFound = await createOrGetBranch(
+  //     this.octokit,
+  //     githubSettings.owner,
+  //     githubSettings.repositoryName,
+  //     githubSettings.baseBranch,
+  //     branchName
+  //   );
+
+  //   if (!branchFound) {
+  //     console.error('Failed to create or fetch branch');
+  //     throw 'Export failed: Failed to create or fetch branch';
+  //   }
+
+  //   const commitId = await createCommit(
+  //     this.octokit,
+  //     githubSettings.owner,
+  //     githubSettings.repositoryName,
+  //     branchName,
+  //     files,
+  //     user,
+  //     title
+  //   );
+
+  //   console.log('created new commit');
+
+  //   const { pullRequestNumber, pullRequestUrl } = await createOrGetPullRequest(
+  //     this.octokit,
+  //     githubSettings.owner,
+  //     githubSettings.repositoryName,
+  //     githubSettings.baseBranch,
+  //     title,
+  //     description,
+  //     branchName
+  //   );
+
+  //   console.log('created new pr: ', pullRequestUrl);
+  //   return pullRequestUrl;
+  // }
 
   async getFileFromActivity(activity: Activity) {
     if (!activity.path) {
@@ -97,5 +101,18 @@ export class ProjectPubllisher {
     }
 
     const pathInfo = getPathInfo(activity.path, this.githubSettings.rootPath);
+    if (!this.filesMap.has(pathInfo.path)) {
+      const fileContentData = await this.githubService.fetchFileFromPath(
+        this.githubSettings.owner,
+        this.githubSettings.repositoryName,
+        this.githubSettings.baseBranch,
+        pathInfo.path
+      );
+      if (!fileContentData) {
+        console.error('File content not found for path: ', pathInfo.path);
+      } else {
+        this.filesMap.set(pathInfo.path, fileContentData);
+      }
+    }
   }
 }
