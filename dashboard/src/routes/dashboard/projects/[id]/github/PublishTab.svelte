@@ -32,7 +32,6 @@
 	let githubHistories: GithubHistory[] = [];
 	let publishErrorMessage = '';
 	let errorMessage = '';
-	let prLink: string | undefined;
 
 	let titlePlaceholder = 'Updated site using Onlook';
 	let descriptionPlaceholder = 'Describe your changes here';
@@ -81,53 +80,53 @@
 		isLoading = true;
 		try {
 			const projectPublisher = new ProjectPublisher(project, user);
-			prLink = await projectPublisher.publish(title, description);
+			let pullRequestUrl = await projectPublisher.publish(title, description);
+			if (!pullRequestUrl) throw new Error('No pull request url returned from GitHub');
+			handlePublishedSucceeded(pullRequestUrl);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
 			publishErrorMessage = `Error publishing changes: ${JSON.stringify(error)}`;
 			publishError = true;
 		} finally {
 			isLoading = false;
-			if (!prLink) {
-				publishError = true;
-				return;
-			}
-
-			const githubHistory: GithubHistory = {
-				id: nanoid(),
-				title,
-				description,
-				userId: user.id,
-				projectId: project.id,
-				createdAt: new Date().toISOString(),
-				pullRequestUrl: prLink,
-				activityHistory: project.activities
-			};
-
-			// Reset activites, they are archived in github history
-			title = '';
-			description = '';
-			if (!project.githubHistoryIds) {
-				project.githubHistoryIds = [];
-			}
-			project.githubHistoryIds.push(githubHistory.id);
-			githubHistories = [...githubHistories, githubHistory];
-			toast.push('Changes published to GitHub! 🎉', {
-				theme: {
-					'--toastColor': 'mintcream',
-					'--toastBackground': 'rgba(72,187,120,0.9)',
-					'--toastBarBackground': '#2F855A'
-				}
-			});
-
-			// Save project and github history
-			githubHistoryService.post(githubHistory);
-			projectService.post(project);
-			projectsMapStore.update((projectsMap) => {
-				projectsMap.set(project.id, project);
-				return projectsMap;
-			});
 		}
+	}
+
+	function handlePublishedSucceeded(pullRequestUrl: string) {
+		const githubHistory: GithubHistory = {
+			id: nanoid(),
+			title,
+			description,
+			userId: user.id,
+			projectId: project.id,
+			createdAt: new Date().toISOString(),
+			pullRequestUrl,
+			activityHistory: project.activities
+		};
+
+		// Reset activites, they are archived in github history
+		title = '';
+		description = '';
+		if (!project.githubHistoryIds) {
+			project.githubHistoryIds = [];
+		}
+		project.githubHistoryIds.push(githubHistory.id);
+		githubHistories = [...githubHistories, githubHistory];
+		toast.push('Changes published to GitHub! 🎉', {
+			theme: {
+				'--toastColor': 'mintcream',
+				'--toastBackground': 'rgba(72,187,120,0.9)',
+				'--toastBarBackground': '#2F855A'
+			}
+		});
+
+		// Save project and github history
+		githubHistoryService.post(githubHistory);
+		projectService.post(project);
+		projectsMapStore.update((projectsMap) => {
+			projectsMap.set(project.id, project);
+			return projectsMap;
+		});
 	}
 
 	function restoreActivities(history: GithubHistory) {
