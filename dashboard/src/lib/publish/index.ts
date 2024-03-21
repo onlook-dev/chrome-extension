@@ -36,7 +36,7 @@ export class ProjectPublisher {
     this.translationService = new TranslationService();
   }
 
-  async publish(title: string, description: string) {
+  async publish(title: string, description: string): Promise<string> {
     /*
       Emit state for each step
       1. For each activity:
@@ -58,13 +58,16 @@ export class ProjectPublisher {
     }
 
     try {
-      await this.publishFiles();
+      return await this.publishFiles(title, description);
     } catch (e) {
       throw `Publish failed while publishing files. ${e}`;
     }
   }
 
-  private async publishFiles() {
+  private async publishFiles(
+    title: string,
+    description: string
+  ): Promise<string> {
     /*
      1. Create or get branch
      2. Add commit to branch
@@ -73,7 +76,15 @@ export class ProjectPublisher {
 
     const branchName = `onlook-${this.project.id}`;
     await this.githubService.createOrGetBranch(branchName);
-    const commitId = await this.githubService.createCommitFromFiles(Object.values(this.filesMap));
+    const commitId = await this.githubService.createCommitFromFiles(
+      this.user.name,
+      this.user.email,
+      title,
+      Object.values(this.filesMap));
+
+
+    const pullRequestUrl = ''
+    return pullRequestUrl
   }
 
   async updateFileWithActivity(processed: ProcessedActivity, fileContent: FileContentData) {
@@ -112,12 +123,7 @@ export class ProjectPublisher {
     // If item in cache, return it
     if (fileContent) return fileContent;
 
-    fileContent = await this.githubService.fetchFileFromPath(
-      this.githubSettings.owner,
-      this.githubSettings.repositoryName,
-      this.githubSettings.baseBranch,
-      processed.pathInfo.path
-    );
+    fileContent = await this.githubService.fetchFileFromPath(processed.pathInfo.path);
 
     if (!fileContent) throw new Error(`File content not found for path: ${processed.pathInfo.path}`);
     this.filesMap.set(processed.pathInfo.path, fileContent);
