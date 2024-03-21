@@ -1,5 +1,4 @@
 import { StructuredTool } from "@langchain/core/tools";
-import { zodToJsonSchema } from "zod-to-json-schema";
 import { convertToOpenAITool } from "@langchain/core/utils/function_calling";
 import { z } from "zod";
 
@@ -10,24 +9,20 @@ import { z } from "zod";
  * to the model along with the class name.
  */
 
-const calculatorSchema = z.object({
-  operation: z
-    .enum(["add", "subtract", "multiply", "divide"])
-    .describe("The type of operation to execute."),
-  number1: z.number().describe("The first number to operate on."),
-  number2: z.number().describe("The second number to operate on."),
-});
+class TranslationTool extends StructuredTool {
+  schema = z.object({
+    code: z.string().describe("The code chunk to modify."),
+    css: z.string().describe("The CSS properties to apply to the code."),
+    framework: z.string().describe("The suffix which indicates the framewor of the code"),
+  });
 
-class CalculatorTool extends StructuredTool {
-  schema = calculatorSchema;
+  name = "modify_code";
 
-  name = "calculator";
+  description = "A tool to modify code based on CSS properties.";
 
-  description = "A simple calculator tool";
-
-  async _call(params: z.infer<typeof calculatorSchema>) {
+  async _call(params: z.infer<typeof this.schema>) {
     return "The answer";
   }
 }
 
-export const calculatorTool = convertToOpenAITool(new CalculatorTool());
+export const translationTool = convertToOpenAITool(new TranslationTool());

@@ -11,13 +11,7 @@ export interface PathInfo {
 }
 
 export type TranslationInput = {
-  pathInfo: PathInfo;
-  newCss: string;
-  codeChunk: string;
-}
-
-// Object returned from translator to be created into PR
-export type TranslationOutput = {
-  pathInfo: PathInfo;
-  codeChunk: string;
+  framework: string;
+  css: string;
+  code: string;
 }

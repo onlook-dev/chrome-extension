@@ -4,7 +4,6 @@ import { createCommit } from './commits';
 import { createOrGetBranch } from './branches';
 import { createOrGetPullRequest } from './pullRequests';
 import { Activity } from "$shared/models/activity";
-import { getTranslationsFromServer } from '$lib/translation/translation';
 import { getTranslationInput, updateContentChunk } from '$shared/translation';
 import { fetchFileFromPath, getPathInfo } from './files';
 
