@@ -16,17 +16,23 @@ export class ProjectPublisher {
   constructor(private project: Project, private user: User) {
     if (!this.project.installationId) {
       console.error('Project has no installation ID');
-      throw 'Export failed: Project has no installation ID';
+      throw 'Publish failed: Project has no installation ID';
     }
 
     if (!this.project.githubSettings) {
+
       console.error('No github settings found for this project');
-      throw 'Export failed: No github settings found for this project';
+      throw 'Publish failed: No github settings found for this project';
     }
 
     this.processedActivities = getProcessedActivities(this.project.activities, this.project.githubSettings.rootPath);
     this.githubSettings = this.project.githubSettings;
-    this.githubService = new GithubService(this.project.installationId);
+    this.githubService = new GithubService(
+      this.project.installationId,
+      this.githubSettings.owner,
+      this.githubSettings.repositoryName,
+      this.githubSettings.baseBranch
+    );
     this.translationService = new TranslationService();
   }
 
@@ -40,18 +46,35 @@ export class ProjectPublisher {
       2. Publish all files
     */
 
-    for (const processed of this.processedActivities) {
-      const fileContent = await this.getFileFromActivity(processed);
-      const newFileContent = await this.updateFileWithActivity(processed, fileContent);
-      // TODO: this.emitState();
-      this.filesMap.set(processed.pathInfo.path, newFileContent);
+    try {
+      for (const processed of this.processedActivities) {
+        const fileContent = await this.getFileFromActivity(processed);
+        const newFileContent = await this.updateFileWithActivity(processed, fileContent);
+        // TODO: this.emitState();
+        this.filesMap.set(processed.pathInfo.path, newFileContent);
+      }
+    } catch (e) {
+      throw `Publish failed while processing activities. ${e}`;
     }
 
-    await this.publishFiles();
-    return 'https://google.com'
+    try {
+      await this.publishFiles();
+    } catch (e) {
+      throw `Publish failed while publishing files. ${e}`;
+    }
   }
 
-  async publishFiles() { }
+  private async publishFiles() {
+    /*
+     1. Create or get branch
+     2. Add commit to branch
+     3. Create or get pull request
+   */
+
+    const branchName = `onlook-${this.project.id}`;
+    await this.githubService.createOrGetBranch(branchName);
+    const commitId = await this.githubService.createCommitFromFiles(Object.values(this.filesMap));
+  }
 
   async updateFileWithActivity(processed: ProcessedActivity, fileContent: FileContentData) {
     /*

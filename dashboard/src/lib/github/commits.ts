@@ -1,7 +1,6 @@
 import type { Octokit } from '@octokit/core';
 import type { TreeItem } from '$shared/models/github';
 import type { FileContentData } from '$shared/models/translation';
-import type { User } from '$shared/models/user';
 
 import { Endpoints } from '@octokit/types';
 
@@ -9,15 +8,15 @@ type GetRefResponse = Endpoints["GET /repos/{owner}/{repo}/git/ref/{ref}"]["resp
 type CreateTreeResponse = Endpoints["POST /repos/{owner}/{repo}/git/trees"]["response"];
 type CreateCommitResponse = Endpoints["POST /repos/{owner}/{repo}/git/commits"]["response"];
 
-
 export async function createCommit(
 	octokit: Octokit,
 	owner: string,
 	repo: string,
 	branch: string,
+	authorName: string,
+	authorEmail: string,
+	message: string,
 	files: FileContentData[],
-	user: User,
-	title: string
 ): Promise<string> {
 	try {
 		// Preparing the tree for the commit
@@ -48,12 +47,12 @@ export async function createCommit(
 		const commitResponse: CreateCommitResponse = await octokit.request('POST /repos/{owner}/{repo}/git/commits', {
 			owner,
 			repo,
-			message: title,
+			message,
 			tree: treeResponse.data.sha,
 			parents: [latestCommitSha],
 			author: {
-				name: user.name,
-				email: user.email,
+				name: authorName,
+				email: authorEmail,
 				date: new Date().toISOString()
 			},
 			headers: {

@@ -44,7 +44,7 @@
 	let hasFilePaths = false;
 	let isLoading = false;
 	let publishError = false;
-	let translatingChanges = true;
+	let translatingChanges = false;
 
 	$: if (project?.installationId) {
 		githubConfigured = true;
