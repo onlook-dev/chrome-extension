@@ -41,15 +41,25 @@ export function getTranslationInput(content: string, pathInfo: PathInfo, activit
   } as TranslationInput
 }
 
-export function updateContentChunk(oldContent: string, newContent: string, pathInfo: PathInfo): string {
-  let lines = oldContent.split('\n');
-  lines.splice(pathInfo.startLine - 1, pathInfo.endLine - pathInfo.startLine + 1, ...newContent.split('\n'));
+export function updateContentChunk(file: string, newContentChunk: string, pathInfo: PathInfo): string {
+  let lines = file.split('\n');
+  if (!lines) return file;
+
+  // Detect the indentation of the first line to be replaced
+  const match = lines[pathInfo.startLine - 1].match(/^\s*/);
+  const firstLineIndentation = match ? match[0] : '';
+
+  // Apply the detected indentation to each line of the new content chunk
+  const indentedNewContentChunk = newContentChunk.split('\n').map(line => firstLineIndentation + line).join('\n');
+
+  // Replace the specified lines with the indented new content chunk
+  lines.splice(pathInfo.startLine - 1, pathInfo.startTagEndLine - pathInfo.startLine + 1, indentedNewContentChunk);
+
   return lines.join('\n');
 }
 
-
 export const getCodeChunkFromContent = (content: string, pathInfo: PathInfo) => {
-  return content.split('\n').slice(pathInfo.startLine - 1, pathInfo.endLine).join('\n');
+  return content.split('\n').slice(pathInfo.startLine - 1, pathInfo.startTagEndLine).join('\n');
 }
 
 export const getCssStringFromStyleChanges = (styleChanges: Record<string, ChangeValues>) => {
