@@ -19,7 +19,7 @@
 	import GitHub from '~icons/mdi/github';
 	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
 	import HistoriesView from './HistoriesView.svelte';
-	import { ProjectPubllisher } from '$lib/publish';
+	import { ProjectPublisher } from '$lib/publish';
 
 	export let project: Project;
 	export let user: User;
@@ -80,8 +80,8 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
-			const projectPublisher = new ProjectPubllisher(project, user);
-			prLink = await githubService.publishProjectToGitHub(project, title, description, user);
+			const projectPublisher = new ProjectPublisher(project, user);
+			prLink = await projectPublisher.publish(title, description);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
 			publishErrorMessage = `Error publishing changes: ${JSON.stringify(error)}`;

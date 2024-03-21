@@ -13,7 +13,7 @@ export class ProjectPublisher {
   private filesMap = new Map<string, FileContentData>();
   private processedActivities: ProcessedActivity[];
 
-  constructor(private project: Project, private user: User, private rootPath: string) {
+  constructor(private project: Project, private user: User) {
     if (!this.project.installationId) {
       console.error('Project has no installation ID');
       throw 'Export failed: Project has no installation ID';
@@ -24,13 +24,13 @@ export class ProjectPublisher {
       throw 'Export failed: No github settings found for this project';
     }
 
-    this.processedActivities = getProcessedActivities(this.project.activities, this.rootPath);
+    this.processedActivities = getProcessedActivities(this.project.activities, this.project.githubSettings.rootPath);
     this.githubSettings = this.project.githubSettings;
     this.githubService = new GithubService(this.project.installationId);
     this.translationService = new TranslationService();
   }
 
-  async publish() {
+  async publish(title: string, description: string) {
     /*
       Emit state for each step
       1. For each activity:
@@ -48,6 +48,7 @@ export class ProjectPublisher {
     }
 
     await this.publishFiles();
+    return 'https://google.com'
   }
 
   async publishFiles() { }
