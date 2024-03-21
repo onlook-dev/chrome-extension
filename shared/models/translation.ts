@@ -9,6 +9,7 @@ export interface FileContentData {
 export interface PathInfo {
   path: string;
   startLine: number;
+  startTagEndLine: number;
   endLine: number;
 }
 

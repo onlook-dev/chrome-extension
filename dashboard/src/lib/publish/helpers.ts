@@ -1,6 +1,5 @@
 import type { Activity, ChangeValues } from "$shared/models/activity";
 import type { ProcessedActivity, PathInfo, TranslationInput } from "$shared/models/translation";
-import type { EditEvent } from "$shared/models/editor";
 
 export function getProcessedActivities(
   activities: Record<string, Activity>,
@@ -19,12 +18,13 @@ export function getProcessedActivities(
 };
 
 export function getPathInfo(activityPath: string, rootPath: string): PathInfo {
-  const [filePath, startLine, endLine] = activityPath.split(':');
+  const [filePath, startLine, startTagEndLine, endLine] = activityPath.split(':');
   return {
     path: rootPath === '.' || rootPath === '' || rootPath === '/'
       ? `${filePath}`
       : `${rootPath}/${filePath}`,
     startLine: parseInt(startLine),
+    startTagEndLine: parseInt(startTagEndLine),
     endLine: parseInt(endLine),
   };
 }
@@ -47,16 +47,6 @@ export function updateContentChunk(oldContent: string, newContent: string, pathI
   return lines.join('\n');
 }
 
-export function convertEditEventToStyleChangeMap(
-  editEvent: EditEvent
-): Record<string, ChangeValues> {
-  const styleChangeMap: Record<string, ChangeValues> = {};
-  Object.entries(editEvent.newVal).forEach(([style, newVal]) => {
-    const oldVal = editEvent.oldVal as Record<string, string>;
-    styleChangeMap[style] = { key: style, oldVal: oldVal[style], newVal };
-  });
-  return styleChangeMap;
-}
 
 export const getCodeChunkFromContent = (content: string, pathInfo: PathInfo) => {
   return content.split('\n').slice(pathInfo.startLine - 1, pathInfo.endLine).join('\n');

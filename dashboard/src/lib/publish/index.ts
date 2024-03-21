@@ -46,7 +46,11 @@ export class ProjectPublisher {
       // TODO: this.emitState();
       this.filesMap.set(processed.pathInfo.path, newFileContent);
     }
+
+    await this.publishFiles();
   }
+
+  async publishFiles() { }
 
   async updateFileWithActivity(processed: ProcessedActivity, fileContent: FileContentData) {
     /*
@@ -73,7 +77,7 @@ export class ProjectPublisher {
     return fileContent;
   }
 
-  // TODO: This log should be more testable
+  // TODO: This logic should be more testable
   async getFileFromActivity(processed: ProcessedActivity): Promise<FileContentData> {
     /*
       1. Process activity to get pathInfo
