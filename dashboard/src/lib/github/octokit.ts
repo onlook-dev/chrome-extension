@@ -12,7 +12,6 @@ export const CustomOctokit = Octokit
 
 export type CustomOctokit = InstanceType<typeof CustomOctokit>;
 
-
 export function getOctokitByInstallationId(installationId: string) {
   const octokit = new CustomOctokit({
     authStrategy: createAppAuth,

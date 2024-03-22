@@ -6,6 +6,7 @@ import { GenericPromptService } from "./prompt";
 import { openAiConfig } from "$lib/utils/env";
 import { Example } from "@langchain/core/prompts";
 
+// TODO: Very coupled to tailwind atm, should add configs to generalize or add separate service
 export class TranslationService {
   private openAi: Runnable;
   private promptService: GenericPromptService<any>;
@@ -58,7 +59,7 @@ export class TranslationService {
   private getModel() {
     return new ChatOpenAI({
       openAIApiKey: openAiConfig.apiKey,
-      modelName: "gpt-4",
+      modelName: "gpt-4-turbo-preview",
       temperature: 0,
     }).bind({
       tools: [translationTool],
@@ -69,7 +70,6 @@ export class TranslationService {
     }));
   }
 
-  // TODO: Add examples
   private getPromptService() {
     const service = new GenericPromptService(
       this.prompt,

@@ -9,10 +9,9 @@ export const getReposByInstallation = async (installationId: string): Promise<{ 
   });
 
   const repos: GithubRepo[] = response.data.repositories.map((repo) => ({
-    id: repo.id.toString(), // Assuming your GithubRepo type expects a string for id
+    id: repo.id.toString(),
     name: repo.name,
     owner: repo.owner.login,
-    // Include any other fields your GithubRepo type may require
   }));
 
   return { repos };
@@ -21,7 +20,7 @@ export const getReposByInstallation = async (installationId: string): Promise<{ 
 export async function getRepoDefaults(
   installationId: string,
   repo: GithubRepo
-): Promise<string | null> {
+): Promise<string | undefined> {
   const octokit: CustomOctokit = await getOctokitByInstallationId(installationId);
 
   const repoSettings = await octokit.rest.repos.get({
@@ -30,8 +29,7 @@ export async function getRepoDefaults(
   });
 
   const defaultBranch = repoSettings.data.default_branch;
-  console.log('defaultBranch:', defaultBranch);
-
-  return defaultBranch || null;
+  if (!defaultBranch) console.error(`No default branch found for ${repo.owner}/${repo.name}`);
+  return defaultBranch;
 }
 

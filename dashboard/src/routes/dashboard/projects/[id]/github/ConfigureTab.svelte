@@ -5,10 +5,8 @@
 	import { githubConfig } from '$lib/utils/env';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
-
 	import type { Project } from '$shared/models/project';
 	import type { GithubRepo, GithubSettings } from '$shared/models/github';
-
 	import GitHub from '~icons/mdi/github';
 	import Info from '~icons/akar-icons/info';
 
@@ -53,12 +51,9 @@
 	}
 
 	async function connectRepoToProject(repo: GithubRepo) {
-		if (!project.installationId) {
-			console.error('No installation id found');
-		}
+		if (!project.installationId) console.error('No installation id found');
 
 		const defaultBranch = await getRepoDefaults(project.installationId as string, repo);
-
 		project.githubSettings = {
 			repositoryName: repo.name,
 			owner: repo.owner,
@@ -67,7 +62,6 @@
 		} as GithubSettings;
 
 		selectedRepo = repo;
-
 		updateProject(project);
 	}
 
