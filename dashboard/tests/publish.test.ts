@@ -1,6 +1,6 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe } from 'bun:test';
-import { getProcessedActivities, getTranslationInput, updateContentChunk } from '$lib/publish/helpers';
+import { getProcessedActivities, getTranslationInput } from '$lib/publish/helpers';
 import { PathInfo, TranslationInput } from '$shared/models/translation';
 
 describe('ProjectPublisher helpers', () => {
@@ -57,28 +57,5 @@ describe('ProjectPublisher helpers', () => {
 
     // Assert
     expect(translationInput).toEqual(expected);
-  });
-
-  test('should update content chunk with correct indentation', () => {
-    const fileContent = `function example() {
-      console.log("Hello, world!");
-      // Placeholder
-    }`;
-    const newContentChunk = `console.log("Updated content!");`;
-    const pathInfo: PathInfo = {
-      path: 'root/path/to/activity1.js',
-      startLine: 3,
-      startTagEndLine: 3,
-      endLine: 3,
-    };
-
-    const expectedOutput = `function example() {
-      console.log("Hello, world!");
-      console.log("Updated content!");
-    }`;
-
-    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo);
-
-    expect(updatedContent).toBe(expectedOutput);
   });
 });

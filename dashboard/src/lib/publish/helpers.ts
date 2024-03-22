@@ -45,15 +45,41 @@ export function updateContentChunk(file: string, newContentChunk: string, pathIn
   let lines = file.split('\n');
   if (!lines) return file;
 
-  // Detect the indentation of the first line to be replaced
-  const match = lines[pathInfo.startLine - 1].match(/^\s*/);
-  const firstLineIndentation = match ? match[0] : '';
+  // Split the new content chunk into lines
+  let newContentLines = newContentChunk.split('\n');
 
-  // Apply the detected indentation to each line of the new content chunk
-  const indentedNewContentChunk = newContentChunk.split('\n').map(line => firstLineIndentation + line).join('\n');
+  // Variables to keep track of the last detected indentation
+  let lastDetectedIndentation = '';
+  let adjustedNewContentLines = [];
 
-  // Replace the specified lines with the indented new content chunk
-  lines.splice(pathInfo.startLine - 1, pathInfo.startTagEndLine - pathInfo.startLine + 1, indentedNewContentChunk);
+  // Process each line within the original section to be replaced
+  for (let i = 0; i < pathInfo.startTagEndLine - pathInfo.startLine + 1; i++) {
+    const originalLineIndex = pathInfo.startLine - 1 + i;
+    let currentIndentation;
+
+    if (i < newContentLines.length) {
+      // Detect and apply indentation for lines within the new content chunk
+      const indentationMatch = lines[originalLineIndex].match(/^\s*/);
+      currentIndentation = indentationMatch ? indentationMatch[0] : '';
+      adjustedNewContentLines.push(currentIndentation + newContentLines[i].trim());
+    }
+
+    // Update the last detected indentation if applicable
+    if (currentIndentation !== undefined) {
+      lastDetectedIndentation = currentIndentation;
+    }
+  }
+
+  // Handle case when new content has more lines than the original section
+  if (newContentLines.length > pathInfo.startTagEndLine - pathInfo.startLine + 1) {
+    // Append extra new content lines with the last detected indentation
+    for (let i = pathInfo.startTagEndLine - pathInfo.startLine + 1; i < newContentLines.length; i++) {
+      adjustedNewContentLines.push(lastDetectedIndentation + newContentLines[i].trim());
+    }
+  }
+
+  // Replace the specified lines with the newly adjusted content chunk
+  lines.splice(pathInfo.startLine - 1, pathInfo.startTagEndLine - pathInfo.startLine + 1, ...adjustedNewContentLines);
 
   return lines.join('\n');
 }

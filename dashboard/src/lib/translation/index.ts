@@ -54,7 +54,7 @@ export class TranslationService {
   private getModel() {
     return new ChatOpenAI({
       openAIApiKey: openAiConfig.apiKey,
-      modelName: "gpt-3.5-turbo-0125",
+      modelName: "gpt-4",
       temperature: 0,
     }).bind({
       tools: [translationTool],
