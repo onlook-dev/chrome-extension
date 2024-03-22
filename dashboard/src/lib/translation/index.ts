@@ -20,10 +20,10 @@ export class TranslationService {
   private examplePrompt = "Example Input:\nCSS: {css}\nCode: {code}\nFramework: {framework}\n\nExample Output Code: {output}\n\n";
   private examples: Example[] = [
     {
-      css: "font-size: 20px;",
-      code: '<h1 class="bg-red">',
+      css: "background-color: #000000;",
+      code: '<h1 class="bg-gray-200 text-red">',
       framework: "vue",
-      output: '<h1 class="bg-red text-2xl">'
+      output: '<h1 class="bg-black text-red">'
     },
     {
       css: "margin: 20px; border: 1px solid black;",

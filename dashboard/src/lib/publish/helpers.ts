@@ -90,8 +90,8 @@ export const getCodeChunkFromContent = (content: string, pathInfo: PathInfo) => 
 
 export const getCssStringFromStyleChanges = (styleChanges: Record<string, ChangeValues>) => {
   return Object.values(styleChanges).map((styleChange) => {
-    return `${styleChange.key}:${styleChange.newVal}`;
-  }).join(';');
+    return `${styleChange.key}: ${styleChange.newVal}`;
+  }).join('; ');
 }
 
 export const getFrameworkFromPath = (path: string) => {
