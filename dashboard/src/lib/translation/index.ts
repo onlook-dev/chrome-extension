@@ -14,6 +14,22 @@ export class TranslationService {
     css: "css",
     code: "code",
   };
+  private output = 'output'
+  private template = `Given HTML code, the framework, and new style changes in CSS, return the code chunk updated the style changes implemented either in inline css or tailwind. Adapt to the style of the code as much as possible, use TailwindCSS when no inline style exists. Do not make unecessary changes changing the tag name or closing the tag, leave the rest as is.\n\nInput:\n\nCSS: {${this.inputs.css}}\nCode: {${this.inputs.code}}\nFramework: {${this.inputs.framework}}`;
+  private examples = [
+    // {
+    //   framework: "svelte",
+    //   css: "width:16px;height:4rem",
+    //   code: "<CustomTag id='foo'>",
+    //   output: "<CustomTag id='foo' class='w-4 h-16'>"
+    // },
+    // {
+    //   framework: "tsx",
+    //   css: "color:#c21da4;",
+    //   code: "<a>",
+    //   output: "<a className='color-[#c21da4]'>"
+    // },
+  ];
 
   constructor() {
     this.openAi = this.getModel();
@@ -23,7 +39,7 @@ export class TranslationService {
   private getModel() {
     return new ChatOpenAI({
       openAIApiKey: openAiConfig.apiKey,
-      modelName: "gpt-4-0125-preview",
+      modelName: "gpt-3.5-turbo-0125",
       temperature: 0,
     }).bind({
       tools: [translationTool],
@@ -36,8 +52,11 @@ export class TranslationService {
 
   // TODO: Add examples
   private getPromptService() {
-    const template = `Given code chunk, framework, and new style changes in CSS, return the code chunk updated the style changes implemented. Adapt to the style of the code as much as possible, use TailwindCSS to update class or className when appropriate. Do not make unecessary changes like closing the tag, leave the rest as is.\n\nCSS: {${this.inputs.css}}\n\nCode: {${this.inputs.code}}\n\nFramework: {${this.inputs.framework}}`;
-    const service = new GenericPromptService(template, this.inputs);
+    const service = new GenericPromptService(
+      this.template,
+      this.inputs,
+      this.examples
+    );
     return service;
   }
 

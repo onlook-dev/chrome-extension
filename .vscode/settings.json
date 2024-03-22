@@ -1,4 +1,4 @@
 {
   "editor.tabSize": 2,
-  "github.copilot.inlineSuggest.enable": true
+  "github.copilot.inlineSuggest.enable": false
 }
