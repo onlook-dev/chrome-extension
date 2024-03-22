@@ -4,6 +4,7 @@ import { JsonOutputKeyToolsParser } from "@langchain/core/output_parsers/openai_
 import { Runnable } from "@langchain/core/runnables";
 import { GenericPromptService } from "./prompt";
 import { openAiConfig } from "$lib/utils/env";
+import { Example } from "@langchain/core/prompts";
 
 export class TranslationService {
   private openAi: Runnable;
@@ -14,21 +15,35 @@ export class TranslationService {
     css: "css",
     code: "code",
   };
-  private output = 'output'
-  private template = `Given HTML code, the framework, and new style changes in CSS, return the code chunk updated the style changes implemented either in inline css or tailwind. Adapt to the style of the code as much as possible, use TailwindCSS when no inline style exists. Do not make unecessary changes changing the tag name or closing the tag, leave the rest as is.\n\nInput:\n\nCSS: {${this.inputs.css}}\nCode: {${this.inputs.code}}\nFramework: {${this.inputs.framework}}`;
-  private examples = [
-    // {
-    //   framework: "svelte",
-    //   css: "width:16px;height:4rem",
-    //   code: "<CustomTag id='foo'>",
-    //   output: "<CustomTag id='foo' class='w-4 h-16'>"
-    // },
-    // {
-    //   framework: "tsx",
-    //   css: "color:#c21da4;",
-    //   code: "<a>",
-    //   output: "<a className='color-[#c21da4]'>"
-    // },
+  private prompt = `Given HTML code, the framework it's used in, and CSS style changes, update the HTML code to implement the style changes using TailwindCSS. Aim to make minimal changes to the original code structure, leave the quote type, tag name and tag structure as is. Only make style changes. Generalize from the examples given.\nInput:\nCSS: {css}\nCode: {code}\nFramework: {framework}\n\nOutput Code:`;
+
+  private examplePrompt = `Example Input:\nCSS: {css}\nCode: {code}\nFramework: {framework}\n\nExample Output Code: {output}\n\n`;
+
+  private examples: Example[] = [
+    {
+      css: "color: red;",
+      code: "<p>",
+      framework: "jsx",
+      output: `<p className='text-red-500'>`
+    },
+    {
+      css: "font-size: 20px;",
+      code: '<h1 class="bg-red">',
+      framework: "vue",
+      output: '<h1 class="bg-red text-2xl">'
+    },
+    {
+      css: "margin: 20px; border: 1px solid black;",
+      code: "<Card className='mt-8'>",
+      framework: "tsx",
+      output: "<Card className='mt-8 m-5 border border-black'/>"
+    },
+    {
+      css: "background-color: blue; padding: 10px;",
+      code: '<div class="h-4">',
+      framework: "svelte",
+      output: '<div class="h-4 bg-blue-500 p-2">'
+    }
   ];
 
   constructor() {
@@ -53,9 +68,12 @@ export class TranslationService {
   // TODO: Add examples
   private getPromptService() {
     const service = new GenericPromptService(
-      this.template,
+      this.prompt,
       this.inputs,
-      this.examples
+      {
+        prompt: this.examplePrompt,
+        examples: this.examples
+      }
     );
     return service;
   }
