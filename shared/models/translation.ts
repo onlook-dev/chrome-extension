@@ -1,3 +1,5 @@
+import { Activity } from "./activity";
+
 export interface FileContentData {
   path: string;
   content: string;
@@ -7,17 +9,18 @@ export interface FileContentData {
 export interface PathInfo {
   path: string;
   startLine: number;
+  startTagEndLine: number;
   endLine: number;
 }
 
 export type TranslationInput = {
-  pathInfo: PathInfo;
-  newCss: string;
-  codeChunk: string;
+  framework: string;
+  css: string;
+  code: string;
 }
 
-// Object returned from translator to be created into PR
-export type TranslationOutput = {
+export interface ProcessedActivity {
+  activity: Activity;
   pathInfo: PathInfo;
-  codeChunk: string;
 }
+

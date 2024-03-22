@@ -25,12 +25,17 @@ import {
 	PUBLIC_PROD_STRIPE_WEBHOOK_ID,
 	PUBLIC_TEST_URL,
 	PUBLIC_PROD_URL,
-	PUBLIC_GITHUB_APP_ID_TEST,
-	PUBLIC_GITHUB_PRIVATE_KEY_TEST,
-	PUBLIC_GITHUB_APP_ID_PROD,
-	PUBLIC_GITHUB_PRIVATE_KEY_PROD,
-	PUBLIC_GITHUB_APP_URL_TEST,
-	PUBLIC_GITHUB_APP_URL_PROD
+	PUBLIC_TEST_GITHUB_APP_ID,
+	PUBLIC_TEST_GITHUB_PRIVATE_KEY,
+	PUBLIC_TEST_GITHUB_APP_URL,
+	PUBLIC_PROD_GITHUB_APP_ID,
+	PUBLIC_PROD_GITHUB_PRIVATE_KEY,
+	PUBLIC_PROD_GITHUB_APP_URL,
+	PUBLIC_TEST_OPENAPI_API_KEY,
+	PUBLIC_TEST_OPENAPI_ORG,
+	PUBLIC_PROD_OPENAPI_API_KEY,
+	PUBLIC_PROD_OPENAPI_ORG
+
 } from '$env/static/public';
 
 import { Tier } from '$shared/models/team';
@@ -72,15 +77,25 @@ const prodStripeConfig = {
 };
 
 const testGithubConfig = {
-	appUrl: PUBLIC_GITHUB_APP_URL_TEST,
-	appId: PUBLIC_GITHUB_APP_ID_TEST,
-	privateKey: PUBLIC_GITHUB_PRIVATE_KEY_TEST
+	appUrl: PUBLIC_TEST_GITHUB_APP_URL,
+	appId: PUBLIC_TEST_GITHUB_APP_ID,
+	privateKey: PUBLIC_TEST_GITHUB_PRIVATE_KEY
 };
 
 const prodGithubConfig = {
-	appUrl: PUBLIC_GITHUB_APP_URL_PROD,
-	appId: PUBLIC_GITHUB_APP_ID_PROD,
-	privateKey: PUBLIC_GITHUB_PRIVATE_KEY_PROD
+	appUrl: PUBLIC_PROD_GITHUB_APP_URL,
+	appId: PUBLIC_PROD_GITHUB_APP_ID,
+	privateKey: PUBLIC_PROD_GITHUB_PRIVATE_KEY
+};
+
+const testOpenAiConfig = {
+	apiKey: PUBLIC_TEST_OPENAPI_API_KEY,
+	organization: PUBLIC_TEST_OPENAPI_ORG,
+};
+
+const prodOpenAiConfig = {
+	apiKey: PUBLIC_PROD_OPENAPI_API_KEY,
+	organization: PUBLIC_PROD_OPENAPI_ORG,
 };
 
 export const isDevelopment: boolean = import.meta.env.DEV;
@@ -89,6 +104,7 @@ export const firebaseConfig = isDevelopment ? testFirebaseConfig : prodFirebaseC
 export const stripeConfig = isDevelopment ? testStripeConfig : prodStripeConfig;
 export const baseUrl = isDevelopment ? PUBLIC_TEST_URL : PUBLIC_PROD_URL;
 export const githubConfig = isDevelopment ? testGithubConfig : prodGithubConfig;
+export const openAiConfig = isDevelopment ? testOpenAiConfig : prodOpenAiConfig;
 
 export const priceIdMapping = {
 	[Tier.FREE]: isDevelopment ? 'free' : 'free',

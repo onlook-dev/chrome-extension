@@ -10,7 +10,7 @@
 	import ConfigureTab from './ConfigureTab.svelte';
 	import PublishTab from './PublishTab.svelte';
 	import { githubConfig } from '$lib/utils/env';
-	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
 	import { projectsMapStore } from '$lib/utils/store';
 
 	export let project: Project;
@@ -65,7 +65,7 @@
 		<GitHub class="mr-2" /> Pull Request
 	</button>
 	<dialog id={modalId} class="modal">
-		<div class="modal-box card w-full h-[60%] flex flex-col p-6">
+		<div class="modal-box card w-full h-[80%] flex flex-col p-6">
 			<h2 class="text-xl font-semibold mb-3">Send to Github</h2>
 
 			{#if project?.installationId}

@@ -8,46 +8,45 @@
 	} from '$shared/constants';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
-	import type { Project } from '$shared/models/project';
-	import type { GithubHistory } from '$shared/models/github';
-	import type { User } from '$shared/models/user';
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { FirebaseService } from '$lib/storage';
-	import { GithubService } from '$lib/github';
 
-	import PullRequest from '~icons/ph/git-pull-request-bold';
+	import type { Project } from '$shared/models/project';
+	import type { GithubHistory } from '$shared/models/github';
+	import type { User } from '$shared/models/user';
+
 	import GitHub from '~icons/mdi/github';
-	import Restore from '~icons/ic/baseline-restore';
-	import ConfigureProjectInstructions from './ConfigureProjectInstructions.svelte';
+	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
+	import HistoriesView from './HistoriesView.svelte';
+	import { ProjectPublisher } from '$lib/publish';
 
 	export let project: Project;
 	export let user: User;
 
-	let githubService: GithubService;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	const githubHistoryService = new FirebaseService<GithubHistory>(
 		FirestoreCollections.GITHUB_HISTORY
 	);
 
 	let githubHistories: GithubHistory[] = [];
-	let githubConfigured = false;
-	let hasActivities = false;
-	let hasFilePaths = false;
-	let isLoading = false;
-	let publishError = false;
 	let publishErrorMessage = '';
-	let historyOpen = true;
 	let errorMessage = '';
-	let prLink: string | undefined;
 
 	let titlePlaceholder = 'Updated site using Onlook';
 	let descriptionPlaceholder = 'Describe your changes here';
 	let title = '';
 	let description = '';
 
+	// States
+	let githubConfigured = false;
+	let hasActivities = false;
+	let hasFilePaths = false;
+	let isLoading = false;
+	let publishError = false;
+	let translatingChanges = false;
+
 	$: if (project?.installationId) {
-		githubService = new GithubService(project.installationId);
 		githubConfigured = true;
 	}
 
@@ -80,53 +79,54 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
-			prLink = await githubService.publishProjectToGitHub(project, title, description, user);
+			const projectPublisher = new ProjectPublisher(project, user);
+			let pullRequestUrl = await projectPublisher.publish(title, description);
+			if (!pullRequestUrl) throw new Error('No pull request url returned from GitHub');
+			handlePublishedSucceeded(pullRequestUrl);
 		} catch (error) {
 			console.error('Error publishing changes:', error);
 			publishErrorMessage = `Error publishing changes: ${JSON.stringify(error)}`;
 			publishError = true;
 		} finally {
 			isLoading = false;
-			if (!prLink) {
-				publishError = true;
-				return;
-			}
-
-			const githubHistory: GithubHistory = {
-				id: nanoid(),
-				title,
-				description,
-				userId: user.id,
-				projectId: project.id,
-				createdAt: new Date().toISOString(),
-				pullRequestUrl: prLink,
-				activityHistory: project.activities
-			};
-
-			// Reset activites, they are archived in github history
-			title = '';
-			description = '';
-			if (!project.githubHistoryIds) {
-				project.githubHistoryIds = [];
-			}
-			project.githubHistoryIds.push(githubHistory.id);
-			githubHistories = [...githubHistories, githubHistory];
-			toast.push('Changes published to GitHub! 🎉', {
-				theme: {
-					'--toastColor': 'mintcream',
-					'--toastBackground': 'rgba(72,187,120,0.9)',
-					'--toastBarBackground': '#2F855A'
-				}
-			});
-
-			// Save project and github history
-			githubHistoryService.post(githubHistory);
-			projectService.post(project);
-			projectsMapStore.update((projectsMap) => {
-				projectsMap.set(project.id, project);
-				return projectsMap;
-			});
 		}
+	}
+
+	function handlePublishedSucceeded(pullRequestUrl: string) {
+		const githubHistory: GithubHistory = {
+			id: nanoid(),
+			title,
+			description,
+			userId: user.id,
+			projectId: project.id,
+			createdAt: new Date().toISOString(),
+			pullRequestUrl,
+			activityHistory: project.activities
+		};
+
+		// Reset activites, they are archived in github history
+		title = '';
+		description = '';
+		if (!project.githubHistoryIds) {
+			project.githubHistoryIds = [];
+		}
+		project.githubHistoryIds.push(githubHistory.id);
+		githubHistories = [...githubHistories, githubHistory];
+		toast.push('Changes published to GitHub! 🎉', {
+			theme: {
+				'--toastColor': 'mintcream',
+				'--toastBackground': 'rgba(72,187,120,0.9)',
+				'--toastBarBackground': '#2F855A'
+			}
+		});
+
+		// Save project and github history
+		githubHistoryService.post(githubHistory);
+		projectService.post(project);
+		projectsMapStore.update((projectsMap) => {
+			projectsMap.set(project.id, project);
+			return projectsMap;
+		});
 	}
 
 	function restoreActivities(history: GithubHistory) {
@@ -179,13 +179,19 @@
 				placeholder={descriptionPlaceholder}
 				maxlength={MAX_DESCRIPTION_LENGTH}
 			></textarea>
-			<div class="mt-6 ml-auto">
+			<div class="mt-6 flex items-center justify-end">
 				{#if errorMessage}
 					<p class="text-xs text-error">{errorMessage}</p>
 				{:else}
+					{#if translatingChanges}
+						<div class="flex flex-col mr-8 flex-grow space-y-2">
+							<progress class="progress progress-success w-2/3" value="2" max="3"></progress>
+							<p>2/3 changes translated</p>
+						</div>
+					{/if}
 					<button
 						class="btn btn-primary"
-						disabled={!hasActivities || isLoading}
+						disabled={!hasActivities || isLoading || translatingChanges}
 						on:click={handlePublishClick}
 					>
 						{#if isLoading}
@@ -199,60 +205,7 @@
 			</div>
 		</label>
 
-		{#if githubHistories.length > 0}
-			<div
-				class="collapse collapse-arrow border rounded-md mt-6 {historyOpen
-					? 'collapse-open'
-					: 'collapse-close'}"
-			>
-				<input type="checkbox" on:click={() => (historyOpen = !historyOpen)} />
-				<div class="collapse-title">Publish history ({githubHistories.length})</div>
-				<div class="collapse-content space-y-2">
-					{#each githubHistories as history}
-						<div class="flex flex-row max-w-[100%] items-center">
-							<p class="line-clamp-1 text-ellipsis max-w-[70%]">
-								{history.title}
-							</p>
-							<div class="ml-auto">
-								<div class="tooltip tooltip-left" data-tip="View pull request">
-									<button
-										class="btn btn-xs btn-square btn-ghost ml-auto"
-										on:click={() => window.open(history.pullRequestUrl, '_blank')}
-										><PullRequest class="w-4 h-4" /></button
-									>
-								</div>
-								<div class="tooltip tooltip-left" data-tip="Restore changes">
-									<button
-										class="btn btn-xs btn-square btn-ghost"
-										on:click={() => {
-											// @ts-ignore
-											document.getElementById('confirm_restore_modal').showModal();
-										}}><Restore class="w-4 h-4" /></button
-									>
-								</div>
-
-								<dialog id="confirm_restore_modal" class="modal">
-									<div class="modal-box">
-										<h3 class="font-bold text-lg">Restore changes?</h3>
-										<p class="py-4">This will overwrite your current activities.</p>
-										<div class="modal-action">
-											<form method="dialog">
-												<!-- if there is a button in form, it will close the modal -->
-												<button class="btn">Cancel</button>
-												<button
-													class="btn btn-error ml-2"
-													on:click={() => restoreActivities(history)}>Restore</button
-												>
-											</form>
-										</div>
-									</div>
-								</dialog>
-							</div>
-						</div>
-					{/each}
-				</div>
-			</div>
-		{/if}
+		<HistoriesView {githubHistories} {restoreActivities} />
 	{:else if !githubConfigured}
 		<p class="text-center text-lg">No github config found</p>
 	{:else if hasActivities && !hasFilePaths}
