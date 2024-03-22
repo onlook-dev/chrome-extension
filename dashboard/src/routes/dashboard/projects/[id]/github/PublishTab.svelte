@@ -19,7 +19,11 @@
 	import GitHub from '~icons/mdi/github';
 	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
 	import HistoriesView from './HistoriesView.svelte';
-	import { ProjectPublisher } from '$lib/publish';
+	import {
+		ProjectPublisher,
+		ProjectPublisherEventType,
+		type ProjectPublisherEvent
+	} from '$lib/publish';
 
 	export let project: Project;
 	export let user: User;
@@ -42,9 +46,11 @@
 	let githubConfigured = false;
 	let hasActivities = false;
 	let hasFilePaths = false;
-	let isLoading = false;
 	let publishError = false;
-	let translatingChanges = false;
+	let isLoading = false;
+	let isTranslating = false;
+	let translationProgress = 0;
+	let translationTotal = 0;
 
 	$: if (project?.installationId) {
 		githubConfigured = true;
@@ -80,6 +86,7 @@
 		isLoading = true;
 		try {
 			const projectPublisher = new ProjectPublisher(project, user);
+			handleProjectPublisherEvents(projectPublisher);
 			let pullRequestUrl = await projectPublisher.publish(title, description);
 			if (!pullRequestUrl) throw new Error('No pull request url returned from GitHub');
 			handlePublishedSucceeded(pullRequestUrl);
@@ -89,7 +96,26 @@
 			publishError = true;
 		} finally {
 			isLoading = false;
+			isTranslating = false;
 		}
+	}
+
+	function handleProjectPublisherEvents(projectPublisher: ProjectPublisher) {
+		projectPublisher.on(projectPublisher.EMIT_EVENT_NAME, (event: ProjectPublisherEvent) => {
+			switch (event.type) {
+				case ProjectPublisherEventType.TRANSLATING:
+					translationProgress = event.progress?.processed || 0;
+					translationTotal = event.progress?.total || 0;
+					isLoading = true;
+					isTranslating = true;
+					break;
+				case ProjectPublisherEventType.PUBLISHING:
+					isLoading = true;
+					break;
+				default:
+					break;
+			}
+		});
 	}
 
 	function handlePublishedSucceeded(pullRequestUrl: string) {
@@ -183,15 +209,19 @@
 				{#if errorMessage}
 					<p class="text-xs text-error">{errorMessage}</p>
 				{:else}
-					{#if translatingChanges}
+					{#if isTranslating}
 						<div class="flex flex-col mr-8 flex-grow space-y-2">
-							<progress class="progress progress-success w-2/3" value="2" max="3"></progress>
-							<p>2/3 changes translated</p>
+							<progress
+								class="progress progress-success w-2/3"
+								value={translationProgress}
+								max={translationTotal}
+							></progress>
+							<p>{translationProgress}/{translationTotal} changes translated</p>
 						</div>
 					{/if}
 					<button
 						class="btn btn-primary"
-						disabled={!hasActivities || isLoading || translatingChanges}
+						disabled={!hasActivities || isLoading || isTranslating}
 						on:click={handlePublishClick}
 					>
 						{#if isLoading}

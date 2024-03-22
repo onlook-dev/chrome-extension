@@ -5,15 +5,32 @@ import { Project } from "$shared/models/project";
 import { FileContentData, ProcessedActivity } from "$shared/models/translation";
 import { User } from "$shared/models/user";
 import { getProcessedActivities, getTranslationInput, updateContentChunk } from "./helpers";
+import EventEmitter from 'events';
 
-export class ProjectPublisher {
+export enum ProjectPublisherEventType {
+  TRANSLATING = 'TRANSLATING',
+  PUBLISHING = 'PUBLISHING',
+}
+
+export interface ProjectPublisherEvent {
+  type: ProjectPublisherEventType;
+  progress?: {
+    processed: number;
+    total: number;
+  }
+}
+
+export class ProjectPublisher extends EventEmitter {
   private githubService: GithubService;
   private githubSettings: GithubSettings;
   private translationService: TranslationService;
   private filesMap = new Map<string, FileContentData>();
   private processedActivities: ProcessedActivity[];
 
+  EMIT_EVENT_NAME = 'update';
+
   constructor(private project: Project, private user: User) {
+    super();
     if (!this.project.installationId) {
       throw 'Publish failed: Project has no installation ID';
     }
@@ -33,6 +50,10 @@ export class ProjectPublisher {
     this.translationService = new TranslationService();
   }
 
+  private emitEvent(event: ProjectPublisherEvent) {
+    this.emit(this.EMIT_EVENT_NAME, event);
+  }
+
   async publish(title: string, description: string): Promise<string> {
     /*
       Emit state for each step
@@ -44,17 +65,35 @@ export class ProjectPublisher {
     */
 
     try {
-      for (const processed of this.processedActivities) {
+      this.emitEvent({
+        type: ProjectPublisherEventType.TRANSLATING,
+        progress: {
+          processed: 0,
+          total: this.processedActivities.length
+        }
+      })
+
+      for (const [index, processed] of this.processedActivities.entries()) {
         const fileContent = await this.getFileFromActivity(processed);
         const newFileContent = await this.updateFileWithActivity(processed, fileContent);
-        // TODO: this.emitState();
         this.filesMap.set(processed.pathInfo.path, newFileContent);
+
+        this.emitEvent({
+          type: ProjectPublisherEventType.TRANSLATING,
+          progress: {
+            processed: index + 1,
+            total: this.processedActivities.length
+          }
+        })
       }
     } catch (e) {
       throw `Publish failed while processing activities. ${e}`;
     }
 
     try {
+      this.emitEvent({
+        type: ProjectPublisherEventType.PUBLISHING,
+      });
       return await this.publishFiles(title, description);
     } catch (e) {
       throw `Publish failed while publishing files. ${e}`;
