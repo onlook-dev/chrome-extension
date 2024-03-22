@@ -19,6 +19,7 @@ export interface ProjectPublisherEvent {
     total: number;
   }
 }
+
 export class ProjectPublisher extends EventEmitter {
   private githubService: GithubService;
   private githubSettings: GithubSettings;
