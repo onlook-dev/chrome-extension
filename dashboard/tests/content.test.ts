@@ -138,4 +138,63 @@ quality={100}
     expect(updatedContent).toBe(expectedOutput);
   });
 
+
+  test('Known failure that should be handled. Using current line indentation can mess up when adding lines.', () => {
+    const fileContent = `<Image
+            src="/assets/hero-main.jpg"
+            className={clsx(
+              "select-none",
+              "rounded-xl",
+              "aspect-auto",
+              "grayscale-0"
+            )}
+            width={1000}
+            height={1000}
+            alt="main-image"
+            draggable="false"
+            quality={100}
+          />`;
+
+    const newContentChunk = `<Image
+            src="/assets/hero-main.jpg"
+            className={clsx(
+              "select-none",
+              "rounded-full",
+              "aspect-auto",
+              "grayscale-0",
+              "h-180"
+            )}
+            width={1000}
+            height={1000}
+            alt="main-image"
+            draggable="false"
+            quality={100}
+          />`;
+    const pathInfo: PathInfo = {
+      path: 'root/path/to/activity1.js',
+      startLine: 1,
+      startTagEndLine: 14,
+      endLine: 14,
+    };
+
+    const expectedOutput = `<Image
+            src="/assets/hero-main.jpg"
+            className={clsx(
+              "select-none",
+              "rounded-full",
+              "aspect-auto",
+              "grayscale-0",
+              "h-180"
+            )}
+            width={1000}
+            height={1000}
+            alt="main-image"
+            draggable="false"
+            quality={100}
+          />`;
+
+    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo);
+    expect(updatedContent).toBe(expectedOutput);
+  });
+
 });
