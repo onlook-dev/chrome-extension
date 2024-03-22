@@ -1,0 +1,11 @@
+{
+	"runtime": "nodejs18.x",
+	"maxDuration": 30,
+	"handler": ".svelte-kit/vercel-tmp/index.js",
+	"launcherType": "Nodejs",
+	"experimentalResponseStreaming": true,
+	"framework": {
+		"slug": "sveltekit",
+		"version": "2.0.6"
+	}
+}
