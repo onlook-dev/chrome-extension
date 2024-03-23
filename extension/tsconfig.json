@@ -10,12 +10,30 @@
 		"isolatedModules": true,
 		"outDir": "./dist",
 		"paths": {
-			"$*": ["./src/*"],
-			"$shared/*": ["../shared/*"]
+			"$*": [
+				"./src/*"
+			],
+			"$shared/*": [
+				"../shared/*"
+			]
 		},
 		"strict": true
 	},
-	"include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "src/**/*"],
-	"exclude": ["node_modules/*", "__sapper__/*", "static/*"],
-	"references": [{ "path": "./tsconfig.node.json" }]
+	"include": [
+		"src/**/*.d.ts",
+		"src/**/*.ts",
+		"src/**/*.js",
+		"src/**/*.svelte",
+		"src/**/*",
+	],
+	"exclude": [
+		"node_modules/*",
+		"__sapper__/*",
+		"static/*"
+	],
+	"references": [
+		{
+			"path": "./tsconfig.node.json"
+		}
+	]
 }

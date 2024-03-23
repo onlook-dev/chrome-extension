@@ -139,7 +139,7 @@ quality={100}
   });
 
 
-  test('Known failure that should be handled. Using current line indentation can mess up when adding lines.', () => {
+  test('Known failure: Using current line indentation can mess up when adding lines.', () => {
     const fileContent = `<Image
             src="/assets/hero-main.jpg"
             className={clsx(

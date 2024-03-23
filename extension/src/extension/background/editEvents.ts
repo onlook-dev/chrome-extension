@@ -1,6 +1,6 @@
 import { EditType, type EditEvent, type InsertRemoveVal } from '$shared/models/editor'
 import { ActivityStatus, type Activity, type ChangeValues } from '$shared/models/activity'
-import { convertEditEventToStyleChangeMap } from '$shared/translation'
+import { convertEditEventToStyleChangeMap } from '$lib/utils/editEvents'
 import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { sendGetScreenshotRequest } from '$lib/utils/messaging'
 import { forwardToActiveProjectTab } from './tabs'
