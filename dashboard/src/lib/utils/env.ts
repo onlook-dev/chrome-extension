@@ -35,7 +35,6 @@ import {
 	PUBLIC_TEST_OPENAPI_ORG,
 	PUBLIC_PROD_OPENAPI_API_KEY,
 	PUBLIC_PROD_OPENAPI_ORG
-
 } from '$env/static/public';
 
 import { Tier } from '$shared/models/team';
