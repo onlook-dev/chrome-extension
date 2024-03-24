@@ -135,7 +135,7 @@ export class ProjectPublisher extends EventEmitter {
     */
     const input = getTranslationInput(fileContent.content, processed.pathInfo, processed.activity);
 
-    const newCode = await this.translationService.getTranslation({
+    const newCode = await this.translationService.getStyleTranslation({
       code: input.code,
       css: input.css,
       framework: input.framework,

@@ -18,7 +18,7 @@ describe('Translation service', () => {
 
   test('translation service creates correct new code', async () => {
     const translationService: TranslationService = new serviceClass();
-    let translation = await translationService.getTranslation({
+    let translation = await translationService.getStyleTranslation({
       framework: "tsx",
       code: "<Card className='mt-8'>",
       css: "background-color: blue; padding: 10px;",
