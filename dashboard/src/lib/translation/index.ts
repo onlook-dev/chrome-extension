@@ -56,11 +56,12 @@ export class TranslationService {
     this.promptService = this.getPromptService();
   }
 
-  getModel() {
+  private getModel() {
     return new ChatOpenAI({
       openAIApiKey: openAiConfig.apiKey,
       modelName: "gpt-4-turbo-preview",
       temperature: 0,
+      cache: true,
     }).bind({
       tools: [translationTool],
       tool_choice: translationTool
