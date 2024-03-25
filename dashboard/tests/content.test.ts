@@ -23,7 +23,7 @@ describe('Content editor', () => {
       console.log("Updated content!");
     }`;
 
-    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo);
+    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo, false);
 
     expect(updatedContent).toBe(expectedOutput);
   });
@@ -81,7 +81,7 @@ quality={100}
             quality={100}
           />`;
 
-    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo);
+    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo, false);
     expect(updatedContent).toBe(expectedOutput);
   });
 
@@ -105,7 +105,7 @@ quality={100}
       // New Line 2
     }`;
 
-    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo);
+    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo, false);
     expect(updatedContent).toBe(expectedOutput);
   });
 
@@ -133,7 +133,7 @@ quality={100}
       // Additional Line 2
     }`;
 
-    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo);
+    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo, false);
 
     expect(updatedContent).toBe(expectedOutput);
   });
@@ -193,7 +193,7 @@ quality={100}
             quality={100}
           />`;
 
-    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo);
+    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo, false);
     expect(updatedContent).toBe(expectedOutput);
   });
 

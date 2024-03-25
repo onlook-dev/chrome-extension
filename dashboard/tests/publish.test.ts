@@ -1,7 +1,8 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe } from 'bun:test';
-import { getProcessedActivities, getStyleTranslationInput } from '$lib/publish/helpers';
+import { getProcessedActivities } from '$lib/publish/helpers';
 import { PathInfo, StyleTranslationInput } from '$shared/models/translation';
+import { getStyleTranslationInput } from '$lib/publish/inputs';
 
 describe('ProjectPublisher helpers', () => {
   test('should get processed activity', () => {

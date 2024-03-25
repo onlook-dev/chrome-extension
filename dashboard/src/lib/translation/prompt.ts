@@ -4,7 +4,7 @@ interface PromptVariables {
   [key: string]: string;
 }
 
-class PromptService<T extends PromptVariables> {
+export class PromptService<T extends PromptVariables> {
   private promptTemplate: PromptTemplate;
   private fewShotPromptTemplate: FewShotPromptTemplate | undefined;
 
