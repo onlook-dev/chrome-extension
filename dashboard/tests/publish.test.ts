@@ -48,7 +48,7 @@ describe('ProjectPublisher helpers', () => {
 
     const expected: TranslationInput = {
       framework: 'html',
-      css: 'color:red;background-color:blue',
+      css: 'color: red; background-color: blue',
       code: '      <p>Some text here</p>'
     };
 

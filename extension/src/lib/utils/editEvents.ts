@@ -1,5 +1,5 @@
-import type { EditEvent } from "./models/editor";
-import type { ChangeValues } from "./models/activity";
+import type { EditEvent } from "$shared/models/editor";
+import type { ChangeValues } from "$shared/models/activity";
 
 export function convertEditEventToStyleChangeMap(
   editEvent: EditEvent

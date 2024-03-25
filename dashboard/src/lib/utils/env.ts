@@ -31,11 +31,10 @@ import {
 	PUBLIC_PROD_GITHUB_APP_ID,
 	PUBLIC_PROD_GITHUB_PRIVATE_KEY,
 	PUBLIC_PROD_GITHUB_APP_URL,
-	PUBLIC_TEST_OPENAPI_API_KEY,
-	PUBLIC_TEST_OPENAPI_ORG,
-	PUBLIC_PROD_OPENAPI_API_KEY,
-	PUBLIC_PROD_OPENAPI_ORG
-
+	PUBLIC_TEST_OPENAI_API_KEY,
+	PUBLIC_TEST_OPENAI_ORG,
+	PUBLIC_PROD_OPENAI_API_KEY,
+	PUBLIC_PROD_OPENAI_ORG
 } from '$env/static/public';
 
 import { Tier } from '$shared/models/team';
@@ -89,13 +88,13 @@ const prodGithubConfig = {
 };
 
 const testOpenAiConfig = {
-	apiKey: PUBLIC_TEST_OPENAPI_API_KEY,
-	organization: PUBLIC_TEST_OPENAPI_ORG,
+	apiKey: PUBLIC_TEST_OPENAI_API_KEY,
+	organization: PUBLIC_TEST_OPENAI_ORG,
 };
 
 const prodOpenAiConfig = {
-	apiKey: PUBLIC_PROD_OPENAPI_API_KEY,
-	organization: PUBLIC_PROD_OPENAPI_ORG,
+	apiKey: PUBLIC_PROD_OPENAI_API_KEY,
+	organization: PUBLIC_PROD_OPENAI_ORG,
 };
 
 export const isDevelopment: boolean = import.meta.env.DEV;

@@ -1,6 +1,6 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe } from 'bun:test';
-import { GenericPromptService } from '$lib/translation/prompt';
+import { PromptService } from '$lib/translation/prompt';
 
 test('GenericPromptService returns formatted prompt', async () => {
   const vars = {
@@ -15,7 +15,7 @@ test('GenericPromptService returns formatted prompt', async () => {
     subj: "chickens",
   };
 
-  const service = new GenericPromptService(template, vars);
+  const service = new PromptService(template, vars);
   const prompt = await service.getPrompt(actualVariables);
 
   const expectedPrompt = `Tell me a ${actualVariables.adj} joke about ${actualVariables.subj}.`;
