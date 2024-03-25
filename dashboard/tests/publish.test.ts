@@ -1,7 +1,7 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe } from 'bun:test';
-import { getProcessedActivities, getTranslationInput } from '$lib/publish/helpers';
-import { PathInfo, TranslationInput } from '$shared/models/translation';
+import { getProcessedActivities, getStyleTranslationInput } from '$lib/publish/helpers';
+import { PathInfo, StyleTranslationInput } from '$shared/models/translation';
 
 describe('ProjectPublisher helpers', () => {
   test('should get processed activity', () => {
@@ -46,14 +46,14 @@ describe('ProjectPublisher helpers', () => {
       }
     } as any;
 
-    const expected: TranslationInput = {
+    const expected: StyleTranslationInput = {
       framework: 'html',
       css: 'color: red; background-color: blue',
       code: '      <p>Some text here</p>'
     };
 
     // Execute
-    const translationInput = getTranslationInput(content, pathInfo, activity);
+    const translationInput = getStyleTranslationInput(content, pathInfo, activity);
 
     // Assert
     expect(translationInput).toEqual(expected);

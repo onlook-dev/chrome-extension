@@ -5,7 +5,7 @@ import type { TranslationService } from '$lib/translation';
 describe('Translation service', () => {
   let TranslationService: any;
 
-  // Need to mock env
+  // Mocking env variable modules. Otherwise only available at Vite runtime.
   beforeAll(async () => {
     mock.module("$lib/utils/env", () => ({
       openAiConfig: {
