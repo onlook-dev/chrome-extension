@@ -8,7 +8,7 @@
   import { Separator } from "$lib/components/ui/separator";
   import { editorPanelVisible } from "$lib/states/editor";
   import type { EditTool } from "$lib/tools/edit";
-  import CodeTab from "./CodeTab.svelte";
+  // import CodeTab from "./CodeTab.svelte";
 
   export let editTool: EditTool;
   let isInputFocused = false;
@@ -53,9 +53,9 @@
           <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CSS}
             >Appearance</Tabs.Trigger
           >
-          <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CODE}
+          <!-- <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CODE}
             >Code</Tabs.Trigger
-          >
+          > -->
         </Tabs.List>
         <Separator class="mt-1" />
         <div
@@ -63,9 +63,9 @@
         >
           <Tabs.Content value={TabValue.CSS}><CssTab {editTool} /></Tabs.Content
           >
-          <Tabs.Content value={TabValue.CODE}
+          <!-- <Tabs.Content value={TabValue.CODE}
             ><CodeTab {editTool} /></Tabs.Content
-          >
+          > -->
         </div>
         <Card.Footer class="flex justify-between"></Card.Footer>
       </Tabs.Root>
