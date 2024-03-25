@@ -101,9 +101,9 @@ export class TextPromptService extends PromptService<{ framework: string, newTex
       {
         newText: "Foo Fighters",
         oldText: "Foo Bar",
-        code: '<p><span style={{ fontWeight: 700 }}>Foo</span> Bar </p>',
+        code: '<p><span style={{ fontWeight: 700 }}>Foo </span>Bar</p>',
         framework: "tsx",
-        output: '<p><span style={{ fontWeight: 700 }}>Foo</span> Fighters </p>'
+        output: '<p><span style={{ fontWeight: 700 }}>Foo </span>Fighters</p>'
       },
     ];
     super(prompt, inputs, {
