@@ -79,3 +79,36 @@ export class StylePromptService extends PromptService<{ framework: string, css: 
     });
   }
 }
+
+export class TextPromptService extends PromptService<{ framework: string, newText: string, oldText: string, code: string }> {
+  constructor() {
+    const inputs = {
+      framework: "framework",
+      newText: "newText",
+      oldText: "oldText",
+      code: "code",
+    };
+    const prompt = "Given HTML code, the framework it's used in, the original old text, and the new text, update the HTML code to implement the text changes. Aim to make minimal changes to the original code structure, leave the quote type, tag name and tag structure as is. Only make text content changes. Generalize from the examples given.\nInput:\nOld Text: {oldText}\nNew Text: {newText}\nCode: {code}\nFramework: {framework}\n\nOutput Code:";
+    const examplePrompt = "Example Input:\nOld Text: {oldText}\nNew Text: {newText}\nCode: {code}\nFramework: {framework}\n\nExample Output Code: {output}\n\n";
+    const examples: Example[] = [
+      {
+        newText: "New Text",
+        oldText: "Hello World",
+        code: '<h1>Hello World</h1>',
+        framework: "svelte",
+        output: '<h1>New Text</h1>'
+      },
+      {
+        newText: "Foo Fighters",
+        oldText: "Foo Bar",
+        code: '<p><span style={{ fontWeight: 700 }}>Foo</span> Bar </p>',
+        framework: "tsx",
+        output: '<p><span style={{ fontWeight: 700 }}>Foo</span> Fighters </p>'
+      },
+    ];
+    super(prompt, inputs, {
+      prompt: examplePrompt,
+      examples: examples
+    });
+  }
+}
