@@ -29,12 +29,28 @@ export function getPathInfo(activityPath: string, rootPath: string): PathInfo {
   };
 }
 
-
 export function updateContentChunk(file: string, newContentChunk: string, pathInfo: PathInfo, full: boolean): string {
-  let lines = file.split('\n');
-  if (!lines) return file;
+  // Validate input parameters
+  if (typeof file !== 'string' || typeof newContentChunk !== 'string' || typeof pathInfo !== 'object' || typeof full !== 'boolean') {
+    throw new Error('Invalid input parameters');
+  }
 
-  let endLine = full ? pathInfo.endLine : pathInfo.startTagEndLine;
+  // Ensure pathInfo has the necessary properties
+  if (typeof pathInfo.startLine !== 'number' || typeof pathInfo.endLine !== 'number') {
+    throw new Error('pathInfo object is missing required properties');
+  }
+
+  let lines = file.split('\n');
+
+  // Handle empty file case correctly
+  if (lines.length === 0) return file;
+
+  let endLine = full ? pathInfo.endLine : pathInfo.startTagEndLine || pathInfo.endLine;
+
+  // Ensure startLine and endLine are within the bounds of the file
+  if (pathInfo.startLine < 1 || pathInfo.startLine > lines.length || endLine < pathInfo.startLine || endLine > lines.length) {
+    throw new Error('startLine or endLine out of file bounds');
+  }
 
   // Split the new content chunk into lines
   let newContentLines = newContentChunk.split('\n');

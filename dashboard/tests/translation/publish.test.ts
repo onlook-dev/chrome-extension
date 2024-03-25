@@ -1,6 +1,6 @@
-import { expect, test, describe, mock, beforeAll, mockImplementation } from 'bun:test';
+// @ts-ignore - Bun test exists
+import { expect, test, describe, mock, beforeAll, beforeEach } from 'bun:test';
 import type { ProjectPublisher } from '$lib/publish';
-import { PathInfo } from '$shared/models/translation';
 
 describe('ProjectPublisher', () => {
   let ProjectPublisher: any;
@@ -35,15 +35,16 @@ describe('ProjectPublisher', () => {
     pathInfo: { path: 'mockPath', startLine: 1, startTagEndLine: 3, endLine: 5 },
   } as any
 
-  const mockFileContent = {
+  const originalMockFileContent = {
     path: 'mockPath',
     sha: 'mockSha',
     content: `<p 
-    class='bg-red'
-  >
+  class='bg-red'
+>
     Old Text
-  </p>`,
+</p>`,
   }
+  let mockFileContent = originalMockFileContent
 
   beforeAll(async () => {
     mock.module("$lib/utils/env", () => ({
@@ -59,6 +60,12 @@ describe('ProjectPublisher', () => {
         async getTextTranslation(input: any) { return input.code }
       }
     }));
+
+    beforeEach(() => {
+      // File content is mutated in tests, so reset it before each test
+      // TODO: This might be a sign that the file content should be cloned in the ProjectPublisher
+      mockFileContent = { ...originalMockFileContent }
+    })
 
     mock.module("$lib/github", () => {
       const GithubService = class { };
@@ -84,17 +91,38 @@ describe('ProjectPublisher', () => {
     expect(fileContent).toBe(mockFileContent)
   });
 
-  test('should get correct text input given line changes from style change', async () => {
+  test('should get correct text input if line added from style change', async () => {
     const updatedCode = `<p 
     id='newId'
     class='bg-red'
-  >`
+>`
     const expectedTextInput = `<p
-    id='newId'
-  class='bg-red'
-  >
+  id='newId'
+class='bg-red'
+>
     Old Text
-  </p>`
+</p>`
+    mock.module("$lib/translation", () => ({
+      TranslationService: class {
+        async getStyleTranslation(content: any) { return updatedCode }
+        async getTextTranslation(content: any) {
+          // Verify that offset works
+          expect(content.code).toBe(expectedTextInput)
+          return content.code
+        }
+      }
+    }));
+    const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
+    const fileContent = await publisher.updateFileWithActivity(mockProcessedActivity, mockFileContent);
+    expect(fileContent.content).toBe(expectedTextInput)
+  });
+
+  test('should get correct text input if line removed from style change', async () => {
+    const updatedCode = `<p>`
+    const expectedTextInput = `<p>
+    Old Text
+</p>`
+
     mock.module("$lib/translation", () => ({
       TranslationService: class {
         async getStyleTranslation(content: any) { return updatedCode }

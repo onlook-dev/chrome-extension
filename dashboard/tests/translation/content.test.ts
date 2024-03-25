@@ -132,6 +132,30 @@ quality={100}
     expect(updatedContent).toBe(expectedOutput);
   });
 
+  test('should correctly handle new content with fewer lines than the original section with endLine enabled', () => {
+    const fileContent = `function example() {
+      // Line 1
+      // Line 2
+      // Removing Line 3
+    }`;
+    const newContentChunk = `// New Line 1
+// New Line 2`;
+    const pathInfo: PathInfo = {
+      path: 'root/path/to/activity1.js',
+      startLine: 2,
+      startTagEndLine: 3,
+      endLine: 4,
+    };
+
+    const expectedOutput = `function example() {
+      // New Line 1
+      // New Line 2
+    }`;
+
+    const updatedContent = updateContentChunk(fileContent, newContentChunk, pathInfo, true);
+    expect(updatedContent).toBe(expectedOutput);
+  });
+
   test('should correctly handle new content with more lines than the original section', () => {
     const fileContent = `function example() {
       // Line 1

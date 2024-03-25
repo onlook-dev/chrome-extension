@@ -136,21 +136,19 @@ export class ProjectPublisher extends EventEmitter {
     */
 
     let offset = 0;
-    let newContent = fileContent.content;
+    let updatedContent = fileContent.content;
     // Process style changes first
     if (processed.activity.styleChanges) {
-      const { newContent: styleContent, newOffset } = await this.processStyleChanges(processed, newContent, offset);
-      newContent = styleContent;
+      const { newContent, newOffset } = await this.processStyleChanges(processed, updatedContent, offset);
+      updatedContent = newContent;
       offset += newOffset;
     }
-
-    // TODO: Add tests for interacting changes with offset
     if (processed.activity.textChanges) {
-      const { newContent: textContent, newOffset } = await this.processTextChanges(processed, newContent, offset);
-      newContent = textContent;
+      const { newContent, newOffset } = await this.processTextChanges(processed, updatedContent, offset);
+      updatedContent = newContent;
       offset += newOffset;
     }
-    fileContent.content = newContent;
+    fileContent.content = updatedContent;
     return fileContent;
   }
 
@@ -167,7 +165,6 @@ export class ProjectPublisher extends EventEmitter {
       css: input.css,
       framework: input.framework,
     });
-
     const newContent = updateContentChunk(
       content,
       newCode,
