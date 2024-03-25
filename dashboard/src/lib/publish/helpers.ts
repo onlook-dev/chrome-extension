@@ -30,19 +30,7 @@ export function getPathInfo(activityPath: string, rootPath: string): PathInfo {
 }
 
 export function updateContentChunk(file: string, newContentChunk: string, pathInfo: PathInfo, full: boolean): string {
-  // Validate input parameters
-  if (typeof file !== 'string' || typeof newContentChunk !== 'string' || typeof pathInfo !== 'object' || typeof full !== 'boolean') {
-    throw new Error('Invalid input parameters');
-  }
-
-  // Ensure pathInfo has the necessary properties
-  if (typeof pathInfo.startLine !== 'number' || typeof pathInfo.endLine !== 'number') {
-    throw new Error('pathInfo object is missing required properties');
-  }
-
   let lines = file.split('\n');
-
-  // Handle empty file case correctly
   if (lines.length === 0) return file;
 
   let endLine = full ? pathInfo.endLine : pathInfo.startTagEndLine || pathInfo.endLine;
