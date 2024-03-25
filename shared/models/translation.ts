@@ -13,9 +13,16 @@ export interface PathInfo {
   endLine: number;
 }
 
-export type TranslationInput = {
+export type StyleTranslationInput = {
   framework: string;
   css: string;
+  code: string;
+}
+
+export type TextTranslationInput = {
+  framework: string;
+  oldText: string;
+  newText: string;
   code: string;
 }
 

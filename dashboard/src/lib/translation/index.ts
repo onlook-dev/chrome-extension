@@ -2,16 +2,18 @@ import { ChatOpenAI } from "@langchain/openai";
 import { translationTool } from "./tools";
 import { JsonOutputKeyToolsParser } from "@langchain/core/output_parsers/openai_tools";
 import { Runnable } from "@langchain/core/runnables";
-import { StylePromptService } from "./prompt";
+import { StylePromptService, TextPromptService } from "./prompt";
 import { openAiConfig } from "$lib/utils/env";
 
 export class TranslationService {
   private openAi: Runnable;
   private stylePromptService: StylePromptService;
+  private textPromptService: TextPromptService;
 
   constructor() {
     this.openAi = this.getModel();
     this.stylePromptService = new StylePromptService();
+    this.textPromptService = new TextPromptService();
   }
 
   private getModel() {
@@ -31,6 +33,12 @@ export class TranslationService {
 
   async getStyleTranslation(variables: typeof this.stylePromptService.inputVariables): Promise<string> {
     const prompt = await this.stylePromptService.getPrompt(variables);
+    const response = (await this.openAi.invoke(prompt)) as { code: string }
+    return response.code;
+  }
+
+  async getTextTranslation(variables: typeof this.textPromptService.inputVariables): Promise<string> {
+    const prompt = await this.textPromptService.getPrompt(variables);
     const response = (await this.openAi.invoke(prompt)) as { code: string }
     return response.code;
   }

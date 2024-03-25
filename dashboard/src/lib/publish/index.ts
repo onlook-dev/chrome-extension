@@ -2,10 +2,11 @@ import { GithubService } from "$lib/github";
 import { TranslationService } from "$lib/translation";
 import { GithubSettings } from "$shared/models/github";
 import { Project } from "$shared/models/project";
-import { FileContentData, ProcessedActivity } from "$shared/models/translation";
+import { FileContentData, PathInfo, ProcessedActivity } from "$shared/models/translation";
 import { User } from "$shared/models/user";
-import { getProcessedActivities, getTranslationInput, updateContentChunk } from "./helpers";
+import { getProcessedActivities, updateContentChunk } from "./helpers";
 import EventEmitter from 'events';
+import { getStyleTranslationInput, getTextTranslationInput } from "./inputs";
 
 export enum ProjectPublisherEventType {
   TRANSLATING = 'TRANSLATING',
@@ -129,26 +130,80 @@ export class ProjectPublisher extends EventEmitter {
   async updateFileWithActivity(processed: ProcessedActivity, fileContent: FileContentData) {
     /*
       1. Get translation input
-      2. Get translation output from translation
-      3. Write output back to content
-      4. Return content
+      2. For each change types (style, text, component)
+        a. Get translation output from translation
+        b. Write output back to content
+      3. Return content
     */
-    const input = getTranslationInput(fileContent.content, processed.pathInfo, processed.activity);
 
+    // Offsets for lines added or removed when reading and writing to files
+    let offset = 0;
+    let updatedContent = fileContent.content;
+
+    // Process style changes
+    if (processed.activity.styleChanges) {
+      const { newContent, newOffset } = await this.processStyleChanges(processed, updatedContent, offset);
+      updatedContent = newContent;
+      offset += newOffset;
+    }
+
+    // Process text changes
+    if (processed.activity.textChanges) {
+      const { newContent, newOffset } = await this.processTextChanges(processed, updatedContent, offset);
+      updatedContent = newContent;
+      offset += newOffset;
+    }
+
+    fileContent.content = updatedContent;
+    return fileContent;
+  }
+
+  async processStyleChanges(processed: ProcessedActivity, content: string, offset: number = 0) {
+    const newPathInfo = {
+      ...processed.pathInfo,
+      startTagEndLine: processed.pathInfo.startTagEndLine + offset,
+      endLine: processed.pathInfo.endLine + offset,
+    } as PathInfo;
+
+    const input = getStyleTranslationInput(content, newPathInfo, processed.activity);
     const newCode = await this.translationService.getStyleTranslation({
       code: input.code,
       css: input.css,
       framework: input.framework,
     });
+    const newContent = updateContentChunk(
+      content,
+      newCode,
+      newPathInfo,
+      false
+    );
+    const newOffset = offset + newCode.split('\n').length - input.code.split('\n').length;
+    return { newContent, newOffset };
+  }
+
+  async processTextChanges(processed: ProcessedActivity, content: string, offset: number = 0) {
+    const newPathInfo = {
+      ...processed.pathInfo,
+      startTagEndLine: processed.pathInfo.startTagEndLine + offset,
+      endLine: processed.pathInfo.endLine + offset,
+    } as PathInfo;
+
+    const input = getTextTranslationInput(content, newPathInfo, processed.activity);
+    const newCode = await this.translationService.getTextTranslation({
+      oldText: input.oldText,
+      newText: input.newText,
+      code: input.code,
+      framework: input.framework,
+    });
 
     const newContent = updateContentChunk(
-      fileContent.content,
+      content,
       newCode,
-      processed.pathInfo
+      newPathInfo,
+      true
     );
-
-    fileContent.content = newContent;
-    return fileContent;
+    const newOffset = offset + newCode.split('\n').length - input.code.split('\n').length;
+    return { newContent, newOffset };
   }
 
   async getFileFromActivity(processed: ProcessedActivity): Promise<FileContentData> {

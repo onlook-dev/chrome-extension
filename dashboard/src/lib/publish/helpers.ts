@@ -1,5 +1,5 @@
-import type { Activity, ChangeValues } from "$shared/models/activity";
-import type { ProcessedActivity, PathInfo, TranslationInput } from "$shared/models/translation";
+import type { Activity } from "$shared/models/activity";
+import type { ProcessedActivity, PathInfo } from "$shared/models/translation";
 
 export function getProcessedActivities(
   activities: Record<string, Activity>,
@@ -29,21 +29,16 @@ export function getPathInfo(activityPath: string, rootPath: string): PathInfo {
   };
 }
 
-export function getTranslationInput(content: string, pathInfo: PathInfo, activity: Activity): TranslationInput {
-  const code = getCodeChunkFromContent(content, pathInfo);
-  const css = getCssStringFromStyleChanges(activity.styleChanges);
-  const framework = getFrameworkFromPath(pathInfo.path);
-
-  return {
-    framework,
-    css,
-    code
-  } as TranslationInput
-}
-
-export function updateContentChunk(file: string, newContentChunk: string, pathInfo: PathInfo): string {
+export function updateContentChunk(file: string, newContentChunk: string, pathInfo: PathInfo, full: boolean): string {
   let lines = file.split('\n');
-  if (!lines) return file;
+  if (lines.length === 0) return file;
+
+  let endLine = full ? pathInfo.endLine : pathInfo.startTagEndLine || pathInfo.endLine;
+
+  // Ensure startLine and endLine are within the bounds of the file
+  if (pathInfo.startLine < 1 || pathInfo.startLine > lines.length || endLine < pathInfo.startLine || endLine > lines.length) {
+    throw new Error('startLine or endLine out of file bounds');
+  }
 
   // Split the new content chunk into lines
   let newContentLines = newContentChunk.split('\n');
@@ -53,7 +48,7 @@ export function updateContentChunk(file: string, newContentChunk: string, pathIn
   let adjustedNewContentLines = [];
 
   // Process each line within the original section to be replaced
-  for (let i = 0; i < pathInfo.startTagEndLine - pathInfo.startLine + 1; i++) {
+  for (let i = 0; i < endLine - pathInfo.startLine + 1; i++) {
     const originalLineIndex = pathInfo.startLine - 1 + i;
     let currentIndentation;
 
@@ -71,29 +66,15 @@ export function updateContentChunk(file: string, newContentChunk: string, pathIn
   }
 
   // Handle case when new content has more lines than the original section
-  if (newContentLines.length > pathInfo.startTagEndLine - pathInfo.startLine + 1) {
+  if (newContentLines.length > endLine - pathInfo.startLine + 1) {
     // Append extra new content lines with the last detected indentation
-    for (let i = pathInfo.startTagEndLine - pathInfo.startLine + 1; i < newContentLines.length; i++) {
+    for (let i = endLine - pathInfo.startLine + 1; i < newContentLines.length; i++) {
       adjustedNewContentLines.push(lastDetectedIndentation + newContentLines[i].trim());
     }
   }
 
   // Replace the specified lines with the newly adjusted content chunk
-  lines.splice(pathInfo.startLine - 1, pathInfo.startTagEndLine - pathInfo.startLine + 1, ...adjustedNewContentLines);
+  lines.splice(pathInfo.startLine - 1, endLine - pathInfo.startLine + 1, ...adjustedNewContentLines);
 
   return lines.join('\n');
 }
-
-export const getCodeChunkFromContent = (content: string, pathInfo: PathInfo) => {
-  return content.split('\n').slice(pathInfo.startLine - 1, pathInfo.startTagEndLine).join('\n');
-}
-
-export const getCssStringFromStyleChanges = (styleChanges: Record<string, ChangeValues>) => {
-  return Object.values(styleChanges).map((styleChange) => {
-    return `${styleChange.key}: ${styleChange.newVal}`;
-  }).join('; ');
-}
-
-export const getFrameworkFromPath = (path: string) => {
-  return path.split('.').pop() ?? 'html';
-};
