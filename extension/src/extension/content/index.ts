@@ -52,6 +52,10 @@ function applyActivityChanges(activity: Activity): boolean {
 			// Apply style to element
 			element.style[style] = changeObject.newVal
 		})
+		Object.entries(activity.textChanges ?? {}).forEach(([textChange, changeObject]) => {
+			// Apply style to element
+			element.innerText = changeObject.newVal
+		})
 		if (activity.path !== element.dataset.onlookId) {
 			activity.path = element.dataset.onlookId
 			return true

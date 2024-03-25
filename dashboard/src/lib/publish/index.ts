@@ -139,12 +139,13 @@ export class ProjectPublisher extends EventEmitter {
     let newContent = fileContent.content;
     // Process style changes first
     if (processed.activity.styleChanges) {
-      const { newContent: styleContent, offset: styleOffset } = await this.processStyleChanges(processed, fileContent);
+      const { newContent: styleContent, offset: styleOffset } = await this.processStyleChanges(processed, newContent);
       newContent = styleContent;
       offset += styleOffset;
     }
+    // TODO: Add tests for interacting changes with offset
     if (processed.activity.textChanges) {
-      const { newContent: textContent, offset: textOffset } = await this.processTextChanges(processed, fileContent);
+      const { newContent: textContent, offset: textOffset } = await this.processTextChanges(processed, newContent);
       newContent = textContent;
       offset += textOffset;
     }
@@ -152,22 +153,22 @@ export class ProjectPublisher extends EventEmitter {
     return fileContent;
   }
 
-  async processStyleChanges(processed: ProcessedActivity, fileContent: FileContentData, offset: number = 0) {
-    const input = getStyleTranslationInput(fileContent.content, processed.pathInfo, processed.activity);
-    const newCode = await this.translationService.getStyleTranslation({
-      code: input.code,
-      css: input.css,
-      framework: input.framework,
-    });
-
+  async processStyleChanges(processed: ProcessedActivity, content: string, offset: number = 0) {
     const newPathInfo = {
       ...processed.pathInfo,
       startTagEndLine: processed.pathInfo.startTagEndLine + offset,
       endLine: processed.pathInfo.endLine + offset,
     } as PathInfo;
 
+    const input = getStyleTranslationInput(content, newPathInfo, processed.activity);
+    const newCode = await this.translationService.getStyleTranslation({
+      code: input.code,
+      css: input.css,
+      framework: input.framework,
+    });
+
     const newContent = updateContentChunk(
-      fileContent.content,
+      content,
       newCode,
       newPathInfo,
       false
@@ -176,8 +177,14 @@ export class ProjectPublisher extends EventEmitter {
     return { newContent, offset: newOffset };
   }
 
-  async processTextChanges(processed: ProcessedActivity, fileContent: FileContentData, offset: number = 0) {
-    const input = getTextTranslationInput(fileContent.content, processed.pathInfo, processed.activity);
+  async processTextChanges(processed: ProcessedActivity, content: string, offset: number = 0) {
+    const newPathInfo = {
+      ...processed.pathInfo,
+      startTagEndLine: processed.pathInfo.startTagEndLine + offset,
+      endLine: processed.pathInfo.endLine + offset,
+    } as PathInfo;
+
+    const input = getTextTranslationInput(content, newPathInfo, processed.activity);
     const newCode = await this.translationService.getTextTranslation({
       oldText: input.oldText,
       newText: input.newText,
@@ -185,14 +192,8 @@ export class ProjectPublisher extends EventEmitter {
       framework: input.framework,
     });
 
-    const newPathInfo = {
-      ...processed.pathInfo,
-      startTagEndLine: processed.pathInfo.startTagEndLine + offset,
-      endLine: processed.pathInfo.endLine + offset,
-    } as PathInfo;
-
     const newContent = updateContentChunk(
-      fileContent.content,
+      content,
       newCode,
       newPathInfo,
       true
