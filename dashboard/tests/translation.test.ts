@@ -2,8 +2,18 @@
 import { expect, test, describe, mock, beforeAll } from 'bun:test';
 import type { TranslationService } from '$lib/translation';
 
+// Should explicitly enable. Costs money to run.
+const enabled = false;
+
 describe('Translation service', () => {
   let TranslationService: any;
+
+  if (!enabled) {
+    test.skip('Translation tests should be explicitly enabled', () => {
+      expect(enabled).toBe(true);
+    });
+    return;
+  }
 
   // Mocking env variable modules. Otherwise only available at Vite runtime.
   beforeAll(async () => {
