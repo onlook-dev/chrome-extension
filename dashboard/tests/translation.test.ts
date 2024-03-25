@@ -30,13 +30,14 @@ describe('Translation service', () => {
 
   test('translation service implements text change correctly', async () => {
     const service: TranslationService = new TranslationService();
-    let translation = await service.getStyleTranslation({
+    let translation = await service.getTextTranslation({
+      oldText: "Hello World",
+      newText: "Foo Bar",
       framework: "tsx",
-      code: "<Card className='mt-8'>",
-      css: "background-color: blue; padding: 10px;",
+      code: "<Text className='mt-8'>Hello World</Text>",
     });
 
-    let expected = "<Card className='mt-8 bg-blue-500 p-2'>";
+    let expected = "<Text className='mt-8'>Foo Bar</Text>";
     expect(translation).toBe(expected);
   });
 })
