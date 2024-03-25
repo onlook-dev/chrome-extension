@@ -130,24 +130,30 @@ export class ProjectPublisher extends EventEmitter {
   async updateFileWithActivity(processed: ProcessedActivity, fileContent: FileContentData) {
     /*
       1. Get translation input
-      2. Get translation output from translation
-      3. Write output back to content
-      4. Return content
+      2. For each change types (style, text, component)
+        a. Get translation output from translation
+        b. Write output back to content
+      3. Return content
     */
 
+    // Offsets for lines added or removed when reading and writing to files
     let offset = 0;
     let updatedContent = fileContent.content;
-    // Process style changes first
+
+    // Process style changes
     if (processed.activity.styleChanges) {
       const { newContent, newOffset } = await this.processStyleChanges(processed, updatedContent, offset);
       updatedContent = newContent;
       offset += newOffset;
     }
+
+    // Process text changes
     if (processed.activity.textChanges) {
       const { newContent, newOffset } = await this.processTextChanges(processed, updatedContent, offset);
       updatedContent = newContent;
       offset += newOffset;
     }
+
     fileContent.content = updatedContent;
     return fileContent;
   }

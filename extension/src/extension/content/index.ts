@@ -49,11 +49,11 @@ function applyActivityChanges(activity: Activity): boolean {
 	const element = document.querySelector(activity.selector) as any
 	if (element) {
 		Object.entries(activity.styleChanges ?? {}).forEach(([style, changeObject]) => {
-			// Apply style to element
+			// Apply style change to element
 			element.style[style] = changeObject.newVal
 		})
 		Object.entries(activity.textChanges ?? {}).forEach(([textChange, changeObject]) => {
-			// Apply style to element
+			// Apply text change to element
 			element.innerText = changeObject.newVal
 		})
 		if (activity.path !== element.dataset.onlookId) {
