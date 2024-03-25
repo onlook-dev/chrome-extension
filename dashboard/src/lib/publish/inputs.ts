@@ -16,7 +16,7 @@ export function getStyleTranslationInput(content: string, pathInfo: PathInfo, ac
 export function getTextTranslationInput(content: string, pathInfo: PathInfo, activity: Activity): TextTranslationInput {
   if (!activity.textChanges) throw new Error('Text changes are required for text translation');
 
-  const code = getCodeChunkFromContent(content, pathInfo, false);
+  const code = getCodeChunkFromContent(content, pathInfo, true);
   const { oldText, newText } = getTextFromTextChanges(activity.textChanges);
   const framework = getFrameworkFromPath(pathInfo.path);
 
