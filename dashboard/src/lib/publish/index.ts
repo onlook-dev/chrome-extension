@@ -139,15 +139,16 @@ export class ProjectPublisher extends EventEmitter {
     let newContent = fileContent.content;
     // Process style changes first
     if (processed.activity.styleChanges) {
-      const { newContent: styleContent, offset: styleOffset } = await this.processStyleChanges(processed, newContent);
+      const { newContent: styleContent, newOffset } = await this.processStyleChanges(processed, newContent, offset);
       newContent = styleContent;
-      offset += styleOffset;
+      offset += newOffset;
     }
+
     // TODO: Add tests for interacting changes with offset
     if (processed.activity.textChanges) {
-      const { newContent: textContent, offset: textOffset } = await this.processTextChanges(processed, newContent);
+      const { newContent: textContent, newOffset } = await this.processTextChanges(processed, newContent, offset);
       newContent = textContent;
-      offset += textOffset;
+      offset += newOffset;
     }
     fileContent.content = newContent;
     return fileContent;
@@ -174,7 +175,7 @@ export class ProjectPublisher extends EventEmitter {
       false
     );
     const newOffset = offset + newCode.split('\n').length - input.code.split('\n').length;
-    return { newContent, offset: newOffset };
+    return { newContent, newOffset };
   }
 
   async processTextChanges(processed: ProcessedActivity, content: string, offset: number = 0) {
@@ -199,7 +200,7 @@ export class ProjectPublisher extends EventEmitter {
       true
     );
     const newOffset = offset + newCode.split('\n').length - input.code.split('\n').length;
-    return { newContent, offset: newOffset };
+    return { newContent, newOffset };
   }
 
   async getFileFromActivity(processed: ProcessedActivity): Promise<FileContentData> {

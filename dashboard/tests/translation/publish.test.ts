@@ -1,5 +1,6 @@
 import { expect, test, describe, mock, beforeAll, mockImplementation } from 'bun:test';
 import type { ProjectPublisher } from '$lib/publish';
+import { PathInfo } from '$shared/models/translation';
 
 describe('ProjectPublisher', () => {
   let ProjectPublisher: any;
@@ -31,14 +32,13 @@ describe('ProjectPublisher', () => {
 
   const mockProcessedActivity = {
     activity: mockActivity,
-    pathInfo: { path: 'mockPath', startLine: 1, startTagEndLine: 2, endLine: 3 },
+    pathInfo: { path: 'mockPath', startLine: 1, startTagEndLine: 3, endLine: 5 },
   } as any
 
-  const mockContent = {
+  const mockFileContent = {
     path: 'mockPath',
     sha: 'mockSha',
-    content: `<div>
-  <p 
+    content: `<p 
     class='bg-red'
   >
     Old Text
@@ -78,9 +78,35 @@ describe('ProjectPublisher', () => {
     expect(() => new ProjectPublisher(project, mockUser)).not.toThrow();
   });
 
-  test('should get correct style change', async () => {
+  test('should get correct change if nothing updated', async () => {
     const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
-    const { content } = await publisher.updateFileWithActivity(mockProcessedActivity, mockContent);
-    expect(content).toBe(content)
+    const fileContent = await publisher.updateFileWithActivity(mockProcessedActivity, mockFileContent);
+    expect(fileContent).toBe(mockFileContent)
+  });
+
+  test('should get correct text input given line changes from style change', async () => {
+    const updatedCode = `<p 
+    id='newId'
+    class='bg-red'
+  >`
+    const expectedTextInput = `<p
+    id='newId'
+  class='bg-red'
+  >
+    Old Text
+  </p>`
+    mock.module("$lib/translation", () => ({
+      TranslationService: class {
+        async getStyleTranslation(content: any) { return updatedCode }
+        async getTextTranslation(content: any) {
+          // Verify that offset works
+          expect(content.code).toBe(expectedTextInput)
+          return content.code
+        }
+      }
+    }));
+    const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
+    const fileContent = await publisher.updateFileWithActivity(mockProcessedActivity, mockFileContent);
+    expect(fileContent.content).toBe(expectedTextInput)
   });
 });
