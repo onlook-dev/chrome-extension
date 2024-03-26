@@ -103,7 +103,6 @@ export class ProjectPublisher extends EventEmitter {
     } catch (e) {
       throw `Publish failed while publishing files. ${e}`;
     }
-
   }
 
   private async publishFiles(
