@@ -11,7 +11,7 @@ import {
 import { FirestoreCollections, MessageTypes } from '$shared/constants';
 import { FirebaseService } from '$lib/storage';
 import type { User } from '$shared/models/user';
-import { identifyMixpanelUser, trackMixpanelEvent } from '$lib/mixpanel/client';
+import { identifyMixpanelUser } from '$lib/mixpanel/client';
 
 export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged((authUser) => {
@@ -35,7 +35,6 @@ export function subscribeToFirebaseAuthChanges() {
 					$avatar: user.profileImage,
 					$created: user.createdAt
 				});
-				trackMixpanelEvent("Sign In", {});
 			});
 		} else {
 			// Clear data when signed out
