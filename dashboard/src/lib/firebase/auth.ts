@@ -30,8 +30,10 @@ export function subscribeToFirebaseAuthChanges() {
 			userServices.subscribe(authUser.uid, (user) => {
 				userStore.set(user);
 				identifyMixpanelUser(user.id, {
-					name: user.name,
-					email: user.name
+					$name: user.name,
+					$email: user.email,
+					$avatar: user.profileImage,
+					$created: user.createdAt
 				});
 				trackMixpanelEvent("Sign In", {});
 			});
