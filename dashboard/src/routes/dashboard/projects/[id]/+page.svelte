@@ -15,7 +15,7 @@
 
 	import { truncateString } from '$shared/helpers';
 	import type { User } from '$shared/models/user';
-	import { auth } from '$lib/firebase/firebase';
+	import { auth } from '$lib/firebase';
 
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';

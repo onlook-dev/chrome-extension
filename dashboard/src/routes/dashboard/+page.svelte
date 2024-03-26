@@ -3,19 +3,20 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	import { auth } from '$lib/firebase/firebase';
+	import { auth } from '$lib/firebase';
 	import { DashboardRoutes, DashboardSearchParams, FirestoreCollections } from '$shared/constants';
 	import { paymentsMapStore, teamsMapStore, userStore } from '$lib/utils/store';
-	import type { User } from '$shared/models/user';
+	import { FirebaseService } from '$lib/storage';
 
 	import AvatarDropdown from './AvatarDropdown.svelte';
 	import ProjectsView from './ProjectsView.svelte';
 	import SideBarLine from '~icons/ri/side-bar-line';
 	import NewTeamModal from './NewTeamModal.svelte';
 	import PlanModal from './PlanModal.svelte';
-	import { FirebaseService } from '$lib/storage';
+
 	import type { Team } from '$shared/models/team';
 	import type { Payment } from '$shared/models/payment';
+	import type { User } from '$shared/models/user';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
