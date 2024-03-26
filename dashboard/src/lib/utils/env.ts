@@ -34,7 +34,9 @@ import {
 	PUBLIC_TEST_OPENAI_API_KEY,
 	PUBLIC_TEST_OPENAI_ORG,
 	PUBLIC_PROD_OPENAI_API_KEY,
-	PUBLIC_PROD_OPENAI_ORG
+	PUBLIC_PROD_OPENAI_ORG,
+	PUBLIC_TEST_MIXPANEL_TOKEN,
+	PUBLIC_PROD_MIXPANEL_TOKEN
 } from '$env/static/public';
 
 import { Tier } from '$shared/models/team';
@@ -104,6 +106,7 @@ export const stripeConfig = isDevelopment ? testStripeConfig : prodStripeConfig;
 export const baseUrl = isDevelopment ? PUBLIC_TEST_URL : PUBLIC_PROD_URL;
 export const githubConfig = isDevelopment ? testGithubConfig : prodGithubConfig;
 export const openAiConfig = isDevelopment ? testOpenAiConfig : prodOpenAiConfig;
+export const mixpanelToken = isDevelopment ? PUBLIC_TEST_MIXPANEL_TOKEN : PUBLIC_PROD_MIXPANEL_TOKEN;
 
 export const priceIdMapping = {
 	[Tier.FREE]: isDevelopment ? 'free' : 'free',

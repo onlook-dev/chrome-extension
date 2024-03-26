@@ -215,7 +215,6 @@ const setListeners = () => {
 		projectSubs.forEach(unsubscribe => unsubscribe())
 
 		for (const projectId of projectsNotInMap) {
-			console.log('Subscribing to project', projectId)
 			projectService.subscribe(projectId, async project => {
 				if (!project) return
 				projectsMapBucket.set({ [project.id]: project })
@@ -292,7 +291,6 @@ const setListeners = () => {
 
 try {
 	setListeners()
-	console.log('Background script loaded!')
 } catch (error) {
 	console.error(error)
 }

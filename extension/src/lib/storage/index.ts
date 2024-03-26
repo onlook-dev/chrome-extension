@@ -19,7 +19,6 @@ export class FirebaseService<T extends Identifiable> {
 
   async post(object: T): Promise<string | undefined> {
     const objectId = await postObjectToCollection(this.collection, object, object.id);
-    console.log(`Posted object to ${this.collection}`);
     return objectId;
   }
 

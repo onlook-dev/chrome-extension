@@ -11,6 +11,7 @@ import {
 import { FirestoreCollections, MessageTypes } from '$shared/constants';
 import { FirebaseService } from '$lib/storage';
 import type { User } from '$shared/models/user';
+import { clearUser, identifyUser, trackEvent } from '$lib/mixpanel';
 
 export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged((authUser) => {
@@ -29,14 +30,17 @@ export function subscribeToFirebaseAuthChanges() {
 			userServices.subscribe(authUser.uid, (user) => {
 				userStore.set(user);
 			});
+
+			identifyUser(authUser.uid);
+			trackEvent('login', { method: 'google' });
 		} else {
-			console.log('User signed out');
 			// Clear data when signed out
 			userStore.set(undefined);
 			usersMapStore.set(new Map());
 			projectsMapStore.set(new Map());
 			githubHistoryMapStore.set(new Map());
 			teamsMapStore.set(new Map());
+			clearUser();
 		}
 	});
 }

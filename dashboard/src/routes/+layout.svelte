@@ -3,9 +3,11 @@
 	import { onMount } from 'svelte';
 	import { subscribeToFirebaseAuthChanges } from '$lib/firebase/auth';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import { initMixpanel } from '$lib/mixpanel';
 
 	onMount(() => {
 		subscribeToFirebaseAuthChanges();
+		initMixpanel();
 	});
 </script>
 

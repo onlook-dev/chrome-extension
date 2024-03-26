@@ -31,7 +31,6 @@ export function subscribeToFirebaseAuthChanges() {
 			})
 
 		} else {
-			console.log('User signed out')
 			// Clear data when signed out
 			userBucket.clear()
 			authUserBucket.clear()
