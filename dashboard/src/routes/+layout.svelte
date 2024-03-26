@@ -3,9 +3,12 @@
 	import { onMount } from 'svelte';
 	import { subscribeToFirebaseAuthChanges } from '$lib/firebase/auth';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import { page } from '$app/stores';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	onMount(() => {
 		subscribeToFirebaseAuthChanges();
+		trackMixpanelEvent('Page View', { page: $page.route.id });
 	});
 </script>
 

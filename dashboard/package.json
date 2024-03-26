@@ -52,7 +52,6 @@
     "@octokit/plugin-retry": "^7.0.3",
     "@octokit/plugin-throttling": "^9.0.3",
     "@skeletonlabs/skeleton": "^2.7.1",
-    "@types/mixpanel-browser": "^2.49.0",
     "events": "^3.3.0",
     "firebase": "^10.7.1",
     "highlight.js": "^11.9.0",

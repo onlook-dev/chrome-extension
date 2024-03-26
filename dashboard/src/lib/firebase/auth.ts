@@ -33,7 +33,7 @@ export function subscribeToFirebaseAuthChanges() {
 					name: user.name,
 					email: user.name
 				});
-				trackMixpanelEvent(user.id, "Sign In", {});
+				trackMixpanelEvent("Sign In", {});
 			});
 		} else {
 			// Clear data when signed out

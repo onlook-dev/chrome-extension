@@ -27,6 +27,7 @@
 	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
 	import type { Activity } from '$shared/models/activity';
 	import { FirebaseService } from '$lib/storage';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	let project: Project | undefined;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -100,6 +101,7 @@
 			},
 			window.location.origin
 		);
+		trackMixpanelEvent('Edit Project', { projectId: project?.id });
 	}
 </script>
 

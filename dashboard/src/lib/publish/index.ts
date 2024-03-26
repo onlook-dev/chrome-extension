@@ -7,6 +7,7 @@ import { User } from "$shared/models/user";
 import { getProcessedActivities, updateContentChunk } from "./helpers";
 import EventEmitter from 'events';
 import { getStyleTranslationInput, getTextTranslationInput } from "./inputs";
+import { trackMixpanelEvent } from "$lib/mixpanel/client";
 
 export enum ProjectPublisherEventType {
   TRANSLATING = 'TRANSLATING',
@@ -95,10 +96,14 @@ export class ProjectPublisher extends EventEmitter {
       this.emitEvent({
         type: ProjectPublisherEventType.PUBLISHING,
       });
+      trackMixpanelEvent('Publish Project to GitHub', {
+        changes: this.processedActivities.length
+      });
       return await this.publishFiles(title, description);
     } catch (e) {
       throw `Publish failed while publishing files. ${e}`;
     }
+
   }
 
   private async publishFiles(
