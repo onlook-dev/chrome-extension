@@ -38,6 +38,55 @@ export class StylePromptService extends PromptService<{ framework: string, css: 
       css: "css",
       code: "code",
     };
+    const prompt = "Given HTML code, the framework it's used in, and CSS style changes, update the HTML code to implement the style changes using inline CSS. Aim to make minimal changes to the original code structure, leave the quote type, tag name and tag structure as is. Only make style changes. Generalize from the examples given.\nInput:\nCSS: {css}\nCode: {code}\nFramework: {framework}\n\nOutput Code:";
+    const examplePrompt = "Example Input:\nCSS: {css}\nCode: {code}\nFramework: {framework}\n\nExample Output Code: {output}\n\n";
+    const examples: Example[] = [
+      {
+        css: "background-color: #000000;",
+        code: '<h1 class="text-red">',
+        framework: "vue",
+        output: '<h1 class="text-red" style="background-color: #000000;">'
+      },
+      {
+        css: "margin: 20px; border: 1px solid black;",
+        code: "<Card>",
+        framework: "tsx",
+        output: "<Card style={{ margin: '20px', border: '1px solid black' }}/>"
+      },
+      {
+        css: "background-color: blue; padding: 10px;",
+        code: '<div>',
+        framework: "svelte",
+        output: '<div style="background-color: blue; padding: 10px;">'
+      },
+      {
+        css: "font-size: 17px;",
+        code: '<span class="text-gray-600">',
+        framework: "html",
+        output: '<span class="text-gray-600" style="font-size: 17px;">'
+      },
+      {
+        css: "width: 67%;",
+        code: '<div className="mt-4">',
+        framework: "jsx",
+        output: '<div className="mt-4" style={{ width: "67%" }}>'
+      },
+    ];
+
+    super(prompt, inputs, {
+      prompt: examplePrompt,
+      examples: examples
+    });
+  }
+}
+
+export class TailwindPromptService extends PromptService<{ framework: string, css: string, code: string }> {
+  constructor() {
+    const inputs = {
+      framework: "framework",
+      css: "css",
+      code: "code",
+    };
     const prompt = "Given HTML code, the framework it's used in, and CSS style changes, update the HTML code to implement the style changes using TailwindCSS. Use tailwindCSS arbitrary values when no Tailwind equivalent like in example. Aim to make minimal changes to the original code structure, leave the quote type, tag name and tag structure as is. Only make style changes. Generalize from the examples given.\nInput:\nCSS: {css}\nCode: {code}\nFramework: {framework}\n\nOutput Code:";
     const examplePrompt = "Example Input:\nCSS: {css}\nCode: {code}\nFramework: {framework}\n\nExample Output Code: {output}\n\n";
     const examples: Example[] = [
