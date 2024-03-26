@@ -11,7 +11,7 @@ import {
 import { FirestoreCollections, MessageTypes } from '$shared/constants';
 import { FirebaseService } from '$lib/storage';
 import type { User } from '$shared/models/user';
-import { clearUser, identifyUser, trackEvent } from '$lib/mixpanel';
+import { identifyMixpanelUser, trackMixpanelEvent } from '$lib/mixpanel/client';
 
 export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged((authUser) => {
@@ -29,10 +29,12 @@ export function subscribeToFirebaseAuthChanges() {
 			// Listen and update user from remote
 			userServices.subscribe(authUser.uid, (user) => {
 				userStore.set(user);
+				identifyMixpanelUser(user.id, {
+					name: user.name,
+					email: user.name
+				});
+				trackMixpanelEvent(user.id, "Sign In", {});
 			});
-
-			identifyUser(authUser.uid);
-			trackEvent('login', { method: 'google' });
 		} else {
 			// Clear data when signed out
 			userStore.set(undefined);
@@ -40,7 +42,6 @@ export function subscribeToFirebaseAuthChanges() {
 			projectsMapStore.set(new Map());
 			githubHistoryMapStore.set(new Map());
 			teamsMapStore.set(new Map());
-			clearUser();
 		}
 	});
 }
