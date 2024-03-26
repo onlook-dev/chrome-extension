@@ -2,7 +2,7 @@ import {
 	MessageTypes,
 	DashboardRoutes
 } from '$shared/constants'
-import { authUserBucket, getActiveProject, getProjectById, popupStateBucket, setActiveProject } from '$lib/utils/localstorage'
+import { authUserBucket, getActiveProject, popupStateBucket, setActiveProject } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
 	activityInspectStream,
@@ -20,6 +20,7 @@ import { baseUrl } from '$lib/utils/env'
 import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
 import type { Project } from '$shared/models/project'
 import { PopupRoutes } from '$lib/utils/constants'
+import { isTailwindCSSUsed } from '$lib/utils/tailwind'
 
 function simulateEventOnSelector(
 	selector: string,
@@ -160,6 +161,9 @@ export function setupListeners() {
 
 try {
 	setupListeners()
+	isTailwindCSSUsed().then(isTailwind => {
+		console.log('Tailwind CSS used:', isTailwind)
+	})
 	console.log('Content script loaded!')
 } catch (e) {
 	console.error(e)
