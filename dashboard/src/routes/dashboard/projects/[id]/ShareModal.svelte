@@ -8,6 +8,7 @@
 	import type { User } from '$shared/models/user';
 	import CopyIcon from '~icons/mdi/content-copy';
 	import Share from '~icons/solar/share-outline';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	export let teamId: string;
 	const userService = new FirebaseService<User>(FirestoreCollections.USERS);
@@ -102,6 +103,7 @@
 							await navigator.clipboard.writeText(window.location.href);
 							closeModal();
 							toast.push('Link copied to clipboard');
+							trackMixpanelEvent('Copy Project Link', { teamId });
 						} catch (err) {
 							toast.push('Failed to copy text: ' + err);
 						}

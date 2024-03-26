@@ -15,7 +15,7 @@
 
 	import { truncateString } from '$shared/helpers';
 	import type { User } from '$shared/models/user';
-	import { auth } from '$lib/firebase/firebase';
+	import { auth } from '$lib/firebase';
 
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';
@@ -27,6 +27,7 @@
 	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
 	import type { Activity } from '$shared/models/activity';
 	import { FirebaseService } from '$lib/storage';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	let project: Project | undefined;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -93,7 +94,6 @@
 	});
 
 	function requestEditProject() {
-		console.log('requestEditProject');
 		window.postMessage(
 			{
 				type: MessageTypes.EDIT_PROJECT,
@@ -101,6 +101,7 @@
 			},
 			window.location.origin
 		);
+		trackMixpanelEvent('Edit Project', { projectId: project?.id });
 	}
 </script>
 

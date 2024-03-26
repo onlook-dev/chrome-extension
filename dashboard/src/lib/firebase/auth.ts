@@ -1,6 +1,6 @@
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
-import { auth } from './firebase';
+import { auth } from '.';
 import {
 	githubHistoryMapStore,
 	projectsMapStore,
@@ -11,6 +11,8 @@ import {
 import { FirestoreCollections, MessageTypes } from '$shared/constants';
 import { FirebaseService } from '$lib/storage';
 import type { User } from '$shared/models/user';
+import { identifyMixpanelUser } from '$lib/mixpanel/client';
+import { USER_ID_KEY } from '$lib/utils/constants';
 
 export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged((authUser) => {
@@ -28,15 +30,22 @@ export function subscribeToFirebaseAuthChanges() {
 			// Listen and update user from remote
 			userServices.subscribe(authUser.uid, (user) => {
 				userStore.set(user);
+				identifyMixpanelUser(user.id, {
+					$name: user.name,
+					$email: user.email,
+					$avatar: user.profileImage,
+					$created: user.createdAt
+				});
 			});
+			localStorage.setItem(USER_ID_KEY, authUser.uid);
 		} else {
-			console.log('User signed out');
 			// Clear data when signed out
 			userStore.set(undefined);
 			usersMapStore.set(new Map());
 			projectsMapStore.set(new Map());
 			githubHistoryMapStore.set(new Map());
 			teamsMapStore.set(new Map());
+			localStorage.removeItem(USER_ID_KEY);
 		}
 	});
 }

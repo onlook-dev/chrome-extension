@@ -9,7 +9,7 @@ import {
 	onSnapshot,
 	getDoc
 } from 'firebase/firestore';
-import { store } from './firebase';
+import { store } from '.';
 
 export async function postObjectToCollection(
 	collectionId: string,

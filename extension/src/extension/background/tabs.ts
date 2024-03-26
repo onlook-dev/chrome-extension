@@ -54,7 +54,6 @@ async function updateProjectTabHostData(tab: chrome.tabs.Tab) {
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
 	projectService.post(activeProject)
 	projectsMapBucket.set({ [activeProject.id]: activeProject })
-	console.log('Updated project with host data')
 }
 
 async function captureTab(windowId: number): Promise<string> {

@@ -38,7 +38,7 @@
     }}
     on:input={(event) => {
       if (parse(event.currentTarget.value) === undefined) {
-        console.log("Invalid color");
+        console.error("Invalid color");
         return;
       }
       inputString = event.currentTarget.value;

@@ -109,7 +109,6 @@
 					<button
 						class="btn btn-primary"
 						on:click={() => {
-							console.log('projectMapStore', $projectsMapStore.get(project?.id));
 							window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
 						}}><GitHub class="h-5 w-5" />Connect project to Github</button
 					>

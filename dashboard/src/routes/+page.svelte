@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { auth } from '$lib/firebase/firebase';
+	import { auth } from '$lib/firebase';
 	import { DashboardRoutes } from '$shared/constants';
 	import { onMount } from 'svelte';
 

@@ -2,9 +2,10 @@
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 	import type { Project } from '$shared/models/project';
-	import { baseUrl } from '$lib/utils/env';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
+	import { goto } from '$app/navigation';
 
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	let installationId = $page.url.searchParams.get('installation_id') as string;
@@ -38,6 +39,7 @@
 		project.installationId = installationId;
 
 		await projectService.post(project);
+		await trackMixpanelEvent('Add Github to Project', { projectId });
 		openProject();
 	});
 
@@ -46,8 +48,7 @@
 	});
 
 	function openProject() {
-		const dashboardUrl = `${baseUrl}/dashboard/projects/${projectId}`;
-		window.location.href = dashboardUrl;
+		goto(`/dashboard/projects/${projectId}`);
 	}
 </script>
 
