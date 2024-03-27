@@ -43,12 +43,13 @@
 			new Date(a.updatedAt ?? a.createdAt).getTime()
 	);
 
-	function deleteActivity(activity: Activity, modalId: string) {
+	async function deleteActivity(activity: Activity, modalId: string) {
 		project.activities = Object.fromEntries(
 			Object.entries(project.activities).filter(([key, value]) => value.id !== activity.id)
 		);
 
-		projectService.post(project);
+		await projectService.post(project, false);
+
 		projectsMapStore.update((projectsMap) => {
 			projectsMap.set(project.id, project);
 			return projectsMap;
