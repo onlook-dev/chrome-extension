@@ -1,5 +1,5 @@
 import { EditType, type EditEvent, type InsertRemoveVal } from '$shared/models/editor'
-import { ActivityStatus, type Activity, type ChangeValues } from '$shared/models/activity'
+import { ActivityStatus, type Activity, type ChangeValues, type InsertedComponent } from '$shared/models/activity'
 import { convertEditEventToStyleChangeMap } from '$lib/utils/editEvents'
 import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { sendGetScreenshotRequest } from '$lib/utils/messaging'
@@ -50,8 +50,8 @@ async function processEditEvent(editEvent: EditEvent) {
 		case EditType.TEXT:
 			activity.textChanges = getChangeObject(editEvent, activity.textChanges ?? {})
 			break
-		case EditType.INSERT:
-			activity.insertChanges = getChangeObject(editEvent, activity.insertChanges ?? {})
+		case EditType.COMPONENT:
+			activity = handleComponentChange(editEvent, activity)
 			break
 		case EditType.REMOVE:
 			activity = handleRemoveChange(editEvent, activity)
@@ -81,10 +81,8 @@ function isActivityEmpty(activity: Activity): boolean {
 	return Object.keys(activity.styleChanges).length === 0
 		&& Object.keys(activity.textChanges ?? {}).length === 0
 		&& Object.keys(activity.insertChanges ?? {}).length === 0
-		&& Object.keys(activity.removeChanges ?? {}).length === 0
 }
 
-// TODO: This may change for different EditEvent EditType. Same for now
 function getChangeObject(editEvent: EditEvent, changeObject: Record<string, ChangeValues>) {
 	const mappedStyleChange = convertEditEventToStyleChangeMap(editEvent)
 
@@ -112,12 +110,25 @@ function getChangeObject(editEvent: EditEvent, changeObject: Record<string, Chan
 	return changeObject
 }
 
+function handleComponentChange(editEvent: EditEvent, activity: Activity) {
+	// Insert new component
+
+	return activity
+}
+
 function handleRemoveChange(editEvent: EditEvent, activity: Activity) {
-	// If inserted change is removed change, remove inserted
-	if (activity.insertChanges && activity.insertChanges.childSelector.newVal === (editEvent.oldVal as InsertRemoveVal).childSelector) {
-		delete activity.insertChanges
+	// If removed in inserted component, remove it from list in activity
+	const newVal = editEvent.newVal as InsertedComponent
+	if (activity.insertChanges && newVal.id in Object.keys(activity.insertChanges)) {
+		delete activity.insertChanges[newVal.id]
 	} else {
-		activity.removeChanges = getChangeObject(editEvent, activity.removeChanges ?? {})
+		// Add to delete change
+		if (!activity.deleteChanges) activity.deleteChanges = {}
+		activity.deleteChanges[newVal.id] = newVal
 	}
 	return activity
+}
+
+function handleComponentRemoveChange() {
+
 }

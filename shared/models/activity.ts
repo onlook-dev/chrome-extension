@@ -19,8 +19,8 @@ export interface Activity {
   textChanges?: Record<string, ChangeValues>;
 
   // TODO: These will be different
-  insertChanges?: Record<string, ChangeValues>;
-  removeChanges?: Record<string, ChangeValues>;
+  insertChanges?: Record<string, Component>;
+  deleteChanges?: Record<string, Component>;
 
   // Handles the code written to GitHub
   status?: ActivityStatus;
@@ -31,6 +31,14 @@ export interface ChangeValues {
   key: string;
   oldVal: string;
   newVal: string;
+}
+
+export interface Component {
+  componentId?: string; // Exists if Onlook custom component
+  selector: string;
+  parentSelector: string; // Parent selector
+  index: number; // Index within parent
+  content: string; // String content of the element (For reversibility)
 }
 
 export enum ActivityStatus {

@@ -177,30 +177,6 @@
 					/>
 				{/if}
 
-				{#if activity.insertChanges && Object.keys(activity.insertChanges).length > 0}
-					<p>Inserted component:</p>
-					<CodeBlock
-						class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-scroll"
-						language="html"
-						code={activity.insertChanges.childContent.newVal ?? ''}
-						color="text-gray-800"
-						text="text-xs"
-						button="btn btn-xs ml-auto rounded-sm"
-					/>
-				{/if}
-
-				{#if activity.removeChanges && Object.keys(activity.removeChanges).length > 0}
-					<p>Removed component:</p>
-					<CodeBlock
-						class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-auto "
-						language="css"
-						code={formatStyleChanges(activity.removeChanges)}
-						color="text-gray-800"
-						text="text-xs"
-						button="btn btn-xs ml-auto rounded-sm"
-					/>
-				{/if}
-
 				{#if activity.previewImage}
 					<p>Preview image:</p>
 					<img src={activity.previewImage} alt="Preview" class="w-full rounded border" />
