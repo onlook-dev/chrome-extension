@@ -174,7 +174,7 @@ export class ProjectPublisher extends EventEmitter {
       code: input.code,
       css: input.css,
       framework: input.framework,
-    });
+    }, this.project.projectSettings?.styleFramework);
     const newContent = updateContentChunk(
       content,
       newCode,
