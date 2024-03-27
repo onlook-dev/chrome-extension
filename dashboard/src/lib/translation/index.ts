@@ -2,17 +2,20 @@ import { ChatOpenAI } from "@langchain/openai";
 import { translationTool } from "./tools";
 import { JsonOutputKeyToolsParser } from "@langchain/core/output_parsers/openai_tools";
 import { Runnable } from "@langchain/core/runnables";
-import { StylePromptService, TextPromptService } from "./prompt";
+import { InlineCssPromptService, TailwindPromptService, TextPromptService } from "./prompt";
 import { openAiConfig } from "$lib/utils/env";
+import { StyleFramework } from "$shared/models/projectSettings";
 
 export class TranslationService {
   private openAi: Runnable;
-  private stylePromptService: StylePromptService;
+  private inlineCssPromptService: InlineCssPromptService;
+  private tailwindPromptService: TailwindPromptService;
   private textPromptService: TextPromptService;
 
   constructor() {
     this.openAi = this.getModel();
-    this.stylePromptService = new StylePromptService();
+    this.inlineCssPromptService = new InlineCssPromptService();
+    this.tailwindPromptService = new TailwindPromptService();
     this.textPromptService = new TextPromptService();
   }
 
@@ -31,8 +34,18 @@ export class TranslationService {
     }));
   }
 
-  async getStyleTranslation(variables: typeof this.stylePromptService.inputVariables): Promise<string> {
-    const prompt = await this.stylePromptService.getPrompt(variables);
+  async getStyleTranslation(variables: typeof this.inlineCssPromptService.inputVariables, styleFramework?: StyleFramework): Promise<string> {
+    let prompt;
+    switch (styleFramework) {
+      case StyleFramework.TailwindCSS:
+        prompt = await this.tailwindPromptService.getPrompt(variables);
+        break;
+      case StyleFramework.InlineCSS:
+        prompt = await this.inlineCssPromptService.getPrompt(variables);
+        break;
+      default:
+        prompt = await this.inlineCssPromptService.getPrompt(variables);
+    }
     const response = (await this.openAi.invoke(prompt)) as { code: string }
     return response.code;
   }

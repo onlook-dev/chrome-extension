@@ -31,45 +31,45 @@ export class PromptService<T extends PromptVariables> {
   }
 }
 
-export class StylePromptService extends PromptService<{ framework: string, css: string, code: string }> {
+export class InlineCssPromptService extends PromptService<{ framework: string, css: string, code: string }> {
   constructor() {
     const inputs = {
       framework: "framework",
       css: "css",
       code: "code",
     };
-    const prompt = "Given HTML code, the framework it's used in, and CSS style changes, update the HTML code to implement the style changes using inline CSS. Aim to make minimal changes to the original code structure, leave the quote type, tag name and tag structure as is. Only make style changes. Generalize from the examples given.\nInput:\nCSS: {css}\nCode: {code}\nFramework: {framework}\n\nOutput Code:";
-    const examplePrompt = "Example Input:\nCSS: {css}\nCode: {code}\nFramework: {framework}\n\nExample Output Code: {output}\n\n";
+    const prompt = "Given HTML code, the framework it's used in, and CSS style changes, update the HTML code to implement the style changes. Aim to make minimal changes to the original code structure. Only make style changes. Generalize from the examples given.\nCSS: {css}\nCode: {code}\nFramework: {framework}\nOutput Code:";
+    const examplePrompt = "CSS: {css}\nCode: {code}\nFramework: {framework}\nOutput Code: {output}\n\n";
     const examples: Example[] = [
       {
-        css: "background-color: #000000;",
-        code: '<h1 class="text-red">',
+        css: "color: #000000;",
+        code: '<h1>',
         framework: "vue",
-        output: '<h1 class="text-red" style="background-color: #000000;">'
+        output: '<h1 style="color: #000000;">'
       },
       {
-        css: "margin: 20px; border: 1px solid black;",
+        css: "background-color: blue; border: 1px solid black;",
         code: "<Card>",
         framework: "tsx",
-        output: "<Card style={{ margin: '20px', border: '1px solid black' }}/>"
+        output: `<Card style={{{{ backgroundColor: blue, border: '1px solid black' }}}}>`
       },
       {
-        css: "background-color: blue; padding: 10px;",
-        code: '<div>',
+        css: "padding: 10px;",
+        code: `<div id="foo" style="padding: 2px;">`,
         framework: "svelte",
-        output: '<div style="background-color: blue; padding: 10px;">'
+        output: `<div id="foo" style="padding: 10px;">`
       },
       {
-        css: "font-size: 17px;",
-        code: '<span class="text-gray-600">',
+        css: "font-size: 17px; color: #000000;",
+        code: '<span style="font-size: 16px;">',
         framework: "html",
-        output: '<span class="text-gray-600" style="font-size: 17px;">'
+        output: '<span style="font-size: 17px; color: #000000;">'
       },
       {
         css: "width: 67%;",
-        code: '<div className="mt-4">',
+        code: `<div style={{{{ height: "10px"}}}}>`,
         framework: "jsx",
-        output: '<div className="mt-4" style={{ width: "67%" }}>'
+        output: '<div style={{{{ height: "10px", width: "67%" }}}}>'
       },
     ];
 
@@ -87,8 +87,8 @@ export class TailwindPromptService extends PromptService<{ framework: string, cs
       css: "css",
       code: "code",
     };
-    const prompt = "Given HTML code, the framework it's used in, and CSS style changes, update the HTML code to implement the style changes using TailwindCSS. Use tailwindCSS arbitrary values when no Tailwind equivalent like in example. Aim to make minimal changes to the original code structure, leave the quote type, tag name and tag structure as is. Only make style changes. Generalize from the examples given.\nInput:\nCSS: {css}\nCode: {code}\nFramework: {framework}\n\nOutput Code:";
-    const examplePrompt = "Example Input:\nCSS: {css}\nCode: {code}\nFramework: {framework}\n\nExample Output Code: {output}\n\n";
+    const prompt = "Given HTML code, the framework it's used in, and CSS style changes, update the HTML code to implement the style changes using TailwindCSS. Use tailwindCSS arbitrary values when no Tailwind equivalent like in example. Aim to make minimal changes to the original code structure. Only make style changes. Generalize from the examples above.\nCSS: {css}\nCode: {code}\nFramework: {framework}\nOutput Code:";
+    const examplePrompt = "CSS: {css}\nCode: {code}\nFramework: {framework}\nOutput Code: {output}";
     const examples: Example[] = [
       {
         css: "background-color: #000000;",
@@ -137,8 +137,8 @@ export class TextPromptService extends PromptService<{ framework: string, newTex
       oldText: "oldText",
       code: "code",
     };
-    const prompt = "Given HTML code, the framework it's used in, the original old text, and the new text, update the HTML code to implement the text changes. Aim to make minimal changes to the original code structure, leave the quote type, tag name and tag structure as is. Only make text content changes. Generalize from the examples given.\nInput:\nOld Text: {oldText}\nNew Text: {newText}\nCode: {code}\nFramework: {framework}\n\nOutput Code:";
-    const examplePrompt = "Example Input:\nOld Text: {oldText}\nNew Text: {newText}\nCode: {code}\nFramework: {framework}\n\nExample Output Code: {output}\n\n";
+    const prompt = "Given HTML code, the framework it's used in, the original old text, and the new text, update the HTML code to implement the text changes. Aim to make minimal changes to the original code structure, leave the quote type, tag name and tag structure as is. Only make text content changes. Generalize from the examples above.\nOld Text: {oldText}\nNew Text: {newText}\nCode: {code}\nFramework: {framework}\nOutput Code:";
+    const examplePrompt = "Old Text: {oldText}\nNew Text: {newText}\nCode: {code}\nFramework: {framework}\n Output Code: {output}";
     const examples: Example[] = [
       {
         newText: "New Text",
