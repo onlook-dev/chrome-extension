@@ -5,7 +5,6 @@ import {
 import { authUserBucket, getActiveProject, popupStateBucket, setActiveProject } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
-	activityInspectStream,
 	activityRevertStream,
 	applyProjectChangesStream,
 	getScreenshotStream,
@@ -20,31 +19,7 @@ import { baseUrl } from '$lib/utils/env'
 import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
 import type { Project } from '$shared/models/project'
 import { PopupRoutes } from '$lib/utils/constants'
-import { isTailwindCSSUsed } from '$lib/utils/tailwind'
-
-function simulateEventOnSelector(
-	selector: string,
-	event: string,
-	scrollToElement: boolean = false
-) {
-	const element = document.querySelector(selector)
-	if (!element) return
-
-	// TODO: This sometimes catches the child elements instead.
-	const rect = element.getBoundingClientRect()
-
-	const mouseEvent = new MouseEvent(event, {
-		clientX: rect.x + 1,
-		clientY: rect.y + 1,
-		bubbles: false,
-		cancelable: true
-	})
-	element.dispatchEvent(mouseEvent)
-
-	if (scrollToElement) {
-		element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
-	}
-}
+import { getCSSFramework } from '$lib/utils/styleFramework'
 
 function applyActivityChanges(activity: Activity): boolean {
 	const element = document.querySelector(activity.selector) as any
@@ -115,11 +90,6 @@ export function setupListeners() {
 		}
 	})
 
-	activityInspectStream.subscribe(([detail, sender]) => {
-		// TODO: This is not reliable enough. Choosing wrong element and not applying changes.
-		simulateEventOnSelector(detail.selector, detail.event, detail.scrollToElement)
-	})
-
 	activityRevertStream.subscribe(([activity, sender]) => {
 		revertActivityChanges(activity)
 	})
@@ -143,6 +113,16 @@ export function setupListeners() {
 			}
 		})
 
+		// Get style framework if did not exist
+		if (!activeProject.projectSettings?.styleFramework) {
+			const styleFramework = await getCSSFramework()
+			activeProject.projectSettings = {
+				...activeProject.projectSettings,
+				styleFramework
+			}
+			shouldSaveProject = true
+		}
+
 		if (shouldSaveProject) {
 			sendSaveProject(activeProject)
 		}
@@ -161,9 +141,6 @@ export function setupListeners() {
 
 try {
 	setupListeners()
-	isTailwindCSSUsed().then(isTailwind => {
-		console.log('Tailwind CSS used:', isTailwind)
-	})
 	console.log('Content script loaded!')
 } catch (e) {
 	console.error(e)

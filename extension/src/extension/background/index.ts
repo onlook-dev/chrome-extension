@@ -1,12 +1,10 @@
 import { DashboardRoutes, FirestoreCollections } from '$shared/constants'
 import { baseUrl } from '$lib/utils/env'
 import {
-	activityInspectStream,
 	activityRevertStream,
 	authRequestStream,
 	editProjectRequestStream,
 	openUrlRequestStream,
-	sendActivityInspect,
 	sendActivityRevert,
 	editEventStream,
 	activityApplyStream,
@@ -109,11 +107,6 @@ const setListeners = () => {
 	})
 
 	subscribeToFirebaseAuthChanges()
-
-	// Forward messages to content script
-	activityInspectStream.subscribe(([detail, sender]) => {
-		forwardToActiveProjectTab(detail, sendActivityInspect)
-	})
 
 	// Forward messages to content script
 	activityRevertStream.subscribe(([detail, sender]) => {

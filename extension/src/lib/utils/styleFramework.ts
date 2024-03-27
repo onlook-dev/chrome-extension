@@ -1,4 +1,6 @@
-export async function isTailwindCSSUsed() {
+import { StyleFramework } from "$shared/models/projectSettings";
+
+async function isTailwindUsed() {
   // Function to fetch and read the content of a stylesheet
   async function fetchStylesheet(href: string) {
     try {
@@ -11,7 +13,7 @@ export async function isTailwindCSSUsed() {
   }
 
   // Get all stylesheet links on the page
-  const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+  const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]')) as HTMLLinkElement[];
 
   // Check each stylesheet for Tailwind CSS patterns
   for (let link of links) {
@@ -24,4 +26,12 @@ export async function isTailwindCSSUsed() {
   }
 
   return false; // No Tailwind CSS patterns found in any stylesheet
+}
+
+export async function getCSSFramework() {
+  if (await isTailwindUsed()) {
+    return StyleFramework.TailwindCSS;
+  } else {
+    return StyleFramework.InlineCSS;
+  }
 }
