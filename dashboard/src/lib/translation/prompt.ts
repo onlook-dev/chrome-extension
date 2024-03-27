@@ -31,7 +31,7 @@ export class PromptService<T extends PromptVariables> {
   }
 }
 
-export class StylePromptService extends PromptService<{ framework: string, css: string, code: string }> {
+export class InlineCssPromptService extends PromptService<{ framework: string, css: string, code: string }> {
   constructor() {
     const inputs = {
       framework: "framework",

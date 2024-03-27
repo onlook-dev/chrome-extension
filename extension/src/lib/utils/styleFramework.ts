@@ -28,10 +28,16 @@ async function isTailwindUsed() {
   return false; // No Tailwind CSS patterns found in any stylesheet
 }
 
-export async function getCSSFramework() {
-  if (await isTailwindUsed()) {
-    return StyleFramework.TailwindCSS;
-  } else {
-    return StyleFramework.InlineCSS;
+export async function getCSSFramework(): Promise<StyleFramework | undefined> {
+  try {
+    if (await isTailwindUsed()) {
+      return StyleFramework.TailwindCSS;
+    } else {
+      return StyleFramework.InlineCSS;
+    }
+  } catch (error) {
+    console.error('Error detecting the CSS framework:', error);
+    return undefined;
   }
+
 }

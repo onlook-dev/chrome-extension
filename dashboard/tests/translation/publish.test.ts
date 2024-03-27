@@ -51,7 +51,8 @@ describe('ProjectPublisher', () => {
       openAiConfig: {
         apiKey: process.env.PUBLIC_TEST_OPENAI_API_KEY,
       },
-      githubConfig: {}
+      githubConfig: {},
+      firebaseConfig: {},
     }))
 
     mock.module("$lib/translation", () => ({
