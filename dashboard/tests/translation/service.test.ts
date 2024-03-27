@@ -3,8 +3,11 @@ import { expect, test, describe, mock, beforeAll } from 'bun:test';
 import type { TranslationService } from '$lib/translation';
 
 // Should explicitly enable. Costs money to run.
-const enabled = true;
-
+const enabled = false;
+const StyleFramework = {
+  TailwindCSS: 'TailwindCSS',
+  InlineCSS: 'InlineCSS',
+}
 describe('Translation service', () => {
   let TranslationService: any;
 
@@ -22,20 +25,24 @@ describe('Translation service', () => {
         apiKey: process.env.PUBLIC_TEST_OPENAI_API_KEY,
       }
     }))
+
+    mock.module("$shared/models/projectSettings", () => ({
+      StyleFramework,
+    }))
+
     const Translation = await import('$lib/translation');
     TranslationService = Translation.TranslationService;
-    console.log(TranslationService);
   });
 
   test('translation service implements inlineCSS correctly', async () => {
     const service: TranslationService = new TranslationService();
     let translation = await service.getStyleTranslation({
       framework: "tsx",
-      code: "<Card className='mt-8'>",
+      code: "<Button style={{ backgroundColor: 'red' }}>",
       css: "background-color: blue; padding: 10px;",
     });
 
-    let expected = "<Card className='mt-8' style={{ backgroundColor: 'blue', padding: '10px' }}>";
+    let expected = "<Button style={{ backgroundColor: 'blue', padding: '10px' }} >";
     expect(translation).toBe(expected);
   });
 
@@ -45,7 +52,7 @@ describe('Translation service', () => {
       framework: "tsx",
       code: "<Card className='mt-8'>",
       css: "background-color: blue; padding: 10px;",
-    });
+    }, StyleFramework.TailwindCSS as any);
 
     let expected = "<Card className='mt-8 bg-blue-500 p-2'>";
     expect(translation).toBe(expected);
