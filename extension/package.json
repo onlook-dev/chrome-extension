@@ -11,7 +11,8 @@
 		"zip": "zip -r dist.zip dist",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
 		"@crxjs/vite-plugin": "2.0.0-beta.18",

@@ -1,11 +1,11 @@
-import type { InsertedComponent } from "./activity";
+import type { Component } from "./activity";
 
 export type EditEvent = {
   createdAt: string;
   selector: string;
   editType: EditType;
-  newVal: Record<string, string> | TextVal | InsertedComponent;
-  oldVal: Record<string, string> | TextVal | InsertedComponent;
+  newVal: Record<string, string> | TextVal | Component;
+  oldVal: Record<string, string> | TextVal | Component;
   path?: string | undefined;
 }
 
