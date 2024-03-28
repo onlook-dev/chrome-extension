@@ -11,10 +11,3 @@ export enum EventMetadataType {
   TIME_STAMP = "time-stamp",
   SOURCE_MAP_ID = "data-onlook-id",
 }
-
-export let getEventDataByType = (
-  eventDataList: EventMetadata[],
-  type: EventMetadataType
-) => {
-  return eventDataList.find((data) => data.type === type)?.value;
-};

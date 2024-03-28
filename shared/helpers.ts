@@ -36,7 +36,6 @@ export function isBase64ImageString(str: string) {
   return base64ImageRegex.test(str);
 }
 
-
 export function getInitials(name: string) {
   const initials = name
     .split(" ")

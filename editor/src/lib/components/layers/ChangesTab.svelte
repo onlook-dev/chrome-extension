@@ -4,8 +4,7 @@
   import * as Avatar from "$lib/components/ui/avatar";
   import type { EditTool } from "$lib/tools/edit";
   import { slide } from "svelte/transition";
-  import { jsToCssProperty } from "$shared/helpers";
-  import { timeSince } from "$shared/helpers";
+  import { jsToCssProperty, timeSince } from "$shared/helpers";
 
   export let editTool: EditTool;
   let hoveredEvent: EditEvent | undefined;

@@ -5,6 +5,7 @@ import { sendGetScreenshotRequest } from '$lib/utils/messaging'
 import { nanoid } from 'nanoid'
 import type { Project } from '$shared/models/project'
 import { convertEditEventToChangeObject } from './convert'
+
 export class EditEventService {
   changeQueue: EditEvent[] = []
 
