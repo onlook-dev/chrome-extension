@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { timeSince } from '$shared/models/comment';
+	import { timeSince } from '$shared/helpers';
 
 	export let profileImageUrl = '';
 	export let userName = '';
