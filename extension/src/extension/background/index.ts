@@ -47,7 +47,7 @@ let activeProjectSub: (() => void) | null = null
 const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
 const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS)
 const userService = new FirebaseService<User>(FirestoreCollections.USERS)
-const editEventService = new EditEventService()
+const editEventService = new EditEventService(forwardToActiveProjectTab)
 
 function setDefaultMaps() {
 	teamsMapBucket.set({})

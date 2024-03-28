@@ -1,34 +1,57 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe } from 'bun:test';
-import { convertEditEventToStyleChangeMap } from '$lib/utils/editEvents';
+// @ts-ignore - Module exists. TODO: Fix this for TS
+import { convertEditEventToChangeObject } from '$lib/editEvents/convert';
 
-describe('Edit event converter', () => {
-  test("convertEditEventToStyleChangeMap creates a style change map from edit events", () => {
+describe('convertEditEventToChangeObject', () => {
+  test('should add new styles to changeObject', () => {
     const editEvent = {
-      oldVal: { color: "red", fontSize: "12px" },
-      newVal: { color: "blue", fontSize: "14px" },
+      oldVal: { color: 'red' },
+      newVal: { color: 'blue', fontSize: '12px' }
     };
+    const changeObject = {};
 
-    const expectedStyleChangeMap = {
-      color: { key: "color", oldVal: "red", newVal: "blue" },
-      fontSize: { key: "fontSize", oldVal: "12px", newVal: "14px" },
-    };
+    const result = convertEditEventToChangeObject(editEvent, changeObject);
 
-    const styleChangeMap = convertEditEventToStyleChangeMap(editEvent);
-
-    expect(styleChangeMap).toEqual(expectedStyleChangeMap);
+    expect(result).toEqual({
+      color: { key: 'color', oldVal: 'red', newVal: 'blue' },
+      fontSize: { key: 'fontSize', oldVal: '', newVal: '12px' }
+    });
   });
 
-  test("convertEditEventToStyleChangeMap handles empty edit events", () => {
+  test('should update existing styles in changeObject', () => {
     const editEvent = {
-      oldVal: {},
-      newVal: {},
+      oldVal: { color: 'red' },
+      newVal: { color: 'blue' }
+    };
+    const changeObject = {
+      color: { key: 'color', oldVal: 'red', newVal: 'green' }
     };
 
-    const expectedStyleChangeMap = {};
+    const result = convertEditEventToChangeObject(editEvent, changeObject);
 
-    const styleChangeMap = convertEditEventToStyleChangeMap(editEvent);
-
-    expect(styleChangeMap).toEqual(expectedStyleChangeMap);
+    expect(result).toEqual({
+      color: { key: 'color', oldVal: 'red', newVal: 'blue' }
+    });
   });
+
+  test('should remove styles from changeObject if newVal is empty', () => {
+    const editEvent = {
+      oldVal: { color: 'red', margin: '5px' },
+      newVal: { color: '', margin: '10px' }
+    };
+    const changeObject = {
+      color: { key: 'color', oldVal: 'red', newVal: 'green' },
+      margin: { key: 'margin', oldVal: '5px', newVal: '5px' }
+    };
+
+    const result = convertEditEventToChangeObject(editEvent, changeObject);
+
+    expect(result).toEqual({
+      margin: { key: 'margin', oldVal: '5px', newVal: '10px' }
+    });
+    expect(result.color).toBeUndefined();
+  });
+
+  // Add more tests as needed to cover different scenarios and edge cases
 });
