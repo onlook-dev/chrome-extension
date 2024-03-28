@@ -27,3 +27,10 @@ export interface Component {
   index: number; // Index within parent
   content: string; // String content of the element (For reversibility)
 }
+
+export type InsertRemoveVal = {
+  childContent: string;
+  childSelector: string;
+  position: string;
+  componentId: string;
+}

@@ -11,6 +11,14 @@ const config = {
 		adapter: adapter({
 			maxDuration: 30
 		})
+	},
+	paths: {
+		"$*": [
+			"./src/*"
+		],
+		"$shared/*": [
+			"../shared/*"
+		]
 	}
 };
 

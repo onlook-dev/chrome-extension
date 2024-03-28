@@ -3,3 +3,6 @@
 
 .DS_Store
 umd
+
+shared
+.svelte-kit
