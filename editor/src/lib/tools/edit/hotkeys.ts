@@ -2,7 +2,7 @@ import hotkeys from "hotkeys-js";
 import { redoLastEvent, undoLastEvent } from "./history";
 import { ToolName } from "..";
 import type { EditTool } from ".";
-import { ONLOOK_TOOLBAR } from "$lib/constants";
+import { ONLOOK_TOOLBAR } from "$shared/constants";
 
 hotkeys.filter = function (event) {
   var target = (event.target || event.srcElement || event.currentTarget) as HTMLElement;

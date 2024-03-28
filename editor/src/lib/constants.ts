@@ -1,5 +1,5 @@
-export const ONLOOK_TOOLBAR = "onlook-toolbar";
-export const DATA_ONLOOK_ID = "data-onlook-id";
+import { ONLOOK_TOOLBAR } from "$shared/constants";
+
 export const DATA_ONLOOK_IGNORE = "data-onlook-ignore";
 export const DATA_ONLOOK_SELECTOR = "data-onlook-selector";
 export const DATA_ONLOOK_INJECT = "data-onlook-inject";

@@ -1,16 +1,16 @@
 function addCustomElements() {
-  const ONLOOK_TOOLBAR_TAG = 'onlook-toolbar';
+  const ONLOOK_TOOLBAR = 'onlook-toolbar';
   // @ts-ignore - Browser exists in context 
   var platform = typeof browser === 'undefined' ? chrome : browser;
 
   // Check if the elements are already added to prevent duplicates
-  if (!document.querySelector(ONLOOK_TOOLBAR_TAG)) {
+  if (!document.querySelector(ONLOOK_TOOLBAR)) {
     const onlookScript = document.createElement('script');
     onlookScript.type = 'module';
     onlookScript.src = platform.runtime.getURL('src/lib/editor/bundle.min.js');
     document.body.appendChild(onlookScript);
 
-    const onlookToolbar = document.createElement(ONLOOK_TOOLBAR_TAG);
+    const onlookToolbar = document.createElement(ONLOOK_TOOLBAR);
     document.body.append(onlookToolbar);
   }
 }
