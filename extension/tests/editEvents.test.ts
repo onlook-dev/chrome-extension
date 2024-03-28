@@ -1,6 +1,6 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe } from 'bun:test';
-// @ts-ignore - Module exists. TODO: Fix this for TS
+// @ts-ignore - Module exists. TODO: Fix TS linter
 import { convertEditEventToChangeObject } from '$lib/editEvents/convert';
 
 describe('convertEditEventToChangeObject', () => {
@@ -53,5 +53,4 @@ describe('convertEditEventToChangeObject', () => {
     expect(result.color).toBeUndefined();
   });
 
-  // Add more tests as needed to cover different scenarios and edge cases
 });

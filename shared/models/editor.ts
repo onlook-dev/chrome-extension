@@ -1,12 +1,11 @@
-import type { Component } from "./activity";
-
 export type EditEvent = {
   createdAt: string;
   selector: string;
   editType: EditType;
-  newVal: Record<string, string> | TextVal | Component;
-  oldVal: Record<string, string> | TextVal | Component;
+  newVal: Record<string, string> | Component | TextVal;
+  oldVal: Record<string, string> | Component | TextVal;
   path?: string | undefined;
+  componentId?: string | undefined;
 }
 
 export type TextVal = {
@@ -17,6 +16,14 @@ export enum EditType {
   TEXT = "TEXT",
   STYLE = "STYLE",
   ATTR = "ATTR",
-  COMPONENT = "COMPONENT",
+  INSERT = "INSERT",
   REMOVE = "REMOVE",
+}
+
+export interface Component {
+  componentId?: string; // Exists if Onlook custom component
+  selector: string;
+  parentSelector: string; // Parent selector
+  index: number; // Index within parent
+  content: string; // String content of the element (For reversibility)
 }

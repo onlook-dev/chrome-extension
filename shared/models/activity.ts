@@ -1,3 +1,4 @@
+import type { Component } from "./editor";
 import type { EventMetadata } from "./eventData";
 
 // All the changes that happen to an element when switched to another element
@@ -31,14 +32,6 @@ export interface ChangeValues {
   key: string;
   oldVal: string;
   newVal: string;
-}
-
-export interface Component {
-  componentId?: string; // Exists if Onlook custom component
-  selector: string;
-  parentSelector: string; // Parent selector
-  index: number; // Index within parent
-  content: string; // String content of the element (For reversibility)
 }
 
 export enum ActivityStatus {

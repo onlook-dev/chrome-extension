@@ -8,7 +8,8 @@ import { convertEditEventToChangeObject } from './convert'
 export class EditEventService {
   changeQueue: EditEvent[] = []
 
-  constructor(private forwardToActiveProjectTab: (activity: Activity, callback: (activity: Activity) => void) => void) { }
+  constructor(private forwardToActiveProjectTab: (activity: Activity, callback: (activity: Activity) => void) => void) {
+  }
 
   async handleEditEvent(editEvent: EditEvent) {
     this.changeQueue.push(editEvent)
@@ -82,22 +83,29 @@ export class EditEventService {
       case EditType.TEXT:
         activity.textChanges = convertEditEventToChangeObject(editEvent, activity.textChanges ?? {})
         break
-      case EditType.COMPONENT:
-        activity = this.handleComponentChange(editEvent, activity)
+      case EditType.INSERT:
+        activity = this.handleInsertChange(editEvent, activity)
         break
       case EditType.REMOVE:
         activity = this.handleRemoveChange(editEvent, activity)
         break
+      default:
+        console.error('Edit type not supported: ', editEvent.editType)
+        break
     }
+
+    // If componentId exists, handle the custom element
+    if (editEvent.componentId) {
+
+    }
+
     activity.path = editEvent.path ?? activity.path
     activity.updatedAt = new Date().toISOString()
     activity.status = ActivityStatus.EDITED
     return activity
   }
 
-
-
-  handleComponentChange(editEvent: EditEvent, activity: Activity) {
+  handleInsertChange(editEvent: EditEvent, activity: Activity) {
     // Insert new component
 
     return activity
