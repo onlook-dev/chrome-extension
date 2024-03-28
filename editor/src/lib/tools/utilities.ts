@@ -1,4 +1,4 @@
-import { DATA_ONLOOK_ID, ONLOOK_TOOLBAR } from '$lib/constants'
+import { DATA_ONLOOK_ID, ONLOOK_TOOLBAR } from '$shared/constants'
 import { finder } from '$lib/tools/selection/uniqueSelector'
 
 export const deepElementFromPoint = (x, y): HTMLElement => {
@@ -20,7 +20,7 @@ export const deepElementFromPoint = (x, y): HTMLElement => {
   return nested_shadow || el
 }
 
-export const isOffBounds = node => node?.closest && (node.closest(ONLOOK_TOOLBAR) || node.closest('#onlook-toolbar'))
+export const isOffBounds = node => node?.closest && (node.closest(ONLOOK_TOOLBAR) || node.closest(`#${ONLOOK_TOOLBAR}`))
 
 export const getDataOnlookId = node => node?.getAttribute(DATA_ONLOOK_ID)
 

@@ -1,7 +1,9 @@
+// @ts-ignore - Module exists
 import { expect, test, describe, beforeEach } from 'bun:test';
+// @ts-ignore - Module exists
+import { EditType, type EditEvent } from '$shared/models/editor';
 import { get } from 'svelte/store';
 import { historyStore, redoStore, addToHistory, undoLastEvent, redoLastEvent } from '../src/lib/tools/edit/history';
-import { EditType, type EditEvent } from '../src/lib/types/editor';
 
 describe('history functionality', () => {
   const mockEvent = {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { User } from '$shared/models/user';
 	import { signOut } from '$lib/firebase/auth';
-	import { getInitials } from '$shared/models/comment';
+	import { getInitials } from '$shared/helpers';
 	import ChevronDownIcon from '~icons/mdi/chevron-down';
 
 	export let user: User | null;

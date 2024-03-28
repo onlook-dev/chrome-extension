@@ -1,15 +1,13 @@
-import type { EditEvent, } from "$lib/types/editor";
-
-const OPEN_PROJECT: string = "OPEN_PROJECT";
-const EDIT_EVEMT: string = "EDIT_EVENT";
+import { MessageTypes } from "$shared/constants";
+import type { EditEvent } from "$shared/models/editor";
 
 export function emitOpenProjectMessage() {
-  window.postMessage({ type: OPEN_PROJECT }, window.location.origin);
+  window.postMessage({ type: MessageTypes.OPEN_PROJECT }, window.location.origin);
 };
 
 export function emitEditEvent(event: EditEvent) {
   const message = {
-    type: EDIT_EVEMT,
+    type: MessageTypes.EDIT_EVENT,
     detail: event,
   }
   window.postMessage(message, window.location.origin);

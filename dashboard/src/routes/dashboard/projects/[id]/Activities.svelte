@@ -43,12 +43,13 @@
 			new Date(a.updatedAt ?? a.createdAt).getTime()
 	);
 
-	function deleteActivity(activity: Activity, modalId: string) {
+	async function deleteActivity(activity: Activity, modalId: string) {
 		project.activities = Object.fromEntries(
 			Object.entries(project.activities).filter(([key, value]) => value.id !== activity.id)
 		);
 
-		projectService.post(project);
+		await projectService.post(project, false);
+
 		projectsMapStore.update((projectsMap) => {
 			projectsMap.set(project.id, project);
 			return projectsMap;
@@ -206,29 +207,6 @@
 						disabled
 						class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col overflow-auto text-gray-800 text-sm"
 						value={activity.textChanges.text?.newVal ?? ''}
-					/>
-				{/if}
-
-				{#if activity.insertChanges && Object.keys(activity.insertChanges).length > 0}
-					<p>Inserted component:</p>
-					<CodeBlock
-						class="text-sm bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-scroll"
-						language="html"
-						code={activity.insertChanges.childContent.newVal ?? ''}
-						color="text-gray-800"
-						text="text-sm"
-						button="btn btn-xs ml-auto rounded-sm"
-					/>
-				{/if}
-
-				{#if activity.removeChanges && Object.keys(activity.removeChanges).length > 0}
-					<p>Removed component:</p>
-					<CodeBlock
-						class="bg-gray-50 rounded p-1 border w-full text-start flex flex-col overflow-auto"
-						language="css"
-						code={formatStyleChanges(activity.removeChanges)}
-						color="text-gray-800"
-						text="text-sm"
 					/>
 				{/if}
 

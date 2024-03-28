@@ -1,3 +1,4 @@
+import type { Component } from "./editor";
 import type { EventMetadata } from "./eventData";
 
 // All the changes that happen to an element when switched to another element
@@ -14,13 +15,12 @@ export interface Activity {
   createdAt: string;
   updatedAt?: string;
 
-  // TODO: Handle content changes + structure changes
   styleChanges: Record<string, ChangeValues>;
   textChanges?: Record<string, ChangeValues>;
 
-  // TODO: These will be different
-  insertChanges?: Record<string, ChangeValues>;
-  removeChanges?: Record<string, ChangeValues>;
+  // TODO: Finish implementing this
+  insertChanges?: Record<string, Component>;
+  deleteChanges?: Record<string, Component>;
 
   // Handles the code written to GitHub
   status?: ActivityStatus;

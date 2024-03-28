@@ -28,7 +28,6 @@ import {
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { forwardToActiveProjectTab, updateTabActiveState } from './tabs'
-import { changeQueue, processChangeQueue } from './editEvents'
 
 import type { Team } from '$shared/models/team'
 import type { Activity } from '$shared/models/activity'
@@ -36,14 +35,17 @@ import type { Comment } from '$shared/models/comment'
 import { FirebaseService } from '$lib/storage'
 import type { Project } from '$shared/models/project'
 import type { User } from '$shared/models/user'
+import { EditEventService } from '$lib/editEvents'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
 let userSubs: (() => void)[] = []
 let activeProjectSub: (() => void) | null = null
+
 const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
 const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS)
 const userService = new FirebaseService<User>(FirestoreCollections.USERS)
+const editEventService = new EditEventService(forwardToActiveProjectTab)
 
 function setDefaultMaps() {
 	teamsMapBucket.set({})
@@ -271,14 +273,8 @@ const setListeners = () => {
 	})
 
 	// Style change from visbug and content script
-	editEventStream.subscribe(async ([editEvent]) => {
-		changeQueue.push(editEvent)
-
-		// Process the queue
-		if (changeQueue.length === 1) {
-			// Only start processing if this is the only item in the queue
-			await processChangeQueue()
-		}
+	editEventStream.subscribe(([editEvent]) => {
+		editEventService.handleEditEvent(editEvent)
 	})
 }
 

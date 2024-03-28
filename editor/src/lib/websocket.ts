@@ -1,4 +1,3 @@
-import { writable, type Writable } from "svelte/store";
 import { SERVER_SOCKET_URL } from "./config";
 type MessageHandler = (message: any) => void;
 

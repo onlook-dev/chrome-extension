@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import { timeSince } from '$shared/models/comment'
+	import { timeSince } from '$shared/helpers'
 
 	export let profileImageUrl: string = ''
 	export let userName: string = ''

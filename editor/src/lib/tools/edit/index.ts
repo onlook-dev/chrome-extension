@@ -1,6 +1,6 @@
 import { ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, } from '$lib/states/editor';
-import { EditType, type InsertRemoveVal } from '$lib/types/editor';
+import { EditType, type InsertRemoveVal } from '$shared/models/editor';
 import type { Tool } from '../index';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';

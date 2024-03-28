@@ -51,7 +51,7 @@
 
   onMount(() => {
     unsubsSelector.push(
-      editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged)
+      editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged),
     );
     handshake();
   });

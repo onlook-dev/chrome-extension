@@ -60,7 +60,7 @@
   }
 </script>
 
-<div class="h-[calc(60vh-8rem)] overflow-auto">
+<div class="h-[calc(60vh)] overflow-auto">
   {#if tree}
     <TreeRoot
       node={tree}
@@ -73,7 +73,9 @@
   {/if}
 </div>
 <Separator />
-<div class="mt-4 items-center text-xs">
+
+<!-- TODO: If enable this, change height above to h-[calc(60vh-8rem)] -->
+<!-- <div class="mt-4 items-center text-xs">
   <button
     class="rounded h-8 text-red w-full bg-red/20 hover:bg-red/25 transition flex items-center justify-center space-x-2"
     on:click={() => {
@@ -83,4 +85,4 @@
     <Plus class="h-3 w-3" />
     <span>Add element</span></button
   >
-</div>
+</div> -->

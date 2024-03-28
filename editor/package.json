@@ -8,14 +8,16 @@
     "umd"
   ],
   "scripts": {
-    "dev": "rollup -c -w",
-    "dev:cpy": "npm run dev & nodemon --watch public/build/bundle.min.js --exec 'cp public/build/bundle.min.js ../extension/src/lib/editor/bundle.min.js'",
+    "dev": "npm run shared && rollup -c -w",
+    "dev:cpy": " npm run dev & nodemon --watch public/build/bundle.min.js --exec 'cp public/build/bundle.min.js ../extension/src/lib/editor/bundle.min.js'",
     "dev:cpy:svelte": "npm run dev & nodemon --watch public/build/bundle.min.js --exec 'cp public/build/bundle.min.js ../playground/src/bundle.min.js'",
-    "build": "rollup -c",
+    "build": "npm run shared && rollup -c",
     "build:cpy": "npm run build && cp public/build/bundle.min.js ../extension/src/lib/editor/bundle.min.js",
     "start": "sirv public --no-clear",
-    "check": "svelte-check",
-    "pub": "npm run build && cp public/build/bundle.min.js umd && npm publish"
+    "check": "npm run shared && svelte-check",
+    "check:watch": "npm run shared && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "pub": "npm run build && cp public/build/bundle.min.js umd && npm publish",
+    "shared": "cp -r ../shared ."
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^13.6.2",

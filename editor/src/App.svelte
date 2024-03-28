@@ -1,13 +1,11 @@
 <script lang="ts">
-  import { ToolName } from "$lib/tools";
-  import { historyStore } from "$lib/tools/edit/history";
   import "./app.pcss";
   import Toolbar from "./lib/components/toolbar/Toolbar.svelte";
-  import {
-    DATA_ONLOOK_EJECT,
-    DATA_ONLOOK_INJECT,
-    ONLOOK_TOOLBAR,
-  } from "./lib/constants";
+
+  import { ToolName } from "$lib/tools";
+  import { historyStore } from "$lib/tools/edit/history";
+  import { ONLOOK_TOOLBAR } from "$shared/constants";
+  import { DATA_ONLOOK_EJECT, DATA_ONLOOK_INJECT } from "$lib/constants";
 
   let toolbarRef: Toolbar;
   let previousTool: ToolName | undefined = ToolName.EDIT;

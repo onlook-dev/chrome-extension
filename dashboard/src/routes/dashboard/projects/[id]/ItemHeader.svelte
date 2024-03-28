@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { timeSince } from '$shared/models/comment';
-	import Dots from '~icons/material-symbols/more-vert';
+	import { timeSince } from '$shared/helpers';
 
 	export let profileImageUrl = '';
 	export let userName = '';

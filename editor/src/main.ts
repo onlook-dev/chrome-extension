@@ -2,7 +2,8 @@ import App from './App.svelte';
 import config from '../twind.config';
 import 'construct-style-sheets-polyfill';
 import { twind, cssom, observe } from '@twind/core';
-import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, ONLOOK_EDITABLE, ONLOOK_TOOLBAR } from './lib/constants';
+import { ONLOOK_TOOLBAR } from '$shared/constants';
+import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, ONLOOK_EDITABLE } from '$/lib/constants';
 
 class OnlookToolbar extends HTMLElement {
 	app: any;

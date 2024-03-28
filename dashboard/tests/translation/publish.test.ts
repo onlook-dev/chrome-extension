@@ -41,8 +41,6 @@ describe('ProjectPublisher', () => {
     mockFileContent = { ...originalMockFileContent }
   })
 
-
-
   const mockUser = { id: 'mockUserId', email: 'mockUserEmail', name: 'mockUserName' } as any;
   const mockProject = {
     id: 'mockProjectId',
@@ -83,6 +81,41 @@ describe('ProjectPublisher', () => {
 </p>`,
   }
   let mockFileContent = originalMockFileContent
+
+  beforeAll(async () => {
+    mock.module("$lib/utils/env", () => ({
+      openAiConfig: {
+        apiKey: process.env.PUBLIC_TEST_OPENAI_API_KEY,
+      },
+      githubConfig: {}
+    }))
+
+    mock.module("$lib/translation", () => ({
+      TranslationService: class {
+        async getStyleTranslation(input: any) { return input.code }
+        async getTextTranslation(input: any) { return input.code }
+      }
+    }));
+
+    mock.module("$lib/firebase", () => ({
+      auth: {},
+    }));
+
+    beforeEach(() => {
+      // File content is mutated in tests, so reset it before each test
+      // TODO: This might be a sign that the file content should be cloned in the ProjectPublisher
+      mockFileContent = { ...originalMockFileContent }
+    })
+
+    mock.module("$lib/github", () => {
+      const GithubService = class { };
+      return { GithubService };
+
+    });
+
+    const Publisher = await import('$lib/publish');
+    ProjectPublisher = Publisher.ProjectPublisher;
+  });
 
   test('should throw error if installationId is missing', () => {
     let project = { ...mockProject, installationId: undefined };
