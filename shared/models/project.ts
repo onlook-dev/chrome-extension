@@ -2,6 +2,7 @@ import type { Comment } from "./comment";
 import type { HostData } from "./hostData";
 import type { Activity } from "./activity";
 import type { GithubSettings } from "./github";
+import type { ProjectSettings } from "./projectSettings";
 
 export interface Project {
   id: string;
@@ -13,7 +14,11 @@ export interface Project {
   activities: Record<string, Activity>;
   createdAt: string;
 
+  // GitHub
   githubHistoryIds: string[];
   githubSettings?: GithubSettings;
   installationId?: string;
+
+  // Settings
+  projectSettings?: ProjectSettings;
 }

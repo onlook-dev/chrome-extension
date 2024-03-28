@@ -19,6 +19,7 @@ import { baseUrl } from '$lib/utils/env'
 import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
 import type { Project } from '$shared/models/project'
 import { PopupRoutes } from '$lib/utils/constants'
+import { getCSSFramework } from '$lib/utils/styleFramework'
 
 function applyActivityChanges(activity: Activity): boolean {
 	const element = document.querySelector(activity.selector) as any
@@ -111,6 +112,16 @@ export function setupListeners() {
 				shouldSaveProject = true
 			}
 		})
+
+		// Get style framework if did not exist
+		if (!activeProject.projectSettings?.styleFramework) {
+			const styleFramework = await getCSSFramework()
+			activeProject.projectSettings = {
+				...activeProject.projectSettings,
+				styleFramework
+			}
+			shouldSaveProject = true
+		}
 
 		if (shouldSaveProject) {
 			sendSaveProject(activeProject)
