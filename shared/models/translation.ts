@@ -1,4 +1,4 @@
-import { Activity } from "./activity";
+import type { Activity } from "./activity";
 
 export interface FileContentData {
   path: string;

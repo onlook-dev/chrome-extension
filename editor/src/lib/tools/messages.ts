@@ -7,7 +7,7 @@ export function emitOpenProjectMessage() {
 
 export function emitEditEvent(event: EditEvent) {
   const message = {
-    type: MessageTypes.EDIT_EVEMT,
+    type: MessageTypes.EDIT_EVENT,
     detail: event,
   }
   window.postMessage(message, window.location.origin);
