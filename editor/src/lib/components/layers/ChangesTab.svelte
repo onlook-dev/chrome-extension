@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { type EditEvent, EditType } from "$lib/types/editor";
+  import { type EditEvent, EditType } from "$shared/models/editor";
   import { historyStore } from "$lib/tools/edit/history";
   import * as Avatar from "$lib/components/ui/avatar";
   import type { EditTool } from "$lib/tools/edit";
   import { slide } from "svelte/transition";
+  import { jsToCssProperty } from "$shared/helpers";
 
   export let editTool: EditTool;
   let hoveredEvent: EditEvent | undefined;
@@ -11,7 +12,7 @@
   let selfSelected = false;
 
   $: events = [...$historyStore].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 
   editTool.selectorEngine.selectedStore.subscribe((selected) => {
@@ -23,12 +24,6 @@
 
   function shortenSelector(selector: string) {
     return selector.split(" ").pop();
-  }
-
-  // TODO: Use from shared.
-  function jsToCssProperty(key: string) {
-    if (!key) return "";
-    return key.replace(/([A-Z])/g, "-$1").toLowerCase();
   }
 
   export function timeSince(date: Date) {

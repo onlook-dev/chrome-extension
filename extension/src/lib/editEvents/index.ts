@@ -1,5 +1,5 @@
 import { EditType, type EditEvent } from '$shared/models/editor'
-import { ActivityStatus, type Activity, type Component } from '$shared/models/activity'
+import { ActivityStatus, type Activity } from '$shared/models/activity'
 import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { sendGetScreenshotRequest } from '$lib/utils/messaging'
 import { nanoid } from 'nanoid'
@@ -106,21 +106,12 @@ export class EditEventService {
   }
 
   handleInsertChange(editEvent: EditEvent, activity: Activity) {
-    // Insert new component
-
+    // TODO: Handle
     return activity
   }
 
   handleRemoveChange(editEvent: EditEvent, activity: Activity) {
-    // If removed in inserted component, remove it from list in activity
-    const newVal = editEvent.newVal as Component
-    if (activity.insertChanges && newVal.componentId && newVal.componentId in Object.keys(activity.insertChanges)) {
-      delete activity.insertChanges[newVal.componentId]
-    } else {
-      // Add to delete change
-      if (!activity.deleteChanges) activity.deleteChanges = {}
-      activity.deleteChanges[newVal.selector] = newVal
-    }
+    // TODO: Handle
     return activity
   }
 

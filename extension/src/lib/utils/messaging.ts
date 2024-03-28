@@ -85,9 +85,6 @@ export const [sendApplyProjectChanges, applyProjectChangesStream] = getExtendedM
 	MessageReceiver.CONTENT
 )
 
-export const [sendActivityInspect, activityInspectStream] =
-	getExtendedMessages<ActivityInspectDetail>('ACTIVITY_INSPECT', MessageReceiver.CONTENT)
-
 export const [sendActivityApply, activityApplyStream] = getExtendedMessages<Activity>(
 	'ACTIVITY_APPLY',
 	MessageReceiver.CONTENT

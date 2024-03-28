@@ -61,6 +61,10 @@ describe('ProjectPublisher', () => {
       }
     }));
 
+    mock.module("$lib/firebase", () => ({
+      auth: {},
+    }));
+
     beforeEach(() => {
       // File content is mutated in tests, so reset it before each test
       // TODO: This might be a sign that the file content should be cloned in the ProjectPublisher

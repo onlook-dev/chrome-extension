@@ -2,7 +2,8 @@
   "extends": "@tsconfig/svelte/tsconfig.json",
   "include": [
     "src/**/*",
-    "twind.config.js"
+    "twind.config.js",
+    "shared/**/*"
   ],
   "exclude": [
     "node_modules/*",

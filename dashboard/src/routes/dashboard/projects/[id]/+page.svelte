@@ -175,7 +175,6 @@
 		</div>
 	{:else}
 		<div class="flex flex-col items-center justify-center h-full">
-			<!-- TODO: Skeleton -->
 			<p class="text-gray-500">Loading...</p>
 		</div>
 	{/if}

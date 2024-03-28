@@ -15,11 +15,10 @@ export interface Activity {
   createdAt: string;
   updatedAt?: string;
 
-  // TODO: Handle content changes + structure changes
   styleChanges: Record<string, ChangeValues>;
   textChanges?: Record<string, ChangeValues>;
 
-  // TODO: These will be different
+  // TODO: Finish applying this
   insertChanges?: Record<string, Component>;
   deleteChanges?: Record<string, Component>;
 

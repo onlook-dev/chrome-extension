@@ -1,4 +1,4 @@
-import type { EditEvent, } from "$lib/types/editor";
+import type { EditEvent, } from "$shared/models/editor";
 
 const OPEN_PROJECT: string = "OPEN_PROJECT";
 const EDIT_EVEMT: string = "EDIT_EVENT";

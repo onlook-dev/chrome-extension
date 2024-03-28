@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Textarea } from "$lib/components/ui/textarea";
   import { handleEditEvent } from "$lib/tools/edit/handleEvents";
-  import { EditType } from "$lib/types/editor";
+  import { EditType } from "$shared/models/editor";
 
   export let el: HTMLElement;
   export let editTool;

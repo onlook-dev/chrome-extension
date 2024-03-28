@@ -52,7 +52,6 @@
 				<div class="flex items-center space-x-2">
 					<div class="avatar">
 						<div class="w-8 mask mask-circle">
-							<!-- TODO: Get author from ID -->
 							{#if project?.hostData?.favicon}
 								<img src={project.hostData.favicon} alt="Favicon of {project.hostUrl}" />
 							{:else}
@@ -68,7 +67,6 @@
 			</button>
 		{/each}
 	{:else}
-		<!-- TODO: Add call to action -->
 		<div class="col-span-full mt-10">
 			<div class="absolute top-0 right-0 m-2">
 				<!-- Arrow container for absolute positioning -->

@@ -17,7 +17,7 @@
   import SpacingInput from "./inputs/SpacingInput.svelte";
   import type { EditTool } from "$lib/tools/edit";
   import { onDestroy, onMount } from "svelte";
-  import { EditType } from "$lib/types/editor";
+  import { EditType } from "$shared/models/editor";
   import { handleEditEvent } from "$lib/tools/edit/handleEvents";
   // import { Textarea } from "$lib/components/ui/textarea";
   // import TailwindInput from "./inputs/TailwindInput.svelte";
@@ -37,7 +37,7 @@
 
   onMount(() => {
     unsubs.push(
-      editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged)
+      editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged),
     );
   });
 
@@ -143,7 +143,7 @@
                       on:input={(event) => {
                         updateElementStyle(
                           elementStyle.key,
-                          event.currentTarget.value
+                          event.currentTarget.value,
                         );
                       }}
                     />

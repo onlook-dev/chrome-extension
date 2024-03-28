@@ -7,10 +7,5 @@ export default {
 			postcss: {}
 		}),
 		vitePreprocess()
-	],
-	kit: {
-		alias: {
-			'@/*': './path/to/lib/*'
-		}
-	}
+	]
 };
