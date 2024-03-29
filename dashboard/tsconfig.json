@@ -18,6 +18,9 @@
 			"$lib": [
 				"./src/lib"
 			],
+			"$lib/*": [
+				"./src/lib/*"
+			],
 			"$shared/*": [
 				"../shared/*"
 			]

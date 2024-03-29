@@ -53,12 +53,15 @@
     "@octokit/plugin-throttling": "^9.0.3",
     "@skeletonlabs/skeleton": "^2.7.1",
     "bits-ui": "^0.21.1",
+    "clsx": "^2.1.0",
     "events": "^3.3.0",
     "firebase": "^10.7.1",
     "highlight.js": "^11.9.0",
     "mixpanel": "^0.18.0",
     "nanoid": "^5.0.4",
     "stripe": "^14.12.0",
+    "tailwind-merge": "^2.2.2",
+    "tailwind-variants": "^0.2.1",
     "zod-to-json-schema": "^3.22.4"
   },
   "optionalDependencies": {

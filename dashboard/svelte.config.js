@@ -10,7 +10,10 @@ const config = {
 	kit: {
 		adapter: adapter({
 			maxDuration: 30
-		})
+		}),
+		alias: {
+			"@/*": "./path/to/lib/*",
+		},
 	},
 };
 
