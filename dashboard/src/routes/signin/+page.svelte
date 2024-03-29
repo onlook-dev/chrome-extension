@@ -8,7 +8,6 @@
 	import { onMount } from 'svelte';
 	import { userStore } from '$lib/utils/store';
 	import Google from '~icons/devicon/google';
-	// import GitHub from '~icons/mdi/github';
 
 	let loading = false;
 
@@ -42,10 +41,10 @@
 			>
 				{#if loading}
 					<div class="loading"></div>
-					Signing in...
+					<span> Signing in... </span>
 				{:else}
 					<Google class="w-4 h-4" />
-					<span class="">Sign in with Google</span>
+					<span>Sign in with Google</span>
 				{/if}</Button
 			>
 			<p class="text-sm text-red">
