@@ -1,4 +1,4 @@
-import { nanoid } from "ai";
+import { nanoid } from 'nanoid';
 
 export enum CustomElementType {
   Text = "Text",
