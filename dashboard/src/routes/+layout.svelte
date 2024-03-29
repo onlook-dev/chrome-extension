@@ -12,8 +12,10 @@
 	});
 </script>
 
-<slot />
-<SvelteToast options={{ reversed: true, intro: { y: 192 }, duration: 3000 }} />
+<div class="dark">
+	<slot />
+	<SvelteToast options={{ reversed: true, intro: { y: 192 }, duration: 3000 }} />
+</div>
 
 <style>
 	:root {

@@ -44,6 +44,7 @@ const config = {
 		},
 		extend: {
 			colors: {
+				red: "hsl(var(--red) / <alpha-value>)",
 				border: "hsl(var(--border) / <alpha-value>)",
 				input: "hsl(var(--input) / <alpha-value>)",
 				ring: "hsl(var(--ring) / <alpha-value>)",
@@ -53,6 +54,9 @@ const config = {
 					DEFAULT: "hsl(var(--primary) / <alpha-value>)",
 					foreground: "hsl(var(--primary-foreground) / <alpha-value>)"
 				},
+				surface: "var(--surface-surface-default)",
+				tertiary: "var(--text-text-tertiary)",
+				state: "var(--text-state-text-default)",
 				secondary: {
 					DEFAULT: "hsl(var(--secondary) / <alpha-value>)",
 					foreground: "hsl(var(--secondary-foreground) / <alpha-value>)"
