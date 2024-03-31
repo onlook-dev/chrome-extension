@@ -48,7 +48,7 @@
 					<span>Sign in with Google</span>
 				{/if}</Button
 			>
-			<p class="text-sm text-red">
+			<p class="text-sm text-brand">
 				If you have a GitHub email associated with your Gmail, be sure to sign in with it. If not,
 				no worries.
 			</p>
