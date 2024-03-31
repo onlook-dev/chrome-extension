@@ -53,6 +53,10 @@ const config = {
 					DEFAULT: "hsl(var(--primary) / <alpha-value>)",
 					foreground: "hsl(var(--primary-foreground) / <alpha-value>)"
 				},
+				brand: "var(--text-text-brand)",
+				surface: "var(--surface-surface-default)",
+				tertiary: "var(--text-text-tertiary)",
+				state: "var(--text-state-text-default)",
 				secondary: {
 					DEFAULT: "hsl(var(--secondary) / <alpha-value>)",
 					foreground: "hsl(var(--secondary-foreground) / <alpha-value>)"
