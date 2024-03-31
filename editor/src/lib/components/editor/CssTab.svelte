@@ -56,7 +56,7 @@
       const computedStyles = getElementComputedStylesData(el);
       groupedStyles = groupElementStylesByGroup(computedStyles);
       classUpdated = true;
-      appendedClass = applyChangeService.getAppendedClass(el);
+      appendedClass = el.className;
     }
   }
 
@@ -147,7 +147,7 @@
     <Accordion.Item data-state="open" value={custom}>
       <Accordion.Trigger><h2 class="text-xs">{custom}</h2></Accordion.Trigger>
       <Accordion.Content>
-        <div class="space-y-2 px-1">
+        <!-- <div class="space-y-2 px-1">
           <p class="text-xs w-24 mr-2 text-start opacity-60">CSS</p>
           <Textarea
             class="w-full text-xs break-normal"
@@ -159,7 +159,7 @@ color: white;"
               });
             }}
           />
-        </div>
+        </div> -->
         <TailwindInput {updateElementClass} {appendedClass} bind:classUpdated />
       </Accordion.Content>
     </Accordion.Item>

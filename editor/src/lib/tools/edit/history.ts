@@ -120,7 +120,7 @@ function applyTextEvent(event: EditEvent, element: HTMLElement) {
 function applyAttributeEvent(event: EditEvent, element: HTMLElement) {
   if (!element) return;
   Object.entries(event.newVal).forEach(([attr, newVal]) => {
-    if (attr === "class")
+    if (attr === "className")
       applyChangeService.applyClass(element, newVal, false);
   });
 }
