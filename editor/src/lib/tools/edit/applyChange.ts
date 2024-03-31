@@ -7,20 +7,20 @@ export interface ClassValues {
 }
 
 export class ApplyChangesService {
-  elementToClass: WeakMap<HTMLElement, { oldVal: string; newVal: string }> = new WeakMap();
+  classCache: WeakMap<HTMLElement, ClassValues> = new WeakMap();
 
   constructor() { }
 
   getClassValue(el: HTMLElement): ClassValues {
-    return this.elementToClass.get(el) || { oldVal: "", newVal: "" };
+    return this.classCache.get(el) || { oldVal: "", newVal: "" };
   }
 
   applyClass(el: HTMLElement, newClass: string) {
-    let stored = this.elementToClass.get(el);
+    let stored = this.classCache.get(el);
     if (!stored) {
       // Save the original class if not previously saved
       stored = { oldVal: el.className, newVal: newClass } as ClassValues;
-      this.elementToClass.set(el, stored);
+      this.classCache.set(el, stored);
     } else {
       // Update the edit class
       stored.newVal = newClass;
@@ -32,6 +32,33 @@ export class ApplyChangesService {
       editType: EditType.ATTR,
       newValue: { class: stored.newVal },
       oldValue: { class: "" },
+    });
+  }
+
+  applyStyle(el: HTMLElement, key: string, value: string) {
+    // Initialize the oldStyles map if it doesn't exist
+    let oldStyles = el.dataset.oldStyles
+      ? JSON.parse(el.dataset.oldStyles)
+      : {};
+
+    // Save the current style value to the map before updating, only if it doesn't exist
+    if (oldStyles[key] === undefined) {
+      const oldStyle = el.style[key];
+      if (oldStyle !== undefined) {
+        // Save only if there's a current value
+        oldStyles[key] = oldStyle;
+        el.dataset.oldStyles = JSON.stringify(oldStyles); // Serialize and save back to dataset
+      }
+    }
+
+    // Update the style
+    el.style[key] = value;
+    // Emit event
+    handleEditEvent({
+      el,
+      editType: EditType.STYLE,
+      newValue: { [key]: value },
+      oldValue: { [key]: oldStyles[key] },
     });
   }
 }

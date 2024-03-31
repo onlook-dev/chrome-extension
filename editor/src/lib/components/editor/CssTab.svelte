@@ -6,8 +6,14 @@
     getElementComputedStylesData,
     groupElementStylesByGroup,
   } from "$lib/tools/selection/styles";
-  import * as Accordion from "$lib/components/ui/accordion";
+
+  import { onDestroy, onMount } from "svelte";
+  import { Textarea } from "$lib/components/ui/textarea";
   import { Input } from "$lib/components/ui/input";
+  import { ApplyChangesService } from "$lib/tools/edit/applyChange";
+  import type { EditTool } from "$lib/tools/edit";
+
+  import * as Accordion from "$lib/components/ui/accordion";
   import Separator from "../ui/separator/separator.svelte";
   import SelectInput from "./inputs/SelectInput.svelte";
   import ColorInput from "./inputs/ColorInput.svelte";
@@ -15,14 +21,10 @@
   import TagInfo from "./inputs/TagInfo.svelte";
   import SizeSection from "./inputs/SizeSection.svelte";
   import SpacingInput from "./inputs/SpacingInput.svelte";
-  import type { EditTool } from "$lib/tools/edit";
-  import { onDestroy, onMount } from "svelte";
-  import { EditType } from "$shared/models/editor";
-  import { handleEditEvent } from "$lib/tools/edit/handleEvents";
-  import { Textarea } from "$lib/components/ui/textarea";
   import TailwindInput from "./inputs/TailwindInput.svelte";
 
   export let editTool: EditTool;
+  const applyChangeService = new ApplyChangesService();
   const custom = "Custom";
   let el: HTMLElement | undefined = undefined;
   let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {
@@ -55,31 +57,8 @@
   }
 
   function updateElementStyle(key, value) {
-    editTool.selectorEngine.selected.forEach((element) => {
-      // Initialize the oldStyles map if it doesn't exist
-      let oldStyles = element.dataset.oldStyles
-        ? JSON.parse(element.dataset.oldStyles)
-        : {};
-
-      // Save the current style value to the map before updating, only if it doesn't exist
-      if (oldStyles[key] === undefined) {
-        const oldStyle = element.style[key];
-        if (oldStyle !== undefined) {
-          // Save only if there's a current value
-          oldStyles[key] = oldStyle;
-          element.dataset.oldStyles = JSON.stringify(oldStyles); // Serialize and save back to dataset
-        }
-      }
-
-      // Update the style
-      element.style[key] = value;
-      // Emit event
-      handleEditEvent({
-        el: element,
-        editType: EditType.STYLE,
-        newValue: { [key]: value },
-        oldValue: { [key]: oldStyles[key] },
-      });
+    editTool.selectorEngine.selected.forEach((el) => {
+      applyChangeService.applyStyle(el, key, value);
     });
   }
 </script>
