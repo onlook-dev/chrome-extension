@@ -1,33 +1,17 @@
 <script lang="ts">
   import { Textarea } from "$lib/components/ui/textarea";
-  import { handleEditEvent } from "$lib/tools/edit/handleEvents";
-  import { EditType } from "$shared/models/editor";
+  import {
+    ApplyChangesService,
+    type ClassValues,
+  } from "$lib/tools/edit/applyChange";
 
   export let el: HTMLElement;
   export let editTool;
-  $: value = elementToClass.get(el) || { original: "", edit: "" };
+  let value: ClassValues = { oldVal: "", newVal: "" };
+  const appyChangeService = new ApplyChangesService();
 
-  let elementToClass: WeakMap<HTMLElement, { original: string; edit: string }> =
-    new WeakMap();
-
-  function applyClass(element: HTMLElement, newClass: string) {
-    let stored = elementToClass.get(element);
-    if (!stored) {
-      // Save the original class if not previously saved
-      stored = { original: element.className, edit: newClass };
-      elementToClass.set(element, stored);
-    } else {
-      // Update the edit class
-      stored.edit = newClass;
-    }
-    // Apply original + new classes
-    element.className = `${stored.original} ${stored.edit}`;
-    handleEditEvent({
-      el: element,
-      editType: EditType.ATTR,
-      newValue: { class: stored.edit },
-      oldValue: { class: "" },
-    });
+  $: if (el) {
+    value = appyChangeService.getClassValue(el);
   }
 </script>
 
@@ -36,11 +20,11 @@
   <Textarea
     class="w-full text-xs break-normal"
     placeholder="bg-red-500 text-white"
-    value={value.edit || ""}
+    value={value.newVal || ""}
     on:input={(event) => {
       const newClass = event.currentTarget.value;
-      editTool.selectorEngine.selected.forEach((element) => {
-        applyClass(element, newClass);
+      editTool.selectorEngine.selected.forEach((el) => {
+        appyChangeService.applyClass(el, newClass);
       });
     }}
   />

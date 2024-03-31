@@ -19,8 +19,8 @@
   import { onDestroy, onMount } from "svelte";
   import { EditType } from "$shared/models/editor";
   import { handleEditEvent } from "$lib/tools/edit/handleEvents";
-  // import { Textarea } from "$lib/components/ui/textarea";
-  // import TailwindInput from "./inputs/TailwindInput.svelte";
+  import { Textarea } from "$lib/components/ui/textarea";
+  import TailwindInput from "./inputs/TailwindInput.svelte";
 
   export let editTool: EditTool;
   const custom = "Custom";
@@ -155,8 +155,7 @@
         </Accordion.Item>
       {/if}
     {/each}
-    <!-- TODO: Handle custom section -->
-    <!-- <Accordion.Item data-state="open" value={custom}>
+    <Accordion.Item data-state="open" value={custom}>
       <Accordion.Trigger><h2 class="text-xs">{custom}</h2></Accordion.Trigger>
       <Accordion.Content>
         <div class="space-y-2 px-1">
@@ -174,6 +173,6 @@ color: white;"
         </div>
         <TailwindInput {editTool} {el} />
       </Accordion.Content>
-    </Accordion.Item> -->
+    </Accordion.Item>
   </Accordion.Root>
 {/if}
