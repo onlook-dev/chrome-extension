@@ -1,5 +1,6 @@
 import { EditType } from "$shared/models/editor";
 import { handleEditEvent } from "./handleEvents";
+import { tw } from 'twind'
 
 export class ApplyChangesService {
   constructor() { }
@@ -8,7 +9,7 @@ export class ApplyChangesService {
     const oldVals = this.getAndSetOldVal(el, 'attr', 'className');
 
     // Apply original + new classes
-    el.className = value
+    el.className = tw`${value}`
     if (!emit) return;
     handleEditEvent({
       el,
