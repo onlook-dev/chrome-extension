@@ -1,14 +1,18 @@
 <script lang="ts">
   import { Textarea } from "$lib/components/ui/textarea";
-  import { ApplyChangesService } from "$lib/tools/edit/applyChange";
+  export let classUpdated: boolean = false;
+  export let appendedClass: string = "";
+  export let updateElementClass: (value: string) => void;
 
-  export let el: HTMLElement;
-  export let editTool;
-
-  const appyChangeService = new ApplyChangesService();
-  let value: string = "";
-
-  $: value = appyChangeService.getAppendedClass(el);
+  function handleNewInput(event: Event) {
+    if (classUpdated) {
+      classUpdated = false;
+      return;
+    }
+    const newClass = (event.target as HTMLInputElement).value;
+    if (newClass === "" && newClass === appendedClass) return;
+    updateElementClass(newClass);
+  }
 </script>
 
 <div class="mt-4 space-y-2 px-1">
@@ -16,13 +20,7 @@
   <Textarea
     class="w-full text-xs break-normal"
     placeholder="bg-red-500 text-white"
-    value={value || ""}
-    on:input={(event) => {
-      const newClass = event.currentTarget.value;
-      if (newClass === value) return;
-      editTool.selectorEngine.selected.forEach((el) => {
-        appyChangeService.applyClass(el, newClass);
-      });
-    }}
+    value={appendedClass}
+    on:input={handleNewInput}
   />
 </div>

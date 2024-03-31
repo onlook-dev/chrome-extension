@@ -35,6 +35,8 @@
     [ElementStyleGroup.Spacing]: [],
     [ElementStyleGroup.Effects]: [],
   };
+  let appendedClass = "";
+  let classUpdated = false;
   let unsubs: (() => void)[] = [];
 
   onMount(() => {
@@ -53,12 +55,20 @@
     if (el) {
       const computedStyles = getElementComputedStylesData(el);
       groupedStyles = groupElementStylesByGroup(computedStyles);
+      classUpdated = true;
+      appendedClass = applyChangeService.getAppendedClass(el);
     }
   }
 
   function updateElementStyle(key, value) {
     editTool.selectorEngine.selected.forEach((el) => {
       applyChangeService.applyStyle(el, key, value);
+    });
+  }
+
+  function updateElementClass(newClass) {
+    editTool.selectorEngine.selected.forEach((el) => {
+      applyChangeService.applyClass(el, newClass);
     });
   }
 </script>
@@ -150,7 +160,7 @@ color: white;"
             }}
           />
         </div>
-        <TailwindInput {editTool} {el} />
+        <TailwindInput {updateElementClass} {appendedClass} bind:classUpdated />
       </Accordion.Content>
     </Accordion.Item>
   </Accordion.Root>
