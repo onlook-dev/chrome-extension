@@ -8,6 +8,7 @@
 	import { onMount } from 'svelte';
 	import { userStore } from '$lib/utils/store';
 	import Google from '~icons/devicon/google';
+	import Spinner from '$lib/components/ui/spinner';
 
 	let loading = false;
 
@@ -24,7 +25,7 @@
 	class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-sky-200 via-indigo-200 to-pink-200"
 	style="background-image: url({BackgroundImage}); background-size: cover; background-position: center;"
 >
-	<Card.Root class="w-2/3 max-w-[26rem] rounded-none px-4">
+	<Card.Root class="w-2/3 h-2/3 max-w-[26rem] max-h-[25rem] rounded-none px-4">
 		<Card.Header class="text-light">
 			<h1 class="text-2xl">Onlook</h1>
 			<h2 class="text-xl text-tertiary">Where Creativity meets Code</h2>
@@ -40,7 +41,7 @@
 				}}
 			>
 				{#if loading}
-					<div class="loading"></div>
+					<Spinner />
 					<span> Signing in... </span>
 				{:else}
 					<Google class="w-4 h-4" />
