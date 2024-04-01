@@ -5,10 +5,10 @@ import { Project } from "$shared/models/project";
 import { FileContentData, PathInfo, ProcessedActivity } from "$shared/models/translation";
 import { User } from "$shared/models/user";
 import { getProcessedActivities, updateContentChunk } from "./helpers";
-import EventEmitter from 'events';
 import { getStyleTranslationInput, getTextTranslationInput } from "./inputs";
 import { trackMixpanelEvent } from "$lib/mixpanel/client";
 import { StyleFramework } from "$shared/models/projectSettings";
+import EventEmitter from 'events';
 
 export enum ProjectPublisherEventType {
   TRANSLATING = 'TRANSLATING',

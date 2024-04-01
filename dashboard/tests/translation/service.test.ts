@@ -3,7 +3,7 @@ import { expect, test, describe, mock, beforeAll } from 'bun:test';
 import type { TranslationService } from '$lib/translation';
 
 // Should explicitly enable. Costs money to run.
-const enabled = true;
+const enabled = false;
 
 const StyleFramework = {
   TailwindCSS: 'TailwindCSS',

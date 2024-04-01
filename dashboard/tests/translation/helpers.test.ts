@@ -43,6 +43,9 @@ describe('ProjectPublisher helpers', () => {
       styleChanges: {
         color: { key: 'color', newVal: 'red', oldVal: 'black' },
         backgroundColor: { key: 'background-color', newVal: 'blue', oldVal: 'white' }
+      },
+      attributeChanges: {
+        className: { key: 'className', newVal: 'mt-8', oldVal: 'mt-4' }
       }
     } as any;
 
@@ -50,7 +53,7 @@ describe('ProjectPublisher helpers', () => {
       framework: 'html',
       css: 'color: red; background-color: blue',
       code: '<div>',
-      tailwind: ''
+      tailwind: 'mt-8'
     };
 
     // Execute
