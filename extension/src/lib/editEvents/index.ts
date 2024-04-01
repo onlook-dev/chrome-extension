@@ -84,6 +84,9 @@ export class EditEventService {
       case EditType.TEXT:
         activity.textChanges = convertEditEventToChangeObject(editEvent, activity.textChanges ?? {})
         break
+      case EditType.ATTR:
+        activity.attributeChanges = convertEditEventToChangeObject(editEvent, activity.textChanges ?? {})
+        break
       case EditType.INSERT:
         activity = this.handleInsertChange(editEvent, activity)
         break
@@ -119,6 +122,7 @@ export class EditEventService {
   isActivityEmpty(activity: Activity): boolean {
     return Object.keys(activity.styleChanges).length === 0
       && Object.keys(activity.textChanges ?? {}).length === 0
+      && Object.keys(activity.attributeChanges ?? {}).length === 0
       && Object.keys(activity.insertChanges ?? {}).length === 0
   }
 }

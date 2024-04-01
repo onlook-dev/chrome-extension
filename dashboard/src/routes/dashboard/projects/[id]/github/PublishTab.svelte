@@ -6,6 +6,11 @@
 		MAX_DESCRIPTION_LENGTH,
 		MAX_TITLE_LENGTH
 	} from '$shared/constants';
+	import {
+		ProjectPublisher,
+		ProjectPublisherEventType,
+		type ProjectPublisherEvent
+	} from '$lib/publish';
 	import { projectsMapStore } from '$lib/utils/store';
 	import { nanoid } from 'nanoid';
 	import { baseUrl } from '$lib/utils/env';
@@ -19,11 +24,6 @@
 	import GitHub from '~icons/mdi/github';
 	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
 	import HistoriesView from './HistoriesView.svelte';
-	import {
-		ProjectPublisher,
-		ProjectPublisherEventType,
-		type ProjectPublisherEvent
-	} from '$lib/publish';
 
 	export let project: Project;
 	export let user: User;
@@ -32,6 +32,7 @@
 	const githubHistoryService = new FirebaseService<GithubHistory>(
 		FirestoreCollections.GITHUB_HISTORY
 	);
+	let projectPublisher: ProjectPublisher = new ProjectPublisher(project, user);
 
 	let githubHistories: GithubHistory[] = [];
 	let publishErrorMessage = '';
@@ -51,10 +52,14 @@
 	let isTranslating = false;
 	let translationProgress = 0;
 	let translationTotal = 0;
+	let configOpen = false;
+	let forceTailwind = false;
 
 	$: if (project?.installationId) {
 		githubConfigured = true;
 	}
+
+	$: projectPublisher.toggleForceTailwind(forceTailwind);
 
 	onMount(() => {
 		// Check each activities for a path
@@ -85,7 +90,6 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
-			const projectPublisher = new ProjectPublisher(project, user);
 			handleProjectPublisherEvents(projectPublisher);
 			let pullRequestUrl = await projectPublisher.publish(title, description);
 			if (!pullRequestUrl) throw new Error('No pull request url returned from GitHub');
@@ -236,6 +240,21 @@
 		</label>
 
 		<HistoriesView {githubHistories} {restoreActivities} />
+
+		<div
+			class="collapse collapse-arrow border rounded-md mt-6 {configOpen
+				? 'collapse-open'
+				: 'collapse-close'}"
+		>
+			<input type="checkbox" on:click={() => (configOpen = !configOpen)} />
+			<div class="collapse-title">Optional Configuration</div>
+			<div class="collapse-content space-y-2">
+				<div class="flex flex-row">
+					<p>Force Tailwind</p>
+					<input type="checkbox" class="toggle ml-auto" bind:checked={forceTailwind} />
+				</div>
+			</div>
+		</div>
 	{:else if !githubConfigured}
 		<p class="text-center text-lg">No github config found</p>
 	{:else if hasActivities && !hasFilePaths}

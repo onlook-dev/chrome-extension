@@ -78,6 +78,12 @@
 			.map(({ key, newVal }) => `${jsToCssProperty(key)}: ${newVal};`)
 			.join('\n')
 	}
+
+	function formatAttrChanges(attrChanges: Record<string, ChangeValues>): string {
+		return Object.values(attrChanges)
+			.map(({ key, newVal }) => `${key}: ${newVal};`)
+			.join('\n')
+	}
 </script>
 
 {#if activities.length === 0}
@@ -174,6 +180,18 @@
 						disabled
 						class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col overflow-scroll text-gray-800 text-xs"
 						value={activity.textChanges.text?.newVal ?? ''}
+					/>
+				{/if}
+
+				{#if activity.attributeChanges && Object.keys(activity.attributeChanges).length > 0}
+					<p>Attribute change:</p>
+					<CodeBlock
+						class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-scroll"
+						language="css"
+						code={formatAttrChanges(activity.attributeChanges)}
+						color="text-gray-800"
+						text="text-xs"
+						button="btn btn-xs ml-auto rounded-sm"
 					/>
 				{/if}
 
