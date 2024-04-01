@@ -56,7 +56,7 @@
       const computedStyles = getElementComputedStylesData(el);
       groupedStyles = groupElementStylesByGroup(computedStyles);
       classUpdated = true;
-      appendedClass = el.className;
+      appendedClass = applyChangeService.getAppendedClasses(el);
     }
   }
 

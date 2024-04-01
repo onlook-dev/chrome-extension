@@ -121,7 +121,7 @@ function applyAttributeEvent(event: EditEvent, element: HTMLElement) {
   if (!element) return;
   Object.entries(event.newVal).forEach(([attr, newVal]) => {
     if (attr === "className")
-      applyChangeService.applyClass(element, newVal, false);
+      applyChangeService.applyClass(element, newVal);
   });
 }
 
@@ -147,7 +147,6 @@ function applyRemoveEvent(event: EditEvent, parent: HTMLElement) {
 }
 
 function applyEvent(event: EditEvent) {
-  console.error("Apply")
   const element: HTMLElement | undefined = document.querySelector(event.selector);
   switch (event.editType) {
     case EditType.STYLE:

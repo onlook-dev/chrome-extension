@@ -1,21 +1,34 @@
 import { EditType } from "$shared/models/editor";
+import { getUniqueSelector } from "../utilities";
 import { handleEditEvent } from "./handleEvents";
 import { tw } from 'twind'
 
 export class ApplyChangesService {
+  appendedClassCache = new Map<string, string>();
   constructor() { }
+
+  getAppendedClasses(el: HTMLElement): string {
+    const selector = getUniqueSelector(el);
+    const appendedClass = this.appendedClassCache.get(selector) || '';
+    return appendedClass
+  }
 
   applyClass(el: HTMLElement, value: string, emit = true) {
     const oldVals = this.getAndSetOldVal(el, 'attr', 'className');
 
     // Apply original + new classes
-    el.className = tw`${value}`
+    el.className = `${oldVals.attr.className} ${tw`${value}`}`
+
+    // Update cache
+    const selector = getUniqueSelector(el);
+    this.appendedClassCache.set(selector, value);
+
     if (!emit) return;
     handleEditEvent({
       el,
       editType: EditType.ATTR,
       newValue: { className: value },
-      oldValue: { className: oldVals.attr.className }
+      oldValue: { className: '' }
     });
   }
 
@@ -35,8 +48,16 @@ export class ApplyChangesService {
     });
   }
 
+  getOldVals(el: HTMLElement): Record<string, Record<string, string>> {
+    return el.dataset.oldVals ? JSON.parse(el.dataset.oldVals) : {};
+  }
+
+  setOldVals(el: HTMLElement, oldVals: Record<string, Record<string, string>>) {
+    el.dataset.oldVals = JSON.stringify(oldVals);
+  }
+
   getAndSetOldVal(el: HTMLElement, type: string, key: string): Record<string, Record<string, string>> {
-    let oldVals: Record<string, Record<string, string>> = el.dataset.oldVals ? JSON.parse(el.dataset.oldVals) : {};
+    const oldVals = this.getOldVals(el);
 
     // Save the current style value to the map before updating, only if it doesn't exist
     if (oldVals[type] === undefined) {
@@ -58,7 +79,7 @@ export class ApplyChangesService {
       if (oldVal !== undefined) {
         // Save only if there's a current value
         oldVals[type][key] = oldVal;
-        el.dataset.oldVals = JSON.stringify(oldVals);
+        this.setOldVals(el, oldVals);
       }
     }
 
