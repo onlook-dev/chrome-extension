@@ -2,9 +2,9 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import type { Project } from '$shared/models/project';
-	import type { Activity, ChangeValues } from '$shared/models/activity';
+	import type { Activity } from '$shared/models/activity';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
-	import { jsToCssProperty } from '$shared/helpers';
+	import { formatAttrChanges, formatStyleChanges, jsToCssProperty } from '$shared/helpers';
 	import GitHub from '~icons/mdi/github';
 	import ItemHeader from './ItemHeader.svelte';
 	import Trash from '~icons/material-symbols/delete';
@@ -79,13 +79,6 @@
 		if (modal) {
 			modal.close();
 		}
-	}
-
-	// Format style changes for an activity
-	function formatStyleChanges(styleChanges: Record<string, ChangeValues>): string {
-		return Object.values(styleChanges)
-			.map(({ key, newVal }) => `${jsToCssProperty(key)}: ${newVal};`)
-			.join('\n');
 	}
 </script>
 
@@ -207,6 +200,18 @@
 						disabled
 						class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col overflow-auto text-gray-800 text-sm"
 						value={activity.textChanges.text?.newVal ?? ''}
+					/>
+				{/if}
+
+				{#if activity.attributeChanges && Object.keys(activity.attributeChanges).length > 0}
+					<p>Attribute Change:</p>
+					<CodeBlock
+						class="text-sm bg-gray-50 rounded p-1 border w-full text-start overflow-scroll"
+						language="css"
+						code={formatAttrChanges(activity.attributeChanges)}
+						color="text-gray-800"
+						text="text-sm"
+						button="btn btn-xs ml-auto rounded-sm"
 					/>
 				{/if}
 

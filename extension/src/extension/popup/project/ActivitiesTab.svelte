@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import type { Project } from '$shared/models/project'
-	import type { Activity, ChangeValues } from '$shared/models/activity'
+	import type { Activity } from '$shared/models/activity'
 	import type { User } from '$shared/models/user'
 	import { usersMapBucket, projectsMapBucket } from '$lib/utils/localstorage'
 	import { sendActivityRevert, sendActivityApply } from '$lib/utils/messaging'
-	import { jsToCssProperty } from '$shared/helpers'
+	import { formatStyleChanges, formatAttrChanges } from '$shared/helpers'
 
 	import { CodeBlock, storeHighlightJs } from '@skeletonlabs/skeleton'
 	import hljs from 'highlight.js/lib/core'
@@ -71,18 +71,6 @@
 		if (modal) {
 			modal.close()
 		}
-	}
-
-	function formatStyleChanges(styleChanges: Record<string, ChangeValues>): string {
-		return Object.values(styleChanges)
-			.map(({ key, newVal }) => `${jsToCssProperty(key)}: ${newVal};`)
-			.join('\n')
-	}
-
-	function formatAttrChanges(attrChanges: Record<string, ChangeValues>): string {
-		return Object.values(attrChanges)
-			.map(({ key, newVal }) => `${key}: ${newVal};`)
-			.join('\n')
 	}
 </script>
 
@@ -175,7 +163,7 @@
 				{/if}
 
 				{#if activity.textChanges && Object.keys(activity.textChanges).length > 0}
-					<p>Text change:</p>
+					<p>Text Change:</p>
 					<textarea
 						disabled
 						class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col overflow-scroll text-gray-800 text-xs"
@@ -184,7 +172,7 @@
 				{/if}
 
 				{#if activity.attributeChanges && Object.keys(activity.attributeChanges).length > 0}
-					<p>Attribute change:</p>
+					<p>Attribute Change:</p>
 					<CodeBlock
 						class="text-xs bg-gray-50 rounded p-1 border w-[23rem] text-start overflow-scroll"
 						language="css"
