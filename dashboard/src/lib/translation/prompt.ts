@@ -42,7 +42,7 @@ const styleExamplePrompt = "CSS: {css}\nTailwind: {tailwind}\nCode: {code}\nFram
 
 export class InlineCssPromptService extends PromptService<typeof styleInputs> {
   constructor() {
-    const prompt = "Given HTML code, the framework it's used in, CSS style changes and optional Tailwind style change. Update the HTML code to implement the style changes. Aim to make minimal changes to the original code structure. Only make style changes. Generalize from the examples given.\nCSS: {css}\nTailwind: {tailwind}\nCode: {code}\nFramework: {framework}\nOutput Code:";
+    const prompt = "Given HTML code, the framework it's used in, CSS style changes and optional Tailwind style change. Update the HTML code to implement the style changes. Aim to make minimal changes to the original code structure. Only make style changes, update existing styles when possible. Generalize from the examples given.\nCSS: {css}\nTailwind: {tailwind}\nCode: {code}\nFramework: {framework}\nOutput Code:";
     const examples: Example[] = [
       {
         css: "color: #000000;",
@@ -91,7 +91,7 @@ export class InlineCssPromptService extends PromptService<typeof styleInputs> {
 export class TailwindPromptService extends PromptService<typeof styleInputs> {
   constructor() {
 
-    const prompt = "Given HTML code, the framework it's used in, CSS style changes and optional Tailwind style change. Update the HTML code to implement the style changes using TailwindCSS. Use tailwindCSS arbitrary values when no Tailwind equivalent like in example. Aim to make minimal changes to the original code structure. Only make style changes. Generalize from the examples above.\nCSS: {css}\nTailwind: {tailwind}\nCode: {code}\nFramework: {framework}\nOutput Code:";
+    const prompt = "Given HTML code, the framework it's used in, CSS style changes and optional Tailwind style change. Update the HTML code to implement the style changes using TailwindCSS. Use tailwindCSS arbitrary values when no Tailwind equivalent like in example. Aim to make minimal changes to the original code structure. Only make style changes, update existing styles when possible. Generalize from the examples above.\nCSS: {css}\nTailwind: {tailwind}\nCode: {code}\nFramework: {framework}\nOutput Code:";
     const examples: Example[] = [
       {
         css: "background-color: #000000;",
@@ -102,10 +102,10 @@ export class TailwindPromptService extends PromptService<typeof styleInputs> {
       },
       {
         css: "margin: 20px; border: 1px solid black;",
-        tailwind: "",
-        code: "<Card className='mt-8'>",
+        tailwind: "font-light",
+        code: "<Card className='mt-8 font-bold'>",
         framework: "tsx",
-        output: "<Card className='mt-8 m-5 border border-black'/>"
+        output: "<Card className='mt-8 font-light m-5 border border-black'/>"
       },
       {
         css: "background-color: blue; padding: 10px;",
