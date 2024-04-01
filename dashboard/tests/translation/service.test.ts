@@ -3,7 +3,8 @@ import { expect, test, describe, mock, beforeAll } from 'bun:test';
 import type { TranslationService } from '$lib/translation';
 
 // Should explicitly enable. Costs money to run.
-const enabled = false;
+const enabled = true;
+
 const StyleFramework = {
   TailwindCSS: 'TailwindCSS',
   InlineCSS: 'InlineCSS',
@@ -57,6 +58,32 @@ describe('Translation service', () => {
     }, StyleFramework.TailwindCSS as any);
 
     let expected = "<Card className='mt-8 bg-blue-500 p-2'>";
+    expect(translation).toBe(expected);
+  });
+
+  test('translation service implements inlineCSS correctly with tailwind input', async () => {
+    const service: TranslationService = new TranslationService();
+    let translation = await service.getStyleTranslation({
+      framework: "tsx",
+      code: "<Button style={{ backgroundColor: 'red' }}>",
+      css: "background-color: blue; padding: 10px;",
+      tailwind: "text-blue-500",
+    });
+
+    let expected = "<Button style={{ backgroundColor: 'blue', padding: '10px', color: 'blue' }} >";
+    expect(translation).toBe(expected);
+  });
+
+  test('translation service implements tailwindCSS correctly with tailwind input', async () => {
+    const service: TranslationService = new TranslationService();
+    let translation = await service.getStyleTranslation({
+      framework: "tsx",
+      code: "<Card className='mt-8'>",
+      css: "background-color: blue; padding: 10px;",
+      tailwind: "h-10",
+    }, StyleFramework.TailwindCSS as any);
+
+    let expected = "<Card className='mt-8 h-10 bg-blue-500 p-2'>";
     expect(translation).toBe(expected);
   });
 
