@@ -1,4 +1,3 @@
-
 export interface ProjectSettings {
   styleFramework?: StyleFramework;
 }

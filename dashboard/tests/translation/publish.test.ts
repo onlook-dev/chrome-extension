@@ -30,6 +30,10 @@ describe('ProjectPublisher', () => {
       trackMixpanelEvent: () => { }
     }));
 
+    mock.module("$shared/models/projectSettings", () => ({
+      StyleFramework: {}
+    }));
+
     const Publisher = await import('$lib/publish');
     ProjectPublisher = Publisher.ProjectPublisher;
   });
