@@ -380,8 +380,8 @@ export function sortGroupsByCustomOrder(groups: Record<string, ElementStyle[]>):
   return sortedGroups;
 }
 
-export function groupElementStylesByGroup(elementStyles: ElementStyle[]): Record<ElementStyleGroup, ElementStyle[]> {
-  return elementStyles.reduce((groups: any, style) => {
+export function groupElementStylesByGroup(styles: ElementStyle[]): Record<ElementStyleGroup, ElementStyle[]> {
+  return styles.reduce((groups: any, style) => {
     // Initialize the group if it doesn't exist
     if (!groups[style.group]) {
       groups[style.group] = []
@@ -392,12 +392,12 @@ export function groupElementStylesByGroup(elementStyles: ElementStyle[]): Record
   }, {})
 }
 
-export function getElementComputedStylesData(target: HTMLElement) {
+export function getElementComputedStylesData(el: HTMLElement) {
   // Retrieve all computed styles for the clicked element
-  const computedStyles = getComputedStyle(target)
+  const computedStyles = getComputedStyle(el)
   // TODO: Could get styles based on tag types
   elementStyles.forEach((style: any) => {
-    const inlineStyle = target.style[style.key]
+    const inlineStyle = el.style[style.key]
     const computedStyle = computedStyles[style.key]
     if (style.type === ElementStyleType.Number) {
       style.value = (inlineStyle && inlineStyle !== '') ? inlineStyle : computedStyle

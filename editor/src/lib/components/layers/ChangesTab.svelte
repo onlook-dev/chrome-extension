@@ -124,6 +124,10 @@
           <li class="opacity-60">
             Id: {event.oldVal["componentId"]}
           </li>
+        {:else if event.editType === EditType.ATTR}
+          {#each Object.entries(event.newVal) as [key, val]}
+            <li class="opacity-60">{key}: {val};</li>
+          {/each}
         {:else}
           {#each Object.entries(event.newVal) as [key, val]}
             <li class="opacity-60">{jsToCssProperty(key)}: {val};</li>

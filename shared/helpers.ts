@@ -1,3 +1,5 @@
+import type { ChangeValues } from "./models/activity";
+
 export function jsToCssProperty(key: string) {
   if (!key) return "";
   return key.replace(/([A-Z])/g, "-$1").toLowerCase();
@@ -74,4 +76,16 @@ export function timeSince(date: Date) {
     return Math.floor(interval) + "m";
   }
   return Math.floor(seconds) + "s";
+}
+
+export function formatStyleChanges(styleChanges: Record<string, ChangeValues>): string {
+  return Object.values(styleChanges)
+    .map(({ key, newVal }) => `${jsToCssProperty(key)}: ${newVal};`)
+    .join('\n')
+}
+
+export function formatAttrChanges(attrChanges: Record<string, ChangeValues>): string {
+  return Object.values(attrChanges)
+    .map(({ key, newVal }) => `${key}: ${newVal};`)
+    .join('\n')
 }

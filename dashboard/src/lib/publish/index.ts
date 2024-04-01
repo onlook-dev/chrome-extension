@@ -5,9 +5,10 @@ import { Project } from "$shared/models/project";
 import { FileContentData, PathInfo, ProcessedActivity } from "$shared/models/translation";
 import { User } from "$shared/models/user";
 import { getProcessedActivities, updateContentChunk } from "./helpers";
-import EventEmitter from 'events';
 import { getStyleTranslationInput, getTextTranslationInput } from "./inputs";
 import { trackMixpanelEvent } from "$lib/mixpanel/client";
+import { StyleFramework } from "$shared/models/projectSettings";
+import EventEmitter from 'events';
 
 export enum ProjectPublisherEventType {
   TRANSLATING = 'TRANSLATING',
@@ -28,6 +29,7 @@ export class ProjectPublisher extends EventEmitter {
   private translationService: TranslationService;
   private filesMap = new Map<string, FileContentData>();
   private processedActivities: ProcessedActivity[];
+  private forceTailwind = false;
 
   EMIT_EVENT_NAME = 'update';
 
@@ -54,6 +56,10 @@ export class ProjectPublisher extends EventEmitter {
 
   private emitEvent(event: ProjectPublisherEvent) {
     this.emit(this.EMIT_EVENT_NAME, event);
+  }
+
+  toggleForceTailwind(forceTailwind: boolean) {
+    this.forceTailwind = forceTailwind;
   }
 
   async publish(title: string, description: string): Promise<string> {
@@ -174,7 +180,8 @@ export class ProjectPublisher extends EventEmitter {
       code: input.code,
       css: input.css,
       framework: input.framework,
-    }, this.project.projectSettings?.styleFramework);
+      tailwind: input.tailwind,
+    }, this.forceTailwind ? StyleFramework.TailwindCSS : this.project.projectSettings?.styleFramework);
     const newContent = updateContentChunk(
       content,
       newCode,

@@ -17,6 +17,7 @@ export interface Activity {
 
   styleChanges: Record<string, ChangeValues>;
   textChanges?: Record<string, ChangeValues>;
+  attributeChanges?: Record<string, ChangeValues>;
 
   // TODO: Finish implementing this
   insertChanges?: Record<string, Component>;

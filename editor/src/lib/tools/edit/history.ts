@@ -1,9 +1,11 @@
 import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$shared/models/editor';
 import { writable } from 'svelte/store';
 import { emitEditEvent } from '../messages';
+import { ApplyChangesService } from './applyChange';
 
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
+const applyChangeService = new ApplyChangesService();
 
 function compareKeys(a: Record<string, string>, b: Record<string, string>): boolean {
   if (!a || !b) return false;
@@ -115,6 +117,14 @@ function applyTextEvent(event: EditEvent, element: HTMLElement) {
   element.textContent = newVal.text;
 }
 
+function applyAttributeEvent(event: EditEvent, element: HTMLElement) {
+  if (!element) return;
+  Object.entries(event.newVal).forEach(([attr, newVal]) => {
+    if (attr === "className")
+      applyChangeService.applyClass(element, newVal);
+  });
+}
+
 function applyInsertEvent(event: EditEvent, parent: HTMLElement) {
   const newVal = event.newVal as InsertRemoveVal;
   if (!parent) return;
@@ -144,6 +154,9 @@ function applyEvent(event: EditEvent) {
       break;
     case EditType.TEXT:
       applyTextEvent(event, element);
+      break;
+    case EditType.ATTR:
+      applyAttributeEvent(event, element);
       break;
     case EditType.INSERT:
       applyInsertEvent(event, element);

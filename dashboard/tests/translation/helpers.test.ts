@@ -43,13 +43,17 @@ describe('ProjectPublisher helpers', () => {
       styleChanges: {
         color: { key: 'color', newVal: 'red', oldVal: 'black' },
         backgroundColor: { key: 'background-color', newVal: 'blue', oldVal: 'white' }
+      },
+      attributeChanges: {
+        className: { key: 'className', newVal: 'mt-8', oldVal: 'mt-4' }
       }
     } as any;
 
     const expected: StyleTranslationInput = {
       framework: 'html',
       css: 'color: red; background-color: blue',
-      code: '<div>'
+      code: '<div>',
+      tailwind: 'mt-8'
     };
 
     // Execute
