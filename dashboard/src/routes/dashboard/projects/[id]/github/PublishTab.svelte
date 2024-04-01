@@ -28,11 +28,11 @@
 	export let project: Project;
 	export let user: User;
 
+	const projectPublisher: ProjectPublisher = new ProjectPublisher(project, user);
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	const githubHistoryService = new FirebaseService<GithubHistory>(
 		FirestoreCollections.GITHUB_HISTORY
 	);
-	let projectPublisher: ProjectPublisher = new ProjectPublisher(project, user);
 
 	let githubHistories: GithubHistory[] = [];
 	let publishErrorMessage = '';

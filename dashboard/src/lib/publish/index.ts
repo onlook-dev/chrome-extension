@@ -180,6 +180,7 @@ export class ProjectPublisher extends EventEmitter {
       code: input.code,
       css: input.css,
       framework: input.framework,
+      tailwind: input.tailwind,
     }, this.forceTailwind ? StyleFramework.TailwindCSS : this.project.projectSettings?.styleFramework);
     const newContent = updateContentChunk(
       content,

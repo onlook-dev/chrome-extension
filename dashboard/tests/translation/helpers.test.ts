@@ -49,7 +49,8 @@ describe('ProjectPublisher helpers', () => {
     const expected: StyleTranslationInput = {
       framework: 'html',
       css: 'color: red; background-color: blue',
-      code: '<div>'
+      code: '<div>',
+      tailwind: ''
     };
 
     // Execute

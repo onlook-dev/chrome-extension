@@ -17,6 +17,7 @@ export type StyleTranslationInput = {
   framework: string;
   css: string;
   code: string;
+  tailwind: string;
 }
 
 export type TextTranslationInput = {

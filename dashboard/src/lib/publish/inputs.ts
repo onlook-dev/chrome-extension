@@ -5,11 +5,12 @@ export function getStyleTranslationInput(content: string, pathInfo: PathInfo, ac
   const code = getCodeChunkFromContent(content, pathInfo, false);
   const css = getCssStringFromStyleChanges(activity.styleChanges);
   const framework = getFrameworkFromPath(pathInfo.path);
-
+  const tailwind = activity.attributeChanges ? getTailwindStringFromAttributeChange(activity.attributeChanges) : '';
   return {
     framework,
     css,
     code,
+    tailwind
   }
 }
 
@@ -37,6 +38,10 @@ export const getCssStringFromStyleChanges = (styleChanges: Record<string, Change
   return Object.values(styleChanges).map((styleChange) => {
     return `${styleChange.key}: ${styleChange.newVal}`;
   }).join('; ');
+}
+
+export const getTailwindStringFromAttributeChange = (attributeChange: Record<string, ChangeValues>) => {
+  return attributeChange.className.newVal;
 }
 
 export const getTextFromTextChanges = (textChanges: Record<string, ChangeValues>) => {

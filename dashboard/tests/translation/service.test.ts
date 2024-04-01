@@ -40,6 +40,7 @@ describe('Translation service', () => {
       framework: "tsx",
       code: "<Button style={{ backgroundColor: 'red' }}>",
       css: "background-color: blue; padding: 10px;",
+      tailwind: "",
     });
 
     let expected = "<Button style={{ backgroundColor: 'blue', padding: '10px' }} >";
@@ -52,6 +53,7 @@ describe('Translation service', () => {
       framework: "tsx",
       code: "<Card className='mt-8'>",
       css: "background-color: blue; padding: 10px;",
+      tailwind: "",
     }, StyleFramework.TailwindCSS as any);
 
     let expected = "<Card className='mt-8 bg-blue-500 p-2'>";
