@@ -1,4 +1,4 @@
-import { ChangeValues } from "./models/activity";
+import type { ChangeValues } from "./models/activity";
 
 export function jsToCssProperty(key: string) {
   if (!key) return "";
