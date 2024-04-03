@@ -27,7 +27,7 @@
     "@rollup/plugin-terser": "^0.4.0",
     "@rollup/plugin-typescript": "^11.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
-    "@tsconfig/svelte": "^4.0.0",
+    "@tsconfig/svelte": "^3.0.0",
     "autoprefixer": "^10.4.17",
     "bun-types": "^1.0.29",
     "dotenv": "^16.4.5",
