@@ -1,16 +1,10 @@
 <script lang="ts">
   import { Textarea } from "$lib/components/ui/textarea";
-  export let classUpdated: boolean = false;
-  export let appendedClass: string = "";
+  export let appendedClass: string[];
   export let updateElementClass: (value: string) => void;
 
   function handleNewInput(event: Event) {
-    if (classUpdated) {
-      classUpdated = false;
-      return;
-    }
-    const newClass = (event.target as HTMLInputElement).value;
-    if (newClass === "" && newClass === appendedClass) return;
+    const newClass = (event.currentTarget as HTMLInputElement).value;
     updateElementClass(newClass);
   }
 </script>
@@ -20,7 +14,7 @@
   <Textarea
     class="w-full text-xs break-normal"
     placeholder="bg-red-500 text-white"
-    value={appendedClass}
+    value={appendedClass.length > 0 ? appendedClass[0] : ""}
     on:input={handleNewInput}
   />
 </div>

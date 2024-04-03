@@ -8,7 +8,6 @@
   } from "$lib/tools/selection/styles";
 
   import { onDestroy, onMount } from "svelte";
-  import { Textarea } from "$lib/components/ui/textarea";
   import { Input } from "$lib/components/ui/input";
   import { ApplyChangesService } from "$lib/tools/edit/applyChange";
   import type { EditTool } from "$lib/tools/edit";
@@ -35,8 +34,7 @@
     [ElementStyleGroup.Spacing]: [],
     [ElementStyleGroup.Effects]: [],
   };
-  let appendedClass = "";
-  let classUpdated = false;
+  let appendedClass: string[] = [];
   let unsubs: (() => void)[] = [];
 
   onMount(() => {
@@ -55,8 +53,9 @@
     if (el) {
       const computedStyles = getElementComputedStylesData(el);
       groupedStyles = groupElementStylesByGroup(computedStyles);
-      classUpdated = true;
-      appendedClass = applyChangeService.getAppendedClasses(el);
+      // TODO: This is a hack because for some reason, string assignment aren't always reactive when assigning empty string.
+      // But arrays are always reactive on assignment.
+      appendedClass = [applyChangeService.getAppendedClasses(el)];
     }
   }
 
@@ -160,7 +159,7 @@ color: white;"
             }}
           />
         </div> -->
-        <TailwindInput {updateElementClass} {appendedClass} bind:classUpdated />
+        <TailwindInput {updateElementClass} {appendedClass} />
       </Accordion.Content>
     </Accordion.Item>
   </Accordion.Root>
