@@ -7,10 +7,8 @@ export class ApplyChangesService {
   appendedClassCache = new Map<string, string>();
   constructor() { }
 
-  getAppendedClasses(el: HTMLElement): string {
-    const selector = getUniqueSelector(el);
-    const appendedClass = this.appendedClassCache.get(selector) || '';
-    return appendedClass
+  getUpdatedClasses(el: HTMLElement): string {
+    return el.className;
   }
 
   applyClass(el: HTMLElement, value: string, emit = true) {
@@ -23,12 +21,15 @@ export class ApplyChangesService {
     const selector = getUniqueSelector(el);
     this.appendedClassCache.set(selector, value);
 
+    // Get only the changed classes
+    const changedClasses = value.split(' ').filter((c) => !oldVals.attr.className.includes(c)).join(' ').trim();
+
     if (!emit) return;
     handleEditEvent({
       el,
-      editType: EditType.ATTR,
-      newValue: { className: value },
-      oldValue: { className: '' }
+      editType: EditType.CLASS,
+      newValue: { updated: changedClasses, full: value },
+      oldValue: { updated: '', full: oldVals.attr.className },
     });
   }
 
