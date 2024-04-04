@@ -41,7 +41,7 @@ export const getCssStringFromStyleChanges = (styleChanges: Record<string, Change
 }
 
 export const getTailwindStringFromAttributeChange = (attributeChange: Record<string, ChangeValues>) => {
-  return attributeChange.className.newVal;
+  return attributeChange.updated.newVal;
 }
 
 export const getTextFromTextChanges = (textChanges: Record<string, ChangeValues>) => {

@@ -54,11 +54,12 @@
 					<div class="flex items-center space-x-2">
 						<div class="avatar">
 							<div class="w-8 mask mask-circle">
-								{#if project?.hostData?.favicon && faviconErrorIds.indexOf(project.id) === -1}
+								{#if project.hostData?.favicon && faviconErrorIds.indexOf(project.id) === -1}
 									<img
 										src={project.hostData.favicon}
 										alt="Favicon of {project.hostUrl}"
 										on:error={() => {
+											if (!project) return;
 											faviconErrorIds = [...faviconErrorIds, project.id];
 										}}
 									/>
