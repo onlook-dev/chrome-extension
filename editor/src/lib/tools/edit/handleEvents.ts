@@ -61,7 +61,6 @@ function undebounceHandleEditEvent(param: HandleEditEventParams) {
 let debouncedHandleEditEvent = debounce(undebounceHandleEditEvent, 1000);
 
 export function handleEditEvent(param: HandleEditEventParams) {
-  console.log('Handling edit event', param);
   if (param.editType === EditType.STYLE || param.editType === EditType.TEXT || param.editType === EditType.CLASS) {
     debouncedHandleEditEvent(param);
   } else {
