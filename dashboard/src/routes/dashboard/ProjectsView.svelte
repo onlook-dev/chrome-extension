@@ -13,6 +13,7 @@
 	export let team: Team | undefined;
 	let unsubs: any[] = [];
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
+	let faviconErrorIds: string[] = [];
 
 	$: team?.projectIds.forEach((projectId) => {
 		if (!$projectsMapStore.has(projectId)) {
@@ -34,37 +35,45 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
 	{#if team?.projectIds.length}
 		{#each team?.projectIds.map((id) => $projectsMapStore.get(id)) as project}
-			<button
-				on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
-				class="bg-base-100 rounded space-y-4 p-4 hover:shadow block"
-			>
-				<figure class="">
-					{#if project?.hostData.previewImage}
-						<img
-							src={project.hostData.previewImage}
-							alt={project.name}
-							class="object-cover object-top aspect-video rounded w-full"
-						/>
-					{:else}
-						<div class="bg-gray-100 aspect-video rounded w-full" />
-					{/if}
-				</figure>
-				<div class="flex items-center space-x-2">
-					<div class="avatar">
-						<div class="w-8 mask mask-circle">
-							{#if project?.hostData?.favicon}
-								<img src={project.hostData.favicon} alt="Favicon of {project.hostUrl}" />
-							{:else}
-								<div class="bg-gray-100 rounded-full w-full h-full" />
-							{/if}
+			{#if project}
+				<button
+					on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
+					class="bg-base-100 rounded space-y-4 p-4 hover:shadow block"
+				>
+					<figure class="">
+						{#if project?.hostData.previewImage}
+							<img
+								src={project.hostData.previewImage}
+								alt={project.name}
+								class="object-cover object-top aspect-video rounded w-full"
+							/>
+						{:else}
+							<div class="bg-gray-100 aspect-video rounded w-full" />
+						{/if}
+					</figure>
+					<div class="flex items-center space-x-2">
+						<div class="avatar">
+							<div class="w-8 mask mask-circle">
+								{#if project?.hostData?.favicon && faviconErrorIds.indexOf(project.id) === -1}
+									<img
+										src={project.hostData.favicon}
+										alt="Favicon of {project.hostUrl}"
+										on:error={() => {
+											faviconErrorIds = [...faviconErrorIds, project.id];
+										}}
+									/>
+								{:else}
+									<div class="bg-stone-200 rounded-full w-full h-full" />
+								{/if}
+							</div>
+						</div>
+						<div class="text-left overflow-x-hidden">
+							<p class="text-sm font-semibold truncate">{project?.name}</p>
+							<p class="text-xs opacity-70 truncate">{project?.hostUrl}</p>
 						</div>
 					</div>
-					<div class="text-left overflow-x-hidden">
-						<p class="text-sm font-semibold truncate">{project?.name}</p>
-						<p class="text-xs opacity-70 truncate">{project?.hostUrl}</p>
-					</div>
-				</div>
-			</button>
+				</button>
+			{/if}
 		{/each}
 	{:else}
 		<div class="col-span-full mt-10">

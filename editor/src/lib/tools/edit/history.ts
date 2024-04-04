@@ -117,11 +117,11 @@ function applyTextEvent(event: EditEvent, element: HTMLElement) {
   element.textContent = newVal.text;
 }
 
-function applyAttributeEvent(event: EditEvent, element: HTMLElement) {
+function applyClassEvent(event: EditEvent, element: HTMLElement) {
   if (!element) return;
   Object.entries(event.newVal).forEach(([attr, newVal]) => {
-    if (attr === "className")
-      applyChangeService.applyClass(element, newVal);
+    if (attr === "full") return;
+    applyChangeService.applyClass(element, newVal);
   });
 }
 
@@ -155,8 +155,8 @@ function applyEvent(event: EditEvent) {
     case EditType.TEXT:
       applyTextEvent(event, element);
       break;
-    case EditType.ATTR:
-      applyAttributeEvent(event, element);
+    case EditType.CLASS:
+      applyClassEvent(event, element);
       break;
     case EditType.INSERT:
       applyInsertEvent(event, element);
