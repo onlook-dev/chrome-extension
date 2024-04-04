@@ -28,7 +28,7 @@
 	export let project: Project;
 	export let user: User;
 
-	const projectPublisher: ProjectPublisher = new ProjectPublisher(project, user);
+	let projectPublisher: ProjectPublisher;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	const githubHistoryService = new FirebaseService<GithubHistory>(
 		FirestoreCollections.GITHUB_HISTORY
@@ -59,7 +59,9 @@
 		githubConfigured = true;
 	}
 
-	$: projectPublisher.toggleForceTailwind(forceTailwind);
+	$: if (projectPublisher) {
+		projectPublisher.toggleForceTailwind(forceTailwind);
+	}
 
 	onMount(() => {
 		// Check each activities for a path
@@ -90,6 +92,7 @@
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		try {
+			projectPublisher = new ProjectPublisher(project, user);
 			handleProjectPublisherEvents(projectPublisher);
 			let pullRequestUrl = await projectPublisher.publish(title, description);
 			if (!pullRequestUrl) throw new Error('No pull request url returned from GitHub');

@@ -11,7 +11,6 @@
 	import PublishTab from './PublishTab.svelte';
 	import { githubConfig } from '$lib/utils/env';
 	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
-	import { projectsMapStore } from '$lib/utils/store';
 
 	export let project: Project;
 	export let user: User;
