@@ -2,13 +2,14 @@
   import { draggable } from "@neodrag/svelte";
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
-  import { editorPanelVisible } from "$lib/states/editor";
+  import { editorPanelVisible, layersPanelCollapsed } from "$lib/states/editor";
   import type { EditTool } from "$lib/tools/edit";
   import LayersTab from "./LayersTab.svelte";
   import ChangesTab from "./ChangesTab.svelte";
   import { historyStore } from "$lib/tools/edit/history";
   import { slide } from "svelte/transition";
   import Separator from "../ui/separator/separator.svelte";
+  import { DragHandleDots2, LineHeight } from "radix-icons-svelte";
 
   export let editTool: EditTool;
   let newHistory: boolean = false;
@@ -20,6 +21,7 @@
     ELEMENTS = "elements",
   }
   let selectedTab = TabValue.LAYERS;
+  let panelCollapsed = $panelCollapsed;
 
   historyStore.subscribe((history) => {
     if (selectedTab === TabValue.CHANGES) return;
@@ -29,6 +31,11 @@
   $: if (selectedTab === TabValue.CHANGES) {
     newHistory = false;
   }
+
+  function collapsePanel() {
+    panelCollapsed = !panelCollapsed;
+    layersPanelCollapsed.set(panelCollapsed);
+  }
 </script>
 
 <div
@@ -37,16 +44,22 @@
       top: 0,
       left: 0,
     },
+    handle: ".handle",
     disabled: isInputFocused,
   }}
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
   class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
 >
-  <Card.Root class="w-[260px] h-[60vh] backdrop-blur bg-background/90 pt-2">
+  <Card.Root
+    class="transition {panelCollapsed
+      ? 'h-[3rem]'
+      : 'h-[60vh]'} w-[260px] backdrop-blur bg-background/90 pt-2 overflow-hidden"
+    style="transition: height 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
+  >
     <Card.Content>
       <Tabs.Root bind:value={selectedTab} class="w-full h-full">
-        <Tabs.List class="bg-transparent p-0 gap-4">
+        <Tabs.List class="bg-transparent p-0 gap-4 w-full">
           <Tabs.Trigger
             class="bg-transparent p-0 text-xs"
             value={TabValue.LAYERS}>Layers</Tabs.Trigger
@@ -63,6 +76,19 @@
               </p>{/if}
             Changes
           </Tabs.Trigger>
+          <div class="ml-auto flex items-center">
+            <button
+              class="w-6 h-6 flex items-center justify-center transition hover:text-white/80"
+              on:click={collapsePanel}
+            >
+              <LineHeight />
+            </button>
+            <div
+              class="handle w-6 h-6 flex items-center justify-center cursor-pointer transition hover:text-white/80"
+            >
+              <DragHandleDots2 />
+            </div>
+          </div>
         </Tabs.List>
         <Separator class="mt-1" />
         <div class="h-[calc(60vh-4rem)] overflow-auto">
