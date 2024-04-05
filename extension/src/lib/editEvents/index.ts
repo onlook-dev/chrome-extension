@@ -84,7 +84,7 @@ export class EditEventService {
       case EditType.TEXT:
         activity.textChanges = convertEditEventToChangeObject(editEvent, activity.textChanges ?? {})
         break
-      case EditType.ATTR:
+      case EditType.CLASS:
         activity.attributeChanges = convertEditEventToChangeObject(editEvent, activity.attributeChanges ?? {})
         break
       case EditType.INSERT:

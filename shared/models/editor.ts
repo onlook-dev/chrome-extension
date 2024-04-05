@@ -15,7 +15,7 @@ export type TextVal = {
 export enum EditType {
   TEXT = "TEXT",
   STYLE = "STYLE",
-  ATTR = "ATTR",
+  CLASS = "CLASS",
   INSERT = "INSERT",
   REMOVE = "REMOVE",
 }

@@ -2,9 +2,10 @@
   import { onMount } from "svelte";
   import type { EditTool } from "$lib/tools/edit";
   import TreeRoot from "./dom/TreeRoot.svelte";
-  import { elementsPanelVisible } from "$lib/states/editor";
   import Separator from "../ui/separator/separator.svelte";
-  import { Plus } from "radix-icons-svelte";
+
+  // import { Plus } from "radix-icons-svelte";
+
   export let editTool: EditTool;
 
   let hovered: HTMLElement;

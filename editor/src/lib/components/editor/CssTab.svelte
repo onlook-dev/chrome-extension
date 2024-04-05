@@ -55,7 +55,7 @@
       groupedStyles = groupElementStylesByGroup(computedStyles);
       // TODO: This is a hack because for some reason, string assignment aren't always reactive when assigning empty string.
       // But arrays are always reactive on assignment.
-      appendedClass = [applyChangeService.getAppendedClasses(el)];
+      appendedClass = [applyChangeService.getUpdatedClasses(el)];
     }
   }
 

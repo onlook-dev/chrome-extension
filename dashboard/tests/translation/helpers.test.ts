@@ -45,7 +45,8 @@ describe('ProjectPublisher helpers', () => {
         backgroundColor: { key: 'background-color', newVal: 'blue', oldVal: 'white' }
       },
       attributeChanges: {
-        className: { key: 'className', newVal: 'mt-8', oldVal: 'mt-4' }
+        full: { key: 'full', newVal: 'custom mt-8', oldVal: 'custom mt-4' },
+        updated: { key: 'updated', newVal: 'mt-8', oldVal: 'mt-4' }
       }
     } as any;
 

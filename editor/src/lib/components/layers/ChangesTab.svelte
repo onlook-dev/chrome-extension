@@ -124,7 +124,7 @@
           <li class="opacity-60">
             Id: {event.oldVal["componentId"]}
           </li>
-        {:else if event.editType === EditType.ATTR}
+        {:else if event.editType === EditType.CLASS}
           {#each Object.entries(event.newVal) as [key, val]}
             <li class="opacity-60">{key}: {val};</li>
           {/each}
