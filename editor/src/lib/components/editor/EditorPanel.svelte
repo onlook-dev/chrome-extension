@@ -49,7 +49,9 @@
   }}
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
-  class="fixed top-10 right-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
+  class="fixed top-10 right-2 overscroll-contain {$editorPanelVisible
+    ? 'visible'
+    : 'invisible'}"
 >
   <Card.Root
     class="transition {panelCollapsed
@@ -81,7 +83,7 @@
           </div>
         </Tabs.List>
         <Separator class="mt-1" />
-        <div class="h-[calc(80vh-4rem)]">
+        <div class="h-[calc(80vh-4rem)] overscroll-contain overflow-auto">
           <Tabs.Content value={TabValue.CSS}><CssTab {editTool} /></Tabs.Content
           >
           <!-- <Tabs.Content value={TabValue.CODE}

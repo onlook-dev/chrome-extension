@@ -25,7 +25,7 @@
     ELEMENTS = "elements",
   }
   let selectedTab = TabValue.LAYERS;
-  let panelCollapsed = $panelCollapsed;
+  let panelCollapsed = $layersPanelCollapsed;
 
   historyStore.subscribe((history) => {
     if (selectedTab === TabValue.CHANGES) return;
@@ -95,7 +95,7 @@
           </div>
         </Tabs.List>
         <Separator class="mt-1" />
-        <div class="h-[calc(60vh-4rem)] overflow-auto">
+        <div class="h-[calc(60vh-4rem)] overscroll-contain overflow-auto">
           <Tabs.Content value={TabValue.LAYERS}
             ><LayersTab {editTool} />
           </Tabs.Content>
