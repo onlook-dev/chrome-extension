@@ -9,6 +9,7 @@
   import { DATA_ONLOOK_IGNORE, IGNORE_TAGS } from "$lib/constants";
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
+  import { layersPanelCollapsed } from "$lib/states/editor";
 
   export let node: HTMLElement | undefined;
   export let selected: HTMLElement[];
@@ -58,7 +59,7 @@
     ? "bg-[#38040c] rounded-b rounded-t-none font-normal text-white/60"
     : "";
   $: iconClass = `shrink-0 h-3 w-3 ml-1 mr-2 ${isSelected ? "text-white" : "text-red"}`;
-  $: if (isSelected && !selfSelected) {
+  $: if (isSelected && !selfSelected && !layersPanelCollapsed) {
     nodeRef?.scrollIntoView({
       behavior: "smooth",
       block: "start",
