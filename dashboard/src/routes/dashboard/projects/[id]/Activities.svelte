@@ -204,14 +204,11 @@
 				{/if}
 
 				{#if activity.attributeChanges && Object.keys(activity.attributeChanges).length > 0}
-					<p>Attribute Change:</p>
-					<CodeBlock
-						class="text-sm bg-gray-50 rounded p-1 border w-full text-start overflow-scroll"
-						language="css"
-						code={formatAttrChanges(activity.attributeChanges)}
-						color="text-gray-800"
-						text="text-sm"
-						button="btn btn-xs ml-auto rounded-sm"
+					<p>Class Change:</p>
+					<textarea
+						disabled
+						class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col overflow-auto text-gray-800 text-sm"
+						value={formatAttrChanges(activity.attributeChanges)}
 					/>
 				{/if}
 

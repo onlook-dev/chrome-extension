@@ -1,13 +1,17 @@
 <script lang="ts">
+  import { historyStore } from "$lib/tools/edit/history";
+  import { slide } from "svelte/transition";
   import { draggable } from "@neodrag/svelte";
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
   import { editorPanelVisible, layersPanelCollapsed } from "$lib/states/editor";
+
   import type { EditTool } from "$lib/tools/edit";
+
+  import * as Card from "$lib/components/ui/card";
+  import * as Tabs from "$lib/components/ui/tabs";
   import LayersTab from "./LayersTab.svelte";
   import ChangesTab from "./ChangesTab.svelte";
-  import { historyStore } from "$lib/tools/edit/history";
-  import { slide } from "svelte/transition";
   import Separator from "../ui/separator/separator.svelte";
   import { DragHandleDots2, LineHeight } from "radix-icons-svelte";
 

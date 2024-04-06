@@ -5,6 +5,11 @@
 	import ChevronDownIcon from '~icons/mdi/chevron-down';
 
 	export let user: User | null;
+	let imageError = false;
+
+	function handleImageError() {
+		imageError = true;
+	}
 </script>
 
 <div class="dropdown dropdown-bottom">
@@ -16,8 +21,8 @@
 		<div class="flex items-center space-x-2">
 			<div class="avatar online placeholder">
 				<div class="bg-neutral text-neutral-content rounded-full w-6">
-					{#if user?.profileImage}
-						<img src={user?.profileImage} alt="profile" />
+					{#if user?.profileImage && !imageError}
+						<img src={user?.profileImage} alt="profile" on:error={handleImageError} />
 					{:else}
 						<span class="text-xs">{getInitials(user?.name ?? '')}</span>
 					{/if}

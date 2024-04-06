@@ -32,6 +32,12 @@ function applyActivityChanges(activity: Activity): boolean {
 			// Apply text change to element
 			element.innerText = changeObject.newVal
 		})
+		Object.entries(activity.attributeChanges ?? {}).forEach(([attributeChange, changeObject]) => {
+			// Apply attribute change to element
+			if (attributeChange === 'full') {
+				element.className = changeObject.newVal
+			}
+		})
 		if (activity.path !== element.dataset.onlookId) {
 			activity.path = element.dataset.onlookId
 			return true

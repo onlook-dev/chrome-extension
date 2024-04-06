@@ -7,17 +7,18 @@ export class ApplyChangesService {
   appendedClassCache = new Map<string, string>();
   constructor() { }
 
-  getAppendedClasses(el: HTMLElement): string {
-    const selector = getUniqueSelector(el);
-    const appendedClass = this.appendedClassCache.get(selector) || '';
-    return appendedClass
+  getUpdatedClasses(el: HTMLElement): string {
+    return el.className;
   }
 
   applyClass(el: HTMLElement, value: string, emit = true) {
     const oldVals = this.getAndSetOldVal(el, 'attr', 'className');
 
+    // Get only the updated classes
+    const updatedClass = value.split(' ').filter((c) => !oldVals.attr.className.includes(c)).join(' ').trim();
+
     // Apply original + new classes
-    el.className = `${oldVals.attr.className} ${tw`${value}`}`
+    el.className = `${oldVals.attr.className} ${tw`${updatedClass}`}`
 
     // Update cache
     const selector = getUniqueSelector(el);
@@ -26,9 +27,9 @@ export class ApplyChangesService {
     if (!emit) return;
     handleEditEvent({
       el,
-      editType: EditType.ATTR,
-      newValue: { className: value },
-      oldValue: { className: '' }
+      editType: EditType.CLASS,
+      newValue: { updated: updatedClass, full: value },
+      oldValue: { updated: '', full: oldVals.attr.className },
     });
   }
 
