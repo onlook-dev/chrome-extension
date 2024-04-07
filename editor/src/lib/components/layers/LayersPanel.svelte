@@ -59,7 +59,7 @@
       top: 0,
       left: 0,
     },
-    cancel: ".cancel",
+    handle: ".handle",
     disabled: isInputFocused,
   }}
   on:focusin={() => (isInputFocused = true)}
@@ -75,10 +75,10 @@
       ? "transition: height 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
       : ""}
   >
-    <Card.Root class="backdrop-blur bg-background/90 pt-2">
+    <Card.Root class="h-full backdrop-blur bg-background/90 pt-2">
       <Card.Content>
         <Tabs.Root bind:value={selectedTab} class="w-full h-full">
-          <Tabs.List class="bg-transparent p-0 gap-4 w-full">
+          <Tabs.List class="handle bg-transparent p-0 gap-4 w-full select-none	">
             <Tabs.Trigger
               class="bg-transparent p-0 text-xs"
               value={TabValue.LAYERS}>Layers</Tabs.Trigger
@@ -111,7 +111,7 @@
           </Tabs.List>
           <Separator class="mt-1" />
           <div
-            class="cancel h-[calc({cardHeight}-4rem)] overscroll-contain overflow-auto"
+            class="h-[calc({cardHeight}-4rem)] overscroll-contain overflow-auto"
           >
             <Tabs.Content value={TabValue.LAYERS}
               ><LayersTab {editTool} />
