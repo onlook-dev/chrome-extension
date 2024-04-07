@@ -51,7 +51,7 @@
   }}
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
-  class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
+  class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'visible'}"
 >
   <Card.Root
     class="transition {panelCollapsed

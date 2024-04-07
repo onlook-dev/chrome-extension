@@ -1,10 +1,11 @@
 <script lang="ts">
   import { type EditEvent, EditType } from "$shared/models/editor";
-  import { historyStore } from "$lib/tools/edit/history";
-  import * as Avatar from "$lib/components/ui/avatar";
+  import { historyStore, undoEvent } from "$lib/tools/edit/history";
+  // import * as Avatar from "$lib/components/ui/avatar";
   import type { EditTool } from "$lib/tools/edit";
   import { slide } from "svelte/transition";
   import { jsToCssProperty, timeSince } from "$shared/helpers";
+  import { Trash } from "radix-icons-svelte";
 
   export let editTool: EditTool;
   let hoveredEvent: EditEvent | undefined;
@@ -50,6 +51,11 @@
     selfSelected = true;
     editTool.simulateClick([el]);
   }
+
+  function deleteEvent(event: EditEvent) {
+    if (!event) return;
+    undoEvent(event);
+  }
 </script>
 
 <div class="text-xs flex flex-col space-y-2">
@@ -83,13 +89,17 @@
         clickEvent(event);
       }}
     >
-      <div class="flex flex-row items-center space-x-2">
+      <div class="flex flex-row items-center w-full">
         <!-- <Avatar.Root class="h-6 w-6">
           <Avatar.Image />
           <Avatar.Fallback></Avatar.Fallback>
         </Avatar.Root> -->
         <p>You</p>
-        <p class="opacity-60">{timeSince(new Date(event.createdAt))}</p>
+        <p class="text-white/60">{timeSince(new Date(event.createdAt))}</p>
+        <button
+          class="ml-auto transition hover:text-white/80 text-white/60"
+          on:click={() => deleteEvent(event)}><Trash /></button
+        >
       </div>
       <div class="flex flex-row items-center space-x-1">
         <p class="opacity-60">Element:</p>
