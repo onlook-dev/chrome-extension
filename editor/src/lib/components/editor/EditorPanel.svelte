@@ -73,12 +73,12 @@
               class="w-8 h-8 flex items-center justify-center transition hover:text-white/80"
               on:click={collapsePanel}
             >
-              <LineHeight />
+              <LineHeight class="w-4 h-4" />
             </button>
             <div
               class="w-8 h-8 flex items-center justify-center cursor-pointer transition hover:text-white/80"
             >
-              <DragHandleDots2 />
+              <DragHandleDots2 class="w-4 h-4" />
             </div>
           </div>
         </Tabs.List>

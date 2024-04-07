@@ -84,10 +84,10 @@
       }}
     >
       <div class="flex flex-row items-center space-x-2">
-        <Avatar.Root class="h-6 w-6">
+        <!-- <Avatar.Root class="h-6 w-6">
           <Avatar.Image />
           <Avatar.Fallback></Avatar.Fallback>
-        </Avatar.Root>
+        </Avatar.Root> -->
         <p>You</p>
         <p class="opacity-60">{timeSince(new Date(event.createdAt))}</p>
       </div>
