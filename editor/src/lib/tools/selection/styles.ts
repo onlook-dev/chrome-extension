@@ -410,3 +410,7 @@ export function getElementComputedStylesData(el: HTMLElement) {
 
   return elementStyles
 }
+
+export let getImmediateTextContent = (el: HTMLElement) => {
+  return [].reduce.call(el.childNodes, function (a, b) { return a + (b.nodeType === 3 ? b.textContent : ''); }, '').trim();
+}

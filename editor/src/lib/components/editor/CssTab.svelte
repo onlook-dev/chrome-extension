@@ -4,6 +4,7 @@
     ElementStyleGroup,
     ElementStyleType,
     getElementComputedStylesData,
+    getImmediateTextContent,
     groupElementStylesByGroup,
   } from "$lib/tools/selection/styles";
 
@@ -53,6 +54,13 @@
     if (el) {
       const computedStyles = getElementComputedStylesData(el);
       groupedStyles = groupElementStylesByGroup(computedStyles);
+
+      // Remove text group if no text content
+      const immediateTextContent = getImmediateTextContent(el);
+      if (!immediateTextContent || immediateTextContent === "") {
+        delete groupedStyles[ElementStyleGroup.Text];
+      }
+
       // TODO: This is a hack because for some reason, string assignment aren't always reactive when assigning empty string.
       // But arrays are always reactive on assignment.
       appendedClass = [applyChangeService.getUpdatedClasses(el)];
