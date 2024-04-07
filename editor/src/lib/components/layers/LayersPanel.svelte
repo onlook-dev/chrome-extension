@@ -86,11 +86,11 @@
             >
               <LineHeight class="w-4 h-4" />
             </button>
-            <div
+            <button
               class="w-8 h-8 flex items-center justify-center cursor-pointer transition hover:text-white/80"
             >
               <DragHandleDots2 class="w-4 h-4" />
-            </div>
+            </button>
           </div>
         </Tabs.List>
         <Separator class="mt-1" />
