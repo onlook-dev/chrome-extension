@@ -61,7 +61,7 @@
   >
     <Card.Content>
       <Tabs.Root bind:value={selectedTab} class="w-full h-full">
-        <Tabs.List class="bg-transparent p-0 gap-4 w-full">
+        <Tabs.List class="handle bg-transparent p-0 gap-4 w-full">
           <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CSS}
             >Appearance</Tabs.Trigger
           >
@@ -70,16 +70,16 @@
           > -->
           <div class="ml-auto flex items-center">
             <button
-              class="w-6 h-6 flex items-center justify-center transition hover:text-white/80"
+              class="w-8 h-8 flex items-center justify-center transition hover:text-white/80"
               on:click={collapsePanel}
             >
-              <LineHeight />
+              <LineHeight class="w-4 h-4" />
             </button>
-            <div
-              class="handle w-6 h-6 flex items-center justify-center cursor-pointer transition hover:text-white/80"
+            <button
+              class="w-8 h-8 flex items-center justify-center cursor-pointer transition hover:text-white/80"
             >
-              <DragHandleDots2 />
-            </div>
+              <DragHandleDots2 class="w-4 h-4" />
+            </button>
           </div>
         </Tabs.List>
         <Separator class="mt-1" />

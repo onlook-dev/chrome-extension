@@ -14,7 +14,7 @@ export const TagMap: Record<string, TagInfo> = {
   h4: { title: "Heading 4", description: "Represent six levels of section headings. <h1> is the highest section level and <h6> is the lowest." },
   h5: { title: "Heading 5", description: "Represent six levels of section headings. <h1> is the highest section level and <h6> is the lowest." },
   h6: { title: "Heading 6", description: "Represent six levels of section headings. <h1> is the highest section level and <h6> is the lowest." },
-  div: { title: "Division", description: "The generic container for flow content. It has no effect on the content or layout until styled in some way using CSS (e.g., styling is directly applied to it, or some kind of layout model like flexbox is applied to its parent element)." },
+  div: { title: "Div", description: "The generic container for flow content. It has no effect on the content or layout until styled in some way using CSS (e.g., styling is directly applied to it, or some kind of layout model like flexbox is applied to its parent element)." },
   p: {
     title: "Paragraph", description: "Represents a paragraph. Paragraphs are usually represented in visual media as blocks of text separated from adjacent blocks by blank lines and/or first-line indentation, but HTML paragraphs can be any structural grouping of related content, such as images or form fields."
   },

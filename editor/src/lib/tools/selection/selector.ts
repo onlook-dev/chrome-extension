@@ -54,6 +54,7 @@ export class SelectorEngine {
     if (!e.shiftKey) {
       this.selectSingle(target);
     } else {
+      document.getSelection().removeAllRanges();
       if (get(this.selectedStore).includes(target)) {
         this.unselect(target);
       } else {
