@@ -195,25 +195,25 @@ export const elementStyles: ElementStyle[] = [
   ),
 
   // Text
-  new ElementStyle(
-    'fontFamily',
-    'sans-serif',
-    'Font',
-    ElementStyleType.Select,
-    ElementStyleGroup.Text,
-    [
-      'inherit',
-      'system-ui',
-      'serif',
-      'sans-serif',
-      'monospace',
-      'cursive',
-      'fantasy',
-      'emoji',
-      'math',
-      'fangsong'
-    ]
-  ),
+  // new ElementStyle(
+  //   'fontFamily',
+  //   'sans-serif',
+  //   'Font',
+  //   ElementStyleType.Select,
+  //   ElementStyleGroup.Text,
+  //   [
+  //     'inherit',
+  //     'system-ui',
+  //     'serif',
+  //     'sans-serif',
+  //     'monospace',
+  //     'cursive',
+  //     'fantasy',
+  //     'emoji',
+  //     'math',
+  //     'fangsong'
+  //   ]
+  // ),
   new ElementStyle(
     'fontSize',
     '16px',
