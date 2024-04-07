@@ -135,16 +135,16 @@ export const elementStyles: ElementStyle[] = [
     elementStyleUnits,
     1000
   ),
-  // new ElementStyle(
-  //   'rotate',
-  //   '',
-  //   'Rot',
-  //   ElementStyleType.Number,
-  //   ElementStyleGroup.Size,
-  //   [],
-  //   ['deg', 'rad', 'grad', 'turn'],
-  //   1000
-  // ),
+  new ElementStyle(
+    'rotate',
+    '',
+    'Rot',
+    ElementStyleType.Number,
+    ElementStyleGroup.Size,
+    [],
+    ['deg', 'rad', 'grad', 'turn'],
+    1000
+  ),
   new ElementStyle(
     'borderRadius',
     '',
