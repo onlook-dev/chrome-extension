@@ -95,7 +95,7 @@
           <Avatar.Fallback></Avatar.Fallback>
         </Avatar.Root> -->
         <p>You</p>
-        <p class="text-white/60">{timeSince(new Date(event.createdAt))}</p>
+        <p class="ml-2 text-white/60">{timeSince(new Date(event.createdAt))}</p>
         <button
           class="ml-auto transition hover:text-white/80 text-white/60"
           on:click={() => deleteEvent(event)}><Trash /></button

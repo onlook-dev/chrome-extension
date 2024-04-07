@@ -70,12 +70,12 @@
     bind:this={cardRef}
     class="{panelCollapsed
       ? 'h-[3rem]'
-      : 'resize h-[60vh]'} min-h-[3rem] w-[{cardWidth}] min-w-[{cardWidth}] backdrop-blur bg-background/90 pt-2 overflow-hidden"
+      : 'resize h-[60vh]'} min-h-[3rem] w-[{cardWidth}] min-w-[{cardWidth}] overflow-hidden bg-transparent"
     style={panelCollapsed
       ? "transition: height 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
       : ""}
   >
-    <Card.Root>
+    <Card.Root class="backdrop-blur bg-background/90 pt-2">
       <Card.Content>
         <Tabs.Root bind:value={selectedTab} class="w-full h-full">
           <Tabs.List class="handle bg-transparent p-0 gap-4 w-full">
