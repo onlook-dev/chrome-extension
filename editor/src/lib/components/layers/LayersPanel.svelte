@@ -37,7 +37,6 @@
   function collapsePanel() {
     panelCollapsed = !panelCollapsed;
     layersPanelCollapsed.set(panelCollapsed);
-    console.log($layersPanelCollapsed);
   }
 </script>
 
