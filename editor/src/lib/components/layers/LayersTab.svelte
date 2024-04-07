@@ -61,18 +61,16 @@
   }
 </script>
 
-<div class="h-[calc(60vh)] overflow-auto">
-  {#if tree}
-    <TreeRoot
-      node={tree}
-      {hovered}
-      {selected}
-      {select}
-      {mouseEnter}
-      {mouseLeave}
-    />
-  {/if}
-</div>
+{#if tree}
+  <TreeRoot
+    node={tree}
+    {hovered}
+    {selected}
+    {select}
+    {mouseEnter}
+    {mouseLeave}
+  />
+{/if}
 <Separator />
 
 <!-- TODO: If enable this, change height above to h-[calc(60vh-8rem)] -->

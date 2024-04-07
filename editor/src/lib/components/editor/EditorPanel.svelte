@@ -1,34 +1,28 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { draggable } from "@neodrag/svelte";
-  import { tweened } from "svelte/motion";
-  import { cubicOut } from "svelte/easing";
+  import { Separator } from "$lib/components/ui/separator";
+  import { editorPanelVisible } from "$lib/states/editor";
+  import { DragHandleDots2, LineHeight } from "radix-icons-svelte";
+
+  import type { EditTool } from "$lib/tools/edit";
+
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
   import CssTab from "./CssTab.svelte";
-  import { Separator } from "$lib/components/ui/separator";
-  import { editorPanelVisible } from "$lib/states/editor";
-  import type { EditTool } from "$lib/tools/edit";
-  import { DragHandleDots2, LineHeight } from "radix-icons-svelte";
-  import { onMount } from "svelte";
-
   // import CodeTab from "./CodeTab.svelte";
-
-  export let editTool: EditTool;
-  let isInputFocused = false;
-  let panelCollapsed = false;
-  let cardRef: HTMLDivElement;
-  const cardWidth = "232px";
-  let cardHeight = "80vh";
 
   enum TabValue {
     CSS = "css",
     CODE = "code",
   }
+  export let editTool: EditTool;
   let selectedTab: string = TabValue.CSS;
-
-  function collapsePanel() {
-    panelCollapsed = !panelCollapsed;
-  }
+  let isInputFocused = false;
+  let panelCollapsed = false;
+  let cardRef: HTMLDivElement;
+  const cardWidth = "232px";
+  let cardHeight = "80vh";
 
   onMount(() => {
     const resizeObserver = new ResizeObserver((entries) => {
@@ -39,6 +33,10 @@
 
     resizeObserver.observe(cardRef);
   });
+
+  function collapsePanel() {
+    panelCollapsed = !panelCollapsed;
+  }
 </script>
 
 <div
@@ -54,13 +52,13 @@
   on:focusout={() => (isInputFocused = false)}
   class="fixed top-10 right-2 overscroll-contain {$editorPanelVisible
     ? 'visible'
-    : 'visible'}"
+    : 'invisible'}"
 >
   <div
     bind:this={cardRef}
-    class="resize-y {panelCollapsed
+    class="{panelCollapsed
       ? 'h-[3rem]'
-      : 'h-[80vh]'} w-[{cardWidth}] backdrop-blur bg-background/90 pt-2 overflow-hidden"
+      : 'resize-y h-[80vh]'} w-[{cardWidth}] min-h-[3rem] backdrop-blur bg-background/90 pt-2 overflow-hidden"
     style={panelCollapsed
       ? "transition: height 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
       : ""}
