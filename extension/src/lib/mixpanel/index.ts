@@ -13,7 +13,6 @@ export function initializeMixpanel() {
                 identifyUser(user.id);
             }
         })
-        console.log('Initialized mixpanel');
     } catch (error) {
         console.error('Error initializing mixpanel', error);
     }
@@ -31,7 +30,6 @@ export function identifyUser(id: string) {
 export function trackEvent(eventName: string, properties: Record<string, any>) {
     try {
         mixpanel.track(eventName, properties);
-        console.log('Tracked event', eventName, properties);
     } catch (error) {
         console.error('Error tracking event', error);
     }
