@@ -281,7 +281,6 @@ const setListeners = () => {
 
 try {
 	setListeners()
-	initializeMixpanel()
 } catch (error) {
 	console.error(error)
 }

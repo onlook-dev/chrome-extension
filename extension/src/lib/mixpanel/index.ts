@@ -4,13 +4,16 @@ import mixpanel from 'mixpanel-browser';
 
 export function initializeMixpanel() {
     try {
-        mixpanel.init(mixpanelToken, { track_pageview: true });
+        mixpanel.init(mixpanelToken, {
+            track_pageview: false,
+            persistence: 'localStorage'
+        });
         getActiveUser().then(user => {
             if (user) {
                 identifyUser(user.id);
             }
         })
-        console.log('Initialized mixpanel', mixpanelToken);
+        console.log('Initialized mixpanel');
     } catch (error) {
         console.error('Error initializing mixpanel', error);
     }

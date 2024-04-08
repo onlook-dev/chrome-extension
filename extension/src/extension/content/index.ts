@@ -20,6 +20,7 @@ import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
 import type { Project } from '$shared/models/project'
 import { PopupRoutes } from '$lib/utils/constants'
 import { getCSSFramework } from '$lib/utils/styleFramework'
+import { initializeMixpanel, trackEvent } from '$lib/mixpanel'
 
 function applyActivityChanges(activity: Activity): boolean {
 	const element = document.querySelector(activity.selector) as any
@@ -75,6 +76,7 @@ export function setupListeners() {
 		if (message.type === MessageTypes.EDIT_EVENT) {
 			const editorStyleChange = message.detail as EditEvent
 			sendEditEvent(editorStyleChange)
+			trackEvent('Edit Page', { page: window.location.href })
 			return
 		}
 
@@ -132,6 +134,7 @@ export function setupListeners() {
 		if (shouldSaveProject) {
 			sendSaveProject(activeProject)
 		}
+		trackEvent('Apply Project Change', { project: activeProject.id })
 	})
 
 	getScreenshotStream.subscribe(async ([activity]) => {
@@ -146,6 +149,7 @@ export function setupListeners() {
 }
 
 try {
+	initializeMixpanel()
 	setupListeners()
 	console.log('Content script loaded!')
 } catch (e) {
