@@ -149,8 +149,8 @@ export function setupListeners() {
 }
 
 try {
-	initializeMixpanel()
 	setupListeners()
+	initializeMixpanel()
 	console.log('Content script loaded!')
 } catch (e) {
 	console.error(e)
