@@ -195,25 +195,25 @@ export const elementStyles: ElementStyle[] = [
   ),
 
   // Text
-  new ElementStyle(
-    'fontFamily',
-    'sans-serif',
-    'Font',
-    ElementStyleType.Select,
-    ElementStyleGroup.Text,
-    [
-      'inherit',
-      'system-ui',
-      'serif',
-      'sans-serif',
-      'monospace',
-      'cursive',
-      'fantasy',
-      'emoji',
-      'math',
-      'fangsong'
-    ]
-  ),
+  // new ElementStyle(
+  //   'fontFamily',
+  //   'sans-serif',
+  //   'Font',
+  //   ElementStyleType.Select,
+  //   ElementStyleGroup.Text,
+  //   [
+  //     'inherit',
+  //     'system-ui',
+  //     'serif',
+  //     'sans-serif',
+  //     'monospace',
+  //     'cursive',
+  //     'fantasy',
+  //     'emoji',
+  //     'math',
+  //     'fangsong'
+  //   ]
+  // ),
   new ElementStyle(
     'fontSize',
     '16px',
@@ -409,4 +409,8 @@ export function getElementComputedStylesData(el: HTMLElement) {
   })
 
   return elementStyles
+}
+
+export let getImmediateTextContent = (el: HTMLElement) => {
+  return [].reduce.call(el.childNodes, function (a, b) { return a + (b.nodeType === 3 ? b.textContent : ''); }, '').trim();
 }

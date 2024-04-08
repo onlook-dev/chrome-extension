@@ -1,37 +1,38 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { draggable } from "@neodrag/svelte";
-  import { tweened } from "svelte/motion";
-  import { cubicOut } from "svelte/easing";
+  import { Separator } from "$lib/components/ui/separator";
+  import { editorPanelVisible } from "$lib/states/editor";
+  import { DragHandleDots2, LineHeight } from "radix-icons-svelte";
+
+  import type { EditTool } from "$lib/tools/edit";
+
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
   import CssTab from "./CssTab.svelte";
-  import { Separator } from "$lib/components/ui/separator";
-  import { editorPanelVisible } from "$lib/states/editor";
-  import type { EditTool } from "$lib/tools/edit";
-  import { DragHandleDots2, LineHeight } from "radix-icons-svelte";
-
   // import CodeTab from "./CodeTab.svelte";
-
-  export let editTool: EditTool;
-  let isInputFocused = false;
 
   enum TabValue {
     CSS = "css",
     CODE = "code",
-    COMPONENTS = "components",
   }
+  export let editTool: EditTool;
   let selectedTab: string = TabValue.CSS;
+  let isInputFocused = false;
   let panelCollapsed = false;
-  const codeWidth = 400;
-  const cssWidth = 232;
-  let numericWidth = selectedTab === TabValue.CODE ? codeWidth : cssWidth;
+  let cardRef: HTMLDivElement;
+  const cardWidth = "232px";
+  let cardHeight = "80vh";
 
-  const width = tweened(numericWidth, {
-    duration: 400,
-    easing: cubicOut,
+  onMount(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        cardHeight = `${entry.contentRect.height}px`;
+      }
+    });
+
+    resizeObserver.observe(cardRef);
   });
-  $: (numericWidth = selectedTab === TabValue.CODE ? codeWidth : cssWidth),
-    width.set(numericWidth);
 
   function collapsePanel() {
     panelCollapsed = !panelCollapsed;
@@ -53,45 +54,54 @@
     ? 'visible'
     : 'invisible'}"
 >
-  <Card.Root
-    class="transition {panelCollapsed
+  <div
+    bind:this={cardRef}
+    class="{panelCollapsed
       ? 'h-[3rem]'
-      : 'h-[80vh]'} w-[{$width}px] backdrop-blur bg-background/90 pt-2 overflow-hidden"
-    style="transition: height 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
+      : 'resize-y h-[80vh]'} w-[{cardWidth}] min-h-[3rem] overflow-hidden bg-transparent"
+    style={panelCollapsed
+      ? "transition: height 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
+      : ""}
   >
-    <Card.Content>
-      <Tabs.Root bind:value={selectedTab} class="w-full h-full">
-        <Tabs.List class="handle bg-transparent p-0 gap-4 w-full">
-          <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CSS}
-            >Appearance</Tabs.Trigger
-          >
-          <!-- <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CODE}
+    <Card.Root class="backdrop-blur h-full bg-background/90 pt-2">
+      <Card.Content>
+        <Tabs.Root bind:value={selectedTab} class="w-full h-full">
+          <Tabs.List class="handle bg-transparent p-0 gap-4 w-full select-none	">
+            <Tabs.Trigger
+              class="bg-transparent p-0 text-xs"
+              value={TabValue.CSS}>Appearance</Tabs.Trigger
+            >
+            <!-- <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CODE}
             >Code</Tabs.Trigger
           > -->
-          <div class="ml-auto flex items-center">
-            <button
-              class="w-8 h-8 flex items-center justify-center transition hover:text-white/80"
-              on:click={collapsePanel}
-            >
-              <LineHeight class="w-4 h-4" />
-            </button>
-            <button
-              class="w-8 h-8 flex items-center justify-center cursor-pointer transition hover:text-white/80"
-            >
-              <DragHandleDots2 class="w-4 h-4" />
-            </button>
-          </div>
-        </Tabs.List>
-        <Separator class="mt-1" />
-        <div class="h-[calc(80vh-4rem)] overscroll-contain overflow-auto">
-          <Tabs.Content value={TabValue.CSS}><CssTab {editTool} /></Tabs.Content
+            <div class="ml-auto flex items-center">
+              <button
+                class="w-8 h-8 flex items-center justify-center transition hover:text-white/80"
+                on:click={collapsePanel}
+              >
+                <LineHeight class="w-4 h-4" />
+              </button>
+              <div
+                class="w-8 h-8 flex items-center justify-center cursor-pointer transition hover:text-white/80"
+              >
+                <DragHandleDots2 class="w-4 h-4 pointer-events-none	" />
+              </div>
+            </div>
+          </Tabs.List>
+          <Separator class="mt-1" />
+          <div
+            class="h-[calc({cardHeight}-4rem)] overscroll-contain overflow-auto"
           >
-          <!-- <Tabs.Content value={TabValue.CODE}
+            <Tabs.Content value={TabValue.CSS}
+              ><CssTab {editTool} /></Tabs.Content
+            >
+            <!-- <Tabs.Content value={TabValue.CODE}
             ><CodeTab {editTool} /></Tabs.Content
           > -->
-        </div>
-        <Card.Footer class="flex justify-between"></Card.Footer>
-      </Tabs.Root>
-    </Card.Content>
-  </Card.Root>
+          </div>
+          <Card.Footer class="flex justify-between"></Card.Footer>
+        </Tabs.Root>
+      </Card.Content>
+    </Card.Root>
+  </div>
 </div>

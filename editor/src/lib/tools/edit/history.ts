@@ -57,6 +57,13 @@ export function undoLastEvent() {
   });
 }
 
+export function undoEvent(event: EditEvent) {
+  const reverseEvent: EditEvent = createReverseEvent(event);
+  applyEvent(reverseEvent);
+  redoStore.update(redo => [...redo, event]);
+  historyStore.update(history => history.filter(e => e !== event));
+}
+
 export function redoLastEvent() {
   redoStore.update((redo) => {
     const event: EditEvent = redo.pop();
