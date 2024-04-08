@@ -12,6 +12,7 @@ import {
 import { FirebaseService } from '$lib/storage'
 import { FirestoreCollections } from '$shared/constants'
 import type { User } from '$shared/models/user'
+import { identifyUser } from '$lib/mixpanel'
 
 // Use firebase user from dashboard
 export function signInUser(userJson: string) {
@@ -28,6 +29,7 @@ export function subscribeToFirebaseAuthChanges() {
 			const userService = new FirebaseService<User>(FirestoreCollections.USERS)
 			userService.subscribe(authUser.uid, user => {
 				userBucket.set({ user })
+				identifyUser(user.id)
 			})
 
 		} else {

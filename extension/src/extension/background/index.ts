@@ -36,6 +36,7 @@ import { FirebaseService } from '$lib/storage'
 import type { Project } from '$shared/models/project'
 import type { User } from '$shared/models/user'
 import { EditEventService } from '$lib/editEvents'
+import { initializeMixpanel } from '$lib/mixpanel'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
@@ -280,6 +281,7 @@ const setListeners = () => {
 
 try {
 	setListeners()
+	initializeMixpanel()
 } catch (error) {
 	console.error(error)
 }
