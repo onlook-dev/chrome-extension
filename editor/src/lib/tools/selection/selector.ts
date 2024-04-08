@@ -76,7 +76,7 @@ export class SelectorEngine {
     e.preventDefault();
     e.stopPropagation();
 
-    this.selectedStore.set([]);
+    this.selectedStore.set([target]);
     this.hoveredStore.set(undefined);
     this.editingStore.set(target);
   }
