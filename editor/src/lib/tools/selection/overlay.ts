@@ -1,4 +1,5 @@
 import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ID } from "$lib/constants";
+import { nanoid } from 'nanoid';
 
 interface Rect {
     element: HTMLElement;
@@ -94,8 +95,40 @@ class ClickRect extends RectImpl {
         marginRect.setAttribute('fill', 'rgba(255, 165, 0, 0.2)'); // Orange, semi-transparent
         marginRect.setAttribute('stroke', 'none');
 
-        this.svgElement.insertBefore(marginRect, this.svgElement.firstChild); // Ensure it's under the element rectangle
-        console.log('margin rect', marginRect)
+        // Create a mask element
+        const mask = document.createElementNS(this.svgNamespace, 'mask');
+        const maskId = 'mask-' + nanoid(); // Unique ID for the mask
+        mask.setAttribute('id', maskId);
+
+        // Create a white rectangle for the mask that matches the element size
+        // This rectangle allows the content beneath to show through where it overlaps with the marginRect
+        const maskRect = document.createElementNS(this.svgNamespace, 'rect');
+        maskRect.setAttribute('x', mX.toString());
+        maskRect.setAttribute('y', mY.toString());
+        maskRect.setAttribute('width', mWidth.toString());
+        maskRect.setAttribute('height', mHeight.toString());
+        maskRect.setAttribute('fill', 'white'); // White areas of a mask are fully visible
+
+        // Create the cutoutRect for the mask, which will block out the center
+        const cutoutRect = document.createElementNS(this.svgNamespace, 'rect');
+        cutoutRect.setAttribute('x', '0');
+        cutoutRect.setAttribute('y', '0');
+        cutoutRect.setAttribute('width', width.toString());
+        cutoutRect.setAttribute('height', height.toString());
+        cutoutRect.setAttribute('fill', 'black'); // Black areas of a mask are fully transparent
+
+        // Append the maskRect and cutoutRect to the mask
+        mask.appendChild(maskRect);
+        mask.appendChild(cutoutRect);
+
+        // Add the mask to the SVG
+        this.svgElement.appendChild(mask);
+
+        // Apply the mask to the marginRect
+        marginRect.setAttribute('mask', `url(#${maskId})`);
+
+        // Add the marginRect to the SVG, which is now masked
+        this.svgElement.appendChild(marginRect);
     }
 
     updatePadding(padding, { width, height, top, left }) {
@@ -112,11 +145,24 @@ class ClickRect extends RectImpl {
         paddingRect.setAttribute('y', pY.toString());
         paddingRect.setAttribute('width', pWidth.toString());
         paddingRect.setAttribute('height', pHeight.toString());
-        paddingRect.setAttribute('fill', 'rgba(0, 0, 255, 0.2)'); // Blue, semi-transparent
+        // paddingRect.setAttribute('fill', 'rgba(0, 0, 255, 0.2)'); // Blue, semi-transparent
         paddingRect.setAttribute('stroke', 'none');
 
         this.svgElement.insertBefore(paddingRect, this.rectElement.nextSibling); // Ensure it's between the margin and the element rectangles
         console.log('padding rect', paddingRect)
+
+
+        // Clip
+        const clipPath = document.createElementNS(this.svgNamespace, 'mask');
+        const clipPathId = 'clip-' + nanoid() // Generate a unique ID
+        clipPath.setAttribute('id', clipPathId);
+        // Append the rectangle to the clipPath
+        clipPath.appendChild(paddingRect);
+        // Add the clipPath to the SVG (usually at the top level of the SVG)
+        this.svgElement.prepend(clipPath);
+        // Apply the clip path to the rectElement
+        this.rectElement.setAttribute('clip-path', `url(#${clipPathId})`);
+        console.log('Clip path applied with ID:', clipPathId);
     }
 
     render({ width, height, top, left, margin, padding }) {
