@@ -11,6 +11,7 @@
   let parsedNumber: number = 0;
   let parsedUnit: string = "";
   let step = 1;
+  let numberInputRef: HTMLInputElement;
 
   const auto = "auto";
 
@@ -33,7 +34,7 @@
 
   const parsedValueToString = (
     floatValue: number | string,
-    unit: string
+    unit: string,
   ): string => {
     return `${floatValue}${unit}`;
   };
@@ -43,12 +44,23 @@
     const unitIsEmpty = parsedUnit === "";
     return numberIsEmpty && unitIsEmpty;
   }
+
+  function processNumberInput(
+    input: string,
+  ): { parsedNumber: number; parsedUnit: string } | undefined {
+    // Split input into number and unit
+    const matches = input.match(/([-+]?[0-9]*\.?[0-9]+)([a-zA-Z%]*)/);
+    // If unit matches elementStyle.units, assign number to parsedNumber and unit to parsedUnit
+    if (matches && elementStyle.units.includes(matches[2]))
+      return { parsedNumber: parseFloat(matches[1]), parsedUnit: matches[2] };
+  }
 </script>
 
 {#if elementStyle}
   <div class="flex flex-row gap-1 justify-end">
     <input
-      type="number"
+      bind:this={numberInputRef}
+      type="text"
       class="{inputWidth} text-xs border-none text-text bg-transparent text-end focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       placeholder="--"
       value={isEmpty() ? "" : parsedNumber}
@@ -59,6 +71,19 @@
           return;
         }
         if (e.shiftKey) step = 10;
+
+        if (e.key === "ArrowUp") {
+          parsedNumber += step;
+          e.preventDefault();
+        } else if (e.key === "ArrowDown") {
+          parsedNumber -= step;
+          e.preventDefault();
+        }
+
+        const stringValue = parsedValueToString(parsedNumber, parsedUnit);
+        if (stringValue !== elementStyle.value) {
+          updateElementStyle(elementStyle.key, stringValue);
+        }
       }}
       on:keyup={(e) => {
         if (!e.shiftKey) step = 1;
@@ -71,14 +96,15 @@
         ) {
           parsedUnit = "px";
         }
-        const stringValue = parsedValueToString(
-          e.currentTarget.value,
-          parsedUnit
-        );
 
-        if (stringValue !== elementStyle.value) {
-          updateElementStyle(elementStyle.key, stringValue);
+        const res = processNumberInput(e.currentTarget.value);
+        if (res) {
+          parsedNumber = res.parsedNumber;
+          parsedUnit = res.parsedUnit;
+          numberInputRef.value = `${parsedNumber}`;
         }
+        const stringValue = parsedValueToString(parsedNumber, parsedUnit);
+        updateElementStyle(elementStyle.key, stringValue);
       }}
     />
 
@@ -99,11 +125,9 @@
 
         const stringValue = parsedValueToString(
           parsedNumber,
-          e.currentTarget.value
+          e.currentTarget.value,
         );
-        if (stringValue !== elementStyle.value) {
-          updateElementStyle(elementStyle.key, stringValue);
-        }
+        updateElementStyle(elementStyle.key, stringValue);
       }}
       value={isEmpty() ? auto : parsedUnit}
     >
