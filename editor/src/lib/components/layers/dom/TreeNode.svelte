@@ -5,11 +5,11 @@
 <script lang="ts">
   import { TagMap } from "$lib/tools/selection/tag";
   import { ChevronDown } from "radix-icons-svelte";
-  import { Component1, Text, BoxModel } from "radix-icons-svelte";
   import { DATA_ONLOOK_IGNORE, IGNORE_TAGS } from "$lib/constants";
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
   import { layersPanelCollapsed } from "$lib/states/editor";
+  import NodeIcon from "./NodeIcon.svelte";
 
   export let node: HTMLElement | undefined;
   export let selected: HTMLElement[];
@@ -141,7 +141,7 @@
         on:mouseover={(e) => mouseEnter(e, node)}
         class=" {hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
       >
-        <Component1 class={iconClass} />
+        <NodeIcon {node} {iconClass} />
         {name}
       </div>
     {:else if hasOnlyChild}
@@ -155,7 +155,7 @@
         on:mouseover={(e) => mouseEnter(e, node)}
         class=" {hoverClass} {selectedClass} {paddingY} flex flex-row items-center pl-3"
       >
-        <Text class={iconClass} />
+        <NodeIcon {node} {iconClass} />
         <span class="text-ellipsis overflow-hidden">
           {node.firstChild.nodeValue || name}
         </span>
@@ -184,7 +184,7 @@
               ? 'visible'
               : 'invisible'}"
           ></ChevronDown>
-          <BoxModel class={iconClass} />
+          <NodeIcon {node} {iconClass} />
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <p
             class="flex-grow"
