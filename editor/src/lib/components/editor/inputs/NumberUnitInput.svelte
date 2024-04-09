@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { updateValueToUnit } from "$lib/tools/edit/units";
   import type { ElementStyle } from "$lib/tools/selection/styles";
 
   export let elementStyle: ElementStyle;
