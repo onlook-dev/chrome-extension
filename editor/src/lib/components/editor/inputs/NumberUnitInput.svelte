@@ -44,16 +44,6 @@
     const unitIsEmpty = parsedUnit === "";
     return numberIsEmpty && unitIsEmpty;
   }
-
-  function processNumberInput(
-    input: string,
-  ): { parsedNumber: number; parsedUnit: string } | undefined {
-    // Split input into number and unit
-    const matches = input.match(/([-+]?[0-9]*\.?[0-9]+)([a-zA-Z%]*)/);
-    // If unit matches elementStyle.units, assign number to parsedNumber and unit to parsedUnit
-    if (matches && elementStyle.units.includes(matches[2]))
-      return { parsedNumber: parseFloat(matches[1]), parsedUnit: matches[2] };
-  }
 </script>
 
 {#if elementStyle}
@@ -81,9 +71,7 @@
         }
 
         const stringValue = parsedValueToString(parsedNumber, parsedUnit);
-        if (stringValue !== elementStyle.value) {
-          updateElementStyle(elementStyle.key, stringValue);
-        }
+        updateElementStyle(elementStyle.key, stringValue);
       }}
       on:keyup={(e) => {
         if (!e.shiftKey) step = 1;
@@ -97,12 +85,19 @@
           parsedUnit = "px";
         }
 
-        const res = processNumberInput(e.currentTarget.value);
-        if (res) {
-          parsedNumber = res.parsedNumber;
-          parsedUnit = res.parsedUnit;
+        // Process into unit if necessary
+        const matches = e.currentTarget.value.match(
+          /([-+]?[0-9]*\.?[0-9]+)([a-zA-Z%]*)/,
+        );
+        // If unit matches elementStyle.units, assign number to parsedNumber and unit to parsedUnit
+        if (matches && elementStyle.units.includes(matches[2])) {
+          parsedNumber = parseFloat(matches[1]);
+          parsedUnit = matches[2];
           numberInputRef.value = `${parsedNumber}`;
+        } else {
+          parsedNumber = parseFloat(e.currentTarget.value);
         }
+
         const stringValue = parsedValueToString(parsedNumber, parsedUnit);
         updateElementStyle(elementStyle.key, stringValue);
       }}

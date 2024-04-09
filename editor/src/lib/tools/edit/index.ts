@@ -1,5 +1,6 @@
 import { ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, } from '$lib/states/editor';
+import { debounce } from '$shared/helpers';
 import { EditType, type InsertRemoveVal } from '$shared/models/editor';
 import type { Tool } from '../index';
 import { OverlayManager } from '../selection/overlay';
@@ -23,6 +24,7 @@ export class EditTool implements Tool {
 			const observedElements = entries.map(entry => entry.target);
 			this.onElementResize(observedElements);
 		});
+		window.addEventListener('resize', this.onScreenResize.bind(this));
 	}
 
 	onInit() { }
@@ -33,6 +35,7 @@ export class EditTool implements Tool {
 		this.overlayManager.clear();
 		this.selectorEngine.clear();
 		this.elResizeObserver.disconnect();
+		window.removeEventListener('resize', this.onScreenResize.bind(this));
 	}
 
 	onMouseOver(e: MouseEvent): void {
@@ -68,7 +71,10 @@ export class EditTool implements Tool {
 	}
 
 	onScreenResize(e: Event): void {
-		this.updateClickedRects(this.selectorEngine.selected);
+		setTimeout(() => {
+			this.updateClickedRects(this.selectorEngine.selected);
+			this.updateParentRect();
+		}, 500);
 	}
 
 	onElementResize(els: Element[]): void {
