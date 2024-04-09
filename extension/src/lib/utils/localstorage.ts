@@ -3,6 +3,7 @@ import type { User } from '../../../../shared/models/user'
 import type { Team } from '../../../../shared/models/team'
 import type { Project } from '../../../../shared/models/project'
 import type { PopupRoutes } from './constants'
+import { trackEvent } from '$lib/mixpanel'
 
 // Maps that get shared across the whole extension using local storage
 // https://github.com/extend-chrome/storage
@@ -82,6 +83,7 @@ export async function saveTabState(tabId: number, tabState: VisbugState) {
 		tabsMapBucket.remove(tabId.toString())
 	} else {
 		tabsMapBucket.set({ [tabId.toString()]: tabState })
+		trackEvent('Edit Tab', { ...tabState })
 	}
 }
 

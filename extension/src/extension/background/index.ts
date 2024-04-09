@@ -36,7 +36,7 @@ import { FirebaseService } from '$lib/storage'
 import type { Project } from '$shared/models/project'
 import type { User } from '$shared/models/user'
 import { EditEventService } from '$lib/editEvents'
-import { initializeMixpanel } from '$lib/mixpanel'
+import { initializeMixpanel, trackEvent } from '$lib/mixpanel'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
@@ -276,6 +276,7 @@ const setListeners = () => {
 	// Style change from visbug and content script
 	editEventStream.subscribe(([editEvent]) => {
 		editEventService.handleEditEvent(editEvent)
+		trackEvent('Edit Event', { type: editEvent.editType })
 	})
 }
 
