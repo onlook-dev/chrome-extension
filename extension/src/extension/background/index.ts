@@ -9,7 +9,9 @@ import {
 	editEventStream,
 	activityApplyStream,
 	sendActivityApply,
-	saveProjectStream
+	saveProjectStream,
+	sendPageScreenshotResponse,
+	pageScreenshotRequestStream
 } from '$lib/utils/messaging'
 import {
 	authUserBucket,
@@ -27,7 +29,7 @@ import {
 	popupStateBucket
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
-import { forwardToActiveProjectTab, updateTabActiveState } from './tabs'
+import { captureActiveTab, forwardToActiveProjectTab, updateTabActiveState } from './tabs'
 
 import type { Team } from '$shared/models/team'
 import type { Activity } from '$shared/models/activity'
@@ -112,12 +114,12 @@ const setListeners = () => {
 	subscribeToFirebaseAuthChanges()
 
 	// Forward messages to content script
-	activityRevertStream.subscribe(([detail, sender]) => {
+	activityRevertStream.subscribe(([detail]) => {
 		forwardToActiveProjectTab(detail, sendActivityRevert)
 	})
 
 	// Forward messages to content script
-	activityApplyStream.subscribe(([detail, sender]) => {
+	activityApplyStream.subscribe(([detail]) => {
 		forwardToActiveProjectTab(detail, sendActivityApply)
 	})
 
@@ -128,9 +130,15 @@ const setListeners = () => {
 		return
 	})
 
-	saveProjectStream.subscribe(([project, sender]) => {
+	saveProjectStream.subscribe(([project]) => {
 		projectService.post(project)
 		projectsMapBucket.set({ [project.id]: project })
+	})
+
+	pageScreenshotRequestStream.subscribe(async ([signature]) => {
+		// Send message back
+		const image = await captureActiveTab()
+		forwardToActiveProjectTab({ image, signature }, sendPageScreenshotResponse)
 	})
 
 	// Start editing request from popup

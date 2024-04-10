@@ -35,7 +35,7 @@ function getExtendedMessages<T>(
 		return send({ data, to }, options)
 	}
 	sendExtended.toTab = (options?: SendOptions) => {
-		return send.toTab(options)
+		return send.toTab(options).then((res) => res)
 	}
 	const streamExtended: Observable<[T, chrome.runtime.MessageSender]> = stream.pipe(
 		map(([message, sender]) => {
@@ -78,6 +78,17 @@ export const [sendOpenUrlRequest, openUrlRequestStream] = getExtendedMessages<st
 export const [sendSaveProject, saveProjectStream] = getExtendedMessages<Project>(
 	'SAVE_PROJECT',
 	MessageReceiver.BACKGROUND
+)
+
+
+export const [sendPageScreenshotRequest, pageScreenshotRequestStream] = getExtendedMessages<string>(
+	'PAGE_SCREENSHOT_REQUEST',
+	MessageReceiver.BACKGROUND
+)
+
+export const [sendPageScreenshotResponse, pageScreenshotResponseStream] = getExtendedMessages<{ image: string, signature: string }>(
+	'PAGE_SCREENSHOT_RESPONSE',
+	MessageReceiver.CONTENT
 )
 
 export const [sendApplyProjectChanges, applyProjectChangesStream] = getExtendedMessages<void>(
