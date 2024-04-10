@@ -16,11 +16,12 @@ import {
 import type { Activity } from '$shared/models/activity'
 import type { EditEvent, } from '$shared/models/editor'
 import { baseUrl } from '$lib/utils/env'
-import { activityScreenshotQueue, processScreenshotQueue } from './screenshot'
+import { ScreenshotService } from './screenshot'
 import type { Project } from '$shared/models/project'
 import { PopupRoutes } from '$lib/utils/constants'
 import { getCSSFramework } from '$lib/utils/styleFramework'
 
+const screenshotService = new ScreenshotService()
 function applyActivityChanges(activity: Activity): boolean {
 	const element = document.querySelector(activity.selector) as any
 	if (element) {
@@ -135,13 +136,7 @@ export function setupListeners() {
 	})
 
 	getScreenshotStream.subscribe(async ([activity]) => {
-		activityScreenshotQueue.push(activity)
-
-		// Process the queue
-		if (activityScreenshotQueue.length === 1) {
-			// Only start processing if this is the only item in the queue
-			await processScreenshotQueue()
-		}
+		screenshotService.takeScreenshot(activity)
 	})
 }
 
