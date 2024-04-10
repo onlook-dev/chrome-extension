@@ -32,9 +32,7 @@ export class ScreenshotService {
 		const element = document.querySelector(activity.selector) as HTMLElement
 		if (!element) return
 		// Get screenshot
-		hideEditor();
 		const pageImageUri = await this.takePageScreenshot()
-		showEditor();
 		const croppedImageUri = await this.cropPageByElement(element, pageImageUri)
 		activity.previewImage = croppedImageUri
 
