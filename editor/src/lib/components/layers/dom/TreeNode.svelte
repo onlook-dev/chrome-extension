@@ -51,20 +51,23 @@
   }
   $: isSelected = selected.includes(node);
   $: isHovered = node == hovered;
-  $: selectedClass = isSelected
-    ? "bg-red rounded text-white font-semibold"
-    : "";
+  $: selectedClass = `transition ${
+    isSelected ? "bg-red rounded text-white font-semibold" : ""
+  }`;
   $: hoverClass = isHovered ? "bg-red/20 rounded" : "";
   $: childrenSelectedClass = isSelected
     ? "bg-[#38040c] rounded-b rounded-t-none font-normal text-white/60"
     : "";
   $: iconClass = `shrink-0 h-3 w-3 ml-1 mr-2 ${isSelected ? "text-white" : "text-red"}`;
   $: if (isSelected && !selfSelected && !$layersPanelCollapsed) {
-    nodeRef?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "start",
-    });
+    // Allows time to load if needed
+    setTimeout(() => {
+      nodeRef?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "start",
+      });
+    }, 100);
     selfSelected = false;
   }
   const paddingY = "py-1";
@@ -75,7 +78,7 @@
         if (entry.isIntersecting) {
           // Node is visible, proceed to load/render it
           if (!loaded) {
-            isOpen = true;
+            isOpen = false;
           }
           observer.unobserve(entry.target);
         }
