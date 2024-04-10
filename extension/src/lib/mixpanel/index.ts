@@ -24,7 +24,6 @@ export function identifyUser(id: string) {
     } catch (error) {
         console.error('Error identifying user', error);
     }
-
 }
 
 export function trackEvent(eventName: string, properties: Record<string, any>) {

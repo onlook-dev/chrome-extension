@@ -36,7 +36,6 @@
 
 	let githubHistories: GithubHistory[] = [];
 	let publishErrorMessage = '';
-	let errorMessage = '';
 
 	let titlePlaceholder = 'Updated site using Onlook';
 	let descriptionPlaceholder = 'Describe your changes here';
@@ -91,6 +90,8 @@
 		title = title || titlePlaceholder;
 		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
+		publishErrorMessage = '';
+		publishError = false;
 		try {
 			projectPublisher = new ProjectPublisher(project, user);
 			handleProjectPublisherEvents(projectPublisher);
@@ -176,15 +177,10 @@
 		hasActivities = true;
 	}
 
-	function displayError(message: string) {
-		errorMessage = message;
-		setTimeout(() => {
-			errorMessage = '';
-		}, 10000);
-	}
-
 	$: if (publishError) {
-		displayError(publishErrorMessage);
+		setTimeout(() => {
+			publishError = false;
+		}, 10000);
 	}
 </script>
 
@@ -213,9 +209,7 @@
 				maxlength={MAX_DESCRIPTION_LENGTH}
 			></textarea>
 			<div class="mt-6 flex items-center justify-end">
-				{#if errorMessage}
-					<p class="text-xs text-error">{errorMessage}</p>
-				{:else}
+				{#if !publishError}
 					{#if isTranslating}
 						<div class="flex flex-col mr-8 flex-grow space-y-2">
 							<progress
@@ -240,6 +234,9 @@
 					</button>
 				{/if}
 			</div>
+			{#if publishErrorMessage}
+				<p class="text-xs text-error mt-4">{publishErrorMessage}</p>
+			{/if}
 		</label>
 
 		<HistoriesView {githubHistories} {restoreActivities} />
