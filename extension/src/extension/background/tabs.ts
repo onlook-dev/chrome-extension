@@ -63,7 +63,6 @@ export async function captureActiveTab(): Promise<string> {
 	return new Promise((resolve, reject) => {
 		// If within 1 second, return the existing dataUri 
 		// This is to prevent multiple calls to captureVisibleTab
-		console.log('lastCaptured', Date.now() - lastCaptured)
 		if (Date.now() - lastCaptured > 1000) {
 			chrome.tabs.query({ active: true, currentWindow: true }, async tabs => {
 				const tab = tabs[0]
