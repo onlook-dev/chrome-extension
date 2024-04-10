@@ -83,7 +83,7 @@ export class ScreenshotService {
 
 			image.onload = () => {
 				let rect = { x: hoverInfo.left, y: hoverInfo.top, width: hoverInfo.width, height: hoverInfo.height };
-				let visibleRect = this.getVisibleRect(rect, 20); //getVisibleRect(hoverInfo.clientRect);
+				let visibleRect = this.getVisibleRect(rect, 20);
 				let canvas: HTMLCanvasElement | undefined | null = document.createElement('canvas');
 				let ctx: CanvasRenderingContext2D | undefined | null = canvas.getContext('2d');
 

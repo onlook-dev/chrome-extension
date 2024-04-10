@@ -35,7 +35,7 @@ function getExtendedMessages<T>(
 		return send({ data, to }, options)
 	}
 	sendExtended.toTab = (options?: SendOptions) => {
-		return send.toTab(options).then((res) => res)
+		return send.toTab(options)
 	}
 	const streamExtended: Observable<[T, chrome.runtime.MessageSender]> = stream.pipe(
 		map(([message, sender]) => {
