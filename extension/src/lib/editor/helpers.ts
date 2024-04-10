@@ -3,12 +3,12 @@ let hidden = false
 export const hideEditor = () => {
     try {
         if (hidden) return
-        document.querySelectorAll('onlook-toolbar').forEach((node) => {
+        document.querySelectorAll('onlook-toolbar').forEach((node: any) => {
             node.style.opacity = '0';
         });
 
         // Hide rectangles 
-        document.querySelectorAll(`#onlook-rect`).forEach(node => {
+        document.querySelectorAll(`#onlook-rect`).forEach((node: any) => {
             node.style.opacity = '0';
         });
         hidden = true
@@ -20,12 +20,12 @@ export const hideEditor = () => {
 
 export const showEditor = () => {
     try {
-        document.querySelectorAll('onlook-toolbar').forEach((node) => {
+        document.querySelectorAll('onlook-toolbar').forEach((node: any) => {
             node.style.opacity = '1';
         });
 
         // Show rectangles 
-        document.querySelectorAll(`#onlook-rect`).forEach(node => {
+        document.querySelectorAll(`#onlook-rect`).forEach((node: any) => {
             node.style.opacity = '1';
         });
         hidden = false

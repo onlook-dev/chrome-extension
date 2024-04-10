@@ -2,7 +2,7 @@ import type { Activity } from '$shared/models/activity'
 import { getProjectById, projectsMapBucket } from '$lib/utils/localstorage'
 import { pageScreenshotResponseStream, sendPageScreenshotRequest } from '$lib/utils/messaging'
 import { nanoid } from 'nanoid'
-import { hideEditor, showEditor } from '$lib/editor/helpers'
+
 export class ScreenshotService {
 	activityScreenshotQueue: Activity[] = []
 	pageScreenshot: string | undefined
@@ -83,7 +83,7 @@ export class ScreenshotService {
 
 			image.onload = () => {
 				let rect = { x: hoverInfo.left, y: hoverInfo.top, width: hoverInfo.width, height: hoverInfo.height };
-				let visibleRect = this.getVisibleRect(rect, 10); //getVisibleRect(hoverInfo.clientRect);
+				let visibleRect = this.getVisibleRect(rect, 20); //getVisibleRect(hoverInfo.clientRect);
 				let canvas: HTMLCanvasElement | undefined | null = document.createElement('canvas');
 				let ctx: CanvasRenderingContext2D | undefined | null = canvas.getContext('2d');
 
@@ -114,6 +114,7 @@ export class ScreenshotService {
 
 	private takePageScreenshot(): Promise<string> {
 		return new Promise((resolve, reject) => {
+			// TODO: If hiding editor, should setTimeout 50ms to ensure editor is hidden
 			let signature = nanoid()
 			const subscription = pageScreenshotResponseStream.subscribe(([data]) => {
 				if (data.signature !== signature) return;
