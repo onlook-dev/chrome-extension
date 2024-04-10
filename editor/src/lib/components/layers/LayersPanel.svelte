@@ -20,7 +20,7 @@
     ELEMENTS = "elements",
   }
   export let editTool: EditTool;
-  let selectedTab = TabValue.LAYERS;
+  let selectedTab = TabValue.CHANGES;
   let panelCollapsed = $layersPanelCollapsed;
   let newHistory: boolean = false;
   let isInputFocused = false;
@@ -64,7 +64,7 @@
   }}
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
-  class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
+  class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'visible'}"
 >
   <div
     bind:this={cardRef}

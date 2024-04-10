@@ -5,12 +5,13 @@
   import type { EditTool } from "$lib/tools/edit";
   import { slide } from "svelte/transition";
   import { jsToCssProperty, timeSince } from "$shared/helpers";
-  import { Trash } from "radix-icons-svelte";
+  import { EyeOpen, EyeClosed, Trash } from "radix-icons-svelte";
 
   export let editTool: EditTool;
   let hoveredEvent: EditEvent | undefined;
   let clickedEvent: EditEvent | undefined;
   let selfSelected = false;
+  let hiddenEvents: EditEvent[] = [];
 
   $: events = [...$historyStore].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -73,10 +74,10 @@
     <div
       class="rounded flex flex-col space-y-2 p-2 mb-1 transition duration-200 ease-in-out cursor-pointer {hoveredEvent ==
       event
-        ? 'bg-red/20'
+        ? 'bg-red/20 '
         : ''} {clickedEvent == event
-        ? 'bg-red/20 border border-red p-[calc(0.5rem-1px)]'
-        : ''}"
+        ? 'bg-red/20 border border-red'
+        : 'm-[1px]'}"
       transition:slide
       on:mouseenter={() => {
         hoverEvent(event);
@@ -96,8 +97,23 @@
         </Avatar.Root> -->
         <p>You</p>
         <p class="ml-2 text-white/60">{timeSince(new Date(event.createdAt))}</p>
+
         <button
           class="ml-auto transition hover:text-white/80 text-white/60"
+          on:click={() => {
+            hiddenEvents = hiddenEvents.includes(event)
+              ? hiddenEvents.filter((e) => e !== event)
+              : [...hiddenEvents, event];
+          }}
+        >
+          {#if hiddenEvents.includes(event)}
+            <EyeClosed />
+          {:else}
+            <EyeOpen />
+          {/if}</button
+        >
+        <button
+          class="transition ml-2 hover:text-white/80 text-white/60"
           on:click={() => deleteEvent(event)}><Trash /></button
         >
       </div>
