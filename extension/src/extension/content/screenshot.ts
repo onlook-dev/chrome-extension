@@ -1,55 +1,127 @@
-import { toJpeg } from 'html-to-image'
 import type { Activity } from '$shared/models/activity'
 import { getProjectById, projectsMapBucket } from '$lib/utils/localstorage'
-import { isBase64ImageString } from '$shared/helpers'
+import { pageScreenshotResponseStream, sendPageScreenshotRequest } from '$lib/utils/messaging'
+import { nanoid } from 'nanoid'
 
-export let activityScreenshotQueue: Activity[] = []
-const elementRequestCount = new Map()
+export class ScreenshotService {
+	activityScreenshotQueue: Activity[] = []
+	pageScreenshot: string | undefined
+	isProcessing: boolean = false;
 
-export async function processScreenshotQueue() {
-	while (activityScreenshotQueue.length > 0) {
-		const activity = activityScreenshotQueue[0] // Get the first item from the queue without removing it
-		await takeActivityScreenshot(activity) // Process it
-		activityScreenshotQueue.shift() // Remove the processed item from the queue
-	}
-}
-
-function takeElementScreenshot(element: HTMLElement) {
-	if (element.tagName === 'CODE' && element.parentElement) {
-		element = element.parentElement
-	}
-	return toJpeg(element, {
-		quality: 0.1,
-		backgroundColor: element.style.backgroundColor || '#fafafa'
-	}).then(function (dataUrl) {
-		return dataUrl
-	})
-}
-
-async function takeActivityScreenshot(activity: Activity) {
-	// Get element
-	const element = document.querySelector(activity.selector) as HTMLElement
-	if (!element) return
-
-	// Skip first request because our debounce does one request immediately
-	// (which is redundant because it gets overwritten by the next screenshot)
-	const count = elementRequestCount.get(activity.selector) || 0
-	if (count === 0) {
-		elementRequestCount.set(activity.selector, 1)
-		return
+	async takeScreenshot(activity: Activity) {
+		this.activityScreenshotQueue.push(activity);
+		if (!this.isProcessing) {
+			this.isProcessing = true;
+			await this.processScreenshotQueue();
+			this.isProcessing = false;
+		}
 	}
 
-	// Get screenshot
-	const dataUrl = await takeElementScreenshot(element)
-	if (isBase64ImageString(dataUrl)) {
-		activity.previewImage = dataUrl
+	private async processScreenshotQueue() {
+		while (this.activityScreenshotQueue.length > 0) {
+			// Process item in queue 1 by 1
+			const activity = this.activityScreenshotQueue[0]
+			await this.takeActivityScreenshot(activity)
+			// Remove the processed item from the queue
+			this.activityScreenshotQueue.shift()
+		}
 	}
 
-	// Update project
-	const project = await getProjectById(activity.projectId)
-	project.activities[activity.selector] = activity
-	projectsMapBucket.set({ [project.id]: project })
+	private async takeActivityScreenshot(activity: Activity) {
+		// Get element
+		const element = document.querySelector(activity.selector) as HTMLElement
+		if (!element) return
+		// Get screenshot
+		const pageImageUri = await this.takePageScreenshot()
+		const croppedImageUri = await this.cropPageByElement(element, pageImageUri)
+		activity.previewImage = croppedImageUri
 
-	// Remove from map after taking screenshot
-	elementRequestCount.delete(activity.selector)
+		// Update project
+		const project = await getProjectById(activity.projectId)
+		project.activities[activity.selector] = activity
+		await projectsMapBucket.set({ [project.id]: project })
+	}
+
+	getVisibleRect(rect: Object, padding: number = 0): DOMRect {
+		let visibleRect = DOMRect.fromRect(rect);
+
+		// Adjust for padding
+		visibleRect.x = Math.max(0, visibleRect.x - padding);
+		visibleRect.y = Math.max(0, visibleRect.y - padding);
+		visibleRect.width += padding * 2;
+		visibleRect.height += padding * 2;
+
+		// Ensure the rectangle does not exceed the viewport boundaries
+		if (visibleRect.x + visibleRect.width > window.innerWidth) {
+			visibleRect.width = window.innerWidth - visibleRect.x;
+		}
+		if (visibleRect.y + visibleRect.height > window.innerHeight) {
+			visibleRect.height = window.innerHeight - visibleRect.y;
+		}
+
+		// Adjust width and height if padding causes them to extend beyond viewport
+		if (visibleRect.width + visibleRect.x > window.innerWidth) {
+			visibleRect.width = window.innerWidth - visibleRect.x - padding;
+		}
+		if (visibleRect.height + visibleRect.y > window.innerHeight) {
+			visibleRect.height = window.innerHeight - visibleRect.y - padding;
+		}
+
+		// Ensure width and height are not negative after adjusting for padding
+		visibleRect.width = Math.max(0, visibleRect.width);
+		visibleRect.height = Math.max(0, visibleRect.height);
+
+		return visibleRect;
+	}
+
+	private cropPageByElement(element: HTMLElement, pageImageUri: string): Promise<string> {
+		return new Promise((resolve, reject) => {
+			let image = new Image();
+			let dataURL = pageImageUri;
+			// Get element bounding box
+			const hoverInfo = element.getBoundingClientRect()
+
+			image.onload = () => {
+				let rect = { x: hoverInfo.left, y: hoverInfo.top, width: hoverInfo.width, height: hoverInfo.height };
+				let visibleRect = this.getVisibleRect(rect, 20);
+				let canvas: HTMLCanvasElement | undefined | null = document.createElement('canvas');
+				let ctx: CanvasRenderingContext2D | undefined | null = canvas.getContext('2d');
+
+				if (!ctx) return;
+				const zoomLevel = window.devicePixelRatio;
+				if (zoomLevel != 1.0) {
+					visibleRect.x *= zoomLevel;
+					visibleRect.y *= zoomLevel;
+					visibleRect.width *= zoomLevel;
+					visibleRect.height *= zoomLevel;
+				}
+				canvas.width = visibleRect.width;
+				canvas.height = visibleRect.height;
+
+				ctx.drawImage(image, visibleRect.x, visibleRect.y, visibleRect.width, visibleRect.height,
+					0, 0, visibleRect.width, visibleRect.height);
+
+				((croppedDataURL) => {
+					canvas = null;
+					ctx = null;
+					resolve(croppedDataURL);
+				})(canvas.toDataURL());
+			};
+			image.src = dataURL;
+		});
+
+	}
+
+	private takePageScreenshot(): Promise<string> {
+		return new Promise((resolve, reject) => {
+			// TODO: If hiding editor, should setTimeout 50ms to ensure editor is hidden
+			let signature = nanoid()
+			const subscription = pageScreenshotResponseStream.subscribe(([data]) => {
+				if (data.signature !== signature) return;
+				resolve(data.image);
+				subscription.unsubscribe();
+			});
+			sendPageScreenshotRequest(signature);
+		});
+	}
 }

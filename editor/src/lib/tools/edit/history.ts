@@ -153,7 +153,7 @@ function applyRemoveEvent(event: EditEvent, parent: HTMLElement) {
   if (el) el.remove();
 }
 
-function applyEvent(event: EditEvent) {
+function applyEvent(event: EditEvent, emit: boolean = true) {
   const element: HTMLElement | undefined = document.querySelector(event.selector);
   switch (event.editType) {
     case EditType.STYLE:
@@ -172,6 +172,17 @@ function applyEvent(event: EditEvent) {
       applyRemoveEvent(event, element);
       break;
   }
+  if (emit)
+    emitEditEvent(event);
+}
 
-  emitEditEvent(event);
+export function toggleEventVisibility(event: EditEvent, visible: boolean) {
+  const element: HTMLElement | undefined = document.querySelector(event.selector);
+  if (!element) return;
+  if (visible) {
+    const reverseEvent: EditEvent = createReverseEvent(event);
+    applyEvent(reverseEvent, false);
+  } else {
+    applyEvent(event, false);
+  }
 }
