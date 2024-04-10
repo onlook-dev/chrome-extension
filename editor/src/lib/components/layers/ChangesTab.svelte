@@ -1,6 +1,10 @@
 <script lang="ts">
   import { type EditEvent, EditType } from "$shared/models/editor";
-  import { historyStore, undoEvent } from "$lib/tools/edit/history";
+  import {
+    historyStore,
+    undoEvent,
+    toggleEventVisibility,
+  } from "$lib/tools/edit/history";
   // import * as Avatar from "$lib/components/ui/avatar";
   import type { EditTool } from "$lib/tools/edit";
   import { slide } from "svelte/transition";
@@ -101,9 +105,12 @@
         <button
           class="ml-auto transition hover:text-white/80 text-white/60"
           on:click={() => {
-            hiddenEvents = hiddenEvents.includes(event)
+            let hidden = hiddenEvents.includes(event);
+            hiddenEvents = hidden
               ? hiddenEvents.filter((e) => e !== event)
               : [...hiddenEvents, event];
+
+            toggleEventVisibility(event, !hidden);
           }}
         >
           {#if hiddenEvents.includes(event)}
