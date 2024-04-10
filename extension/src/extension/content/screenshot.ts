@@ -32,15 +32,6 @@ export class ScreenshotService {
 		const element = document.querySelector(activity.selector) as HTMLElement
 		if (!element) return
 
-		console.log('Taking screenshot for activity', activity)
-		// Skip first request because our debounce does one request immediately
-		// (which is redundant because it gets overwritten by the next screenshot)
-		const count = this.elementRequestCount.get(activity.selector) || 0
-		if (count === 0) {
-			this.elementRequestCount.set(activity.selector, 1)
-			return
-		}
-
 		// Get screenshot
 		const dataUrl = await this.takeElementScreenshot(element)
 		if (isBase64ImageString(dataUrl)) {
