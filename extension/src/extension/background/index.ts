@@ -30,15 +30,16 @@ import {
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { captureActiveTab, forwardToActiveProjectTab, updateTabActiveState } from './tabs'
+import { EditEventService } from '$lib/editEvents'
+import { initializeMixpanel, trackEvent } from '$lib/mixpanel'
+import { FirebaseService } from '$lib/storage'
 
 import type { Team } from '$shared/models/team'
 import type { Activity } from '$shared/models/activity'
 import type { Comment } from '$shared/models/comment'
-import { FirebaseService } from '$lib/storage'
 import type { Project } from '$shared/models/project'
 import type { User } from '$shared/models/user'
-import { EditEventService } from '$lib/editEvents'
-import { initializeMixpanel, trackEvent } from '$lib/mixpanel'
+
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
@@ -48,7 +49,7 @@ let activeProjectSub: (() => void) | null = null
 const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
 const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS)
 const userService = new FirebaseService<User>(FirestoreCollections.USERS)
-const editEventService = new EditEventService(forwardToActiveProjectTab)
+const editEventService = new EditEventService(projectService, forwardToActiveProjectTab)
 
 function setDefaultMaps() {
 	teamsMapBucket.set({})
@@ -57,19 +58,28 @@ function setDefaultMaps() {
 	tabsMapBucket.set({})
 }
 
+async function setStartupState() {
+	for (const cs of chrome.runtime.getManifest().content_scripts ?? []) {
+		for (const tab of await chrome.tabs.query({ url: cs.matches })) {
+			if (tab.url && tab.url.match(/(chrome|chrome-extension):\/\//gi)) continue;
+			if (tab.id === undefined) continue
+
+			chrome.scripting.executeScript({
+				target: { tabId: tab.id, allFrames: cs.all_frames },
+				files: cs.js ?? [],
+				injectImmediately: cs.run_at === 'document_start',
+			})
+		}
+	}
+}
 const setListeners = () => {
 	// Refresh tabs on update
-	chrome.runtime.onInstalled.addListener(async () => {
+	chrome.runtime.onInstalled.addListener(() => {
 		setDefaultMaps()
-		for (const cs of chrome.runtime.getManifest().content_scripts ?? []) {
-			for (const tab of await chrome.tabs.query({ url: cs.matches })) {
-				chrome.scripting.executeScript({
-					target: { tabId: tab.id as number },
-					files: cs.js ?? []
-				})
-			}
-		}
+		setStartupState()
 	})
+
+	chrome.runtime.onStartup.addListener(setStartupState)
 
 	chrome.tabs.onUpdated.addListener(
 		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
@@ -294,3 +304,8 @@ try {
 } catch (error) {
 	console.error(error)
 }
+
+// Keep service worker alive
+const keepAlive = () => setInterval(chrome.runtime.getPlatformInfo, 20e3);
+chrome.runtime.onStartup.addListener(keepAlive);
+keepAlive();
