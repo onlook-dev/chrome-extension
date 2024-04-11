@@ -16,12 +16,11 @@
 	import ItemHeader from './ItemHeader.svelte'
 	import ClockArrow from '~icons/mdi/clock-arrow'
 	import Trash from '~icons/material-symbols/delete'
-	import { FirebaseService } from '$lib/storage'
-	import { FirestoreCollections } from '$shared/constants'
+	import { FirebaseProjectService } from '$lib/storage/project'
 
 	export let project: Project
 
-	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
+	const projectService = new FirebaseProjectService()
 	let activities: Activity[] = []
 	let usersMap: Map<string, User> = new Map()
 

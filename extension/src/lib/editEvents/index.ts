@@ -5,13 +5,12 @@ import { sendGetScreenshotRequest } from '$lib/utils/messaging'
 import { nanoid } from 'nanoid'
 import type { Project } from '$shared/models/project'
 import { convertEditEventToChangeObject } from './convert'
-import type { FirebaseService } from '$lib/storage'
+import type { FirebaseProjectService } from '$lib/storage/project'
 
 export class EditEventService {
   changeQueue: EditEvent[] = []
 
-  constructor(private projectService: FirebaseService<Project>, private forwardToActiveProjectTab: (activity: Activity, callback: (activity: Activity) => void) => void) {
-  }
+  constructor(private projectService: FirebaseProjectService, private forwardToActiveProjectTab: (activity: Activity, callback: (activity: Activity) => void) => void) { }
 
   async handleEditEvent(editEvent: EditEvent) {
     this.changeQueue.push(editEvent)

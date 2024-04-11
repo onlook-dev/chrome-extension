@@ -11,8 +11,8 @@ import { toggleProjectTab } from '$lib/editor'
 import type { HostData } from '$shared/models/hostData'
 import type { Project } from '$shared/models/project'
 import { MessageReceiver, sendApplyProjectChanges } from '$lib/utils/messaging'
-import { FirebaseService } from '$lib/storage'
-import { FirestoreCollections } from '$shared/constants'
+import { captureTab } from './screenshot'
+import { FirebaseProjectService } from '$lib/storage/project'
 
 export const updateProjectTabHostWithDebounce = debounce((tab: chrome.tabs.Tab) => {
 	updateProjectTabHostData(tab)
@@ -51,43 +51,9 @@ async function updateProjectTabHostData(tab: chrome.tabs.Tab) {
 	activeProject.hostData = hostData
 
 	// Save project
-	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
+	const projectService = new FirebaseProjectService()
 	projectService.post(activeProject)
 	projectsMapBucket.set({ [activeProject.id]: activeProject })
-}
-
-let lastCaptured = 0
-let dataUri = ''
-
-export async function captureActiveTab(): Promise<string> {
-	return new Promise((resolve, reject) => {
-		// If within 1 second, return the existing dataUri 
-		// This is to prevent multiple calls to captureVisibleTab
-		if (Date.now() - lastCaptured > 1000) {
-			chrome.tabs.query({ active: true, currentWindow: true }, async tabs => {
-				const tab = tabs[0]
-				if (!tab) return
-				dataUri = await captureTab(tab.windowId as number)
-				lastCaptured = Date.now()
-				resolve(dataUri)
-			})
-		} else {
-			resolve(dataUri)
-		}
-	})
-
-}
-
-async function captureTab(windowId: number): Promise<string> {
-	return new Promise((resolve, reject) => {
-		chrome.tabs.captureVisibleTab(windowId, { format: 'jpeg' }, dataUri => {
-			if (chrome.runtime.lastError) {
-				reject(chrome.runtime.lastError)
-			} else {
-				resolve(dataUri)
-			}
-		})
-	})
 }
 
 export function sameTabHost(url1: string, url2: string) {

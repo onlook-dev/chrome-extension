@@ -8,15 +8,16 @@
 		projectsMapBucket,
 		teamsMapBucket
 	} from '$lib/utils/localstorage'
+	import { MAX_TITLE_LENGTH } from '$shared/constants'
+	import { nanoid } from 'nanoid'
+	import { FirebaseProjectService } from '$lib/storage/project'
+
 	import type { Project } from '$shared/models/project'
 	import type { HostData } from '$shared/models/hostData'
-	import { FirestoreCollections, MAX_TITLE_LENGTH } from '$shared/constants'
 
-	import { nanoid } from 'nanoid'
 	import validUrl from 'valid-url'
-	import { FirebaseService } from '$lib/storage'
 
-	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
+	const projectService = new FirebaseProjectService()
 	let projectName = ''
 	let projectUrl = ''
 	let nameError = false
