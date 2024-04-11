@@ -30,15 +30,16 @@ import {
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { captureActiveTab, forwardToActiveProjectTab, updateTabActiveState } from './tabs'
+import { EditEventService } from '$lib/editEvents'
+import { initializeMixpanel, trackEvent } from '$lib/mixpanel'
+import { FirebaseService } from '$lib/storage'
 
 import type { Team } from '$shared/models/team'
 import type { Activity } from '$shared/models/activity'
 import type { Comment } from '$shared/models/comment'
-import { FirebaseService } from '$lib/storage'
 import type { Project } from '$shared/models/project'
 import type { User } from '$shared/models/user'
-import { EditEventService } from '$lib/editEvents'
-import { initializeMixpanel, trackEvent } from '$lib/mixpanel'
+
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
