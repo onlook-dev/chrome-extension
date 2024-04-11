@@ -10,8 +10,8 @@ const config = {
 		themes: [
 			{
 				light: {
-					primary: '#111827',
-					'primary-content': '#ffffff',
+					primary: 'white',
+					'primary-content': 'black',
 					neutral: '#ebeef5',
 					'neutral-content': '#303133',
 					accent: '#a8abb2',

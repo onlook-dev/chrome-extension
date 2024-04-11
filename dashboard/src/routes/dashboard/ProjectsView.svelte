@@ -49,7 +49,7 @@
 			{#if project}
 				<button
 					on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
-					class="transition bg-gray-900 rounded space-y-4 p-4 hover:bg-gray-800 block"
+					class="transition rounded space-y-4 p-4 border border-black hover:bg-stone-900 block"
 				>
 					<figure class="">
 						{#if project?.hostData.previewImage}

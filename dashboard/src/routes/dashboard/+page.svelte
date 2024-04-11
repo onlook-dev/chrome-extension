@@ -89,7 +89,7 @@
 	<!-- Drawer Sidebar -->
 	<div class="drawer-side shadow">
 		<label for={dashboardDrawerId} aria-label="close sidebar" class="drawer-overlay"></label>
-		<ul class="w-64 min-h-full bg-gray-900 text-white space-y-2 p-2">
+		<ul class="w-64 min-h-full bg-stone-900 text-white space-y-2 p-2">
 			<!-- Sidebar content -->
 			<li>
 				<AvatarDropdown {user} />
