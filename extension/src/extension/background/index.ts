@@ -29,24 +29,24 @@ import {
 	popupStateBucket
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
-import { captureActiveTab, forwardToActiveProjectTab, updateTabActiveState } from './tabs'
+import { forwardToActiveProjectTab, updateTabActiveState } from './tabs'
 import { EditEventService } from '$lib/editEvents'
 import { initializeMixpanel, trackEvent } from '$lib/mixpanel'
 import { FirebaseService } from '$lib/storage'
+import { captureActiveTab } from './screenshot'
 
 import type { Team } from '$shared/models/team'
 import type { Activity } from '$shared/models/activity'
 import type { Comment } from '$shared/models/comment'
-import type { Project } from '$shared/models/project'
 import type { User } from '$shared/models/user'
-
+import { FirebaseProjectService } from '$lib/storage/project'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
 let userSubs: (() => void)[] = []
 let activeProjectSub: (() => void) | null = null
 
-const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
+const projectService = new FirebaseProjectService()
 const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS)
 const userService = new FirebaseService<User>(FirestoreCollections.USERS)
 const editEventService = new EditEventService(projectService, forwardToActiveProjectTab)
