@@ -294,3 +294,8 @@ try {
 } catch (error) {
 	console.error(error)
 }
+
+// Keep service worker alive
+const keepAlive = () => setInterval(chrome.runtime.getPlatformInfo, 20e3);
+chrome.runtime.onStartup.addListener(keepAlive);
+keepAlive();
