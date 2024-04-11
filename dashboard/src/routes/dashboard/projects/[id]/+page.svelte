@@ -14,7 +14,7 @@
 	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
-	import { GithubLogo, Pencil2 } from 'svelte-radix';
+	import { CounterClockwiseClock, GithubLogo, Pencil2, Sun } from 'svelte-radix';
 
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';
@@ -30,6 +30,8 @@
 	import type { Activity } from '$shared/models/activity';
 	import type { User } from '$shared/models/user';
 	import type { Project } from '$shared/models/project';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import Input from '$lib/components/ui/input/input.svelte';
 
 	let project: Project | undefined;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -153,31 +155,49 @@
 			</div>
 		</div>
 		<!-- Main content -->
-		<Resizable.PaneGroup class="w-full border" direction="horizontal">
+		<Separator />
+		<Resizable.PaneGroup class="w-full" direction="horizontal">
 			<Resizable.Pane>
-				<div class="bg-black w-full h-full items-center justify-center">Hello world</div>
+				<div class="bg-black w-full h-full">
+					<div class="p-6 flex flex-col space-y-2">
+						<h1 class="text-xl">Brand Updates</h1>
+						<h2 class="text-sm text-white/60">
+							This is a description of what is going on with these changes
+						</h2>
+					</div>
+					<Separator />
+					<div class="p-6">Content</div>
+				</div>
 			</Resizable.Pane>
 			<Resizable.Handle class="hover:bg-surface-brand" />
 			<Resizable.Pane>
-				<!-- Screenshot -->
-				<div class="bg-surface flex w-full h-full items-center justify-center">
-					{#if activeActivity && activeActivity.previewImage}
-						<img
-							src={activeActivity.previewImage}
-							alt="Screenshot"
-							class="shadow max-w-[80%] mx-auto my-auto"
-						/>
-					{:else if project.hostData?.previewImage}
-						<img
-							src={project.hostData?.previewImage}
-							alt="Screenshot"
-							class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] object-cover object-top aspect-video skeleton mx-auto my-auto"
-						/>
-					{:else}
-						<div
-							class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
-						></div>
-					{/if}
+				<div class="bg-surface flex flex-col w-full h-full">
+					<div class="flex flex-row p-6 text-white/60">
+						<div class="flex flex-col space-y-2">
+							<div class="flex flex-row space-x-4">
+								<h1>Primary Card</h1>
+								<p>Edited x days ago</p>
+							</div>
+							<Input class="border-none" placeholder="Click to describe the changes..." />
+						</div>
+						<div class="ml-auto flex flex-row space-x-4 items-start">
+							<button><CounterClockwiseClock class="w-4" /></button>
+							<button><Sun class="w-4" /></button>
+						</div>
+					</div>
+					<div class="flex w-full h-full items-center justify-center">
+						{#if (activeActivity && activeActivity.previewImage) || project.hostData?.previewImage}
+							<img
+								src={activeActivity?.previewImage ?? project.hostData?.previewImage}
+								alt="Screenshot"
+								class="shadow max-w-[80%] mx-auto my-auto"
+							/>
+						{:else}
+							<div
+								class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
+							></div>
+						{/if}
+					</div>
 				</div>
 			</Resizable.Pane>
 			<!-- <Resizable.Handle />
