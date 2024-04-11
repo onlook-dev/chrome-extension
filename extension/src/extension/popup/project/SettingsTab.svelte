@@ -10,10 +10,11 @@
 	import { FirebaseService } from '$lib/storage'
 	import { FirestoreCollections } from '$shared/constants'
 	import { sendEditProjectRequest } from '$lib/utils/messaging'
+	import { FirebaseProjectService } from '$lib/storage/project'
 
 	export let project: Project
 	const modalId = 'delete-project-modal'
-	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
+	const projectService = new FirebaseProjectService()
 
 	function showModal() {
 		const modal = document.getElementById(modalId) as HTMLDialogElement

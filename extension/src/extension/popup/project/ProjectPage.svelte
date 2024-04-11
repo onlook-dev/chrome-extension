@@ -11,21 +11,20 @@
 	} from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { sendEditProjectRequest, sendOpenUrlRequest } from '$lib/utils/messaging'
+	import { truncateString } from '$shared/helpers'
+	import { baseUrl } from '$lib/utils/env'
+	import { DashboardRoutes } from '$shared/constants'
+	import { FirebaseProjectService } from '$lib/storage/project'
 
 	import ArrowLeft from '~icons/formkit/arrowleft'
 	import Pencil from '~icons/mdi/pencil'
 	import Stop from '~icons/carbon/stop-outline'
-
 	import SettingsTab from './SettingsTab.svelte'
 	import ActivitiesTab from './ActivitiesTab.svelte'
 	import CommentsTab from './CommentsTab.svelte'
-	import { truncateString } from '$shared/helpers'
-	import { baseUrl } from '$lib/utils/env'
-	import { DashboardRoutes, FirestoreCollections } from '$shared/constants'
-	import { FirebaseService } from '$lib/storage'
 
 	const tabsName = 'project-tabs-id'
-	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS)
+	const projectService = new FirebaseProjectService()
 	let saved = false
 	let project: Project | undefined
 	let projectInjected: boolean = false
