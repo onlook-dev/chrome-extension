@@ -28,7 +28,7 @@
 					{/if}
 				</div>
 			</div>
-			<h2 class="text-sm font-semibold">{user?.name}</h2>
+			<h2 class="text-sm">{user?.name}</h2>
 		</div>
 		<ChevronDownIcon class="w-4 h-4" />
 	</div>

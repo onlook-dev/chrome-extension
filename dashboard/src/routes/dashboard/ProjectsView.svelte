@@ -80,7 +80,7 @@
 							</div>
 						</div>
 						<div class="text-left overflow-x-hidden">
-							<p class="text-sm font-semibold truncate">{project?.name}</p>
+							<p class="text-sm truncate">{project?.name}</p>
 							<p class="text-xs opacity-70 truncate">{shortenUrl(project?.hostUrl)}</p>
 						</div>
 					</div>

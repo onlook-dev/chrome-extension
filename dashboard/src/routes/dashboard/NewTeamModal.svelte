@@ -68,7 +68,7 @@
 
 <dialog id={modalId} class="modal fixed inset-0 flex items-center justify-center">
 	<div class="modal-box space-y-2 bg-stone-900 text-white">
-		<h3 class="font-bold text-lg mb-4">Create a new team</h3>
+		<h3 class="text-lg mb-4">Create a new team</h3>
 
 		<div class="flex flex-col space-y-4">
 			<div class="space-y-2">
