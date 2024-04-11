@@ -2,8 +2,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount, onDestroy } from 'svelte';
-
-	import type { Project } from '$shared/models/project';
 	import {
 		DashboardRoutes,
 		DashboardSearchParams,
@@ -12,22 +10,26 @@
 		FirestoreCollections
 	} from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
-
 	import { truncateString } from '$shared/helpers';
-	import type { User } from '$shared/models/user';
 	import { auth } from '$lib/firebase';
+	import { FirebaseService } from '$lib/storage';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
+	import { GithubLogo, Pencil2 } from 'svelte-radix';
 
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';
 	import Slack from '~icons/devicon/slack';
 	import Jira from '~icons/logos/jira';
-	import Edit from '~icons/bxs/edit';
 	import Linear from '~icons/logos/linear-icon';
-
 	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as Resizable from '$lib/components/ui/resizable';
+
 	import type { Activity } from '$shared/models/activity';
-	import { FirebaseService } from '$lib/storage';
-	import { trackMixpanelEvent } from '$lib/mixpanel/client';
+	import type { User } from '$shared/models/user';
+	import type { Project } from '$shared/models/project';
 
 	let project: Project | undefined;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -105,27 +107,33 @@
 	}
 </script>
 
-<div class="flex h-screen w-screen flex-col">
+<div class="flex h-screen w-screen flex-col bg-black text-white">
 	{#if project && user}
 		<!-- Header -->
-		<div class="navbar bg-base-100">
-			<div class="navbar-start flex flex-row">
-				<a
-					class="btn btn-ghost text-sm"
-					href="{DashboardRoutes.DASHBOARD}?{DashboardSearchParams.TEAM}={project?.teamId}"
-					>Onlook</a
+		<div class="flex flex-row items-center h-14 px-4">
+			<Breadcrumb.Root class="mr-auto ">
+				<Breadcrumb.List>
+					<Breadcrumb.Item>
+						<Breadcrumb.Link
+							href="{DashboardRoutes.DASHBOARD}?{DashboardSearchParams.TEAM}={project?.teamId}"
+							>Onlook</Breadcrumb.Link
+						>
+					</Breadcrumb.Item>
+					<Breadcrumb.Separator class="p-0 m-0" />
+					<Breadcrumb.Item>
+						{truncateString(project?.name || 'Dashboard', MAX_TITLE_LENGTH)}
+					</Breadcrumb.Item>
+				</Breadcrumb.List>
+			</Breadcrumb.Root>
+			<Button class="bg-surface text-gray-500">Placeholder</Button>
+			<div class="flex flex-row ml-auto space-x-2">
+				<Button variant="secondary" class="h-8" on:click={requestEditProject}
+					><Pencil2 class="mr-2 w-4 h-4" /> Edit</Button
 				>
-				<p class="text-sm mr-4">/</p>
-				<p class="truncate">
-					{truncateString(project?.name || 'Dashboard', MAX_TITLE_LENGTH)}
-				</p>
-			</div>
-
-			<div class="navbar-end space-x-2">
-				<button class="btn btn-outline color-red-500" on:click={requestEditProject}
-					><Edit /> Edit project</button
+				<Button variant="primary" class="h-8" on:click={requestEditProject}
+					><GithubLogo class="mr-2 w-4 h-4" /> Publish to GitHub</Button
 				>
-				<div class="dropdown dropdown-end">
+				<!-- <div class="dropdown dropdown-end">
 					<button class="btn btn-primary">Share and Publish</button>
 					<ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
 						<li tabindex="-1"><PublishToGithubModal {project} {user} /></li>
@@ -141,38 +149,46 @@
 							<button disabled><Slack /> Create Slack thread</button>
 						</li>
 					</ul>
-				</div>
+				</div> -->
 			</div>
 		</div>
 		<!-- Main content -->
-		<div class="bg-base-200 flex flex-col sm:flex-row flex-grow overflow-auto">
-			<!-- Screenshot -->
-			<div class="sm:w-full flex flex-grow h-full border items-center justify-center">
-				{#if activeActivity && activeActivity.previewImage}
-					<img
-						src={activeActivity.previewImage}
-						alt="Screenshot"
-						class="shadow max-w-[80%] mx-auto my-auto"
-					/>
-				{:else if project.hostData?.previewImage}
-					<img
-						src={project.hostData?.previewImage}
-						alt="Screenshot"
-						class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] object-cover object-top aspect-video skeleton mx-auto my-auto"
-					/>
-				{:else}
-					<div
-						class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
-					></div>
-				{/if}
-			</div>
-			<!-- Sidebar/ comments + activities -->
-			<div class="flex flex-col w-full sm:max-w-96 h-full text-sm">
-				<div class="border h-full w-full overflow-auto">
-					<Activities {project} bind:activeActivityId />
+		<Resizable.PaneGroup class="w-full border" direction="horizontal">
+			<Resizable.Pane>
+				<div class="bg-black w-full h-full items-center justify-center">Hello world</div>
+			</Resizable.Pane>
+			<Resizable.Handle class="hover:bg-surface-brand" />
+			<Resizable.Pane>
+				<!-- Screenshot -->
+				<div class="bg-surface flex w-full h-full items-center justify-center">
+					{#if activeActivity && activeActivity.previewImage}
+						<img
+							src={activeActivity.previewImage}
+							alt="Screenshot"
+							class="shadow max-w-[80%] mx-auto my-auto"
+						/>
+					{:else if project.hostData?.previewImage}
+						<img
+							src={project.hostData?.previewImage}
+							alt="Screenshot"
+							class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] object-cover object-top aspect-video skeleton mx-auto my-auto"
+						/>
+					{:else}
+						<div
+							class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
+						></div>
+					{/if}
 				</div>
-			</div>
-		</div>
+			</Resizable.Pane>
+			<!-- <Resizable.Handle />
+			<Resizable.Pane>
+				<div class="flex flex-col w-full h-full text-sm">
+					<div class="border h-full w-full overflow-auto">
+						<Activities {project} bind:activeActivityId />
+					</div>
+				</div>
+			</Resizable.Pane> -->
+		</Resizable.PaneGroup>
 	{:else}
 		<div class="flex flex-col items-center justify-center h-full">
 			<p class="text-gray-500">Loading...</p>

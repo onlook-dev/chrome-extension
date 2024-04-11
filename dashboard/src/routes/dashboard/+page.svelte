@@ -100,7 +100,7 @@
 				<!-- TODO: Make responsive with teamsMapStore-->
 				{#if user?.teamIds}
 					{#each user?.teamIds as teamId}
-						<li class={activeTeamId === teamId ? 'bg-black w-full' : ''}>
+						<li class={activeTeamId === teamId ? 'bg-black' : 'hover:bg-stone-900 '}>
 							<button
 								class="btn btn-ghost grid grid-cols-3 items-center w-full font-normal"
 								on:click={() => {
