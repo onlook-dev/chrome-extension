@@ -19,7 +19,7 @@
 		class="flex items-center space-x-2 hover:shadow rounded-lg py-2 px-1"
 	>
 		<div class="flex items-center space-x-2">
-			<div class="avatar online placeholder">
+			<div class="avatar placeholder">
 				<div class="bg-neutral text-neutral-content rounded-full w-6">
 					{#if user?.profileImage && !imageError}
 						<img src={user?.profileImage} alt="profile" on:error={handleImageError} />
@@ -32,12 +32,12 @@
 		</div>
 		<ChevronDownIcon class="w-4 h-4" />
 	</div>
-	<ul class="dropdown-content z-[1] menu shadow bg-base-100 rounded-box w-52">
+	<ul class="dropdown-content bg-black text-white z-[1] menu shadow rounded-box w-52">
 		<li class="disabled">
-			<button>Profile</button>
+			<button class="text-gray-500">Profile</button>
 		</li>
 		<li class="disabled">
-			<button>Settings</button>
+			<button class="text-gray-500">Settings</button>
 		</li>
 		<li class="text-red-600">
 			<button on:click={signOut}>Sign out</button>

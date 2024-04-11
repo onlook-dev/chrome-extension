@@ -70,14 +70,14 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="drawer-content px-4 py-6 overflow-auto h-screen bg-gray-200">
+	<div class="drawer-content px-4 py-6 overflow-auto h-screen bg-black">
 		<!-- Page content here -->
 		<div class="flex flex-row gap-2 mb-4 items-center">
 			<label for={dashboardDrawerId} class="btn btn-square btn-ghost drawer-button lg:hidden"
-				><SideBarLine /></label
+				><SideBarLine class="text-white" /></label
 			>
 			<div class="flex flex-row w-full items-center">
-				<h1 class="text-2xl text-black font-medium">
+				<h1 class="text-2xl text-white">
 					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 				</h1>
 			</div>
@@ -89,7 +89,7 @@
 	<!-- Drawer Sidebar -->
 	<div class="drawer-side shadow">
 		<label for={dashboardDrawerId} aria-label="close sidebar" class="drawer-overlay"></label>
-		<ul class="w-64 min-h-full bg-base-100 space-y-2 p-2">
+		<ul class="w-64 min-h-full bg-gray-900 text-white space-y-2 p-2">
 			<!-- Sidebar content -->
 			<li>
 				<AvatarDropdown {user} />
@@ -111,8 +111,8 @@
 								}}
 							>
 								<p
-									class="font-semibold {activeTeamId === teamId
-										? 'active font-extrabold'
+									class="{activeTeamId === teamId
+										? 'active font-semibold'
 										: ''} col-span-2 text-left"
 								>
 									{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}

@@ -30,15 +30,26 @@
 	onDestroy(() => {
 		unsubs.forEach((unsub: any) => unsub());
 	});
+
+	const shortenUrl = (url: string) => {
+		try {
+			const urlObj = new URL(url);
+			return urlObj.hostname + (urlObj.port ? `:${urlObj.port}` : '') + urlObj.pathname;
+		} catch (e) {
+			return url;
+		}
+	};
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+<div
+	class="text-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
+>
 	{#if team?.projectIds.length}
 		{#each team?.projectIds.map((id) => $projectsMapStore.get(id)) as project}
 			{#if project}
 				<button
 					on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
-					class="bg-base-100 rounded space-y-4 p-4 hover:shadow block"
+					class="transition bg-gray-900 rounded space-y-4 p-4 hover:bg-gray-800 block"
 				>
 					<figure class="">
 						{#if project?.hostData.previewImage}
@@ -48,7 +59,7 @@
 								class="object-cover object-top aspect-video rounded w-full"
 							/>
 						{:else}
-							<div class="bg-gray-100 aspect-video rounded w-full" />
+							<div class="bg-gray-700 aspect-video rounded w-full" />
 						{/if}
 					</figure>
 					<div class="flex items-center space-x-2">
@@ -64,13 +75,13 @@
 										}}
 									/>
 								{:else}
-									<div class="bg-stone-200 rounded-full w-full h-full" />
+									<div class="bg-gray-700 rounded-full w-full h-full" />
 								{/if}
 							</div>
 						</div>
 						<div class="text-left overflow-x-hidden">
 							<p class="text-sm font-semibold truncate">{project?.name}</p>
-							<p class="text-xs opacity-70 truncate">{project?.hostUrl}</p>
+							<p class="text-xs opacity-70 truncate">{shortenUrl(project?.hostUrl)}</p>
 						</div>
 					</div>
 				</button>
