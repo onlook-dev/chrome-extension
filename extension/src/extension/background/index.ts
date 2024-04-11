@@ -57,19 +57,28 @@ function setDefaultMaps() {
 	tabsMapBucket.set({})
 }
 
+async function setStartupState() {
+	for (const cs of chrome.runtime.getManifest().content_scripts ?? []) {
+		for (const tab of await chrome.tabs.query({ url: cs.matches })) {
+			if (tab.url && tab.url.match(/(chrome|chrome-extension):\/\//gi)) continue;
+			if (tab.id === undefined) continue
+
+			chrome.scripting.executeScript({
+				target: { tabId: tab.id, allFrames: cs.all_frames },
+				files: cs.js ?? [],
+				injectImmediately: cs.run_at === 'document_start',
+			})
+		}
+	}
+}
 const setListeners = () => {
 	// Refresh tabs on update
-	chrome.runtime.onInstalled.addListener(async () => {
+	chrome.runtime.onInstalled.addListener(() => {
 		setDefaultMaps()
-		for (const cs of chrome.runtime.getManifest().content_scripts ?? []) {
-			for (const tab of await chrome.tabs.query({ url: cs.matches })) {
-				chrome.scripting.executeScript({
-					target: { tabId: tab.id as number },
-					files: cs.js ?? []
-				})
-			}
-		}
+		setStartupState()
 	})
+
+	chrome.runtime.onStartup.addListener(setStartupState)
 
 	chrome.tabs.onUpdated.addListener(
 		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
