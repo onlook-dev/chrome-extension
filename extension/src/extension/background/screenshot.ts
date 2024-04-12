@@ -13,7 +13,6 @@ export async function captureActiveTab(refresh = false): Promise<string> {
                     reject('No active tab found.');
                     return;
                 }
-                console.log(`Capturing tab ${tab.id}`);
                 dataUri = await captureTab(tab.windowId);
                 lastCaptured = Date.now();
                 resolve(dataUri);
@@ -21,8 +20,6 @@ export async function captureActiveTab(refresh = false): Promise<string> {
                 reject(`Failed to capture tab: ${error}`);
             }
         };
-
-        console.log(refresh)
 
         if (!dataUri) {
             capture();
@@ -32,14 +29,11 @@ export async function captureActiveTab(refresh = false): Promise<string> {
         const timeSinceLastCapture = Date.now() - lastCaptured;
         if (timeSinceLastCapture <= buffer) {
             if (refresh) {
-                console.log(`Waiting ${buffer - timeSinceLastCapture}ms before capturing`);
                 setTimeout(capture, buffer - timeSinceLastCapture);
             } else {
-                console.log('Returning cached dataUri');
                 resolve(dataUri);
             }
         } else {
-            console.log('Capturing immediately');
             capture();
         }
     });

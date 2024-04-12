@@ -141,9 +141,8 @@ const setListeners = () => {
 	})
 
 	saveProjectStream.subscribe(([project]) => {
-		console.log(project)
-		// projectService.post(project)
-		// projectsMapBucket.set({ [project.id]: project })
+		projectService.post(project)
+		projectsMapBucket.set({ [project.id]: project })
 	})
 
 	pageScreenshotRequestStream.subscribe(async ([{ signature, refresh }]) => {

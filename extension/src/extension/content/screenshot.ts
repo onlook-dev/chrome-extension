@@ -43,10 +43,8 @@ export class ScreenshotService {
 
 		// Set before image or after image
 		if (before) {
-			console.log('Setting before image')
 			activity.beforeImage = croppedImageUri
 		} else {
-			console.log('Setting preview image')
 			activity.previewImage = croppedImageUri
 		}
 

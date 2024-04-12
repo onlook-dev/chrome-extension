@@ -11,10 +11,9 @@ export class PublishProjectService {
     constructor(private project: Project, private screenshotService: ScreenshotService) { }
 
     public async publish() {
-        console.log("Publishing project");
         await this.takeScreenshot();
         await sendSaveProject(this.project);
-        // sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
+        sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
     }
 
     async takeScreenshot() {
@@ -31,7 +30,7 @@ export class PublishProjectService {
             revertActivityChanges(activity);
         }
 
-        // Wait 
+        // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));
 
         // Take before screenshot
@@ -46,6 +45,9 @@ export class PublishProjectService {
         for (const activity of activities) {
             applyActivityChanges(activity);
         }
+
+        // Wait for changes to apply
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         // Take after screenshot
         refresh = true;
