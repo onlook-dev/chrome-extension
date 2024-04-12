@@ -43,6 +43,8 @@
 	let activeActivityId: string = '';
 	let activeActivity: Activity | undefined;
 
+	let activityCols = '4';
+
 	$: if (project) {
 		activeActivity = Object.values(project.activities).find(
 			(activity) => activity.id === activeActivityId
@@ -158,31 +160,46 @@
 		<!-- Main content -->
 		<Separator />
 		<Resizable.PaneGroup class="w-full" direction="horizontal">
-			<Resizable.Pane>
-				<div class="bg-black w-full h-full">
+			<Resizable.Pane
+				minSize={20}
+				onResize={(size) => {
+					if (size > 43) {
+						activityCols = '4';
+					} else if (33 < size && size < 43) {
+						activityCols = '3';
+					} else if (23 < size && size < 33) {
+						activityCols = '2';
+					} else {
+						activityCols = '1';
+					}
+				}}
+			>
+				<div class="bg-black flex flex-col w-full h-full">
 					<div class="p-6 flex flex-col space-y-2">
-						<h1 class="text-xl">Brand Updates</h1>
+						<h1 class="text-xl">{project.name}</h1>
 						<h2 class="text-sm text-white/60">
 							This is a description of what is going on with these changes
 						</h2>
 					</div>
 					<Separator />
 
-					<div
-						class="p-6 text-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-					>
-						{#each [1, 2, 3, 4, 5, 6, 7, 8] as activity}
+					<div class="p-6 text-white grid grid-cols-{activityCols} gap-8 overflow-auto">
+						{#each Object.values(project.activities) as activity}
 							<Card.Root
 								class="transition rounded border-transparent bg-transparent hover:border-border w-42 h-42"
 							>
 								<Card.Header class="p-2 pb-1">
-									<div
+									<img
 										class="bg-stone-900 w-full rounded aspect-video skeleton mx-auto my-auto"
-									></div>
+										src={activity.previewImage}
+										alt="Activity preview"
+									/>
 								</Card.Header>
 								<Card.Content class="p-3 space-y-1">
-									<Card.Title class="font-normal">My project</Card.Title>
-									<Card.Description>5 changes</Card.Description>
+									<Card.Title class="font-normal">{activity.selector}</Card.Title>
+									<Card.Description
+										>{new Array(activity.styleChanges).length} changes</Card.Description
+									>
 								</Card.Content>
 							</Card.Root>
 						{/each}
@@ -190,7 +207,7 @@
 				</div></Resizable.Pane
 			>
 			<Resizable.Handle class="hover:bg-surface-brand" />
-			<Resizable.Pane>
+			<Resizable.Pane minSize={20}>
 				<div class="bg-surface flex flex-col w-full h-full">
 					<div class="flex flex-row p-6 text-white/60">
 						<div class="flex flex-col space-y-2">
@@ -207,11 +224,21 @@
 					</div>
 					<div class="flex w-full h-full items-center justify-center">
 						{#if (activeActivity && activeActivity.previewImage) || project.hostData?.previewImage}
-							<img
-								src={activeActivity?.previewImage ?? project.hostData?.previewImage}
-								alt="Screenshot"
-								class="shadow max-w-[80%] mx-auto my-auto"
-							/>
+							<div class="diff rounded-sm aspect-[16/9] max-w-[80%] mx-auto my-auto">
+								<div class="diff-item-1">
+									<img
+										alt="daisy"
+										src={activeActivity?.previewImage || project.hostData?.previewImage}
+									/>
+								</div>
+								<div class="diff-item-2">
+									<img
+										alt="daisy"
+										src={activeActivity?.previewImage || project.hostData?.previewImage}
+									/>
+								</div>
+								<div class="diff-resizer"></div>
+							</div>
 						{:else}
 							<div
 								class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
