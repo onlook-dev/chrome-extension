@@ -26,6 +26,7 @@
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Resizable from '$lib/components/ui/resizable';
+	import * as Card from '$lib/components/ui/card/index.js';
 
 	import type { Activity } from '$shared/models/activity';
 	import type { User } from '$shared/models/user';
@@ -166,9 +167,28 @@
 						</h2>
 					</div>
 					<Separator />
-					<div class="p-6">Content</div>
-				</div>
-			</Resizable.Pane>
+
+					<div
+						class="p-6 text-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+					>
+						{#each [1, 2, 3, 4, 5, 6, 7, 8] as activity}
+							<Card.Root
+								class="transition rounded border-transparent bg-transparent hover:border-border w-42 h-42"
+							>
+								<Card.Header class="p-2 pb-1">
+									<div
+										class="bg-stone-900 w-full rounded aspect-video skeleton mx-auto my-auto"
+									></div>
+								</Card.Header>
+								<Card.Content class="p-3 space-y-1">
+									<Card.Title class="font-normal">My project</Card.Title>
+									<Card.Description>5 changes</Card.Description>
+								</Card.Content>
+							</Card.Root>
+						{/each}
+					</div>
+				</div></Resizable.Pane
+			>
 			<Resizable.Handle class="hover:bg-surface-brand" />
 			<Resizable.Pane>
 				<div class="bg-surface flex flex-col w-full h-full">
