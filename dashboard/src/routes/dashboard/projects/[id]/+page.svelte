@@ -157,17 +157,31 @@
 				class="bg-gray-300 flex overflow-auto h-full w-full  items-center justify-center"
 				minSize={30}
 			>
-				{#if activeActivity}
-					{#if activeActivity.beforeImage && activeActivity.previewImage}
+				{#if activeActivity && activeActivity.previewImage}
+					{#if activeActivity.beforeImage}
 						<div class="diff w-full h-full max-w-[80%] max-h-[80%]">
 							<div class="diff-item-1">
-								<img class="object-scale-down" src={activeActivity.previewImage} alt="Screenshot" />
+								<img
+									class="object-scale-down"
+									src={activeActivity.previewImage}
+									alt="Before screenshot"
+								/>
 							</div>
 							<div class="diff-item-2">
-								<img class="object-scale-down" src={activeActivity.beforeImage} alt="Screenshot" />
+								<img
+									class="object-scale-down"
+									src={activeActivity.beforeImage}
+									alt="After screenshot"
+								/>
 							</div>
 							<div class="diff-resizer"></div>
 						</div>
+					{:else}
+						<img
+							src={activeActivity.previewImage}
+							alt="Preview screenshot"
+							class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] object-cover object-top aspect-video skeleton mx-auto my-auto"
+						/>
 					{/if}
 				{:else if project.hostData?.previewImage}
 					<img
