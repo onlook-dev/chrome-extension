@@ -147,7 +147,7 @@
 		</div>
 		<!-- Main content -->
 		<Resizable.PaneGroup class="bg-base-200 overflow-auto border" direction="horizontal">
-			<Resizable.Pane minSize={25} defaultSize={25}>
+			<Resizable.Pane minSize={15} defaultSize={25}>
 				<div class="flex flex-col overflow-auto text-sm h-full w-full">
 					<Activities {project} bind:activeActivityId />
 				</div>
