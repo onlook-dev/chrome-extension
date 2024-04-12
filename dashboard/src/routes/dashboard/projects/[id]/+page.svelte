@@ -146,14 +146,29 @@
 		</div>
 		<!-- Main content -->
 		<div class="bg-base-200 flex flex-col sm:flex-row flex-grow overflow-auto">
+			<!-- Sidebar/ comments + activities -->
+			<div class="flex flex-col w-full sm:max-w-96 h-full text-sm">
+				<div class="border h-full w-full overflow-auto">
+					<Activities {project} bind:activeActivityId />
+				</div>
+			</div>
+
 			<!-- Screenshot -->
-			<div class="sm:w-full flex flex-grow h-full border items-center justify-center">
-				{#if activeActivity && activeActivity.previewImage}
-					<img
-						src={activeActivity.previewImage}
-						alt="Screenshot"
-						class="shadow max-w-[80%] mx-auto my-auto"
-					/>
+			<div
+				class="bg-gray-300 sm:w-full flex flex-grow h-full w-full border items-center justify-center"
+			>
+				{#if activeActivity}
+					{#if activeActivity.beforeImage && activeActivity.previewImage}
+						<div class="diff w-full h-full max-w-[80%] max-h-[80%]">
+							<div class="diff-item-1">
+								<img class="object-scale-down" src={activeActivity.previewImage} alt="Screenshot" />
+							</div>
+							<div class="diff-item-2">
+								<img class="object-scale-down" src={activeActivity.beforeImage} alt="Screenshot" />
+							</div>
+							<div class="diff-resizer"></div>
+						</div>
+					{/if}
 				{:else if project.hostData?.previewImage}
 					<img
 						src={project.hostData?.previewImage}
@@ -165,12 +180,6 @@
 						class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
 					></div>
 				{/if}
-			</div>
-			<!-- Sidebar/ comments + activities -->
-			<div class="flex flex-col w-full sm:max-w-96 h-full text-sm">
-				<div class="border h-full w-full overflow-auto">
-					<Activities {project} bind:activeActivityId />
-				</div>
 			</div>
 		</div>
 	{:else}

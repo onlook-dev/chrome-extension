@@ -11,12 +11,12 @@ export class PublishProjectService {
     constructor(private project: Project, private screenshotService: ScreenshotService) { }
 
     public async publish() {
-        await this.takeScreenshot();
+        await this.takeActivityScreenshots();
         await sendSaveProject(this.project);
         sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
     }
 
-    async takeScreenshot() {
+    async takeActivityScreenshots() {
         const activities = Object.values(this.project.activities);
         if (activities.length === 0) {
             return;
@@ -36,7 +36,6 @@ export class PublishProjectService {
         // Take before screenshot
         let refresh = true;
         for (const activity of activities) {
-            if (activity.beforeImage) continue;
             await this.screenshotService.takeScreenshot(activity, true, refresh);
             refresh = false;
         }
