@@ -146,7 +146,7 @@
 		}
 		project.githubHistoryIds.push(githubHistory.id);
 		githubHistories = [...githubHistories, githubHistory];
-		toast.push('Changes published to GitHub! 🎉', {
+		toast.push('Changes published to GitHub! ð', {
 			theme: {
 				'--toastColor': 'mintcream',
 				'--toastBackground': 'rgba(72,187,120,0.9)',
@@ -245,9 +245,10 @@
 			class="collapse collapse-arrow border rounded-md mt-6 {configOpen
 				? 'collapse-open'
 				: 'collapse-close'}"
+		style="padding-bottom: 18px;"
 		>
 			<input type="checkbox" on:click={() => (configOpen = !configOpen)} />
-			<div class="collapse-title">Optional Configuration</div>
+			<div class="collapse-title" style="background-color: #222; height: 150px;">Optional Configuration</div>
 			<div class="collapse-content space-y-2">
 				<div class="flex flex-row">
 					<p>Force Tailwind</p>

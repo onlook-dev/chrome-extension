@@ -127,11 +127,12 @@
 					}}
 				/>
 			</div>
-			<div class="flex flex-row items-center">
+			<div class="flex flex-row items-center" style="width: 50%; border-color: #e5e7eb;">
 				<p class="label w-28">Root directory</p>
 				<div
 					class="tooltip tooltip-bottom tooltip-info before:w-[10rem] before:content-[attr(data-tip)]"
 					data-tip="Folder that contains your src file. If it's at root you can leave this empty"
+				style="padding-bottom: 18px;"
 				>
 					<button class="label mr-2">
 						<Info class="h-4 w-4 text-gray-500" />

@@ -125,7 +125,7 @@
 				<button class="btn btn-outline color-red-500" on:click={requestEditProject}
 					><Edit /> Edit project</button
 				>
-				<div class="dropdown dropdown-end">
+				<div class="dropdown dropdown-end" style="width: 100%; border-color: #e5e7eb;">
 					<button class="btn btn-primary">Share and Publish</button>
 					<ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
 						<li tabindex="-1"><PublishToGithubModal {project} {user} /></li>
@@ -147,7 +147,7 @@
 		<!-- Main content -->
 		<div class="bg-base-200 flex flex-col sm:flex-row flex-grow overflow-auto">
 			<!-- Screenshot -->
-			<div class="sm:w-full flex flex-grow h-full border items-center justify-center">
+			<div class="sm:w-full flex flex-grow h-full border items-center justify-center" style="width: 100%; border-color: #e2e8f0;">
 				{#if activeActivity && activeActivity.previewImage}
 					<img
 						src={activeActivity.previewImage}
