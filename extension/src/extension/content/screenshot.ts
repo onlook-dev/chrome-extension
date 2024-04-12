@@ -3,13 +3,19 @@ import { getProjectById, projectsMapBucket } from '$lib/utils/localstorage'
 import { pageScreenshotResponseStream, sendPageScreenshotRequest } from '$lib/utils/messaging'
 import { nanoid } from 'nanoid'
 
+interface QueueItem {
+	activity: Activity
+	before: boolean
+	refresh: boolean
+}
+
 export class ScreenshotService {
-	activityScreenshotQueue: Activity[] = []
+	screenshotQueue: QueueItem[] = []
 	pageScreenshot: string | undefined
 	isProcessing: boolean = false;
 
-	async takeScreenshot(activity: Activity) {
-		this.activityScreenshotQueue.push(activity);
+	async takeScreenshot(activity: Activity, before: boolean = false, refresh: boolean = false) {
+		this.screenshotQueue.push({ activity, before, refresh });
 		if (!this.isProcessing) {
 			this.isProcessing = true;
 			await this.processScreenshotQueue();
@@ -18,23 +24,31 @@ export class ScreenshotService {
 	}
 
 	private async processScreenshotQueue() {
-		while (this.activityScreenshotQueue.length > 0) {
+		while (this.screenshotQueue.length > 0) {
 			// Process item in queue 1 by 1
-			const activity = this.activityScreenshotQueue[0]
-			await this.takeActivityScreenshot(activity)
+			await this.takeActivityScreenshot(this.screenshotQueue[0])
 			// Remove the processed item from the queue
-			this.activityScreenshotQueue.shift()
+			this.screenshotQueue.shift()
 		}
 	}
 
-	private async takeActivityScreenshot(activity: Activity) {
+	private async takeActivityScreenshot(queueItem: QueueItem) {
+		const { activity, before, refresh } = queueItem
 		// Get element
 		const element = document.querySelector(activity.selector) as HTMLElement
 		if (!element) return
 		// Get screenshot
-		const pageImageUri = await this.takePageScreenshot()
+		const pageImageUri = await this.takePageScreenshot(refresh)
 		const croppedImageUri = await this.cropPageByElement(element, pageImageUri)
-		activity.previewImage = croppedImageUri
+
+		// Set before image or after image
+		if (before) {
+			console.log('Setting before image')
+			activity.beforeImage = croppedImageUri
+		} else {
+			console.log('Setting preview image')
+			activity.previewImage = croppedImageUri
+		}
 
 		// Update project
 		const project = await getProjectById(activity.projectId)
@@ -112,7 +126,7 @@ export class ScreenshotService {
 
 	}
 
-	private takePageScreenshot(): Promise<string> {
+	private takePageScreenshot(refresh: boolean): Promise<string> {
 		return new Promise((resolve, reject) => {
 			// TODO: If hiding editor, should setTimeout 50ms to ensure editor is hidden
 			let signature = nanoid()
@@ -121,7 +135,7 @@ export class ScreenshotService {
 				resolve(data.image);
 				subscription.unsubscribe();
 			});
-			sendPageScreenshotRequest(signature);
+			sendPageScreenshotRequest({ signature, refresh });
 		});
 	}
 }

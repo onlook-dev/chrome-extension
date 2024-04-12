@@ -20,46 +20,10 @@ import { ScreenshotService } from './screenshot'
 import type { Project } from '$shared/models/project'
 import { PopupRoutes } from '$lib/utils/constants'
 import { getCSSFramework } from '$lib/utils/styleFramework'
+import { PublishProjectService } from '$lib/publish'
+import { applyActivityChanges, revertActivityChanges } from '$lib/utils/activity'
 
 const screenshotService = new ScreenshotService()
-function applyActivityChanges(activity: Activity): boolean {
-	const element = document.querySelector(activity.selector) as any
-	if (element) {
-		Object.entries(activity.styleChanges ?? {}).forEach(([style, changeObject]) => {
-			// Apply style change to element
-			element.style[style] = changeObject.newVal
-		})
-		Object.entries(activity.textChanges ?? {}).forEach(([textChange, changeObject]) => {
-			// Apply text change to element
-			element.innerText = changeObject.newVal
-		})
-		Object.entries(activity.attributeChanges ?? {}).forEach(([attributeChange, changeObject]) => {
-			// Apply attribute change to element
-			if (attributeChange === 'full') {
-				element.className = changeObject.newVal
-			}
-		})
-		if (activity.path !== element.dataset.onlookId) {
-			activity.path = element.dataset.onlookId
-			return true
-		}
-	}
-	return false
-}
-
-function revertActivityChanges(activity: Activity) {
-	const element = document.querySelector(activity.selector) as any
-	if (element) {
-		Object.entries(activity.styleChanges ?? {}).forEach(([style, changeObject]) => {
-			// Apply style to element
-			if (style === 'text') {
-				element.innerText = changeObject.oldVal
-			} else {
-				element.style[style] = changeObject.oldVal
-			}
-		})
-	}
-}
 
 export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
@@ -83,6 +47,14 @@ export function setupListeners() {
 			getActiveProject().then(project => {
 				sendSaveProject(project)
 				sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project?.id}`)
+			})
+			return
+		}
+
+		if (message.type === MessageTypes.PUBLISH_PROJECT) {
+			getActiveProject().then((project) => {
+				const publishService = new PublishProjectService(project, screenshotService)
+				publishService.publish()
 			})
 			return
 		}

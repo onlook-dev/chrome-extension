@@ -19,6 +19,7 @@ export enum MessageTypes {
   EDIT_EVENT = "EDIT_EVENT",
   OPEN_PROJECT = "OPEN_PROJECT",
   EDIT_PROJECT = "EDIT_PROJECT",
+  PUBLISH_PROJECT = "PUBLISH_PROJECT",
 }
 
 // Links

@@ -81,7 +81,7 @@ export const [sendSaveProject, saveProjectStream] = getExtendedMessages<Project>
 )
 
 
-export const [sendPageScreenshotRequest, pageScreenshotRequestStream] = getExtendedMessages<string>(
+export const [sendPageScreenshotRequest, pageScreenshotRequestStream] = getExtendedMessages<{ signature: string, refresh: boolean }>(
 	'PAGE_SCREENSHOT_REQUEST',
 	MessageReceiver.BACKGROUND
 )

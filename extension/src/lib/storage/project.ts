@@ -10,13 +10,23 @@ export class FirebaseProjectService extends FirebaseService<Project> {
     }
 
     async post(project: Project): Promise<string | undefined> {
-        // For each activity, save the previewImage to filestorage
+        // For each activity, save the beforeImage and previewImage to filestorage
         for (const activity of Object.values(project.activities)) {
-            const dataUri = activity.previewImage;
-            if (!dataUri || !isBase64ImageString(dataUri)) continue;
+
             // Save previewImage to filestorage
-            const result = await storeImageUri({ dataUri });
-            activity.previewImage = result.data;
+            const previewImage = activity.previewImage;
+            if (previewImage && isBase64ImageString(previewImage)) {
+                const result = await storeImageUri({ dataUri: previewImage });
+                activity.previewImage = result.data;
+            }
+
+            // Save beforeImage to filestorage
+            const beforeImage = activity.beforeImage;
+            if (beforeImage && isBase64ImageString(beforeImage)) {
+                const result = await storeImageUri({ dataUri: beforeImage });
+                activity.beforeImage = result.data;
+            }
+
             project.activities[activity.selector] = activity;
         }
         return super.post(project);
