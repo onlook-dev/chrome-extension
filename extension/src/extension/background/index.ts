@@ -145,9 +145,9 @@ const setListeners = () => {
 		projectsMapBucket.set({ [project.id]: project })
 	})
 
-	pageScreenshotRequestStream.subscribe(async ([signature]) => {
+	pageScreenshotRequestStream.subscribe(async ([{ signature, refresh }]) => {
 		// Send message back
-		const image = await captureActiveTab()
+		const image = await captureActiveTab(refresh)
 		forwardToActiveProjectTab({ image, signature }, sendPageScreenshotResponse)
 	})
 

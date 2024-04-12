@@ -13,9 +13,13 @@
 	} from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 
-	import { truncateString } from '$shared/helpers';
-	import type { User } from '$shared/models/user';
 	import { auth } from '$lib/firebase';
+	import { truncateString } from '$shared/helpers';
+	import { FirebaseService } from '$lib/storage';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
+
+	import type { User } from '$shared/models/user';
+	import type { Activity } from '$shared/models/activity';
 
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';
@@ -23,11 +27,8 @@
 	import Jira from '~icons/logos/jira';
 	import Edit from '~icons/bxs/edit';
 	import Linear from '~icons/logos/linear-icon';
-
 	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
-	import type { Activity } from '$shared/models/activity';
-	import { FirebaseService } from '$lib/storage';
-	import { trackMixpanelEvent } from '$lib/mixpanel/client';
+	import * as Resizable from '$lib/components/ui/resizable';
 
 	let project: Project | undefined;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -145,15 +146,43 @@
 			</div>
 		</div>
 		<!-- Main content -->
-		<div class="bg-base-200 flex flex-col sm:flex-row flex-grow overflow-auto">
-			<!-- Screenshot -->
-			<div class="sm:w-full flex flex-grow h-full border items-center justify-center">
+		<Resizable.PaneGroup class="bg-base-200 overflow-auto border" direction="horizontal">
+			<Resizable.Pane minSize={15} defaultSize={25}>
+				<div class="flex flex-col overflow-auto text-sm h-full w-full">
+					<Activities {project} bind:activeActivityId />
+				</div>
+			</Resizable.Pane>
+			<Resizable.Handle />
+			<Resizable.Pane
+				class="bg-gray-300 flex overflow-auto h-full w-full  items-center justify-center"
+				minSize={30}
+			>
 				{#if activeActivity && activeActivity.previewImage}
-					<img
-						src={activeActivity.previewImage}
-						alt="Screenshot"
-						class="shadow max-w-[80%] mx-auto my-auto"
-					/>
+					{#if activeActivity.beforeImage}
+						<div class="diff w-full h-full max-w-[80%] max-h-[80%]">
+							<div class="diff-item-1">
+								<img
+									class="object-scale-down"
+									src={activeActivity.previewImage}
+									alt="Before screenshot"
+								/>
+							</div>
+							<div class="diff-item-2">
+								<img
+									class="object-scale-down"
+									src={activeActivity.beforeImage}
+									alt="After screenshot"
+								/>
+							</div>
+							<div class="diff-resizer"></div>
+						</div>
+					{:else}
+						<img
+							src={activeActivity.previewImage}
+							alt="Preview screenshot"
+							class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] object-cover object-top aspect-video skeleton mx-auto my-auto"
+						/>
+					{/if}
 				{:else if project.hostData?.previewImage}
 					<img
 						src={project.hostData?.previewImage}
@@ -165,14 +194,8 @@
 						class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
 					></div>
 				{/if}
-			</div>
-			<!-- Sidebar/ comments + activities -->
-			<div class="flex flex-col w-full sm:max-w-96 h-full text-sm">
-				<div class="border h-full w-full overflow-auto">
-					<Activities {project} bind:activeActivityId />
-				</div>
-			</div>
-		</div>
+			</Resizable.Pane>
+		</Resizable.PaneGroup>
 	{:else}
 		<div class="flex flex-col items-center justify-center h-full">
 			<p class="text-gray-500">Loading...</p>

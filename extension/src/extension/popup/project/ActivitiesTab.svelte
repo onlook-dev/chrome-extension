@@ -179,6 +179,10 @@
 					/>
 				{/if}
 
+				{#if activity.beforeImage}
+					<p>Before image:</p>
+					<img src={activity.beforeImage} alt="Before" class="w-full rounded border" />
+				{/if}
 				{#if activity.previewImage}
 					<p>Preview image:</p>
 					<img src={activity.previewImage} alt="Preview" class="w-full rounded border" />
