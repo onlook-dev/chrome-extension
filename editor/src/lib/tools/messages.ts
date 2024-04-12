@@ -2,9 +2,7 @@ import { MessageTypes } from "$shared/constants";
 import type { EditEvent } from "$shared/models/editor";
 
 export function emitOpenProjectMessage() {
-  // window.postMessage({ type: MessageTypes.OPEN_PROJECT }, window.location.origin);
-  window.postMessage({ type: MessageTypes.PUBLISH_PROJECT }, window.location.origin);
-
+  window.postMessage({ type: MessageTypes.OPEN_PROJECT }, window.location.origin);
 };
 
 export function emitEditEvent(event: EditEvent) {

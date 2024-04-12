@@ -13,7 +13,6 @@ import {
 	sendEditEvent,
 	sendEditProjectRequest
 } from '$lib/utils/messaging'
-import type { Activity } from '$shared/models/activity'
 import type { EditEvent, } from '$shared/models/editor'
 import { baseUrl } from '$lib/utils/env'
 import { ScreenshotService } from './screenshot'
@@ -44,14 +43,6 @@ export function setupListeners() {
 		}
 
 		if (message.type === MessageTypes.OPEN_PROJECT) {
-			getActiveProject().then(project => {
-				sendSaveProject(project)
-				sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${project?.id}`)
-			})
-			return
-		}
-
-		if (message.type === MessageTypes.PUBLISH_PROJECT) {
 			getActiveProject().then((project) => {
 				const publishService = new PublishProjectService(project, screenshotService)
 				publishService.publish()
