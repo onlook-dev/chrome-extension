@@ -99,7 +99,7 @@ export function setupListeners() {
 	})
 
 	getScreenshotStream.subscribe(async ([activity]) => {
-		screenshotService.takeScreenshot(activity)
+		screenshotService.takeActivityScreenshot(activity)
 	})
 }
 

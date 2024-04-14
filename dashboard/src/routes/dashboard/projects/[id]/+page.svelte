@@ -33,6 +33,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Resizable from '$lib/components/ui/resizable';
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
+	import BeforeAfterView from './BeforeAfterView.svelte';
 
 	let project: Project | undefined;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -194,36 +195,16 @@
 						</div>
 					</div>
 					<div class="flex w-full h-full items-center justify-center">
-						{#if activeActivity && activeActivity.previewImage}
-							{#if activeActivity.beforeImage}
-								<div class="diff w-full h-full max-w-[80%] max-h-[80%]">
-									<div class="diff-item-1">
-										<img
-											class="object-scale-down"
-											src={activeActivity.previewImage}
-											alt="Before screenshot"
-										/>
-									</div>
-									<div class="diff-item-2">
-										<img
-											class="object-scale-down"
-											src={activeActivity.beforeImage}
-											alt="After screenshot"
-										/>
-									</div>
-									<div class="diff-resizer"></div>
-								</div>
-							{:else}
-								<img
-									src={activeActivity.previewImage}
-									alt="Preview screenshot"
-									class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] object-cover object-top aspect-video skeleton mx-auto my-auto"
-								/>
-							{/if}
+						{#if activeActivity}
+							<BeforeAfterView
+								beforeImage={activeActivity.beforeImage}
+								afterImage={activeActivity.previewImage}
+							/>
 						{:else}
-							<div
-								class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
-							></div>
+							<BeforeAfterView
+								beforeImage={project.hostData.beforeImage}
+								afterImage={project.hostData.previewImage}
+							/>
 						{/if}
 					</div>
 				</div>

@@ -35,9 +35,12 @@ export class PublishProjectService {
         // Take before screenshot
         let refresh = true;
         for (const activity of activities) {
-            await this.screenshotService.takeScreenshot(activity, true, refresh);
+            await this.screenshotService.takeActivityScreenshot(activity, true, refresh);
             refresh = false;
         }
+
+        const beforePageScreenshot = await this.screenshotService.takePageScreenshot(false);
+        this.project.hostData.beforeImage = beforePageScreenshot;
 
         // Apply activity
         for (const activity of activities) {
@@ -50,9 +53,10 @@ export class PublishProjectService {
         // Take after screenshot
         refresh = true;
         for (const activity of activities) {
-            await this.screenshotService.takeScreenshot(activity, false, refresh);
+            await this.screenshotService.takeActivityScreenshot(activity, false, refresh);
             refresh = false;
         }
+        this.project.hostData.previewImage = await this.screenshotService.takePageScreenshot(false);
 
         // Show UI
         showEditor()

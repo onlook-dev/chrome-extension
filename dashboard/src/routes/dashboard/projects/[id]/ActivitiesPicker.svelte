@@ -44,6 +44,11 @@
 						? 'border-stone-600 bg-surface'
 						: 'border-transparent bg-transparent'} transition rounded hover:border-stone-600 hover:bg-surface w-42 h-42"
 					on:click={() => {
+						if (activeActivityId === activity.id) {
+							activeActivityId = '';
+							console.log(project.hostData);
+							return;
+						}
 						activeActivityId = activity.id;
 					}}
 				>
