@@ -10,7 +10,7 @@
 		FirestoreCollections
 	} from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
-	import { timeSince, truncateString } from '$shared/helpers';
+	import { timeSince, truncateString, shortenSelector } from '$shared/helpers';
 	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
@@ -178,7 +178,7 @@
 						<div class="flex flex-col space-y-2 w-full">
 							<div class="flex flex-row space-x-4">
 								{#if activeActivity}
-									<h1>{activeActivity.selector}</h1>
+									<h1>{shortenSelector(activeActivity.selector)}</h1>
 									<p>
 										Edited {timeSince(
 											new Date(activeActivity.updatedAt ?? activeActivity.createdAt)

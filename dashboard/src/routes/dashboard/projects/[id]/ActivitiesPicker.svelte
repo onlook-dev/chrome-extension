@@ -5,6 +5,7 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import { shortenSelector } from '$shared/helpers';
 
 	export let project: Project;
 	export let activityCols: string;
@@ -56,7 +57,7 @@
 						/>
 					</Card.Header>
 					<Card.Content class="p-3 space-y-1">
-						<Card.Title class="font-normal">{activity.selector}</Card.Title>
+						<Card.Title class="font-normal">{shortenSelector(activity.selector)}</Card.Title>
 						<Card.Description>{new Array(activity.styleChanges).length} changes</Card.Description>
 					</Card.Content>
 				</Card.Root>

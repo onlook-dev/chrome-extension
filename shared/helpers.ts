@@ -89,3 +89,8 @@ export function formatAttrChanges(attrChanges: Record<string, ChangeValues>): st
     .map(({ key, newVal }) => `${key}: ${newVal};`)
     .join('\n')
 }
+
+export function shortenSelector(selector: string): string {
+  const parts = selector.split(" ");
+  return parts[parts.length - 1];
+}
