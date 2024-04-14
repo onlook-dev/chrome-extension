@@ -34,10 +34,7 @@
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
 		</div>
-		<div
-			class="transition text-white grid {'grid-cols-' +
-				activityCols} gap-8 overflow-auto cursor-pointer"
-		>
+		<div class="transition text-white grid {activityCols} gap-8 overflow-auto cursor-pointer">
 			{#each Object.values(project.activities) as activity}
 				<Card.Root
 					class="{activity.id === activeActivityId
@@ -46,7 +43,6 @@
 					on:click={() => {
 						if (activeActivityId === activity.id) {
 							activeActivityId = '';
-							console.log(project.hostData);
 							return;
 						}
 						activeActivityId = activity.id;

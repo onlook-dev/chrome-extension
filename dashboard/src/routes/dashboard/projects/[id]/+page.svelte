@@ -44,7 +44,7 @@
 	let activeActivityId: string = '';
 	let activeActivity: Activity | undefined;
 
-	let activityCols = 4;
+	let activityCols = 'grid-col-4';
 
 	$: if (project) {
 		activeActivity = Object.values(project.activities).find(
@@ -165,14 +165,14 @@
 				minSize={20}
 				defaultSize={60}
 				onResize={(size) => {
-					if (size > 43) {
-						activityCols = 4;
-					} else if (33 <= size && size < 43) {
-						activityCols = 3;
-					} else if (23 <= size && size < 33) {
-						activityCols = 2;
+					if (size < 23) {
+						activityCols = 'grid-cols-1';
+					} else if (size < 33) {
+						activityCols = 'grid-cols-2';
+					} else if (size < 43) {
+						activityCols = 'grid-cols-3';
 					} else {
-						activityCols = 1;
+						activityCols = 'grid-cols-4';
 					}
 				}}
 			>
