@@ -10,7 +10,7 @@
 		FirestoreCollections
 	} from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
-	import { truncateString } from '$shared/helpers';
+	import { timeSince, truncateString } from '$shared/helpers';
 	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
@@ -20,17 +20,10 @@
 	import type { Activity } from '$shared/models/activity';
 	import type { Project } from '$shared/models/project';
 
-	import Activities from './Activities.svelte';
-	import ShareModal from './ShareModal.svelte';
-	import Slack from '~icons/devicon/slack';
-	import Jira from '~icons/logos/jira';
-	import Linear from '~icons/logos/linear-icon';
-	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Resizable from '$lib/components/ui/resizable';
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
 	import BeforeAfterView from './BeforeAfterView.svelte';
@@ -182,10 +175,18 @@
 			<Resizable.Pane minSize={20}>
 				<div class="bg-surface flex flex-col w-full h-full">
 					<div class="flex flex-row p-6 text-white/60">
-						<div class="flex flex-col space-y-2">
+						<div class="flex flex-col space-y-2 w-full">
 							<div class="flex flex-row space-x-4">
-								<h1>Primary Card</h1>
-								<p>Edited x days ago</p>
+								{#if activeActivity}
+									<h1>{activeActivity.selector}</h1>
+									<p>
+										Edited {timeSince(
+											new Date(activeActivity.updatedAt ?? activeActivity.createdAt)
+										)} ago
+									</p>
+								{:else}
+									<h1>{project.name}</h1>
+								{/if}
 							</div>
 							<Input class="border-none" placeholder="Click to describe the changes..." />
 						</div>

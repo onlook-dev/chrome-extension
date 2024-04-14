@@ -46,7 +46,7 @@ export function getInitials(name: string) {
   return initials.toUpperCase();
 }
 
-export function timeSince(date: Date) {
+export function timeSince(date: Date): string {
   if (!(date instanceof Date) || isNaN(date.getTime())) {
     console.error("Invalid date provided");
     return "Invalid date";

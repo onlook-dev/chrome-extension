@@ -1,26 +1,23 @@
-import {
-	MessageTypes,
-	DashboardRoutes
-} from '$shared/constants'
+import { MessageTypes } from '$shared/constants'
 import { authUserBucket, getActiveProject, popupStateBucket, setActiveProject } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
 	activityRevertStream,
 	applyProjectChangesStream,
 	getScreenshotStream,
-	sendOpenUrlRequest,
 	sendSaveProject,
 	sendEditEvent,
 	sendEditProjectRequest
 } from '$lib/utils/messaging'
-import type { EditEvent, } from '$shared/models/editor'
 import { baseUrl } from '$lib/utils/env'
 import { ScreenshotService } from './screenshot'
-import type { Project } from '$shared/models/project'
 import { PopupRoutes } from '$lib/utils/constants'
 import { getCSSFramework } from '$lib/utils/styleFramework'
 import { PublishProjectService } from '$lib/publish'
 import { applyActivityChanges, revertActivityChanges } from '$lib/utils/activity'
+
+import type { EditEvent, } from '$shared/models/editor'
+import type { Project } from '$shared/models/project'
 
 const screenshotService = new ScreenshotService()
 

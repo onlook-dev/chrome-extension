@@ -7,7 +7,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
 	export let project: Project;
-	export let activityCols: number;
+	export let activityCols: string;
 	export let activeActivityId: string;
 </script>
 

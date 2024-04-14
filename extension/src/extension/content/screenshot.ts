@@ -1,5 +1,4 @@
 import type { Activity } from '$shared/models/activity'
-import { getProjectById, projectsMapBucket } from '$lib/utils/localstorage'
 import { pageScreenshotResponseStream, sendPageScreenshotRequest } from '$lib/utils/messaging'
 import { nanoid } from 'nanoid'
 
@@ -46,21 +45,6 @@ export class ScreenshotService {
 			activity.beforeImage = croppedImageUri
 		} else {
 			activity.previewImage = croppedImageUri
-		}
-
-		// TODO: THIS IS WRONG, PROJECT NOT BEING UPDATED, ONLY ACTIVITY IS
-		// Update project
-		const project = await getProjectById(activity.projectId)
-
-		// If refresh, save project screenshot as well
-		if (refresh) {
-			const hostData = project.hostData || {}
-			if (before) {
-				hostData.beforeImage = pageImageUri
-			} else {
-				hostData.previewImage = pageImageUri
-			}
-			project.hostData = hostData
 		}
 	}
 
