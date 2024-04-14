@@ -39,8 +39,8 @@ export class PublishProjectService {
             refresh = false;
         }
 
-        const beforePageScreenshot = await this.screenshotService.takePageScreenshot(false);
-        this.project.hostData.beforeImage = beforePageScreenshot;
+        // Update project before screenshot
+        this.project.hostData.beforeImage = await this.screenshotService.takePageScreenshot(false);
 
         // Apply activity
         for (const activity of activities) {
@@ -56,6 +56,8 @@ export class PublishProjectService {
             await this.screenshotService.takeActivityScreenshot(activity, false, refresh);
             refresh = false;
         }
+
+        // Update project after screenshot
         this.project.hostData.previewImage = await this.screenshotService.takePageScreenshot(false);
 
         // Show UI
