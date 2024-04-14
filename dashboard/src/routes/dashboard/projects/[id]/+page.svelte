@@ -16,6 +16,10 @@
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 	import { CounterClockwiseClock, GithubLogo, Pencil2, Sun } from 'svelte-radix';
 
+	import type { User } from '$shared/models/user';
+	import type { Activity } from '$shared/models/activity';
+	import type { Project } from '$shared/models/project';
+
 	import Activities from './Activities.svelte';
 	import ShareModal from './ShareModal.svelte';
 	import Slack from '~icons/devicon/slack';
@@ -23,16 +27,12 @@
 	import Linear from '~icons/logos/linear-icon';
 	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import Input from '$lib/components/ui/input/input.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Resizable from '$lib/components/ui/resizable';
 	import * as Card from '$lib/components/ui/card/index.js';
-
-	import type { Activity } from '$shared/models/activity';
-	import type { User } from '$shared/models/user';
-	import type { Project } from '$shared/models/project';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import Input from '$lib/components/ui/input/input.svelte';
 
 	let project: Project | undefined;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);

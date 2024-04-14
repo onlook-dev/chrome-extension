@@ -10,6 +10,7 @@ export interface Activity {
   projectId: string;
   eventData: EventMetadata[];
   visible: boolean;
+  beforeImage?: string;
   previewImage?: string;
 
   createdAt: string;

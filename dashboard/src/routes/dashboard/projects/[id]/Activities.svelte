@@ -95,7 +95,7 @@
 		<div
 			class="w-full p-4 flex flex-col pb-6 transition duration-200 ease-in-out {activeActivityId ==
 			activity.id
-				? 'bg-sky-100 shadow-lg'
+				? 'bg-red-200 shadow-lg'
 				: ''}
 					"
 			on:click={() => {
@@ -210,6 +210,11 @@
 						class="bg-gray-50 rounded p-4 border w-full text-start flex flex-col overflow-auto text-gray-800 text-sm"
 						value={formatAttrChanges(activity.attributeChanges)}
 					/>
+				{/if}
+
+				{#if activity.beforeImage}
+					<p>Before image:</p>
+					<img src={activity.beforeImage} alt="Before" class="w-full rounded border" />
 				{/if}
 
 				{#if activity.previewImage}
