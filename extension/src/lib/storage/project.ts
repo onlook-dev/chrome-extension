@@ -29,6 +29,22 @@ export class FirebaseProjectService extends FirebaseService<Project> {
 
             project.activities[activity.selector] = activity;
         }
+
+        // Save the project before and previewImage
+        if (project.hostData) {
+            const beforeImage = project.hostData.beforeImage;
+            if (beforeImage && isBase64ImageString(beforeImage)) {
+                const result = await storeImageUri({ dataUri: beforeImage });
+                project.hostData.beforeImage = result.data;
+            }
+
+            const previewImage = project.hostData.previewImage;
+            if (previewImage && isBase64ImageString(previewImage)) {
+                const result = await storeImageUri({ dataUri: previewImage });
+                project.hostData.previewImage = result.data;
+            }
+        }
+
         return super.post(project);
     }
 }

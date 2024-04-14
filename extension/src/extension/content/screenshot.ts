@@ -50,6 +50,17 @@ export class ScreenshotService {
 
 		// Update project
 		const project = await getProjectById(activity.projectId)
+
+		// If refresh, save project screenshot as well
+		if (refresh) {
+			if (before) {
+				project.hostData.beforeImage = croppedImageUri
+			} else {
+				project.hostData.previewImage = croppedImageUri
+			}
+		}
+
+		// Update project
 		project.activities[activity.selector] = activity
 		await projectsMapBucket.set({ [project.id]: project })
 	}

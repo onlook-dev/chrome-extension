@@ -15,7 +15,7 @@
 	<div class="pb-6 flex flex-col space-y-2">
 		<h1 class="text-xl">{project.name}</h1>
 		<h2 class="text-sm text-white/60">
-			This is a description of what is going on with these changes
+			{project.hostUrl}
 		</h2>
 	</div>
 	<Separator />
