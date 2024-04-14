@@ -32,7 +32,7 @@
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Resizable from '$lib/components/ui/resizable';
-	import * as Card from '$lib/components/ui/card/index.js';
+	import ActivitiesPicker from './ActivitiesPicker.svelte';
 
 	let project: Project | undefined;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -43,7 +43,7 @@
 	let activeActivityId: string = '';
 	let activeActivity: Activity | undefined;
 
-	let activityCols = '4';
+	let activityCols = 4;
 
 	$: if (project) {
 		activeActivity = Object.values(project.activities).find(
@@ -162,50 +162,21 @@
 		<Resizable.PaneGroup class="w-full" direction="horizontal">
 			<Resizable.Pane
 				minSize={20}
+				defaultSize={60}
 				onResize={(size) => {
 					if (size > 43) {
-						activityCols = '4';
-					} else if (33 < size && size < 43) {
-						activityCols = '3';
-					} else if (23 < size && size < 33) {
-						activityCols = '2';
+						activityCols = 4;
+					} else if (33 <= size && size < 43) {
+						activityCols = 3;
+					} else if (23 <= size && size < 33) {
+						activityCols = 2;
 					} else {
-						activityCols = '1';
+						activityCols = 1;
 					}
 				}}
 			>
-				<div class="bg-black flex flex-col w-full h-full">
-					<div class="p-6 flex flex-col space-y-2">
-						<h1 class="text-xl">{project.name}</h1>
-						<h2 class="text-sm text-white/60">
-							This is a description of what is going on with these changes
-						</h2>
-					</div>
-					<Separator />
-
-					<div class="p-6 text-white grid grid-cols-{activityCols} gap-8 overflow-auto">
-						{#each Object.values(project.activities) as activity}
-							<Card.Root
-								class="transition rounded border-transparent bg-transparent hover:border-border w-42 h-42"
-							>
-								<Card.Header class="p-2 pb-1">
-									<img
-										class="bg-stone-900 w-full rounded aspect-video skeleton mx-auto my-auto"
-										src={activity.previewImage}
-										alt="Activity preview"
-									/>
-								</Card.Header>
-								<Card.Content class="p-3 space-y-1">
-									<Card.Title class="font-normal">{activity.selector}</Card.Title>
-									<Card.Description
-										>{new Array(activity.styleChanges).length} changes</Card.Description
-									>
-								</Card.Content>
-							</Card.Root>
-						{/each}
-					</div>
-				</div></Resizable.Pane
-			>
+				<ActivitiesPicker {activityCols} {project} bind:activeActivityId />
+			</Resizable.Pane>
 			<Resizable.Handle class="hover:bg-surface-brand" />
 			<Resizable.Pane minSize={20}>
 				<div class="bg-surface flex flex-col w-full h-full">
@@ -223,22 +194,32 @@
 						</div>
 					</div>
 					<div class="flex w-full h-full items-center justify-center">
-						{#if (activeActivity && activeActivity.previewImage) || project.hostData?.previewImage}
-							<div class="diff rounded-sm aspect-[16/9] max-w-[80%] mx-auto my-auto">
-								<div class="diff-item-1">
-									<img
-										alt="daisy"
-										src={activeActivity?.previewImage || project.hostData?.previewImage}
-									/>
+						{#if activeActivity && activeActivity.previewImage}
+							{#if activeActivity.beforeImage}
+								<div class="diff w-full h-full max-w-[80%] max-h-[80%]">
+									<div class="diff-item-1">
+										<img
+											class="object-scale-down"
+											src={activeActivity.previewImage}
+											alt="Before screenshot"
+										/>
+									</div>
+									<div class="diff-item-2">
+										<img
+											class="object-scale-down"
+											src={activeActivity.beforeImage}
+											alt="After screenshot"
+										/>
+									</div>
+									<div class="diff-resizer"></div>
 								</div>
-								<div class="diff-item-2">
-									<img
-										alt="daisy"
-										src={activeActivity?.previewImage || project.hostData?.previewImage}
-									/>
-								</div>
-								<div class="diff-resizer"></div>
-							</div>
+							{:else}
+								<img
+									src={activeActivity.previewImage}
+									alt="Preview screenshot"
+									class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] object-cover object-top aspect-video skeleton mx-auto my-auto"
+								/>
+							{/if}
 						{:else}
 							<div
 								class="shadow w-[80%] h-auto max-w-[80%] max-h-[80%] aspect-video skeleton mx-auto my-auto"
