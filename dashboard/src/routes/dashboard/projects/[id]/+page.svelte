@@ -129,7 +129,6 @@
 				<Button variant="secondary" class="h-8" on:click={requestEditProject}
 					><Pencil2 class="mr-2 w-4 h-4" /> Edit</Button
 				>
-
 				<PublishToGithubModal {project} {user} />
 			</div>
 		</div>

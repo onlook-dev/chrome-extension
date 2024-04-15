@@ -24,7 +24,7 @@
 	let filteredRepositories: GithubRepo[] = [];
 	let filterTerm = '';
 	let selectedRepo: GithubRepo | undefined;
-	let saved = false;
+	let shouldSaveConfig = false;
 
 	onMount(async () => {
 		if (project?.githubSettings) {
@@ -78,8 +78,6 @@
 	}
 
 	async function updateProject(project: Project) {
-		saved = true;
-
 		// Prevent footgun of having a leading or trailing slash
 		if (project?.githubSettings?.rootPath) {
 			let pathValue = project?.githubSettings?.rootPath;
@@ -88,7 +86,6 @@
 			project.githubSettings.rootPath = pathValue;
 		}
 
-		saved = false;
 		await projectService.post(project);
 
 		projectsMapStore.update((projectsMap) => {
@@ -96,6 +93,7 @@
 			return projectsMap;
 		});
 		project = { ...project };
+		shouldSaveConfig = false;
 	}
 </script>
 
@@ -103,7 +101,7 @@
 	{#if selectedRepo}
 		<div class="border rounded-lg flex flex-col justify-between p-4 space-y-4 mt-6">
 			<div class="flex flex-row align-middle">
-				<GitHub class="h-9 w-9 mr-2" />
+				<GitHub class="h-8 w-8 mr-2" />
 				<div>
 					<p class="text-sm">{selectedRepo.name}</p>
 					<p class="text-xs text-white/60">{selectedRepo.owner}</p>
@@ -132,7 +130,7 @@
 						if (!project?.githubSettings) return;
 						// @ts-ignore - This value exists
 						project.githubSettings.baseBranch = e.target.value;
-						saved = false;
+						shouldSaveConfig = true;
 					}}
 				/>
 			</div>
@@ -159,13 +157,15 @@
 						if (!project?.githubSettings) return;
 						// @ts-ignore - This value exists
 						project.githubSettings.rootPath = e.target.value;
-						saved = false;
+						shouldSaveConfig = true;
 					}}
 				/>
 			</div>
 			<div class="ml-auto mt-4 space-x-2">
-				<Button variant="outline" disabled={saved} on:click={() => updateProject(project)} class=""
-					>{saved ? 'Saved!' : 'Save'}</Button
+				<Button
+					variant={shouldSaveConfig ? 'default' : 'outline'}
+					disabled={!shouldSaveConfig}
+					on:click={() => updateProject(project)}>Save</Button
 				>
 				<Button variant="destructive" on:click={() => disconnectRepoFromProject()} class=""
 					>Disconnect</Button

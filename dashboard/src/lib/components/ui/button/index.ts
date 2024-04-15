@@ -11,8 +11,8 @@ const buttonVariants = tv({
 				"bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
 			outline:
 				"border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-			primary: "bg-surface-brand text-white hover:opacity-90",
-			secondary: "bg-surface-brand-secondary text-brand hover:opacity-90",
+			primary: "bg-surface-brand text-white hover:bg-red-500",
+			secondary: "bg-surface-brand-secondary text-brand hover:bg-red-900/40 hover:text-red-500",
 			ghost: "hover:bg-accent hover:text-accent-foreground",
 			link: "text-primary underline-offset-4 hover:underline",
 		},
