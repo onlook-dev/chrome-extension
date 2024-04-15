@@ -16,11 +16,11 @@
 		<div class="diff-resizer"></div>
 	</div>
 {:else if beforeImage}
-	<div class=" w-full h-full max-w-[80%] max-h-[80%]">
+	<div class="w-full h-full max-w-[80%] max-h-[80%]">
 		<img class="object-scale-down" src={beforeImage} alt="After screenshot" />
 	</div>
 {:else if afterImage}
-	<div class=" w-full h-full max-w-[80%] max-h-[80%]">
+	<div class="w-full h-full max-w-[80%] max-h-[80%]">
 		<img class="object-scale-down" src={afterImage} alt="After screenshot" />
 	</div>
 {:else}
