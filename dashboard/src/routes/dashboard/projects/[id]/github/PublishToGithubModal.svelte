@@ -12,12 +12,9 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 
 	import type { Project } from '$shared/models/project';
 	import type { User } from '$shared/models/user';
-	import { Content } from '$lib/components/ui/dropdown-menu';
 
 	export let project: Project;
 	export let user: User;
@@ -40,9 +37,6 @@
 		if (!project.githubSettings) {
 			selectedTab = Tab.CONFIGURE;
 		}
-
-		// TEST
-		showModal();
 	});
 
 	function showModal() {
@@ -87,17 +81,6 @@
 						</Tabs.List>
 						<Tabs.Content value={Tab.CONFIGURE}>
 							<ConfigureTab {project} />
-							<div class="collapse collapse-arrow border rounded-md mt-6">
-								<input type="checkbox" />
-								<div class="collapse-title">How to setup your repository</div>
-								<div class="collapse-content">
-									<a
-										href="https://onlook.dev/blog/installing-onlook"
-										class="underline hover:opacity-80"
-										target="_blank">Read the docs to learn more</a
-									>
-								</div>
-							</div>
 						</Tabs.Content>
 						<Tabs.Content value={Tab.PUBLISH}>
 							<PublishTab {project} {user} />

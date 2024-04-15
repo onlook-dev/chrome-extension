@@ -11,7 +11,7 @@
 {#if githubHistories.length > 0}
 	<Collapsible.Root class="border rounded w-full p-2 text-sm">
 		<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
-			>Publish history ({githubHistories.length})
+			>GitHub History ({githubHistories.length} pull requests)
 		</Collapsible.Trigger>
 		<Collapsible.Content class="mt-4">
 			{#each githubHistories as history}

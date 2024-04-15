@@ -56,7 +56,6 @@
 	let isTranslating = false;
 	let translationProgress = 0;
 	let translationTotal = 0;
-	let configOpen = false;
 	let forceTailwind = false;
 
 	$: if (project?.installationId) {
@@ -200,7 +199,7 @@
 				bind:value={title}
 				type="text"
 				placeholder={titlePlaceholder}
-				class="border w-full text-sm p-2"
+				class="w-full text-sm"
 				maxlength={MAX_TITLE_LENGTH}
 			/>
 
@@ -227,7 +226,7 @@
 						</div>
 					{/if}
 					<Button
-						class="rounded "
+						variant="primary"
 						disabled={!hasActivities || isLoading || isTranslating}
 						on:click={handlePublishClick}
 					>
