@@ -14,7 +14,7 @@
 	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
-	import { CounterClockwiseClock, GithubLogo, Pencil2, Sun } from 'svelte-radix';
+	import { GithubLogo, Pencil2 } from 'svelte-radix';
 
 	import type { User } from '$shared/models/user';
 	import type { Activity } from '$shared/models/activity';
@@ -22,11 +22,10 @@
 
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import Input from '$lib/components/ui/input/input.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import * as Resizable from '$lib/components/ui/resizable';
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
-	import BeforeAfterView from './BeforeAfterView.svelte';
+	import ImageDetailView from './ImageDetailView.svelte';
 
 	let project: Project | undefined;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -173,42 +172,7 @@
 			</Resizable.Pane>
 			<Resizable.Handle class="hover:bg-surface-brand" />
 			<Resizable.Pane minSize={20}>
-				<div class="bg-surface flex flex-col w-full h-full">
-					<div class="flex flex-row p-6 text-white/60">
-						<div class="flex flex-col space-y-2 w-full">
-							<div class="flex flex-row space-x-4">
-								{#if activeActivity}
-									<h1>{shortenSelector(activeActivity.selector)}</h1>
-									<p>
-										Edited {timeSince(
-											new Date(activeActivity.updatedAt ?? activeActivity.createdAt)
-										)} ago
-									</p>
-								{:else}
-									<h1>{project.name}</h1>
-								{/if}
-							</div>
-							<Input class="border-none" placeholder="Click to describe the changes..." />
-						</div>
-						<div class="ml-auto flex flex-row space-x-4 items-start">
-							<button><CounterClockwiseClock class="w-4" /></button>
-							<button><Sun class="w-4" /></button>
-						</div>
-					</div>
-					<div class="flex w-full h-full items-center justify-center">
-						{#if activeActivity}
-							<BeforeAfterView
-								beforeImage={activeActivity.beforeImage}
-								afterImage={activeActivity.previewImage}
-							/>
-						{:else}
-							<BeforeAfterView
-								beforeImage={project.hostData.beforeImage}
-								afterImage={project.hostData.previewImage}
-							/>
-						{/if}
-					</div>
-				</div>
+				<ImageDetailView {activeActivity} {project} />
 			</Resizable.Pane>
 			<!-- <Resizable.Handle />
 			<Resizable.Pane>
