@@ -11,9 +11,14 @@
 	import PublishTab from './PublishTab.svelte';
 	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+	import { Input } from '$lib/components/ui/input/index.js';
+	import { Label } from '$lib/components/ui/label/index.js';
 
 	import type { Project } from '$shared/models/project';
 	import type { User } from '$shared/models/user';
+	import { Content } from '$lib/components/ui/dropdown-menu';
 
 	export let project: Project;
 	export let user: User;
@@ -36,6 +41,9 @@
 		if (!project.githubSettings) {
 			selectedTab = Tab.CONFIGURE;
 		}
+
+		// TEST
+		showModal();
 	});
 
 	function showModal() {
@@ -67,56 +75,42 @@
 		><GithubLogo class="mr-2 w-4 h-4" /> Publish to GitHub</Button
 	>
 	<dialog id={modalId} class="modal">
-		<div class="bg-surface text-primary modal-box card w-full h-[80%] flex flex-col p-6">
-			<h2 class="text-xl font-semibold mb-3">Send to Github</h2>
-
-			{#if project?.installationId}
-				<div role="tablist" class="tabs tabs-bordered">
-					<input
-						type="radio"
-						name="my_tabs_1"
-						role="tab"
-						class="tab"
-						value={Tab.PUBLISH}
-						aria-label={Tab.PUBLISH}
-						bind:group={selectedTab}
-						disabled={!project?.githubSettings}
-					/>
-					<div role="tabpanel" class="tab-content py-4 overflow-auto">
-						<PublishTab {project} {user} />
-					</div>
-
-					<input
-						type="radio"
-						name="my_tabs_1"
-						role="tab"
-						class="tab"
-						value={Tab.CONFIGURE}
-						aria-label={Tab.CONFIGURE}
-						bind:group={selectedTab}
-					/>
-					<div role="tabpanel" class="tab-content py-4">
-						<ConfigureTab {project} />
-						<div class="collapse collapse-arrow border rounded-md mt-6">
-							<input type="checkbox" />
-							<div class="collapse-title">How to setup your repository</div>
-							<div class="collapse-content">
-								<ConfigureProjectInstructions />
+		<Card.Root class="text-primary modal-box w-full h-[80%] flex flex-col">
+			<Card.Header><h1 class="text-xl font-light">Publish to Github</h1></Card.Header>
+			<Card.Content>
+				{#if project?.installationId}
+					<Tabs.Root value={selectedTab} class="w-full">
+						<Tabs.List class="grid w-full grid-cols-2">
+							<Tabs.Trigger value={Tab.PUBLISH}>Account</Tabs.Trigger>
+							<Tabs.Trigger value={Tab.CONFIGURE}>Password</Tabs.Trigger>
+						</Tabs.List>
+						<Tabs.Content value={Tab.CONFIGURE}>
+							<ConfigureTab {project} />
+							<div class="collapse collapse-arrow border rounded-md mt-6">
+								<input type="checkbox" />
+								<div class="collapse-title">How to setup your repository</div>
+								<div class="collapse-content">
+									<ConfigureProjectInstructions />
+								</div>
 							</div>
-						</div>
+						</Tabs.Content>
+						<Tabs.Content value={Tab.PUBLISH}>
+							<PublishTab {project} {user} />
+						</Tabs.Content>
+					</Tabs.Root>
+				{:else}
+					<div class="flex flex-col items-center justify-center h-full mt-4">
+						<button
+							class="btn btn-primary"
+							on:click={() => {
+								window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
+							}}><GitHub class="h-5 w-5" />Connect project to Github</button
+						>
 					</div>
-				</div>
-			{:else}
-				<div class="flex flex-col items-center justify-center h-full mt-4">
-					<button
-						class="btn btn-primary"
-						on:click={() => {
-							window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
-						}}><GitHub class="h-5 w-5" />Connect project to Github</button
-					>
-				</div>
-			{/if}
-		</div>
+				{/if}
+			</Card.Content>
+		</Card.Root>
+
 		<form method="dialog" class="modal-backdrop">
 			<button>close</button>
 		</form>

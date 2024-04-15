@@ -16,6 +16,8 @@
 	import { baseUrl } from '$lib/utils/env';
 	import { toast } from '@zerodevx/svelte-toast';
 	import { FirebaseService } from '$lib/storage';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
 
 	import type { Project } from '$shared/models/project';
 	import type { GithubHistory } from '$shared/models/github';
@@ -250,8 +252,8 @@
 			<div class="collapse-title">Optional Configuration</div>
 			<div class="collapse-content space-y-2">
 				<div class="flex flex-row">
-					<p>Force Tailwind</p>
-					<input type="checkbox" class="toggle ml-auto" bind:checked={forceTailwind} />
+					<Label for="force-tailwind">Force TailwindCSS</Label>
+					<Switch id="force-tailwind" class="toggle ml-auto" bind:checked={forceTailwind} />
 				</div>
 			</div>
 		</div>
