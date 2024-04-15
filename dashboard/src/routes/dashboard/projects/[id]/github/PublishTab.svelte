@@ -18,6 +18,7 @@
 	import { FirebaseService } from '$lib/storage';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { Textarea } from '$lib/components/ui/textarea';
 
 	import type { Project } from '$shared/models/project';
 	import type { GithubHistory } from '$shared/models/github';
@@ -25,6 +26,9 @@
 
 	import GitHub from '~icons/mdi/github';
 	import HistoriesView from './HistoriesView.svelte';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Collapsible from '$lib/components/ui/collapsible';
 
 	export let project: Project;
 	export let user: User;
@@ -185,34 +189,35 @@
 	}
 </script>
 
-<div class="flex flex-col items-center justify-center h-full mt-4">
+<div class="flex flex-col items-center justify-center h-full mt-4 space-y-4">
 	{#if githubConfigured && hasActivities && hasFilePaths}
-		<label class="form-control w-full p-2">
-			<div class="label">
-				<span class="label-text">Title</span>
-			</div>
-			<input
+		<label class="form-control w-full p-2 space-y-4">
+			<Label for="form-title">Title</Label>
+
+			<Input
+				id="form-title"
 				disabled={!hasActivities || isLoading}
 				bind:value={title}
 				type="text"
 				placeholder={titlePlaceholder}
-				class="input input-bordered w-full text-sm"
+				class="border w-full text-sm p-2"
 				maxlength={MAX_TITLE_LENGTH}
 			/>
-			<div class="label">
-				<span class="label-text">Description</span>
-			</div>
-			<textarea
+
+			<Label for="form-description">Description</Label>
+
+			<Textarea
+				id="form-tidescriptiontle"
 				disabled={!hasActivities || isLoading}
 				bind:value={description}
-				class="textarea textarea-bordered h-24"
+				class="h-24"
 				placeholder={descriptionPlaceholder}
 				maxlength={MAX_DESCRIPTION_LENGTH}
-			></textarea>
+			></Textarea>
 			<div class="mt-6 flex items-center justify-end">
 				{#if !publishError}
 					{#if isTranslating}
-						<div class="flex flex-col mr-8 flex-grow space-y-2">
+						<div class="flex flex-col mr-8 flex-grow space-y-2 text-sm">
 							<progress
 								class="progress progress-success w-2/3"
 								value={translationProgress}
@@ -221,18 +226,18 @@
 							<p>{translationProgress}/{translationTotal} changes translated</p>
 						</div>
 					{/if}
-					<button
-						class="btn btn-primary"
+					<Button
+						class="rounded "
 						disabled={!hasActivities || isLoading || isTranslating}
 						on:click={handlePublishClick}
 					>
 						{#if isLoading}
-							<div class="loading"></div>
+							<div class="loading mr-2"></div>
 							Publishing
 						{:else}
-							<GitHub class="w-5 h-5" /> Publish
+							<GitHub class="w-5 h-5 mr-2" /> Publish
 						{/if}
-					</button>
+					</Button>
 				{/if}
 			</div>
 			{#if publishErrorMessage}
@@ -242,20 +247,17 @@
 
 		<HistoriesView {githubHistories} {restoreActivities} />
 
-		<div
-			class="collapse collapse-arrow border rounded-md mt-6 {configOpen
-				? 'collapse-open'
-				: 'collapse-close'}"
-		>
-			<input type="checkbox" on:click={() => (configOpen = !configOpen)} />
-			<div class="collapse-title">Optional Configuration</div>
-			<div class="collapse-content space-y-2">
+		<Collapsible.Root class="border rounded w-full p-2 text-sm">
+			<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
+				>Optional Configurations</Collapsible.Trigger
+			>
+			<Collapsible.Content class="mt-4">
 				<div class="flex flex-row">
 					<Label for="force-tailwind">Force TailwindCSS</Label>
 					<Switch id="force-tailwind" class="toggle ml-auto" bind:checked={forceTailwind} />
 				</div>
-			</div>
-		</div>
+			</Collapsible.Content>
+		</Collapsible.Root>
 	{:else if !githubConfigured}
 		<p class="text-center text-lg">No github config found</p>
 	{:else if hasActivities && !hasFilePaths}
