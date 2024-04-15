@@ -10,11 +10,11 @@
 		FirestoreCollections
 	} from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
-	import { timeSince, truncateString, shortenSelector } from '$shared/helpers';
+	import { truncateString } from '$shared/helpers';
 	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
-	import { GithubLogo, Pencil2 } from 'svelte-radix';
+	import { Pencil2 } from 'svelte-radix';
 
 	import type { User } from '$shared/models/user';
 	import type { Activity } from '$shared/models/activity';
@@ -27,6 +27,8 @@
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
 	import ImageDetailView from './ImageDetailView.svelte';
 	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
+	import Activities from './Activities.svelte';
+	import ActivityDetail from './ActivityDetail.svelte';
 
 	let project: Project | undefined;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -156,14 +158,14 @@
 			<Resizable.Pane minSize={20}>
 				<ImageDetailView {activeActivity} {project} />
 			</Resizable.Pane>
-			<!-- <Resizable.Handle />
-			<Resizable.Pane>
-				<div class="flex flex-col w-full h-full text-sm">
-					<div class="border h-full w-full overflow-auto">
-						<Activities {project} bind:activeActivityId />
+			{#if activeActivity}
+				<Resizable.Handle class="hover:bg-surface-brand" />
+				<Resizable.Pane>
+					<div class="flex flex-col w-full h-full text-sm overflow-auto">
+						<ActivityDetail {project} activity={activeActivity} />
 					</div>
-				</div>
-			</Resizable.Pane> -->
+				</Resizable.Pane>
+			{/if}
 		</Resizable.PaneGroup>
 	{:else}
 		<div class="flex flex-col items-center justify-center h-full">

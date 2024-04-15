@@ -45,7 +45,7 @@
 				<Card.Root
 					class="{activity.id === activeActivityId
 						? 'border-stone-600 bg-surface'
-						: 'border-transparent bg-transparent'} transition rounded hover:border-stone-600 hover:bg-surface w-42 h-42"
+						: 'border-transparent bg-transparent'} transition rounded  hover:bg-surface w-42 h-42"
 					on:click={() => {
 						if (activeActivityId === activity.id) {
 							activeActivityId = '';
