@@ -24,7 +24,6 @@
 	import type { User } from '$shared/models/user';
 
 	import GitHub from '~icons/mdi/github';
-	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
 	import HistoriesView from './HistoriesView.svelte';
 
 	export let project: Project;
@@ -261,8 +260,11 @@
 		<p class="text-center text-lg">No github config found</p>
 	{:else if hasActivities && !hasFilePaths}
 		<p class="text-center text-lg">Edited website not configured with Onlook</p>
-		<p class="text-center text-lg">Instructions for configuring website with Onlook below</p>
-		<ConfigureProjectInstructions />
+		<a
+			href="https://onlook.dev/blog/installing-onlook"
+			target="_blank"
+			class="underline hover:opacity-80">Read the docs to learn more</a
+		>
 	{:else}
 		<p class="text-center text-lg">Nothing to publish</p>
 		<p class="text-center text-lg">Use the extension to make some edits!</p>

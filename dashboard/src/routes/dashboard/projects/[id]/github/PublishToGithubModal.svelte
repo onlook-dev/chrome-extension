@@ -9,7 +9,6 @@
 	import GitHub from '~icons/mdi/github';
 	import ConfigureTab from './ConfigureTab.svelte';
 	import PublishTab from './PublishTab.svelte';
-	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -81,8 +80,10 @@
 				{#if project?.installationId}
 					<Tabs.Root value={selectedTab} class="w-full">
 						<Tabs.List class="grid w-full grid-cols-2">
-							<Tabs.Trigger value={Tab.PUBLISH}>Account</Tabs.Trigger>
-							<Tabs.Trigger value={Tab.CONFIGURE}>Password</Tabs.Trigger>
+							<Tabs.Trigger value={Tab.PUBLISH} disabled={!project?.githubSettings}
+								>Publish</Tabs.Trigger
+							>
+							<Tabs.Trigger value={Tab.CONFIGURE}>Configure</Tabs.Trigger>
 						</Tabs.List>
 						<Tabs.Content value={Tab.CONFIGURE}>
 							<ConfigureTab {project} />
@@ -90,7 +91,11 @@
 								<input type="checkbox" />
 								<div class="collapse-title">How to setup your repository</div>
 								<div class="collapse-content">
-									<ConfigureProjectInstructions />
+									<a
+										href="https://onlook.dev/blog/installing-onlook"
+										class="underline hover:opacity-80"
+										target="_blank">Read the docs to learn more</a
+									>
 								</div>
 							</div>
 						</Tabs.Content>
@@ -99,9 +104,9 @@
 						</Tabs.Content>
 					</Tabs.Root>
 				{:else}
-					<div class="flex flex-col items-center justify-center h-full mt-4">
+					<div class="flex flex-col items-center justify-center h-[20rem] mt-4">
 						<button
-							class="btn btn-primary"
+							class="btn"
 							on:click={() => {
 								window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
 							}}><GitHub class="h-5 w-5" />Connect project to Github</button
