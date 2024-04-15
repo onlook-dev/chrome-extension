@@ -10,6 +10,11 @@
 	export let project: Project;
 	export let activityCols: string;
 	export let activeActivityId: string;
+
+	let imageErrors: string[] = [];
+	function handleImageError(imageUrl: string) {
+		imageErrors = [...imageErrors, imageUrl];
+	}
 </script>
 
 <div class="bg-black p-6 flex flex-col w-full h-full space-y-6">
@@ -28,7 +33,7 @@
 						>All activities <TriangleDown class="h-4 w-4 ml-2" /></Button
 					>
 				</DropdownMenu.Trigger>
-				<DropdownMenu.Content class="dark">
+				<DropdownMenu.Content class="dark text-sm text-tertiary">
 					<DropdownMenu.Item>
 						<span>(Coming soon)</span>
 					</DropdownMenu.Item>
@@ -50,11 +55,25 @@
 					}}
 				>
 					<Card.Header class="p-3 pb-1">
-						<img
-							class="bg-black w-full rounded aspect-video mx-auto my-auto object-scale-down object-center"
-							src={activity.previewImage}
-							alt="Activity preview"
-						/>
+						{#if !activity.previewImage || imageErrors.includes(activity.previewImage)}
+							<div
+								class="bg-stone-800 w-full rounded aspect-video mx-auto my-auto object-scale-down object-center"
+							></div>
+						{:else}
+							<img
+								class="bg-black w-full rounded aspect-video mx-auto my-auto object-scale-down object-center"
+								src={activity.previewImage}
+								alt="Activity preview"
+								on:load={() => {
+									imageErrors = imageErrors.filter((error) => error !== activity.previewImage);
+								}}
+								on:error={() => {
+									if (!activity.previewImage) return;
+									if (imageErrors.includes(activity.previewImage)) return;
+									handleImageError(activity.previewImage);
+								}}
+							/>
+						{/if}
 					</Card.Header>
 					<Card.Content class="p-3 space-y-1">
 						<Card.Title class="font-normal">{shortenSelector(activity.selector)}</Card.Title>

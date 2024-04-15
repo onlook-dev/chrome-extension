@@ -26,6 +26,7 @@
 	import * as Resizable from '$lib/components/ui/resizable';
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
 	import ImageDetailView from './ImageDetailView.svelte';
+	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
 
 	let project: Project | undefined;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -128,26 +129,8 @@
 				<Button variant="secondary" class="h-8" on:click={requestEditProject}
 					><Pencil2 class="mr-2 w-4 h-4" /> Edit</Button
 				>
-				<Button variant="primary" class="h-8" on:click={requestEditProject}
-					><GithubLogo class="mr-2 w-4 h-4" /> Publish to GitHub</Button
-				>
-				<!-- <div class="dropdown dropdown-end">
-					<button class="btn btn-primary">Share and Publish</button>
-					<ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-						<li tabindex="-1"><PublishToGithubModal {project} {user} /></li>
-						<li><ShareModal teamId={project.teamId} /></li>
-						<div class="divider">Coming soon</div>
-						<li class="opacity-60">
-							<button disabled><Linear /> Open Linear ticket</button>
-						</li>
-						<li class="opacity-60">
-							<button disabled><Jira /> Open Jira ticket</button>
-						</li>
-						<li class="opacity-60">
-							<button disabled><Slack /> Create Slack thread</button>
-						</li>
-					</ul>
-				</div> -->
+
+				<PublishToGithubModal {project} {user} />
 			</div>
 		</div>
 		<!-- Main content -->

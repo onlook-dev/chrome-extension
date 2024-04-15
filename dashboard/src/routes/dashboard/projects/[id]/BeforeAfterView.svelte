@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { EyeNone } from 'svelte-radix';
+
 	export let beforeImage: string | undefined;
 	export let afterImage: string | undefined;
 </script>
@@ -22,5 +24,8 @@
 		<img class="object-scale-down" src={afterImage} alt="After screenshot" />
 	</div>
 {:else}
-	<img class="skeleton" alt="Empty state" />
+	<div class="flex flex-row items-center">
+		<EyeNone class="mr-2" />
+		<p>No images to compare</p>
+	</div>
 {/if}

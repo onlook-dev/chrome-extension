@@ -2,15 +2,18 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import type { Project } from '$shared/models/project';
-	import type { User } from '$shared/models/user';
 	import { DashboardRoutes } from '$shared/constants';
+	import { githubConfig } from '$lib/utils/env';
+	import { GithubLogo } from 'svelte-radix';
 
 	import GitHub from '~icons/mdi/github';
 	import ConfigureTab from './ConfigureTab.svelte';
 	import PublishTab from './PublishTab.svelte';
-	import { githubConfig } from '$lib/utils/env';
 	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+
+	import type { Project } from '$shared/models/project';
+	import type { User } from '$shared/models/user';
 
 	export let project: Project;
 	export let user: User;
@@ -60,11 +63,11 @@
 </script>
 
 <div>
-	<button class="flex flex-row justify-center" on:click={showModal}>
-		<GitHub class="mr-2" /> Pull Request
-	</button>
+	<Button on:click={showModal} variant="primary" class="h-8"
+		><GithubLogo class="mr-2 w-4 h-4" /> Publish to GitHub</Button
+	>
 	<dialog id={modalId} class="modal">
-		<div class="modal-box card w-full h-[80%] flex flex-col p-6">
+		<div class="bg-surface text-primary modal-box card w-full h-[80%] flex flex-col p-6">
 			<h2 class="text-xl font-semibold mb-3">Send to Github</h2>
 
 			{#if project?.installationId}
