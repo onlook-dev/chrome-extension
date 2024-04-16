@@ -3,19 +3,25 @@
 	import { TriangleDown } from 'svelte-radix';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { shortenSelector, sortActivities } from '$shared/helpers';
+	import { writable } from 'svelte/store';
 
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
 	import type { Project } from '$shared/models/project';
+	import { FirebaseService } from '$lib/storage';
+	import { projectsMapStore } from '$lib/utils/store';
 
+	export let projectService: FirebaseService<Project>;
 	export let project: Project;
 	export let activeActivityId: string;
 
 	let resizeObserver: ResizeObserver;
 	let activityCols = 'grid-cols-4';
 	let container: HTMLDivElement;
+	let imageErrors: string[] = [];
+	let editable = writable(false);
 
 	onMount(() => {
 		resizeObserver = new ResizeObserver((entries) => {
@@ -34,15 +40,28 @@
 		resizeObserver.observe(container);
 	});
 
-	let imageErrors: string[] = [];
+	function handleBlur(event: any) {
+		let updatedText = event?.currentTarget?.textContent || project.name;
+		if (updatedText === project.name) return;
+
+		project.name = updatedText;
+		projectsMapStore.update((projectsMap) => {
+			projectsMap.set(project.id, project);
+			return projectsMap;
+		});
+		projectService.post(project);
+	}
+
 	function handleImageError(imageUrl: string) {
 		imageErrors = [...imageErrors, imageUrl];
 	}
 </script>
 
-<div bind:this={container} class="bg-black flex flex-col w-full h-full space-y-6">
+<div class="bg-black flex flex-col w-full h-full space-y-6">
 	<div class="p-6 flex flex-col space-y-2">
-		<h1 class="text-xl">{project.name}</h1>
+		<h1 class="text-xl focus:ring-0 focus:outline-none" contenteditable={true} on:blur={handleBlur}>
+			{project.name}
+		</h1>
 		<h2 class="text-sm text-white/60">
 			{project.hostUrl}
 		</h2>
@@ -63,6 +82,7 @@
 		</DropdownMenu.Root>
 	</div>
 	<div
+		bind:this={container}
 		class="grid {activityCols} p-6 pt-0 transition text-white gap-8 overflow-auto cursor-pointer"
 	>
 		{#each sortActivities(project.activities) as activity}

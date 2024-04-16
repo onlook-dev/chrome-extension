@@ -134,7 +134,7 @@
 		<Separator />
 		<Resizable.PaneGroup class="w-full" direction="horizontal">
 			<Resizable.Pane minSize={20} defaultSize={60}>
-				<ActivitiesPicker {project} bind:activeActivityId />
+				<ActivitiesPicker {projectService} {project} bind:activeActivityId />
 			</Resizable.Pane>
 			<Resizable.Handle class="hover:bg-surface-brand" />
 			<Resizable.Pane minSize={20}>
