@@ -105,6 +105,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Onlook - {project?.name || 'Project'}</title>
+</svelte:head>
+
 <div class="flex h-screen w-screen flex-col bg-black text-white">
 	{#if project && user}
 		<!-- Header -->
