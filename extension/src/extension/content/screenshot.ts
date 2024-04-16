@@ -1,5 +1,4 @@
 import type { Activity } from '$shared/models/activity'
-import { getProjectById, projectsMapBucket } from '$lib/utils/localstorage'
 import { pageScreenshotResponseStream, sendPageScreenshotRequest } from '$lib/utils/messaging'
 import { nanoid } from 'nanoid'
 
@@ -14,7 +13,7 @@ export class ScreenshotService {
 	pageScreenshot: string | undefined
 	isProcessing: boolean = false;
 
-	async takeScreenshot(activity: Activity, before: boolean = false, refresh: boolean = false) {
+	async takeActivityScreenshot(activity: Activity, before: boolean = false, refresh: boolean = false) {
 		this.screenshotQueue.push({ activity, before, refresh });
 		if (!this.isProcessing) {
 			this.isProcessing = true;
@@ -26,13 +25,13 @@ export class ScreenshotService {
 	private async processScreenshotQueue() {
 		while (this.screenshotQueue.length > 0) {
 			// Process item in queue 1 by 1
-			await this.takeActivityScreenshot(this.screenshotQueue[0])
+			await this.processTakeActivityScreenshot(this.screenshotQueue[0])
 			// Remove the processed item from the queue
 			this.screenshotQueue.shift()
 		}
 	}
 
-	private async takeActivityScreenshot(queueItem: QueueItem) {
+	private async processTakeActivityScreenshot(queueItem: QueueItem) {
 		const { activity, before, refresh } = queueItem
 		// Get element
 		const element = document.querySelector(activity.selector) as HTMLElement
@@ -47,11 +46,6 @@ export class ScreenshotService {
 		} else {
 			activity.previewImage = croppedImageUri
 		}
-
-		// Update project
-		const project = await getProjectById(activity.projectId)
-		project.activities[activity.selector] = activity
-		await projectsMapBucket.set({ [project.id]: project })
 	}
 
 	getVisibleRect(rect: Object, padding: number = 0): DOMRect {
@@ -124,7 +118,7 @@ export class ScreenshotService {
 
 	}
 
-	private takePageScreenshot(refresh: boolean): Promise<string> {
+	takePageScreenshot(refresh: boolean): Promise<string> {
 		return new Promise((resolve, reject) => {
 			// TODO: If hiding editor, should setTimeout 50ms to ensure editor is hidden
 			let signature = nanoid()

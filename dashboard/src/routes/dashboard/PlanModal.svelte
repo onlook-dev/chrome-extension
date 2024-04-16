@@ -94,7 +94,7 @@
 
 <button
 	on:click={showModal}
-	class="bg-green-200 text-green-600 hover:outline text-xs font-semibold py-1 px-2 rounded opacity-80 {plan ===
+	class="bg-green-100 text-green-700 hover:outline text-xs font-semibold py-1 px-2 rounded opacity-80 {plan ===
 	Tier.FREE
 		? 'bg-blue-100 text-blue-700'
 		: 'bg-red-100 text-red-700'}"
@@ -103,12 +103,12 @@
 </button>
 
 <dialog id={modalId} class="modal fixed inset-0 flex items-center justify-center">
-	<div class="modal-container bg-white rounded-md shadow-lg p-6 w-[80%] max-w-2xl mx-auto">
+	<div class=" modal-container bg-black rounded-md shadow-lg p-6 w-[80%] max-w-2xl mx-auto">
 		<h2 class="text-2xl font-bold text-center">Choose Your Plan</h2>
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-			<div class="border border-gray-200 rounded-lg p-6">
+			<div class="border border-gray-700 rounded-lg p-6">
 				<h3 class="text-xl font-bold text-center">{Tier.FREE}</h3>
-				<p class="text-center text-gray-500">Basic features for free</p>
+				<p class="text-center text-gray-300">Basic features for free</p>
 				<div class="grid gap-4 mt-4">
 					<PlanFeatureRow description="Unlimited editing" />
 					<PlanFeatureRow description="Design inspection tools" />
@@ -124,22 +124,21 @@
 					</button>
 				{/if}
 			</div>
-			<div class="border border-gray-200 rounded-lg p-6">
+			<div class="border border-gray-700 rounded-lg p-6">
 				<h3 class="text-xl font-bold text-center">{Tier.PRO}</h3>
-				<p class="text-center text-gray-500">$15/month</p>
+				<p class="text-center text-gray-300">$15/month</p>
 				<div class="grid gap-4 mt-4 mb-4">
 					<PlanFeatureRow description="Publish changes to Github" />
 					<PlanFeatureRow description="Early access to new features" />
 				</div>
-				<p class="text-center text-gray-500">Advanced features coming soon</p>
 				<div class="grid gap-4 mt-4">
 					<PlanFeatureRow description="Advanced design tools" />
 				</div>
 				{#if subscriptionEnd === ''}
 					<button
 						class="{plan === Tier.FREE
-							? 'btn btn-primary'
-							: 'btn-outline'} border-gray-300 btn h-10 px-4 py-2 mt-4 w-full"
+							? 'btn btn-white'
+							: 'btn-outline'} border-gray-700 btn h-10 px-4 py-2 mt-4 w-full"
 						on:click={() => (plan === Tier.PRO ? cancelSubscription() : checkout(Tier.PRO))}
 						disabled={loading}
 					>

@@ -5,10 +5,16 @@
 	import { githubConfig } from '$lib/utils/env';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
-	import type { Project } from '$shared/models/project';
-	import type { GithubRepo, GithubSettings } from '$shared/models/github';
+	import { Label } from '$lib/components/ui/label';
+	import { Input } from '$lib/components/ui/input';
+
 	import GitHub from '~icons/mdi/github';
 	import Info from '~icons/akar-icons/info';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Collapsible from '$lib/components/ui/collapsible';
+
+	import type { Project } from '$shared/models/project';
+	import type { GithubRepo, GithubSettings } from '$shared/models/github';
 
 	export let project: Project;
 
@@ -18,7 +24,7 @@
 	let filteredRepositories: GithubRepo[] = [];
 	let filterTerm = '';
 	let selectedRepo: GithubRepo | undefined;
-	let saved = false;
+	let shouldSaveConfig = false;
 
 	onMount(async () => {
 		if (project?.githubSettings) {
@@ -72,8 +78,6 @@
 	}
 
 	async function updateProject(project: Project) {
-		saved = true;
-
 		// Prevent footgun of having a leading or trailing slash
 		if (project?.githubSettings?.rootPath) {
 			let pathValue = project?.githubSettings?.rootPath;
@@ -82,7 +86,6 @@
 			project.githubSettings.rootPath = pathValue;
 		}
 
-		saved = false;
 		await projectService.post(project);
 
 		projectsMapStore.update((projectsMap) => {
@@ -90,32 +93,36 @@
 			return projectsMap;
 		});
 		project = { ...project };
+		shouldSaveConfig = false;
 	}
 </script>
 
 <div class="space-y-3">
 	{#if selectedRepo}
-		<div class="border rounded-lg flex flex-col justify-between p-4 space-y-4">
+		<div class="border rounded-lg flex flex-col justify-between p-4 space-y-4 mt-6">
 			<div class="flex flex-row align-middle">
-				<GitHub class="h-9 w-9 mr-2" />
+				<GitHub class="h-8 w-8 mr-2" />
 				<div>
 					<p class="text-sm">{selectedRepo.name}</p>
-					<p class="text-xs text-gray-600">{selectedRepo.owner}</p>
+					<p class="text-xs text-white/60">{selectedRepo.owner}</p>
 				</div>
 			</div>
 
 			<div class="flex flex-row items-center">
-				<p class="label w-28">Base branch</p>
-				<div
-					class="tooltip tooltip-bottom tooltip-info before:w-[10rem] before:content-[attr(data-tip)]"
-					data-tip="Branch your changes will be pushed to. Default is your base branch"
-				>
-					<button class="label mr-2">
-						<Info class="h-4 w-4 text-gray-500" />
-					</button>
+				<div class="w-56 flex flex-row items-center">
+					<Label for="base-branch">Base branch</Label>
+					<div
+						class="tooltip tooltip-bottom tooltip-info before:w-[10rem] before:content-[attr(data-tip)]"
+						data-tip="Branch your changes will be pushed to. Default is your base branch"
+					>
+						<button class="label mx-2">
+							<Info class="h-4 w-4 text-gray-500" />
+						</button>
+					</div>
 				</div>
-				<input
-					class="input input-bordered input-sm"
+
+				<Input
+					id="base-branch"
 					type="text"
 					placeholder="main"
 					value={project?.githubSettings?.baseBranch}
@@ -123,22 +130,26 @@
 						if (!project?.githubSettings) return;
 						// @ts-ignore - This value exists
 						project.githubSettings.baseBranch = e.target.value;
-						saved = false;
+						shouldSaveConfig = true;
 					}}
 				/>
 			</div>
+
 			<div class="flex flex-row items-center">
-				<p class="label w-28">Root directory</p>
-				<div
-					class="tooltip tooltip-bottom tooltip-info before:w-[10rem] before:content-[attr(data-tip)]"
-					data-tip="Folder that contains your src file. If it's at root you can leave this empty"
-				>
-					<button class="label mr-2">
-						<Info class="h-4 w-4 text-gray-500" />
-					</button>
+				<div class="w-56 flex flex-row items-center">
+					<Label for="root-dir">Root directory</Label>
+					<div
+						class="tooltip tooltip-bottom tooltip-info before:w-[10rem] before:content-[attr(data-tip)]"
+						data-tip="Folder that contains your src file. If it's at root you can leave this empty"
+					>
+						<button class="label ml-2">
+							<Info class="h-4 w-4 text-gray-500" />
+						</button>
+					</div>
 				</div>
-				<input
-					class="input input-bordered input-sm"
+
+				<Input
+					id="root-dir"
 					type="text"
 					placeholder=""
 					value={project?.githubSettings?.rootPath}
@@ -146,19 +157,18 @@
 						if (!project?.githubSettings) return;
 						// @ts-ignore - This value exists
 						project.githubSettings.rootPath = e.target.value;
-						saved = false;
+						shouldSaveConfig = true;
 					}}
 				/>
 			</div>
 			<div class="ml-auto mt-4 space-x-2">
-				<button
-					disabled={saved}
-					on:click={() => updateProject(project)}
-					class="btn btn-outline btn-sm">{saved ? 'Saved' : 'Save'}</button
+				<Button
+					variant={shouldSaveConfig ? 'default' : 'outline'}
+					disabled={!shouldSaveConfig}
+					on:click={() => updateProject(project)}>Save</Button
 				>
-				<button
-					on:click={() => disconnectRepoFromProject()}
-					class="btn btn-outline btn-sm btn-error">Disconnect</button
+				<Button variant="destructive" on:click={() => disconnectRepoFromProject()} class=""
+					>Disconnect</Button
 				>
 			</div>
 		</div>
@@ -195,10 +205,23 @@
 			{/each}
 		</div>
 	{/if}
-	<button
-		class="btn btn-link mt-4"
+	<Button
+		variant="link"
 		on:click={() => {
 			window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
-		}}>Github Permissions</button
+		}}>Update Github Permissions</Button
 	>
+
+	<Collapsible.Root class="border rounded w-full p-2 text-sm">
+		<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
+			>How to setup my repository?</Collapsible.Trigger
+		>
+		<Collapsible.Content class="mt-4 mb-2">
+			<a
+				href="https://onlook.dev/blog/installing-onlook"
+				class="underline hover:opacity-80"
+				target="_blank">Read the docs to learn more</a
+			>
+		</Collapsible.Content>
+	</Collapsible.Root>
 </div>

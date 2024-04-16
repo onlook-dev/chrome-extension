@@ -1,4 +1,5 @@
-import type { ChangeValues } from "./models/activity";
+import type { Activity, ChangeValues } from "./models/activity";
+import type { GithubSettings } from "./models/github";
 
 export function jsToCssProperty(key: string) {
   if (!key) return "";
@@ -46,7 +47,7 @@ export function getInitials(name: string) {
   return initials.toUpperCase();
 }
 
-export function timeSince(date: Date) {
+export function timeSince(date: Date): string {
   if (!(date instanceof Date) || isNaN(date.getTime())) {
     console.error("Invalid date provided");
     return "Invalid date";
@@ -88,4 +89,22 @@ export function formatAttrChanges(attrChanges: Record<string, ChangeValues>): st
   return Object.values(attrChanges)
     .map(({ key, newVal }) => `${key}: ${newVal};`)
     .join('\n')
+}
+
+export function shortenSelector(selector: string): string {
+  const parts = selector.split(" ");
+  return parts[parts.length - 1];
+}
+
+export function sortActivities(activities: Record<string, Activity>) {
+  return Object.values(activities).sort((a, b) => {
+    return (a.updatedAt ?? a.createdAt) < (b.updatedAt ?? b.createdAt) ? 1 : -1;
+  });
+}
+
+export function getGitHubPath(githubSettings: GithubSettings, path: string) {
+  // Root path might be undefined
+  return `https://github.com/${githubSettings.owner}/${githubSettings.repositoryName
+    }/blob/${githubSettings.baseBranch}/${githubSettings.rootPath ? `${githubSettings.rootPath}/` : ''
+    }${path.split(':')[0]}#L${path.split(':')[1]}`
 }

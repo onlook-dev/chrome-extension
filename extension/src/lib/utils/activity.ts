@@ -1,16 +1,19 @@
 import type { Activity } from "$shared/models/activity"
 
+// TODO: Use editor to apply event instead
 export function revertActivityChanges(activity: Activity) {
 	const element = document.querySelector(activity.selector) as any
 	if (element) {
 		Object.entries(activity.styleChanges ?? {}).forEach(([style, changeObject]) => {
 			// Apply style to element
-			if (style === 'text') {
-				element.innerText = changeObject.oldVal
-			} else {
-				element.style[style] = changeObject.oldVal
-			}
+			element.style[style] = changeObject.oldVal
 		})
+		if (activity.textChanges) {
+			element.innerText = activity.textChanges.text.oldVal
+		}
+		if (activity.attributeChanges) {
+			element.className = activity.attributeChanges.full.oldVal
+		}
 	}
 }
 

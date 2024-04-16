@@ -10,8 +10,8 @@ const config = {
 		themes: [
 			{
 				light: {
-					primary: '#111827',
-					'primary-content': '#ffffff',
+					primary: 'red',
+					'primary-content': 'black',
 					neutral: '#ebeef5',
 					'neutral-content': '#303133',
 					accent: '#a8abb2',
@@ -54,7 +54,13 @@ const config = {
 					foreground: "hsl(var(--primary-foreground) / <alpha-value>)"
 				},
 				brand: "var(--text-text-brand)",
-				surface: "var(--surface-surface-default)",
+				surface: {
+					DEFAULT: "var(--surface-surface-default)",
+					brand: {
+						DEFAULT: "var(--surface-surface-brand)",
+						secondary: "var(--surface-surface-brand-secondary)"
+					},
+				},
 				tertiary: "var(--text-text-tertiary)",
 				state: "var(--text-state-text-default)",
 				secondary: {

@@ -67,17 +67,16 @@
 <button on:click={showModal}> + Create new team </button>
 
 <dialog id={modalId} class="modal fixed inset-0 flex items-center justify-center">
-	<div class="modal-box space-y-2">
-		<h3 class="font-bold text-lg mb-4">Create a new team</h3>
+	<div class="modal-box space-y-2 bg-stone-900 text-white">
+		<h3 class="text-lg mb-4">Create a new team</h3>
 
 		<div class="flex flex-col space-y-4">
 			<div class="space-y-2">
-				<span class="label-text">Team name</span>
 				<input
 					bind:value={teamName}
 					type="text"
 					placeholder="Team name"
-					class="input input-bordered w-full {nameError && 'input-error'}"
+					class="input bg-stone-800 w-full {nameError && 'input-error'}"
 					maxlength={MAX_TITLE_LENGTH}
 				/>
 
@@ -89,7 +88,7 @@
 			<div class="modal-action">
 				<form method="dialog">
 					<!-- if there is a button in form, it will close the modal -->
-					<button class="btn" on:click={closeModal}>Cancel</button>
+					<button class="btn btn-ghost" on:click={closeModal}>Cancel</button>
 					<button class="btn btn-primary" on:click|preventDefault={createTeam}>Create</button>
 				</form>
 			</div>

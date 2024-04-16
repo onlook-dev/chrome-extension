@@ -2,15 +2,19 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import type { Project } from '$shared/models/project';
-	import type { User } from '$shared/models/user';
 	import { DashboardRoutes } from '$shared/constants';
+	import { githubConfig } from '$lib/utils/env';
+	import { GithubLogo } from 'svelte-radix';
 
 	import GitHub from '~icons/mdi/github';
 	import ConfigureTab from './ConfigureTab.svelte';
 	import PublishTab from './PublishTab.svelte';
-	import { githubConfig } from '$lib/utils/env';
-	import ConfigureProjectInstructions from './instructions/ConfigureProjectInstructions.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import * as Card from '$lib/components/ui/card/index.js';
+
+	import type { Project } from '$shared/models/project';
+	import type { User } from '$shared/models/user';
 
 	export let project: Project;
 	export let user: User;
@@ -60,60 +64,41 @@
 </script>
 
 <div>
-	<button class="flex flex-row justify-center" on:click={showModal}>
-		<GitHub class="mr-2" /> Pull Request
-	</button>
+	<Button on:click={showModal} variant="primary" class="h-8"
+		><GithubLogo class="mr-2 w-4 h-4" /> Publish to GitHub</Button
+	>
 	<dialog id={modalId} class="modal">
-		<div class="modal-box card w-full h-[80%] flex flex-col p-6">
-			<h2 class="text-xl font-semibold mb-3">Send to Github</h2>
-
-			{#if project?.installationId}
-				<div role="tablist" class="tabs tabs-bordered">
-					<input
-						type="radio"
-						name="my_tabs_1"
-						role="tab"
-						class="tab"
-						value={Tab.PUBLISH}
-						aria-label={Tab.PUBLISH}
-						bind:group={selectedTab}
-						disabled={!project?.githubSettings}
-					/>
-					<div role="tabpanel" class="tab-content py-4 overflow-auto">
-						<PublishTab {project} {user} />
+		<Card.Root class="text-primary modal-box w-full h-[80%] flex flex-col">
+			<Card.Header><h1 class="text-xl font-light">Publish to Github</h1></Card.Header>
+			<Card.Content>
+				{#if project?.installationId}
+					<Tabs.Root value={selectedTab} class="w-full">
+						<Tabs.List class="grid w-full grid-cols-2">
+							<Tabs.Trigger value={Tab.PUBLISH} disabled={!project?.githubSettings}
+								>Publish</Tabs.Trigger
+							>
+							<Tabs.Trigger value={Tab.CONFIGURE}>Configure</Tabs.Trigger>
+						</Tabs.List>
+						<Tabs.Content value={Tab.CONFIGURE}>
+							<ConfigureTab {project} />
+						</Tabs.Content>
+						<Tabs.Content value={Tab.PUBLISH}>
+							<PublishTab {project} {user} />
+						</Tabs.Content>
+					</Tabs.Root>
+				{:else}
+					<div class="flex flex-col items-center justify-center h-[20rem] mt-4">
+						<button
+							class="btn"
+							on:click={() => {
+								window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
+							}}><GitHub class="h-5 w-5" />Connect project to Github</button
+						>
 					</div>
+				{/if}
+			</Card.Content>
+		</Card.Root>
 
-					<input
-						type="radio"
-						name="my_tabs_1"
-						role="tab"
-						class="tab"
-						value={Tab.CONFIGURE}
-						aria-label={Tab.CONFIGURE}
-						bind:group={selectedTab}
-					/>
-					<div role="tabpanel" class="tab-content py-4">
-						<ConfigureTab {project} />
-						<div class="collapse collapse-arrow border rounded-md mt-6">
-							<input type="checkbox" />
-							<div class="collapse-title">How to setup your repository</div>
-							<div class="collapse-content">
-								<ConfigureProjectInstructions />
-							</div>
-						</div>
-					</div>
-				</div>
-			{:else}
-				<div class="flex flex-col items-center justify-center h-full mt-4">
-					<button
-						class="btn btn-primary"
-						on:click={() => {
-							window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
-						}}><GitHub class="h-5 w-5" />Connect project to Github</button
-					>
-				</div>
-			{/if}
-		</div>
 		<form method="dialog" class="modal-backdrop">
 			<button>close</button>
 		</form>

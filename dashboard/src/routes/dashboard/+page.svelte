@@ -70,14 +70,14 @@
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
-	<div class="drawer-content px-4 py-6 overflow-auto h-screen bg-gray-200">
+	<div class="drawer-content px-4 py-6 overflow-auto h-screen bg-black text-white">
 		<!-- Page content here -->
 		<div class="flex flex-row gap-2 mb-4 items-center">
 			<label for={dashboardDrawerId} class="btn btn-square btn-ghost drawer-button lg:hidden"
-				><SideBarLine /></label
+				><SideBarLine class="text-white" /></label
 			>
 			<div class="flex flex-row w-full items-center">
-				<h1 class="text-2xl text-black font-medium">
+				<h1 class="text-2xl text-white">
 					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 				</h1>
 			</div>
@@ -87,22 +87,22 @@
 	</div>
 
 	<!-- Drawer Sidebar -->
-	<div class="drawer-side shadow">
+	<div class="drawer-side p-0 shadow">
 		<label for={dashboardDrawerId} aria-label="close sidebar" class="drawer-overlay"></label>
-		<ul class="w-64 min-h-full bg-base-100 space-y-2 p-2">
+		<ul class="w-64 p-0 min-h-full bg-stone-900 text-white space-y-2">
 			<!-- Sidebar content -->
-			<li>
+			<li class="p-2">
 				<AvatarDropdown {user} />
 			</li>
 
 			<!-- Project folder navigation -->
-			<ul class="menu p-2 space-y-2">
+			<ul class="menu p-0 space-y-2">
 				<!-- TODO: Make responsive with teamsMapStore-->
 				{#if user?.teamIds}
 					{#each user?.teamIds as teamId}
-						<li>
+						<li class={activeTeamId === teamId ? 'bg-black' : 'hover:bg-stone-900 '}>
 							<button
-								class="grid grid-cols-3 items-center w-full"
+								class="btn btn-ghost grid grid-cols-3 items-center w-full font-normal"
 								on:click={() => {
 									activeTeamId = teamId;
 									goto(`${DashboardRoutes.DASHBOARD}?${DashboardSearchParams.TEAM}=` + teamId, {
@@ -110,11 +110,7 @@
 									});
 								}}
 							>
-								<p
-									class="font-semibold {activeTeamId === teamId
-										? 'active font-extrabold'
-										: ''} col-span-2 text-left"
-								>
+								<p class="{activeTeamId === teamId ? 'active ' : ''} col-span-2 text-left">
 									{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}
 								</p>
 								{#if activeTeamId === teamId}

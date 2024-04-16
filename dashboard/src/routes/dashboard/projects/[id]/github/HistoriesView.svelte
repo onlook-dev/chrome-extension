@@ -2,22 +2,18 @@
 	import PullRequest from '~icons/ph/git-pull-request-bold';
 	import Restore from '~icons/ic/baseline-restore';
 	import type { GithubHistory } from '$shared/models/github';
+	import * as Collapsible from '$lib/components/ui/collapsible';
 
 	export let githubHistories: GithubHistory[] = [];
 	export let restoreActivities: (history: GithubHistory) => void;
-
-	let historyOpen = true;
 </script>
 
 {#if githubHistories.length > 0}
-	<div
-		class="collapse collapse-arrow border rounded-md mt-6 {historyOpen
-			? 'collapse-open'
-			: 'collapse-close'}"
-	>
-		<input type="checkbox" on:click={() => (historyOpen = !historyOpen)} />
-		<div class="collapse-title">Publish history ({githubHistories.length})</div>
-		<div class="collapse-content space-y-2">
+	<Collapsible.Root class="border rounded w-full p-2 text-sm">
+		<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
+			>GitHub History ({githubHistories.length} pull requests)
+		</Collapsible.Trigger>
+		<Collapsible.Content class="mt-4">
 			{#each githubHistories as history}
 				<div class="flex flex-row max-w-[100%] items-center">
 					<p class="line-clamp-1 text-ellipsis max-w-[70%]">
@@ -59,6 +55,6 @@
 					</div>
 				</div>
 			{/each}
-		</div>
-	</div>
+		</Collapsible.Content>
+	</Collapsible.Root>
 {/if}
