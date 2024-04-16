@@ -12,6 +12,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Onlook</title>
+</svelte:head>
+
 <div class="dark">
 	<slot />
 	<SvelteToast options={{ reversed: true, intro: { y: 192 }, duration: 3000 }} />

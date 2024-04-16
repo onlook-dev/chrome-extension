@@ -67,6 +67,9 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Onlook - Dashboard</title>
+</svelte:head>
 <div class="drawer lg:drawer-open">
 	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
 	<!-- Drawer content -->
