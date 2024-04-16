@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ItemHeader from './ItemHeader.svelte';
-	import { formatAttrChanges, formatStyleChanges, jsToCssProperty } from '$shared/helpers';
+	import { jsToCssProperty } from '$shared/helpers';
 	import { usersMapStore } from '$lib/utils/store';
 
 	import type { Activity } from '$shared/models/activity';
@@ -79,12 +79,20 @@
 
 	{#if activity.attributeChanges && Object.keys(activity.attributeChanges).length > 0}
 		<div>
-			{userName} updated
-			<span class="text-brand">class</span>
-			from
-			<span class="text-brand"> {activity.attributeChanges.full.oldVal}</span>
-			to
-			<span class="text-brand"> {activity.attributeChanges.full.newVal}</span>
+			{userName}
+			{#if activity.attributeChanges.full.oldVal === ''}
+				added class value
+				<span class="text-brand">{activity.attributeChanges.full.newVal}</span>
+			{:else}
+				updated
+				<span class="text-brand">class</span>
+				from
+				<span class="text-brand"> {activity.attributeChanges.full.oldVal}</span>
+				to
+				<span class="text-brand"> {activity.attributeChanges.full.newVal}</span>
+				. New attributes:
+				<span class="text-brand"> {activity.attributeChanges.updated.newVal}</span>
+			{/if}
 		</div>
 	{/if}
 </div>
