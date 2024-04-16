@@ -7,6 +7,7 @@
 	export let beforeImage: string | undefined;
 	export let afterImage: string | undefined;
 
+	let padding = 50;
 	let canvas: HTMLCanvasElement;
 	let cx: CanvasRenderingContext2D;
 	let left: HTMLImageElement;
@@ -24,24 +25,22 @@
 		[left, right] = await Promise.all([loadImage(beforeImage ?? ''), loadImage(afterImage ?? '')]);
 		cx = canvas.getContext('2d')!;
 		options = {
-			width: left.width,
-			height: left.height,
+			width: Math.max(left.width, right.width) + padding * 2,
+			height: Math.max(left.height, right.height) + padding * 2,
 			render
 		};
 	}
 
 	function render(ctx: CanvasRenderingContext2D) {
 		if (!left) return;
-		ctx.drawImage(left, 0, 0);
-
-		console.log(ctx.getTransform());
+		ctx.drawImage(left, padding, padding);
 
 		cx.save();
 		cx.resetTransform();
 		canvas.width = ctx.canvas.width;
 		canvas.height = ctx.canvas.height;
 		cx.setTransform(ctx.getTransform());
-		cx.drawImage(right, 0, 0);
+		cx.drawImage(right, padding, padding);
 		cx.restore();
 	}
 
@@ -54,15 +53,7 @@
 		});
 	}
 
-	onMount(async () => {
-		[left, right] = await Promise.all([loadImage(beforeImage ?? ''), loadImage(afterImage ?? '')]);
-		cx = canvas.getContext('2d')!;
-		options = {
-			width: left.width,
-			height: left.height,
-			render
-		};
-	});
+	onMount(updateImages);
 </script>
 
 {#if beforeImage && afterImage}
@@ -71,7 +62,7 @@
 		<canvas bind:this={canvas} slot="right" id="right" />
 	</ImageComparison>
 {:else if beforeImage || afterImage}
-	<div class="w-full h-full max-w-[80%] max-h-[80%]">
+	<div class="w-full h-full flex items-center p-10">
 		<img class="object-scale-down" src={beforeImage ?? afterImage} alt="Screenshot" />
 	</div>
 {:else}
