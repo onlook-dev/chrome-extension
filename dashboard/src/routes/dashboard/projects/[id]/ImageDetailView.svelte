@@ -27,7 +27,7 @@
 <div
 	class="transition {mode === Mode.Dark
 		? 'bg-stone-200 text-surface'
-		: 'bg-surface text-white/60'}  flex flex-col w-full h-full"
+		: 'bg-surface text-tertiary'}  flex flex-col w-full h-full"
 >
 	<div class="flex flex-row p-6">
 		<div class="flex flex-col space-y-2 w-full">
@@ -65,11 +65,17 @@
 	<div class="flex w-full h-full items-center justify-center">
 		{#if activeActivity}
 			<ImageComparer
+				canvasClass="transition {mode === Mode.Dark
+					? 'bg-stone-200 text-surface'
+					: 'bg-surface text-tertiary'}"
 				beforeImage={activeActivity.beforeImage}
 				afterImage={activeActivity.previewImage}
 			/>
 		{:else}
 			<ImageComparer
+				canvasClass="transition {mode === Mode.Dark
+					? 'bg-stone-200 text-surface'
+					: 'bg-surface text-tertiary'}"
 				beforeImage={project.hostData.beforeImage}
 				afterImage={project.hostData.previewImage}
 			/>

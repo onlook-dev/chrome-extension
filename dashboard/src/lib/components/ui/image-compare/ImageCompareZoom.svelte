@@ -6,6 +6,7 @@
 
 	export let beforeImage: string | undefined;
 	export let afterImage: string | undefined;
+	export let canvasClass: string = '';
 
 	let padding = 50;
 	let canvas: HTMLCanvasElement;
@@ -58,8 +59,8 @@
 
 {#if beforeImage && afterImage}
 	<ImageComparison class="w-full h-full">
-		<canvas use:panzoom={options} slot="left" />
-		<canvas bind:this={canvas} slot="right" id="right" />
+		<canvas class={canvasClass} use:panzoom={options} slot="left" />
+		<canvas class={canvasClass} bind:this={canvas} slot="right" id="right" />
 	</ImageComparison>
 {:else if beforeImage || afterImage}
 	<div class="w-full h-full flex items-center p-10">

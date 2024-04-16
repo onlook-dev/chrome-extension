@@ -83,7 +83,7 @@
 	</div>
 	<div
 		bind:this={container}
-		class="grid {activityCols} p-6 pt-0 transition text-white gap-8 overflow-auto cursor-pointer"
+		class="grid {activityCols} p-6 pt-0 transition text-white gap-3 overflow-auto cursor-pointer"
 	>
 		{#each sortActivities(project.activities) as activity}
 			<Card.Root
