@@ -18,7 +18,7 @@
 
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	$: user = $usersMapStore.get(activity.userId);
-	$: userName = user?.name;
+	$: userName = user?.name ?? 'user';
 
 	async function deleteActivity(activity: Activity) {
 		project.activities = Object.fromEntries(
@@ -38,7 +38,7 @@
 <div class="flex flex-col space-y-3 w-full p-4 text-tertiary">
 	<ItemHeader
 		profileImageUrl={user?.profileImage}
-		userName={user?.name}
+		{userName}
 		createdAt={activity.updatedAt ?? activity.createdAt}
 	>
 		{#if project?.githubSettings && activity?.path}

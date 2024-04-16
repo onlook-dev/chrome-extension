@@ -141,12 +141,12 @@
 				<ActivitiesPicker {projectService} {project} bind:activeActivityId />
 			</Resizable.Pane>
 			<Resizable.Handle class="hover:bg-surface-brand" />
-			<Resizable.Pane minSize={20}>
+			<Resizable.Pane minSize={20} defaultSize={40}>
 				<ImageDetailView {activeActivity} {project} />
 			</Resizable.Pane>
 			{#if activeActivity}
 				<Resizable.Handle class="hover:bg-surface-brand" />
-				<Resizable.Pane>
+				<Resizable.Pane minSize={10} defaultSize={20}>
 					<div class="flex flex-col w-full h-full text-sm overflow-auto">
 						<ActivityDetail {project} activity={activeActivity} />
 					</div>
