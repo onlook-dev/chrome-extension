@@ -17,7 +17,8 @@
 	export let project: Project;
 
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
-	$: userName = $usersMapStore.get(activity.userId)?.name;
+	$: user = $usersMapStore.get(activity.userId);
+	$: userName = user?.name;
 
 	async function deleteActivity(activity: Activity) {
 		project.activities = Object.fromEntries(
@@ -34,9 +35,10 @@
 	}
 </script>
 
-<div class="flex flex-col space-y-3 w-full p-4">
+<div class="flex flex-col space-y-3 w-full p-4 text-tertiary">
 	<ItemHeader
-		profileImageUrl={$usersMapStore.get(activity.userId)?.profileImage}
+		profileImageUrl={user?.profileImage}
+		userName={user?.name}
 		createdAt={activity.updatedAt ?? activity.createdAt}
 	>
 		{#if project?.githubSettings && activity?.path}
@@ -103,7 +105,7 @@
 
 	{#each Object.values(activity.styleChanges) as styleChange}
 		<p>
-			{userName}
+			<span class="text-primary">{userName}</span>
 			{#if styleChange.oldVal === ''}
 				added style
 				<span class="text-sky-300">{jsToCssProperty(styleChange.key)}</span>
@@ -121,7 +123,7 @@
 
 	{#if activity.textChanges && Object.keys(activity.textChanges).length > 0}
 		<p>
-			{userName}
+			<span class="text-primary">{userName}</span>
 			updated
 			<span class="text-sky-300">text</span>
 			from
@@ -133,7 +135,7 @@
 
 	{#if activity.attributeChanges && Object.keys(activity.attributeChanges).length > 0}
 		<p>
-			{userName}
+			<span class="text-primary">{userName}</span>
 			{#if activity.attributeChanges.full.oldVal === ''}
 				added
 				<span class="text-sky-300">class</span>

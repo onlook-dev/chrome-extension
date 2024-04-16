@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getInitials, timeSince } from '$shared/helpers';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
 
 	export let profileImageUrl = '';
 	export let userName = '';
@@ -11,18 +12,14 @@
 	}
 </script>
 
-<div class="flex flex-row items-center pb-4 w-full">
-	<div class="avatar">
-		<div class="w-6 mask mask-circle">
-			{#if imageError}
-				<span class="text-xs">{getInitials(userName ?? '')}</span>
-			{:else}
-				<img src={profileImageUrl} alt="Avatar of {userName}" on:error={handleImageError} />
-			{/if}
-		</div>
-	</div>
-	<div class="px-2">{userName}</div>
-	<div class="text-xs text-gray-500">
+<div class="flex flex-row items-center w-full">
+	<Avatar.Root class="w-6 h-6">
+		<Avatar.Image src={profileImageUrl} alt="avatar" />
+		<Avatar.Fallback>{getInitials(userName ?? '')}</Avatar.Fallback>
+	</Avatar.Root>
+
+	<div class="px-2 text-primary">{userName || 'user'}</div>
+	<div class="text-xs">
 		{timeSince(new Date(createdAt))}
 	</div>
 	<div class="ml-auto">
