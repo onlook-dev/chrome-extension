@@ -8,7 +8,6 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
 	import type { Project } from '$shared/models/project';
-	import type { Activity } from '$shared/models/activity';
 
 	export let project: Project;
 	export let activityCols: string;

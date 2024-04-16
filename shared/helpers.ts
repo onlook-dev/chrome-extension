@@ -1,4 +1,4 @@
-import type { ChangeValues } from "./models/activity";
+import type { Activity, ChangeValues } from "./models/activity";
 
 export function jsToCssProperty(key: string) {
   if (!key) return "";
@@ -93,4 +93,10 @@ export function formatAttrChanges(attrChanges: Record<string, ChangeValues>): st
 export function shortenSelector(selector: string): string {
   const parts = selector.split(" ");
   return parts[parts.length - 1];
+}
+
+export function sortActivities(activities: Record<string, Activity>) {
+  return Object.values(activities).sort((a, b) => {
+    return (a.updatedAt ?? a.createdAt) < (b.updatedAt ?? b.createdAt) ? 1 : -1;
+  });
 }

@@ -43,21 +43,6 @@
 			new Date(a.updatedAt ?? a.createdAt).getTime()
 	);
 
-	async function deleteActivity(activity: Activity, modalId: string) {
-		project.activities = Object.fromEntries(
-			Object.entries(project.activities).filter(([key, value]) => value.id !== activity.id)
-		);
-
-		await projectService.post(project, false);
-
-		projectsMapStore.update((projectsMap) => {
-			projectsMap.set(project.id, project);
-			return projectsMap;
-		});
-		project = { ...project };
-		closeModal(modalId);
-	}
-
 	function showModal(modalId: string) {
 		const modal = document.getElementById(modalId) as HTMLDialogElement;
 		if (modal) {
@@ -121,57 +106,7 @@
 				profileImageUrl={$usersMapStore.get(activity.userId)?.profileImage}
 				userName={$usersMapStore.get(activity.userId)?.name}
 				createdAt={activity.updatedAt ?? activity.createdAt}
-			>
-				{#if project?.githubSettings && activity?.path}
-					<div class="tooltip tooltip-left" data-tip="View in GitHub">
-						<button
-							class="btn btn-xs btn-square btn-ghost ml-auto"
-							on:click={() =>
-								// Root path may be empty
-								window.open(
-									`https://github.com/${project?.githubSettings?.owner}/${
-										project?.githubSettings?.repositoryName
-									}/blob/${project?.githubSettings?.baseBranch}/${
-										project?.githubSettings?.rootPath ? `${project?.githubSettings?.rootPath}/` : ''
-									}${activity?.path?.split(':')[0]}#L${activity?.path?.split(':')[1]}`,
-									'_blank'
-								)}
-						>
-							<GitHub class="w-4 h-4" />
-						</button>
-					</div>
-				{/if}
-				<div class="tooltip tooltip-left" data-tip="Delete activity">
-					<button
-						on:click={() => {
-							showModal(activity.id);
-						}}
-						class="btn btn-sm btn-square btn-ghost"
-					>
-						<Trash />
-					</button>
-					<dialog id={activity.id} class="modal">
-						<div class="modal-box">
-							<h3 class="font-bold text-lg">Delete activity?</h3>
-							<p class="py-4">Deleted activities can NOT be restored. Continue?</p>
-							<div class="modal-action space-x-2">
-								<button
-									class="btn"
-									on:click={() => {
-										closeModal(activity.id);
-									}}>Cancel</button
-								>
-								<button class="btn btn-error" on:click={() => deleteActivity(activity, activity.id)}
-									>Delete</button
-								>
-							</div>
-						</div>
-						<form method="dialog" class="modal-backdrop">
-							<button>close</button>
-						</form>
-					</dialog>
-				</div>
-			</ItemHeader>
+			></ItemHeader>
 			<!-- Item body -->
 
 			<div class="flex flex-col space-y-3 w-full">

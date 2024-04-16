@@ -1,16 +1,33 @@
 <script lang="ts">
 	import ItemHeader from './ItemHeader.svelte';
 	import { jsToCssProperty } from '$shared/helpers';
-	import { usersMapStore } from '$lib/utils/store';
+	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 
 	import type { Activity } from '$shared/models/activity';
 	import type { Project } from '$shared/models/project';
-	import { GithubLogo } from 'svelte-radix';
+	import { GithubLogo, Trash } from 'svelte-radix';
+	import { FirebaseService } from '$lib/storage';
+	import { FirestoreCollections } from '$shared/constants';
 
 	export let activity: Activity;
 	export let project: Project;
 
+	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	$: userName = $usersMapStore.get(activity.userId)?.name;
+
+	async function deleteActivity(activity: Activity, modalId: string) {
+		project.activities = Object.fromEntries(
+			Object.entries(project.activities).filter(([key, value]) => value.id !== activity.id)
+		);
+
+		await projectService.post(project, false);
+
+		projectsMapStore.update((projectsMap) => {
+			projectsMap.set(project.id, project);
+			return projectsMap;
+		});
+		project = { ...project };
+	}
 </script>
 
 <div class="flex flex-col space-y-3 w-full p-4">
@@ -37,18 +54,40 @@
 				</button>
 			</div>
 		{/if}
+		<div class="tooltip tooltip-left" data-tip="Delete activity">
+			<button class="btn btn-sm btn-square btn-ghost">
+				<Trash />
+			</button>
+			<dialog id={activity.id} class="modal">
+				<div class="modal-box">
+					<h3 class="font-bold text-lg">Delete activity?</h3>
+					<p class="py-4">Deleted activities can NOT be restored. Continue?</p>
+					<div class="modal-action space-x-2">
+						<button class="btn btn-error" on:click={() => deleteActivity(activity, activity.id)}
+							>Delete</button
+						>
+					</div>
+				</div>
+				<form method="dialog" class="modal-backdrop">
+					<button>close</button>
+				</form>
+			</dialog>
+		</div>
 	</ItemHeader>
 
-	<p>Selector:</p>
-	<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.selector}</span>
-
+	<p>
+		Selector
+		<span class="text-brand">{activity.selector}</span>
+	</p>
 	{#if activity.path}
-		<p class="text-tertiary">Path:</p>
-		<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.path}</span>
+		<p>
+			Path
+			<span class="text-brand">{activity.path}</span>
+		</p>
 	{/if}
 
 	{#each Object.values(activity.styleChanges) as styleChange}
-		<div>
+		<p>
 			{userName}
 			{#if styleChange.oldVal === ''}
 				added style
@@ -62,11 +101,11 @@
 				to
 			{/if}
 			<span class="text-brand">{styleChange.newVal}</span>
-		</div>
+		</p>
 	{/each}
 
 	{#if activity.textChanges && Object.keys(activity.textChanges).length > 0}
-		<div>
+		<p>
 			{userName}
 			updated
 			<span class="text-brand">text</span>
@@ -74,11 +113,11 @@
 			<span class="text-brand">{activity.textChanges.text.oldVal}</span>
 			to
 			<span class="text-brand">{activity.textChanges.text.newVal}</span>
-		</div>
+		</p>
 	{/if}
 
 	{#if activity.attributeChanges && Object.keys(activity.attributeChanges).length > 0}
-		<div>
+		<p>
 			{userName}
 			{#if activity.attributeChanges.full.oldVal === ''}
 				added class value
@@ -93,6 +132,6 @@
 				. New attributes:
 				<span class="text-brand"> {activity.attributeChanges.updated.newVal}</span>
 			{/if}
-		</div>
+		</p>
 	{/if}
 </div>
