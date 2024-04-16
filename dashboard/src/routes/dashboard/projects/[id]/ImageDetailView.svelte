@@ -46,7 +46,7 @@
 			<!-- TODO: Add back later -->
 			<!-- <Input class="border-none" placeholder="Click to describe the changes..." /> -->
 		</div>
-		<div class="ml-auto flex flex-row space-x-4 items-start">
+		<div class="ml-auto flex flex-row space-x-4 items-center">
 			<!-- TODO: Add back later -->
 			<!-- <button><CounterClockwiseClock class="w-4" /></button> -->
 			<button on:click={toggleDarkMode}>

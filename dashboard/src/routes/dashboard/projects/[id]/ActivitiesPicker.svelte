@@ -1,11 +1,14 @@
 <script lang="ts">
-	import type { Project } from '$shared/models/project';
 	import { TriangleDown } from 'svelte-radix';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import { shortenSelector, sortActivities } from '$shared/helpers';
+
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { shortenSelector } from '$shared/helpers';
+
+	import type { Project } from '$shared/models/project';
+	import type { Activity } from '$shared/models/activity';
 
 	export let project: Project;
 	export let activityCols: string;
@@ -40,7 +43,7 @@
 		</DropdownMenu.Root>
 	</div>
 	<div class="transition text-white grid {activityCols} gap-8 overflow-auto cursor-pointer">
-		{#each Object.values(project.activities) as activity}
+		{#each sortActivities(project.activities) as activity}
 			<Card.Root
 				class="{activity.id === activeActivityId
 					? 'border-stone-600 bg-surface'
