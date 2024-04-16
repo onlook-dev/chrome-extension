@@ -73,7 +73,7 @@
 		<span class="text-brand">{activity.selector}</span>
 	</p>
 	{#if activity.path}
-		<p>
+		<p class="break-all">
 			Path
 			<span class="text-brand">{activity.path}</span>
 		</p>
@@ -122,7 +122,7 @@
 				<span class="text-brand"> {activity.attributeChanges.full.oldVal}</span>
 				to
 				<span class="text-brand"> {activity.attributeChanges.full.newVal}</span>
-				. New attributes:
+				with new attributes:
 				<span class="text-brand"> {activity.attributeChanges.updated.newVal}</span>
 			{/if}
 		</p>
