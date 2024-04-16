@@ -21,7 +21,6 @@
 		resizeObserver = new ResizeObserver((entries) => {
 			const width = entries[0].contentRect.width;
 			if (!width || width === 0) return;
-			console.log(width);
 			if (width < 400) {
 				activityCols = 'grid-cols-1';
 			} else if (width < 500) {
