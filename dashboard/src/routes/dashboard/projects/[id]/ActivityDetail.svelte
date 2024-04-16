@@ -1,13 +1,16 @@
 <script lang="ts">
-	import ItemHeader from './ItemHeader.svelte';
-	import { jsToCssProperty } from '$shared/helpers';
+	import { getGitHubPath, jsToCssProperty } from '$shared/helpers';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
-
-	import type { Activity } from '$shared/models/activity';
-	import type { Project } from '$shared/models/project';
 	import { GithubLogo, Trash } from 'svelte-radix';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
+
+	import ItemHeader from './ItemHeader.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+
+	import type { Activity } from '$shared/models/activity';
+	import type { Project } from '$shared/models/project';
 
 	export let activity: Activity;
 	export let project: Project;
@@ -36,43 +39,33 @@
 		createdAt={activity.updatedAt ?? activity.createdAt}
 	>
 		{#if project?.githubSettings && activity?.path}
-			<div class="tooltip tooltip-left" data-tip="View in GitHub">
-				<button
-					class="btn btn-xs btn-square btn-ghost ml-auto"
-					on:click={() =>
-						// Root path may be empty
-						window.open(
-							`https://github.com/${project?.githubSettings?.owner}/${
-								project?.githubSettings?.repositoryName
-							}/blob/${project?.githubSettings?.baseBranch}/${
-								project?.githubSettings?.rootPath ? `${project?.githubSettings?.rootPath}/` : ''
-							}${activity?.path?.split(':')[0]}#L${activity?.path?.split(':')[1]}`,
-							'_blank'
-						)}
-				>
-					<GithubLogo class="w-4 h-4" />
-				</button>
-			</div>
+			<Tooltip.Root openDelay={200}>
+				<Tooltip.Trigger>
+					<Button
+						variant="ghost"
+						on:click={() => {
+							if (!project.githubSettings || !activity.path) return;
+							window.open(getGitHubPath(project.githubSettings, activity.path), '_blank');
+						}}
+					>
+						<GithubLogo class="w-4 h-4" />
+					</Button>
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+					<p>View in GitHub</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
 		{/if}
-		<div class="tooltip tooltip-left" data-tip="Delete activity">
-			<button class="btn btn-sm btn-square btn-ghost">
-				<Trash />
-			</button>
-			<dialog id={activity.id} class="modal">
-				<div class="modal-box">
-					<h3 class="font-bold text-lg">Delete activity?</h3>
-					<p class="py-4">Deleted activities can NOT be restored. Continue?</p>
-					<div class="modal-action space-x-2">
-						<button class="btn btn-error" on:click={() => deleteActivity(activity, activity.id)}
-							>Delete</button
-						>
-					</div>
-				</div>
-				<form method="dialog" class="modal-backdrop">
-					<button>close</button>
-				</form>
-			</dialog>
-		</div>
+		<Tooltip.Root openDelay={200}>
+			<Tooltip.Trigger>
+				<Button variant="ghost">
+					<Trash class="w-4 h-4" />
+				</Button>
+			</Tooltip.Trigger>
+			<Tooltip.Content>
+				<p>Delete activity</p>
+			</Tooltip.Content>
+		</Tooltip.Root>
 	</ItemHeader>
 
 	<p>

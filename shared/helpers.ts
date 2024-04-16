@@ -1,4 +1,5 @@
 import type { Activity, ChangeValues } from "./models/activity";
+import type { GithubSettings } from "./models/github";
 
 export function jsToCssProperty(key: string) {
   if (!key) return "";
@@ -99,4 +100,11 @@ export function sortActivities(activities: Record<string, Activity>) {
   return Object.values(activities).sort((a, b) => {
     return (a.updatedAt ?? a.createdAt) < (b.updatedAt ?? b.createdAt) ? 1 : -1;
   });
+}
+
+export function getGitHubPath(githubSettings: GithubSettings, path: string) {
+  // Root path might be undefined
+  return `https://github.com/${githubSettings.owner}/${githubSettings.repositoryName
+    }/blob/${githubSettings.baseBranch}/${githubSettings.rootPath ? `${githubSettings.rootPath}/` : ''
+    }${path.split(':')[0]}#L${path.split(':')[1]}`
 }
