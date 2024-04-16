@@ -27,7 +27,6 @@
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
 	import ImageDetailView from './ImageDetailView.svelte';
 	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
-	import Activities from './Activities.svelte';
 	import ActivityDetail from './ActivityDetail.svelte';
 
 	let project: Project | undefined;
@@ -38,8 +37,6 @@
 	let unsubs: any[] = [];
 	let activeActivityId: string = '';
 	let activeActivity: Activity | undefined;
-
-	let activityCols = 'grid-col-4';
 
 	$: if (project) {
 		activeActivity = Object.values(project.activities).find(
@@ -137,22 +134,8 @@
 		<!-- Main content -->
 		<Separator />
 		<Resizable.PaneGroup class="w-full" direction="horizontal">
-			<Resizable.Pane
-				minSize={20}
-				defaultSize={60}
-				onResize={(size) => {
-					if (size < 23) {
-						activityCols = 'grid-cols-1';
-					} else if (size < 33) {
-						activityCols = 'grid-cols-2';
-					} else if (size < 43) {
-						activityCols = 'grid-cols-3';
-					} else {
-						activityCols = 'grid-cols-4';
-					}
-				}}
-			>
-				<ActivitiesPicker {activityCols} {project} bind:activeActivityId />
+			<Resizable.Pane minSize={20} defaultSize={60}>
+				<ActivitiesPicker {project} bind:activeActivityId />
 			</Resizable.Pane>
 			<Resizable.Handle class="hover:bg-surface-brand" />
 			<Resizable.Pane minSize={20}>

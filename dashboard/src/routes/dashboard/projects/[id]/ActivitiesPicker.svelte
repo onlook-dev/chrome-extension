@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { TriangleDown } from 'svelte-radix';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { shortenSelector, sortActivities } from '$shared/helpers';
@@ -10,8 +11,29 @@
 	import type { Project } from '$shared/models/project';
 
 	export let project: Project;
-	export let activityCols: string;
 	export let activeActivityId: string;
+
+	let resizeObserver: ResizeObserver;
+	let activityCols = 'grid-cols-4';
+	let container: HTMLDivElement;
+
+	onMount(() => {
+		resizeObserver = new ResizeObserver((entries) => {
+			const width = entries[0].contentRect.width;
+			if (!width || width === 0) return;
+			console.log(width);
+			if (width < 400) {
+				activityCols = 'grid-cols-1';
+			} else if (width < 500) {
+				activityCols = 'grid-cols-2';
+			} else if (width < 750) {
+				activityCols = 'grid-cols-3';
+			} else {
+				activityCols = 'grid-cols-4';
+			}
+		});
+		resizeObserver.observe(container);
+	});
 
 	let imageErrors: string[] = [];
 	function handleImageError(imageUrl: string) {
@@ -19,7 +41,7 @@
 	}
 </script>
 
-<div class="bg-black flex flex-col w-full h-full space-y-6">
+<div bind:this={container} class="bg-black flex flex-col w-full h-full space-y-6">
 	<div class="p-6 flex flex-col space-y-2">
 		<h1 class="text-xl">{project.name}</h1>
 		<h2 class="text-sm text-white/60">
@@ -41,7 +63,9 @@
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</div>
-	<div class="px-6 transition text-white grid {activityCols} gap-8 overflow-auto cursor-pointer">
+	<div
+		class="grid {activityCols} p-6 pt-0 transition text-white gap-8 overflow-auto cursor-pointer"
+	>
 		{#each sortActivities(project.activities) as activity}
 			<Card.Root
 				class="{activity.id === activeActivityId
