@@ -90,7 +90,7 @@
 		</Tooltip.Root>
 	</ItemHeader>
 
-	<p>
+	<p class="text text-tertiary">
 		Selector
 		<span class="text-brand">{activity.selector}</span>
 	</p>
@@ -106,11 +106,11 @@
 			{userName}
 			{#if styleChange.oldVal === ''}
 				added style
-				<span class="text-brand">{jsToCssProperty(styleChange.key)}</span>
+				<span class="text-sky-300">{jsToCssProperty(styleChange.key)}</span>
 				with value
 			{:else}
 				update style of
-				<span class="text-brand">{jsToCssProperty(styleChange.key)}</span>
+				<span class="text-sky-300">{jsToCssProperty(styleChange.key)}</span>
 				from
 				<span class="text-brand">{styleChange.oldVal}</span>
 				to
@@ -123,7 +123,7 @@
 		<p>
 			{userName}
 			updated
-			<span class="text-brand">text</span>
+			<span class="text-sky-300">text</span>
 			from
 			<span class="text-brand">{activity.textChanges.text.oldVal}</span>
 			to
@@ -135,11 +135,13 @@
 		<p>
 			{userName}
 			{#if activity.attributeChanges.full.oldVal === ''}
-				added class value
+				added
+				<span class="text-sky-300">class</span>
+				value
 				<span class="text-brand">{activity.attributeChanges.full.newVal}</span>
 			{:else}
 				updated
-				<span class="text-brand">class</span>
+				<span class="text-sky-300">class</span>
 				from
 				<span class="text-brand"> {activity.attributeChanges.full.oldVal}</span>
 				to

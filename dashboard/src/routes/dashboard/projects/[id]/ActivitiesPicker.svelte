@@ -62,7 +62,7 @@
 		<h1 class="text-xl focus:ring-0 focus:outline-none" contenteditable={true} on:blur={handleBlur}>
 			{project.name}
 		</h1>
-		<h2 class="text-sm text-white/60">
+		<h2 class="text-xs text-white/60">
 			{project.hostUrl}
 		</h2>
 	</div>

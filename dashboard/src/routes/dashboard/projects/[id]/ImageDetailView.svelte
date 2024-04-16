@@ -34,7 +34,7 @@
 			<div class="flex flex-row items-center">
 				<p>
 					{#if activeActivity}
-						<span>{shortenSelector(activeActivity.selector)}</span>
+						<span class="text-sm">{shortenSelector(activeActivity.selector)}</span>
 						<span class="text-xs ml-2">
 							Edited {timeSince(new Date(activeActivity.updatedAt ?? activeActivity.createdAt))} ago
 						</span>
