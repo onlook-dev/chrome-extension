@@ -8,6 +8,7 @@
 	import ItemHeader from './ItemHeader.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 
 	import type { Activity } from '$shared/models/activity';
 	import type { Project } from '$shared/models/project';
@@ -18,7 +19,7 @@
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	$: userName = $usersMapStore.get(activity.userId)?.name;
 
-	async function deleteActivity(activity: Activity, modalId: string) {
+	async function deleteActivity(activity: Activity) {
 		project.activities = Object.fromEntries(
 			Object.entries(project.activities).filter(([key, value]) => value.id !== activity.id)
 		);
@@ -43,6 +44,7 @@
 				<Tooltip.Trigger>
 					<Button
 						variant="ghost"
+						class="px-2"
 						on:click={() => {
 							if (!project.githubSettings || !activity.path) return;
 							window.open(getGitHubPath(project.githubSettings, activity.path), '_blank');
@@ -58,9 +60,29 @@
 		{/if}
 		<Tooltip.Root openDelay={200}>
 			<Tooltip.Trigger>
-				<Button variant="ghost">
-					<Trash class="w-4 h-4" />
-				</Button>
+				<AlertDialog.Root>
+					<AlertDialog.Trigger
+						><Button variant="ghost" class="px-2">
+							<Trash class="w-4 h-4" />
+						</Button>
+					</AlertDialog.Trigger>
+					<AlertDialog.Content>
+						<AlertDialog.Header>
+							<AlertDialog.Title>Are you sure?</AlertDialog.Title>
+							<AlertDialog.Description>
+								This action cannot be undone. This will permanently delete the changes.
+							</AlertDialog.Description>
+						</AlertDialog.Header>
+						<AlertDialog.Footer>
+							<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+							<AlertDialog.Action
+								on:click={() => {
+									deleteActivity(activity);
+								}}>Delete</AlertDialog.Action
+							>
+						</AlertDialog.Footer>
+					</AlertDialog.Content>
+				</AlertDialog.Root>
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Delete activity</p>

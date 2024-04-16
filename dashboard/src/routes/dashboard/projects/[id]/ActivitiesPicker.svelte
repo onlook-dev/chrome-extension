@@ -19,7 +19,7 @@
 	}
 </script>
 
-<div class="bg-black p-6 flex flex-col w-full h-full space-y-6">
+<div class="bg-black flex flex-col w-full h-full space-y-6">
 	<div class="p-6 flex flex-col space-y-2">
 		<h1 class="text-xl">{project.name}</h1>
 		<h2 class="text-sm text-white/60">
@@ -27,7 +27,7 @@
 		</h2>
 	</div>
 	<Separator />
-	<div class="flex flex-row text-tertiary">
+	<div class="px-6 flex flex-row text-tertiary">
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
 				<Button builders={[builder]} variant="ghost"
@@ -41,7 +41,7 @@
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</div>
-	<div class="transition text-white grid {activityCols} gap-8 overflow-auto cursor-pointer">
+	<div class="px-6 transition text-white grid {activityCols} gap-8 overflow-auto cursor-pointer">
 		{#each sortActivities(project.activities) as activity}
 			<Card.Root
 				class="{activity.id === activeActivityId
