@@ -123,7 +123,6 @@
 					</Breadcrumb.Item>
 				</Breadcrumb.List>
 			</Breadcrumb.Root>
-			<Button class="bg-surface text-gray-500">Placeholder</Button>
 			<div class="flex flex-row ml-auto space-x-2">
 				<Button variant="secondary" class="h-8" on:click={requestEditProject}
 					><Pencil2 class="mr-2 w-4 h-4" /> Edit</Button
