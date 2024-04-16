@@ -90,7 +90,7 @@
 		</Tooltip.Root>
 	</ItemHeader>
 
-	<p class="text text-tertiary">
+	<p class="">
 		Selector
 		<span class="text-brand">{activity.selector}</span>
 	</p>

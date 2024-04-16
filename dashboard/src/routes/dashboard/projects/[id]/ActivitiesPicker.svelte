@@ -98,7 +98,7 @@
 					activeActivityId = activity.id;
 				}}
 			>
-				<Card.Header class="p-3 pb-1">
+				<Card.Header class="p-2 pb-1">
 					{#if !activity.previewImage || imageErrors.includes(activity.previewImage)}
 						<div
 							class="bg-stone-800 w-full rounded aspect-video mx-auto my-auto object-scale-down object-center"
@@ -119,7 +119,7 @@
 						/>
 					{/if}
 				</Card.Header>
-				<Card.Content class="p-3 space-y-1">
+				<Card.Content class="p-2 space-y-1">
 					<Card.Title class="font-normal">{shortenSelector(activity.selector)}</Card.Title>
 					<Card.Description>{new Array(activity.styleChanges).length} changes</Card.Description>
 				</Card.Content>
