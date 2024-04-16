@@ -43,7 +43,7 @@
 	<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.selector}</span>
 
 	{#if activity.path}
-		<p>Path:</p>
+		<p class="text-tertiary">Path:</p>
 		<span class="text-orange-600 bg-gray-50 p-2 rounded border">{activity.path}</span>
 	{/if}
 
