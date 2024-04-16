@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ImageComparison } from '$lib/components/ui/image-compare';
+	import ImageComparison from './ImageComparison.svelte';
 	import { EyeNone } from 'svelte-radix';
 	import { panzoom, type Options } from 'svelte-pan-zoom';
 	import { onMount } from 'svelte';

@@ -3,7 +3,7 @@
 	import { shortenSelector, timeSince } from '$shared/helpers';
 	import { Moon, Sun } from 'svelte-radix';
 
-	import BeforeAfterView from './BeforeAfterView.svelte';
+	import ImageComparer from '$lib/components/ui/image-compare';
 
 	import type { Activity } from '$shared/models/activity';
 	import type { Project } from '$shared/models/project';
@@ -64,12 +64,12 @@
 	</div>
 	<div class="flex w-full h-full items-center justify-center">
 		{#if activeActivity}
-			<BeforeAfterView
+			<ImageComparer
 				beforeImage={activeActivity.beforeImage}
 				afterImage={activeActivity.previewImage}
 			/>
 		{:else}
-			<BeforeAfterView
+			<ImageComparer
 				beforeImage={project.hostData.beforeImage}
 				afterImage={project.hostData.previewImage}
 			/>
