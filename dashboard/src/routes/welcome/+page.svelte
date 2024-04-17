@@ -12,15 +12,15 @@
 	style="background-image: url({BackgroundImage}); background-size: cover; background-position: center;"
 >
 	<div class="flex flex-col w-2/3 items-center">
-		<h1 class="text-2xl text-white text-start w-full mb-4">Let's push some pixels</h1>
+		<h1 class="text-2xl text-white text-start w-full" style="margin-bottom: 1rem;">Let's push some pixels</h1>
 		<div class="flex flex-row w-full">
 			<Card.Root class="w-1/2 h-1/2 rounded-none px-4">
 				<Card.Header class="text-light">
-					<h1 class="">Onlook</h1>
+					<h1 class="" style="color: var(--text-tertiary);">Step 1</h1>
 					<h2 class="text-tertiary" style="margin-top: 0px; color: white;">Pin Onlook in your browser</h2>
 				</Card.Header>
 				<Card.Content class="space-y-4">
-					<div class="w-full h-12 bg-stone-100"></div>
+					<div class="w-full h-12 bg-stone-100" style="height: 150px; background-color: #222;"></div>
 				</Card.Content>
 				<Card.Footer class="flex flex-col">
 					<p style="width: 100%; color: var(--text-tertiary);">Click extensions in the upper right corner</p>
@@ -48,7 +48,7 @@
 				<h2 class="text-xl text-tertiary">Where Creativity meets Code</h2>
 			</Card.Header>
 			<Card.Content class="space-y-4">
-				<div class="w-full h-12 bg-stone-100"></div>
+				<div class="w-full h-12 bg-stone-100" style="color: #494949; background-color: #494949;"></div>
 			</Card.Content>
 			<Card.Footer>
 				<p class="text-sm font-light">

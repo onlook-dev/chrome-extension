@@ -10,5 +10,6 @@
 
 <div class={cn("p-6 pt-0", className)} style="padding-bottom: 18px;" {...$$restProps}>
 
+
 	<slot />
 </div>

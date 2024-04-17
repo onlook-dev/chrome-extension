@@ -10,13 +10,17 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-	class={cn("rounded-xl border bg-card text-card-foreground shadow", className)}
+	class={cn("rounded-xl border bg-card text-card-foreground shadow border-gray-200 w-1/2", className)}
+	style="width: 100%"
 	{...$$restProps}
 	on:click
 	on:focusin
 	on:focusout
 	on:mouseenter
-	on:mouseleave
+on:mouseleave
+Framework: svelte
+Framework: svelte
 >
+
 	<slot />
 </div>
