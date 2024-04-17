@@ -74,7 +74,10 @@ async function setStartupState() {
 }
 const setListeners = () => {
 	// Refresh tabs on update
-	chrome.runtime.onInstalled.addListener(() => {
+	chrome.runtime.onInstalled.addListener(({ reason }) => {
+		// Reason install prevents doing this on update
+		if (reason === 'install') chrome.tabs.create({ url: `${baseUrl}${DashboardRoutes.WELCOME}` });
+
 		setDefaultMaps()
 		setStartupState()
 	})
