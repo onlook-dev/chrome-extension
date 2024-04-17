@@ -12,43 +12,43 @@
 	style="background-image: url({BackgroundImage}); background-size: cover; background-position: center;"
 >
 	<div class="flex flex-col w-2/3 items-center">
-		<h1 class="text-2xl text-white text-start w-full">Title</h1>
+		<h1 class="text-[20px] mb-4 text-white text-start w-full">Let's push some pixels</h1>
 		<div class="flex flex-row w-full">
-			<Card.Root class="w-1/2 h-1/2 rounded-none px-4">
-				<Card.Header class="text-light">
-					<h1 class="">Onlook</h1>
-					<h2 class="text-tertiary">Where Creativity meets Code</h2>
+			<Card.Root class="border-none w-1/2 h-1/2 rounded-none px-4">
+				<Card.Header class="pb-6">
+					<h1 class="text-tertiary">Step 1</h1>
+					<h2 class="text-primary">Pin Onlook in your browser</h2>
 				</Card.Header>
 				<Card.Content class="space-y-4">
-					<div class="w-full h-12 bg-stone-100"></div>
+					<div class="w-full h-40 bg-stone-800"></div>
 				</Card.Content>
-				<Card.Footer class="flex flex-col">
-					<p>Hello</p>
-					<p>World</p>
+				<Card.Footer class="flex flex-col text-tertiary w-full items-start">
+					<p>1. Click extensions in the upper right corner</p>
+					<p>2. Pin Onlook</p>
 				</Card.Footer>
 			</Card.Root>
-			<Card.Root class="w-1/2 h-1/2 rounded-none px-4">
-				<Card.Header class="text-light">
-					<h1 class="">Onlook</h1>
-					<h2 class="text-tertiary">Where Creativity meets Code</h2>
+			<Card.Root class="border-none w-1/2 h-1/2 rounded-none px-4">
+				<Card.Header class="pb-6">
+					<h1 class="text-tertiary">Step 2</h1>
+					<h2 class="text-primary">Start editing any page</h2>
 				</Card.Header>
 				<Card.Content class="space-y-4">
-					<div class="w-full h-12 bg-stone-100"></div>
+					<div class="w-full h-40 bg-stone-800"></div>
 				</Card.Content>
-				<Card.Footer class="flex flex-col">
-					<p>Hello</p>
-					<p>World</p>
+				<Card.Footer class="flex flex-col text-tertiary w-full items-start">
+					<p>1. Go to any page you want to design</p>
+					<p>2. Click the extension and start designing</p>
 				</Card.Footer>
 			</Card.Root>
 		</div>
 
-		<Card.Root class="w-full h-1/2 rounded-none px-4">
-			<Card.Header class="text-light">
+		<Card.Root class="border-none w-full h-1/2 rounded-none px-4">
+			<Card.Header class="pb-6">
 				<h1 class="text-2xl">Onlook</h1>
 				<h2 class="text-xl text-tertiary">Where Creativity meets Code</h2>
 			</Card.Header>
 			<Card.Content class="space-y-4">
-				<div class="w-full h-12 bg-stone-100"></div>
+				<div class="w-full h-12 bg-stone-800"></div>
 			</Card.Content>
 			<Card.Footer>
 				<p class="text-sm font-light">
