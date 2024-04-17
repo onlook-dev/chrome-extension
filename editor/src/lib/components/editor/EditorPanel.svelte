@@ -52,7 +52,7 @@
   on:focusout={() => (isInputFocused = false)}
   class="fixed top-10 right-2 overscroll-contain {$editorPanelVisible
     ? 'visible'
-    : 'invisible'}"
+    : 'visible'}"
 >
   <div
     bind:this={cardRef}
@@ -69,7 +69,7 @@
           <Tabs.List class="handle bg-transparent p-0 gap-4 w-full select-none	">
             <Tabs.Trigger
               class="bg-transparent p-0 text-xs"
-              value={TabValue.CSS}>Appearance</Tabs.Trigger
+              value={TabValue.CSS}>Element Appearance</Tabs.Trigger
             >
             <!-- <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CODE}
             >Code</Tabs.Trigger

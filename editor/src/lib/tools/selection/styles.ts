@@ -22,7 +22,7 @@ export enum ElementStyleType {
 
 export enum ElementStyleGroup {
   Size = 'Size',
-  Position = 'Position',
+  Position = 'Position & Dimensions',
   Style = 'Style',
   Text = 'Text',
   Spacing = 'Padding & Margin',
@@ -65,21 +65,20 @@ export class ElementStyle implements ElementStyle {
 
 // https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units
 
-// Size: height, width, minHeight, minWidth, maxWidth, maxHeight, rotate, borderRadius
-// Position: position
-// Style: opacity, overflow, backgroundColor
-// Text: fontFamily fontSize fontWeight color letterSpacing lineHeight textAlign 
-// Spacing: marign padding
+// Position: height, width
+// Layout: type, direction, distribute, X align, Y align, Gap, Padding, Margin
+// Style: opacity, fill (backgroundColor), Corners (cornerRadius and for each corner), Borders (border color, border weight), Position, Shadows (same as border)
+// Text: color fontSize fontWeight letterSpacing lineHeight textAlign 
 // Effect: shadow border
 
 export const elementStyles: ElementStyle[] = [
-  // Size
+  // Position & Dimenions
   new ElementStyle(
     'width',
     '',
-    'W',
+    'Width',
     ElementStyleType.Number,
-    ElementStyleGroup.Size,
+    ElementStyleGroup.Position,
     [],
     elementStyleUnits,
     1000
@@ -87,83 +86,12 @@ export const elementStyles: ElementStyle[] = [
   new ElementStyle(
     'height',
     '',
-    'H',
+    'Height',
     ElementStyleType.Number,
-    ElementStyleGroup.Size,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  new ElementStyle(
-    'minWidth',
-    '',
-    'mW',
-    ElementStyleType.Number,
-    ElementStyleGroup.Size,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  new ElementStyle(
-    'minHeight',
-    '',
-    'mH',
-    ElementStyleType.Number,
-    ElementStyleGroup.Size,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  new ElementStyle(
-    'maxWidth',
-    '',
-    'MW',
-    ElementStyleType.Number,
-    ElementStyleGroup.Size,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-
-  new ElementStyle(
-    'maxHeight',
-    '',
-    'MH',
-    ElementStyleType.Number,
-    ElementStyleGroup.Size,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  new ElementStyle(
-    'rotate',
-    '',
-    'Rot',
-    ElementStyleType.Number,
-    ElementStyleGroup.Size,
-    [],
-    ['deg', 'rad', 'grad', 'turn'],
-    1000
-  ),
-  new ElementStyle(
-    'borderRadius',
-    '',
-    'Rad',
-    ElementStyleType.Number,
-    ElementStyleGroup.Size,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-
-  // Position
-  new ElementStyle(
-    'position',
-    'relative',
-    'Type',
-    ElementStyleType.Select,
     ElementStyleGroup.Position,
-    ['relative', 'absolute', 'fixed', 'sticky', 'static']
+    [],
+    elementStyleUnits,
+    1000
   ),
 
   // Style
