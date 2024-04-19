@@ -4,7 +4,7 @@
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
   import { parse } from "culori";
-  import { Cross2 } from "radix-icons-svelte";
+  import { Cross2, Plus } from "radix-icons-svelte";
 
   $: inputString = stringToHex(elementStyle.value);
 </script>
@@ -30,7 +30,7 @@
     class="w-16 text-xs border-none text-text bg-transparent text-start focus:outline-none focus:ring-0"
     type="text"
     value={inputString}
-    placeholder="--"
+    placeholder="None"
     on:keydown={(e) => {
       if (e.key === "Enter") {
         e.currentTarget.blur();
@@ -46,7 +46,17 @@
       updateElementStyle(elementStyle.key, event.currentTarget.value);
     }}
   />
-  <button class="text-tertiary">
-    <Cross2 />
+  <button
+    class="text-tertiary"
+    on:click={() => {
+      inputString = "";
+      updateElementStyle(elementStyle.key, inputString);
+    }}
+  >
+    {#if inputString === ""}
+      <Plus />
+    {:else}
+      <Cross2 />
+    {/if}
   </button>
 </div>
