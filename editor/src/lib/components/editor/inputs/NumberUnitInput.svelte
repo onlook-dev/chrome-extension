@@ -129,7 +129,7 @@
         {/each}
       </select>
       <div
-        class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+        class="text-tertiary absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
       >
         <ChevronDown />
       </div>

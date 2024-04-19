@@ -118,7 +118,7 @@ export const elementStyles: ElementStyle[] = [
   new ElementStyle(
     'backgroundColor',
     '',
-    'Background',
+    'Fill',
     ElementStyleType.Color,
     ElementStyleGroup.Style
   ),
@@ -205,7 +205,7 @@ export const elementStyles: ElementStyle[] = [
   new ElementStyle(
     'textAlign',
     'start',
-    'Text Alignment',
+    'Align',
     ElementStyleType.Select,
     ElementStyleGroup.Text,
     ['start', 'center', 'end',]

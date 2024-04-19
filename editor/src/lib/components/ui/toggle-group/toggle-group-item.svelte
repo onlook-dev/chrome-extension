@@ -22,7 +22,8 @@
 			variant: ctx.variant || variant,
 			size: ctx.size || size,
 		}),
-		className
+		className,
+		"rounded-sm",
 	)}
 	{value}
 	{...$$restProps}
