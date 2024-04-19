@@ -2,6 +2,7 @@
   import {
     ElementStyle,
     ElementStyleGroup,
+    ElementStyleSubGroup,
     ElementStyleType,
     getElementComputedStylesData,
     getImmediateTextContent,
@@ -9,7 +10,6 @@
   } from "$lib/tools/selection/styles";
 
   import { onDestroy, onMount } from "svelte";
-  import { Input } from "$lib/components/ui/input";
   import { ApplyChangesService } from "$lib/tools/edit/applyChange";
   import type { EditTool } from "$lib/tools/edit";
 
@@ -21,18 +21,21 @@
   import TagInfo from "./inputs/TagInfo.svelte";
   import TailwindInput from "./inputs/TailwindInput.svelte";
   import AutolayoutInput from "./inputs/AutolayoutInput.svelte";
+  import MarginSection from "./inputs/MarginPaddingSection.svelte";
+  import TextInput from "./inputs/TextInput.svelte";
 
   export let editTool: EditTool;
   const applyChangeService = new ApplyChangesService();
   const custom = "Custom";
   let el: HTMLElement | undefined = undefined;
-  let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {
+
+  let groupedStyles: Record<string, ElementStyle[]> = {
     [ElementStyleGroup.Size]: [],
     [ElementStyleGroup.Position]: [],
     [ElementStyleGroup.Layout]: [],
+    [ElementStyleSubGroup.Margin]: [],
     [ElementStyleGroup.Style]: [],
     [ElementStyleGroup.Text]: [],
-    [ElementStyleGroup.Spacing]: [],
     [ElementStyleGroup.Effects]: [],
   };
   let appendedClass: string[] = [];
@@ -92,20 +95,17 @@
     value={[...Object.keys(groupedStyles), custom]}
   >
     {#each Object.entries(groupedStyles) as [groupKey, elementStyles]}
-      {#if groupKey == ElementStyleGroup.Spacing}
-        <Accordion.Item data-state="open" value={groupKey}>
-          <Accordion.Trigger
-            ><h2 class="text-xs">
-              {groupKey}
-            </h2></Accordion.Trigger
-          >
-          <Accordion.Content>
-            Spacing
-            <!-- <SpacingInput {elementStyles} {updateElementStyle} /> -->
-          </Accordion.Content>
-        </Accordion.Item>
+      {#if groupKey === ElementStyleSubGroup.Margin}
+        <MarginSection {elementStyles} {updateElementStyle} />
+      {:else if groupKey === ElementStyleSubGroup.Padding}
+        <MarginSection {elementStyles} {updateElementStyle} />
+        <Separator />
       {:else}
-        <Accordion.Item data-state="open" value={groupKey}>
+        <Accordion.Item
+          data-state="open"
+          value={groupKey}
+          class={groupKey === ElementStyleGroup.Layout ? "border-b-0" : ""}
+        >
           <Accordion.Trigger
             ><h2 class="text-xs font-semibold">
               {groupKey}
@@ -130,18 +130,7 @@
                   {:else if elementStyle.type === ElementStyleType.Number}
                     <NumberUnitInput {elementStyle} {updateElementStyle} />
                   {:else}
-                    <Input
-                      type="text"
-                      placeholder={elementStyle.type}
-                      class="w-24 text-xs"
-                      value={elementStyle.value}
-                      on:input={(event) => {
-                        updateElementStyle(
-                          elementStyle.key,
-                          event.currentTarget.value,
-                        );
-                      }}
-                    />
+                    <TextInput {elementStyle} {updateElementStyle} />
                   {/if}
                 </div>
               </div>

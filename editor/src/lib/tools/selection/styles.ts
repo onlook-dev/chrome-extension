@@ -11,6 +11,7 @@ export interface ElementStyle {
   options?: string[]
   units?: string[]
   max?: number
+  subGroup?: ElementStyleSubGroup
 }
 
 export enum ElementStyleType {
@@ -27,22 +28,32 @@ export enum ElementStyleGroup {
   Layout = 'Layout',
   Style = 'Styles',
   Text = 'Text',
-  Spacing = 'Padding & Margin',
   Effects = 'Effects',
 }
 
+export enum ElementStyleSubGroup {
+  Margin = 'Margin',
+  Padding = 'Padding',
+  Border = 'Border',
+  Shadow = 'Shadow',
+}
+
 // Custom order for the groups
-const groupOrder: ElementStyleGroup[] = [
+const groupOrder: (string)[] = [
   ElementStyleGroup.Size,
   ElementStyleGroup.Position,
   ElementStyleGroup.Layout,
+  ElementStyleSubGroup.Margin,
+  ElementStyleSubGroup.Padding,
   ElementStyleGroup.Style,
+  ElementStyleSubGroup.Border,
+  ElementStyleSubGroup.Shadow,
   ElementStyleGroup.Text,
-  ElementStyleGroup.Layout,
   ElementStyleGroup.Effects,
 ];
 
 export class ElementStyle implements ElementStyle {
+
   constructor(
     key: string,
     value: string,
@@ -51,18 +62,24 @@ export class ElementStyle implements ElementStyle {
     group: ElementStyleGroup,
 
     // Optional
-    options?: string[],
-    units?: string[],
-    max?: number
+    optional?: {
+      options?: string[],
+      units?: string[],
+      max?: number,
+      subGroup?: ElementStyleSubGroup
+    }
   ) {
     this.key = key
     this.value = value
     this.displayName = displayName
     this.type = type
     this.group = group
-    this.options = options
-    this.units = units
-    this.max = max
+
+    if (!optional) return
+    this.options = optional.options || []
+    this.units = optional.units
+    this.max = optional.max
+    this.subGroup = optional.subGroup
   }
 }
 
@@ -82,9 +99,10 @@ export const elementStyles: ElementStyle[] = [
     'Width',
     ElementStyleType.Dimensions,
     ElementStyleGroup.Position,
-    [],
-    elementStyleUnits,
-    1000
+    {
+      units: elementStyleUnits,
+      max: 1000
+    }
   ),
   new ElementStyle(
     'height',
@@ -92,19 +110,20 @@ export const elementStyles: ElementStyle[] = [
     'Height',
     ElementStyleType.Dimensions,
     ElementStyleGroup.Position,
-    [],
-    elementStyleUnits,
-    1000
+    {
+      units: elementStyleUnits,
+      max: 1000
+    }
   ),
 
   // Layout
   new ElementStyle(
     'display',
     'flex',
-    'Display',
+    'Type',
     ElementStyleType.Select,
     ElementStyleGroup.Layout,
-    ['flex', 'grid']
+    { options: ['flex', 'grid', 'block'] }
   ),
 
   new ElementStyle(
@@ -113,16 +132,7 @@ export const elementStyles: ElementStyle[] = [
     'Direction',
     ElementStyleType.Select,
     ElementStyleGroup.Layout,
-    ['row', 'column']
-  ),
-
-  new ElementStyle(
-    'justifyContent',
-    'flex-start',
-    'Y Align',
-    ElementStyleType.Select,
-    ElementStyleGroup.Layout,
-    ['flex-start', 'center', 'flex-end', 'stretch']
+    { options: ['row', 'column'] }
   ),
 
   new ElementStyle(
@@ -131,7 +141,16 @@ export const elementStyles: ElementStyle[] = [
     'X Align',
     ElementStyleType.Select,
     ElementStyleGroup.Layout,
-    ['flex-start', 'center', 'flex-end', 'stretch']
+    { options: ['flex-start', 'center', 'flex-end', 'stretch'] }
+  ),
+
+  new ElementStyle(
+    'justifyContent',
+    'flex-start',
+    'Y Align',
+    ElementStyleType.Select,
+    ElementStyleGroup.Layout,
+    { options: ['flex-start', 'center', 'flex-end', 'stretch'] }
   ),
 
   new ElementStyle(
@@ -140,9 +159,11 @@ export const elementStyles: ElementStyle[] = [
     'Gap',
     ElementStyleType.Number,
     ElementStyleGroup.Layout,
-    [],
-    elementStyleUnits,
-    1000
+
+    {
+      units: elementStyleUnits,
+      max: 1000
+    }
   ),
 
   new ElementStyle(
@@ -151,51 +172,65 @@ export const elementStyles: ElementStyle[] = [
     'Margin',
     ElementStyleType.Number,
     ElementStyleGroup.Layout,
-    [],
-    elementStyleUnits,
-    1000
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Margin
+    }
+  ),
+
+  new ElementStyle(
+    'marginLeft',
+    '',
+    'Left',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Margin
+    }
   ),
 
   new ElementStyle(
     'marginTop',
     '',
-    'Margin Top',
+    'Top',
     ElementStyleType.Number,
     ElementStyleGroup.Layout,
-    [],
-    elementStyleUnits,
-    1000
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Margin
+    }
   ),
+
   new ElementStyle(
     'marginRight',
     '',
-    'Margin Right',
+    'Right',
     ElementStyleType.Number,
     ElementStyleGroup.Layout,
-    [],
-    elementStyleUnits,
-    1000
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Margin
+    }
   ),
+
   new ElementStyle(
     'marginBottom',
     '',
-    'Margin Bottom',
+    'Bottom',
     ElementStyleType.Number,
     ElementStyleGroup.Layout,
-    [],
-    elementStyleUnits,
-    1000
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Margin
+    }
   ),
-  new ElementStyle(
-    'marginLeft',
-    '',
-    'Margin Left',
-    ElementStyleType.Number,
-    ElementStyleGroup.Layout,
-    [],
-    elementStyleUnits,
-    1000
-  ),
+
 
   new ElementStyle(
     'padding',
@@ -203,51 +238,64 @@ export const elementStyles: ElementStyle[] = [
     'Padding',
     ElementStyleType.Number,
     ElementStyleGroup.Layout,
-    [],
-    elementStyleUnits,
-    1000
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Padding
+    }
+  ),
+
+  new ElementStyle(
+    'paddingLeft',
+    '',
+    'Left',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Padding
+    }
   ),
 
   new ElementStyle(
     'paddingTop',
     '',
-    'Padding Top',
+    'Top',
     ElementStyleType.Number,
     ElementStyleGroup.Layout,
-    [],
-    elementStyleUnits,
-    1000
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Padding
+    }
   ),
   new ElementStyle(
     'paddingRight',
     '',
-    'Padding Right',
+    'Right',
     ElementStyleType.Number,
     ElementStyleGroup.Layout,
-    [],
-    elementStyleUnits,
-    1000
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Padding
+    }
   ),
+
   new ElementStyle(
     'paddingBottom',
     '',
-    'Padding Bottom',
+    'Bottom',
     ElementStyleType.Number,
     ElementStyleGroup.Layout,
-    [],
-    elementStyleUnits,
-    1000
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Padding
+    }
   ),
-  new ElementStyle(
-    'paddingLeft',
-    '',
-    'Padding Left',
-    ElementStyleType.Number,
-    ElementStyleGroup.Layout,
-    [],
-    elementStyleUnits,
-    1000
-  ),
+
   // Style
   new ElementStyle(
     'opacity',
@@ -255,9 +303,10 @@ export const elementStyles: ElementStyle[] = [
     'Opacity',
     ElementStyleType.Number,
     ElementStyleGroup.Style,
-    [],
-    ['%'],
-    1
+    {
+      units: ['%'],
+      max: 100
+    }
   ),
   new ElementStyle(
     'overflow',
@@ -265,7 +314,57 @@ export const elementStyles: ElementStyle[] = [
     'Overflow',
     ElementStyleType.Select,
     ElementStyleGroup.Style,
-    ['visible', 'hidden', 'scroll', 'auto']
+    { options: ['visible', 'hidden', 'scroll', 'auto'] }
+  ),
+
+  new ElementStyle(
+    'border',
+    '',
+    'Border',
+    ElementStyleType.Number,
+    ElementStyleGroup.Style,
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Border
+    }
+  ),
+
+  new ElementStyle(
+    'borderColor',
+    '',
+    'Color',
+    ElementStyleType.Color,
+    ElementStyleGroup.Style,
+    {
+      subGroup: ElementStyleSubGroup.Border
+    }
+  ),
+
+  new ElementStyle(
+    'borderRadius',
+    '',
+    'Radius',
+    ElementStyleType.Number,
+    ElementStyleGroup.Style,
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Border
+    }
+  ),
+
+  new ElementStyle(
+    'borderWidth',
+    '',
+    'Width',
+    ElementStyleType.Number,
+    ElementStyleGroup.Style,
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Border
+    }
   ),
 
   new ElementStyle(
@@ -291,9 +390,10 @@ export const elementStyles: ElementStyle[] = [
     'Size',
     ElementStyleType.Number,
     ElementStyleGroup.Text,
-    [],
-    elementStyleUnits,
-    100
+    {
+      units: elementStyleUnits,
+      max: 1000
+    }
   ),
   new ElementStyle(
     'fontWeight',
@@ -301,21 +401,23 @@ export const elementStyles: ElementStyle[] = [
     'Weight',
     ElementStyleType.Select,
     ElementStyleGroup.Text,
-    [
-      'lighter',
-      'normal',
-      'bold',
-      'bolder',
-      '100',
-      '200',
-      '300',
-      '400',
-      '500',
-      '600',
-      '700',
-      '800',
-      '900'
-    ]
+    {
+      options: [
+        'lighter',
+        'normal',
+        'bold',
+        'bolder',
+        '100',
+        '200',
+        '300',
+        '400',
+        '500',
+        '600',
+        '700',
+        '800',
+        '900'
+      ]
+    }
   ),
   new ElementStyle(
     'letterSpacing',
@@ -323,9 +425,10 @@ export const elementStyles: ElementStyle[] = [
     'Letter',
     ElementStyleType.Number,
     ElementStyleGroup.Text,
-    [],
-    elementStyleUnits,
-    100
+    {
+      units: elementStyleUnits,
+      max: 100
+    }
   ),
   new ElementStyle(
     'lineHeight',
@@ -333,9 +436,10 @@ export const elementStyles: ElementStyle[] = [
     'Line Height',
     ElementStyleType.Number,
     ElementStyleGroup.Text,
-    [],
-    elementStyleUnits,
-    100
+    {
+      units: ['%', 'px'],
+      max: 1000
+    }
   ),
   new ElementStyle(
     'textAlign',
@@ -343,7 +447,9 @@ export const elementStyles: ElementStyle[] = [
     'Align',
     ElementStyleType.Select,
     ElementStyleGroup.Text,
-    ['start', 'center', 'end',]
+    {
+      options: ['start', 'center', 'end']
+    }
   ),
 ]
 
@@ -360,8 +466,18 @@ export function sortGroupsByCustomOrder(groups: Record<string, ElementStyle[]>):
   return sortedGroups;
 }
 
-export function groupElementStylesByGroup(styles: ElementStyle[]): Record<ElementStyleGroup, ElementStyle[]> {
+export function groupElementStylesByGroup(styles: ElementStyle[]): Record<string, ElementStyle[]> {
   return styles.reduce((groups: any, style) => {
+
+    if (style.subGroup) {
+      if (!groups[style.subGroup]) {
+        groups[style.subGroup] = []
+      }
+      groups[style.subGroup].push(style)
+      return sortGroupsByCustomOrder(groups)
+    }
+
+
     // Initialize the group if it doesn't exist
     if (!groups[style.group]) {
       groups[style.group] = []
