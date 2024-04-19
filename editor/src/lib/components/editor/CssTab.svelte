@@ -19,7 +19,6 @@
   import ColorInput from "./inputs/ColorInput.svelte";
   import NumberUnitInput from "./inputs/NumberUnitInput.svelte";
   import TagInfo from "./inputs/TagInfo.svelte";
-  import SpacingInput from "./inputs/SpacingInput.svelte";
   import TailwindInput from "./inputs/TailwindInput.svelte";
   import AutolayoutInput from "./inputs/AutolayoutInput.svelte";
 
@@ -30,6 +29,7 @@
   let groupedStyles: Record<ElementStyleGroup, ElementStyle[]> = {
     [ElementStyleGroup.Size]: [],
     [ElementStyleGroup.Position]: [],
+    [ElementStyleGroup.Layout]: [],
     [ElementStyleGroup.Style]: [],
     [ElementStyleGroup.Text]: [],
     [ElementStyleGroup.Spacing]: [],

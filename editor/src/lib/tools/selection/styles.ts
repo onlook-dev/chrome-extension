@@ -24,7 +24,8 @@ export enum ElementStyleType {
 export enum ElementStyleGroup {
   Size = 'Size',
   Position = 'Position & Dimensions',
-  Style = 'Style',
+  Layout = 'Layout',
+  Style = 'Styles',
   Text = 'Text',
   Spacing = 'Padding & Margin',
   Effects = 'Effects',
@@ -34,6 +35,7 @@ export enum ElementStyleGroup {
 const groupOrder: ElementStyleGroup[] = [
   ElementStyleGroup.Size,
   ElementStyleGroup.Position,
+  ElementStyleGroup.Layout,
   ElementStyleGroup.Style,
   ElementStyleGroup.Text,
   ElementStyleGroup.Spacing,
@@ -90,6 +92,54 @@ export const elementStyles: ElementStyle[] = [
     'Height',
     ElementStyleType.Dimensions,
     ElementStyleGroup.Position,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+
+  // Layout
+  new ElementStyle(
+    'display',
+    'flex',
+    'Display',
+    ElementStyleType.Select,
+    ElementStyleGroup.Layout,
+    ['flex', 'grid']
+  ),
+
+  new ElementStyle(
+    'flexDirection',
+    'row',
+    'Direction',
+    ElementStyleType.Select,
+    ElementStyleGroup.Layout,
+    ['row', 'column']
+  ),
+
+  new ElementStyle(
+    'justifyContent',
+    'flex-start',
+    'Y Align',
+    ElementStyleType.Select,
+    ElementStyleGroup.Layout,
+    ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly']
+  ),
+
+  new ElementStyle(
+    'alignItems',
+    'flex-start',
+    'X Align',
+    ElementStyleType.Select,
+    ElementStyleGroup.Layout,
+    ['flex-start', 'center', 'flex-end', 'stretch']
+  ),
+
+  new ElementStyle(
+    'gap',
+    '0px',
+    'Gap',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
     [],
     elementStyleUnits,
     1000

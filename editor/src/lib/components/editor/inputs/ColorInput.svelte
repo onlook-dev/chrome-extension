@@ -12,10 +12,12 @@
 <div
   class="w-32 p-[6px] gap-2 bg-surface flex flex-row rounded-sm cursor-pointer"
 >
-  <div class="overflow-hidden w-5 h-5 border-none rounded-sm relative">
+  <div
+    class="overflow-hidden w-5 h-5 border-transparent rounded-[2px] relative"
+  >
     <input
       type="color"
-      class="absolute w-10 h-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+      class="border-transparent absolute w-10 h-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
       value={inputString}
       on:input={(event) => {
         inputString = event.currentTarget.value;
