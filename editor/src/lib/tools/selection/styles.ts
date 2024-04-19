@@ -38,7 +38,7 @@ const groupOrder: ElementStyleGroup[] = [
   ElementStyleGroup.Layout,
   ElementStyleGroup.Style,
   ElementStyleGroup.Text,
-  ElementStyleGroup.Spacing,
+  ElementStyleGroup.Layout,
   ElementStyleGroup.Effects,
 ];
 
@@ -122,7 +122,7 @@ export const elementStyles: ElementStyle[] = [
     'Y Align',
     ElementStyleType.Select,
     ElementStyleGroup.Layout,
-    ['flex-start', 'center', 'flex-end', 'space-between', 'space-around', 'space-evenly']
+    ['flex-start', 'center', 'flex-end', 'stretch']
   ),
 
   new ElementStyle(
@@ -145,6 +145,109 @@ export const elementStyles: ElementStyle[] = [
     1000
   ),
 
+  new ElementStyle(
+    'margin',
+    '',
+    'Margin',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+
+  new ElementStyle(
+    'marginTop',
+    '',
+    'Margin Top',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'marginRight',
+    '',
+    'Margin Right',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'marginBottom',
+    '',
+    'Margin Bottom',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'marginLeft',
+    '',
+    'Margin Left',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+
+  new ElementStyle(
+    'padding',
+    '',
+    'Padding',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+
+  new ElementStyle(
+    'paddingTop',
+    '',
+    'Padding Top',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'paddingRight',
+    '',
+    'Padding Right',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'paddingBottom',
+    '',
+    'Padding Bottom',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    [],
+    elementStyleUnits,
+    1000
+  ),
+  new ElementStyle(
+    'paddingLeft',
+    '',
+    'Padding Left',
+    ElementStyleType.Number,
+    ElementStyleGroup.Layout,
+    [],
+    elementStyleUnits,
+    1000
+  ),
   // Style
   new ElementStyle(
     'opacity',
@@ -174,29 +277,18 @@ export const elementStyles: ElementStyle[] = [
   ),
 
   // Text
-  // new ElementStyle(
-  //   'fontFamily',
-  //   'sans-serif',
-  //   'Font',
-  //   ElementStyleType.Select,
-  //   ElementStyleGroup.Text,
-  //   [
-  //     'inherit',
-  //     'system-ui',
-  //     'serif',
-  //     'sans-serif',
-  //     'monospace',
-  //     'cursive',
-  //     'fantasy',
-  //     'emoji',
-  //     'math',
-  //     'fangsong'
-  //   ]
-  // ),
+  new ElementStyle(
+    'color',
+    '#000000',
+    'Color',
+    ElementStyleType.Color,
+    ElementStyleGroup.Text
+  ),
+
   new ElementStyle(
     'fontSize',
     '16px',
-    'Font Size',
+    'Size',
     ElementStyleType.Number,
     ElementStyleGroup.Text,
     [],
@@ -226,13 +318,6 @@ export const elementStyles: ElementStyle[] = [
     ]
   ),
   new ElementStyle(
-    'color',
-    '#000000',
-    'Color',
-    ElementStyleType.Color,
-    ElementStyleGroup.Text
-  ),
-  new ElementStyle(
     'letterSpacing',
     '0px',
     'Letter',
@@ -260,90 +345,6 @@ export const elementStyles: ElementStyle[] = [
     ElementStyleGroup.Text,
     ['start', 'center', 'end',]
   ),
-
-  // Spacing
-  new ElementStyle(
-    'marginTop',
-    '',
-    'Margin Top',
-    ElementStyleType.Number,
-    ElementStyleGroup.Spacing,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  new ElementStyle(
-    'marginRight',
-    '',
-    'Margin Right',
-    ElementStyleType.Number,
-    ElementStyleGroup.Spacing,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  new ElementStyle(
-    'marginBottom',
-    '',
-    'Margin Bottom',
-    ElementStyleType.Number,
-    ElementStyleGroup.Spacing,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  new ElementStyle(
-    'marginLeft',
-    '',
-    'Margin Left',
-    ElementStyleType.Number,
-    ElementStyleGroup.Spacing,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  new ElementStyle(
-    'paddingTop',
-    '',
-    'Padding Top',
-    ElementStyleType.Number,
-    ElementStyleGroup.Spacing,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  new ElementStyle(
-    'paddingRight',
-    '',
-    'Padding Right',
-    ElementStyleType.Number,
-    ElementStyleGroup.Spacing,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  new ElementStyle(
-    'paddingBottom',
-    '',
-    'Padding Bottom',
-    ElementStyleType.Number,
-    ElementStyleGroup.Spacing,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  new ElementStyle(
-    'paddingLeft',
-    '',
-    'Padding Left',
-    ElementStyleType.Number,
-    ElementStyleGroup.Spacing,
-    [],
-    elementStyleUnits,
-    1000
-  ),
-  // Effects
-  // TODO: Add effects
 ]
 
 export function sortGroupsByCustomOrder(groups: Record<string, ElementStyle[]>): Record<string, ElementStyle[]> {
