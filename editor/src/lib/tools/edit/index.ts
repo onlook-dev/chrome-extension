@@ -27,7 +27,10 @@ export class EditTool implements Tool {
 		window.addEventListener('resize', this.onScreenResize.bind(this));
 	}
 
-	onInit() { }
+	onInit() {
+		// Test remove later
+		this.selectorEngine.select(document.body);
+	}
 
 	onDestroy() {
 		editorPanelVisible.set(false);

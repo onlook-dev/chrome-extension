@@ -56,10 +56,11 @@
       groupedStyles = groupElementStylesByGroup(computedStyles);
 
       // Remove text group if no text content
-      const immediateTextContent = getImmediateTextContent(el);
-      if (!immediateTextContent || immediateTextContent === "") {
-        delete groupedStyles[ElementStyleGroup.Text];
-      }
+      // TODO: Test, remove comment
+      // const immediateTextContent = getImmediateTextContent(el);
+      // if (!immediateTextContent || immediateTextContent === "") {
+      //   delete groupedStyles[ElementStyleGroup.Text];
+      // }
 
       // TODO: This is a hack because for some reason, string assignment aren't always reactive when assigning empty string.
       // But arrays are always reactive on assignment.
@@ -99,7 +100,8 @@
             </h2></Accordion.Trigger
           >
           <Accordion.Content>
-            <SpacingInput {elementStyles} {updateElementStyle} />
+            Spacing
+            <!-- <SpacingInput {elementStyles} {updateElementStyle} /> -->
           </Accordion.Content>
         </Accordion.Item>
       {:else}
@@ -122,17 +124,11 @@
                   {#if elementStyle.type === ElementStyleType.Select}
                     <SelectInput {elementStyle} {updateElementStyle} />
                   {:else if elementStyle.type === ElementStyleType.Dimensions}
-                    <AutolayoutInput {elementStyle} {updateElementStyle} />
+                    <NumberUnitInput {elementStyle} {updateElementStyle} />
                   {:else if elementStyle.type === ElementStyleType.Color}
                     <ColorInput {elementStyle} {updateElementStyle} />
                   {:else if elementStyle.type === ElementStyleType.Number}
-                    <NumberUnitInput
-                      inputWidth="w-12"
-                      unitWidth="w-6"
-                      unitEnd={true}
-                      {elementStyle}
-                      {updateElementStyle}
-                    />
+                    <NumberUnitInput {elementStyle} {updateElementStyle} />
                   {:else}
                     <Input
                       type="text"

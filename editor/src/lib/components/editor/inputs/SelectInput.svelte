@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as ToggleGroup from "$lib/components/ui/toggle-group";
   import type { ElementStyle } from "$lib/tools/selection/styles";
+  import { ChevronDown } from "radix-icons-svelte";
 
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
@@ -84,20 +85,27 @@
       </ToggleGroup.Item>
     </ToggleGroup.Root>
   {:else}
-    <select
-      name={elementStyle.displayName}
-      value={elementStyle.value}
-      class="border-none text-xs text-text bg-transparent appearance-none text-end focus:outline-none focus:ring-0 capitalize"
-      on:input={(event) => {
-        updateElementStyle(elementStyle.key, event.currentTarget.value);
-      }}
-    >
-      {#if !elementStyle.options.includes(elementStyle.value)}
-        <option value={elementStyle.value}>{elementStyle.value}</option>
-      {/if}
-      {#each elementStyle.options ?? [] as option}
-        <option value={option}>{option}</option>
-      {/each}
-    </select>
+    <div class="relative w-32">
+      <select
+        name={elementStyle.displayName}
+        value={elementStyle.value}
+        class="p-[6px] w-full px-2 text-start rounded border-none text-xs text-text bg-surface appearance-none focus:outline-none focus:ring-0 capitalize"
+        on:input={(event) => {
+          updateElementStyle(elementStyle.key, event.currentTarget.value);
+        }}
+      >
+        {#if !elementStyle.options.includes(elementStyle.value)}
+          <option value={elementStyle.value}>{elementStyle.value}</option>
+        {/if}
+        {#each elementStyle.options ?? [] as option}
+          <option value={option}>{option}</option>
+        {/each}
+      </select>
+      <div
+        class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+      >
+        <ChevronDown />
+      </div>
+    </div>
   {/if}
 {/if}

@@ -11,7 +11,7 @@
 </script>
 
 <button
-  class="text-start w-full p-2 mb-3 bg-stone-800 rounded text-xs cursor-pointer"
+  class="text-start w-full p-2 mb-3 bg-surface rounded text-xs cursor-pointer"
   on:click={() => (showMore = !showMore)}
 >
   <p class="space-x-1">

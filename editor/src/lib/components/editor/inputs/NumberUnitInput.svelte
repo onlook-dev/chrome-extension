@@ -1,19 +1,15 @@
 <script lang="ts">
   import type { ElementStyle } from "$lib/tools/selection/styles";
+  import { ChevronDown } from "radix-icons-svelte";
 
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
-  export let unitEnd: boolean = false;
-  export let inputWidth: string = "w-8";
-  export let unitWidth: string = "w-8";
 
   let parsedNumber: number = 0;
   let parsedUnit: string = "";
   let step = 1;
   let numberInputRef: HTMLInputElement;
-
   const auto = "auto";
-
   $: [parsedNumber, parsedUnit] = stringToParsedValue(elementStyle.value);
 
   const stringToParsedValue = (val: string): [number, string] => {
@@ -46,11 +42,11 @@
 </script>
 
 {#if elementStyle}
-  <div class="flex flex-row gap-1 justify-end">
+  <div class="flex flex-row gap-2 justify-end text-xs w-32">
     <input
       bind:this={numberInputRef}
       type="text"
-      class="{inputWidth} text-xs border-none text-text bg-transparent text-end focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+      class="w-full p-[6px] px-2 rounded border-none text-text bg-surface text-start focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       placeholder="--"
       value={isEmpty() ? "" : parsedNumber}
       {step}
@@ -102,36 +98,41 @@
       }}
     />
 
-    <select
-      name={elementStyle.displayName}
-      placeholder="auto"
-      class="text-xs {unitWidth} border-none text-text bg-transparent appearance-none {unitEnd
-        ? 'text-end'
-        : 'text-start'} focus:outline-none focus:ring-0"
-      on:input={(e) => {
-        if (e.currentTarget.value === auto) {
-          updateElementStyle(elementStyle.key, "inherit");
-          parsedNumber = 0;
+    <div class="relative w-full">
+      <select
+        name={elementStyle.displayName}
+        placeholder="auto"
+        class="p-[6px] w-full px-2 rounded-sm border-none text-text bg-surface text-start appearance-none focus:outline-none focus:ring-0"
+        on:input={(e) => {
+          if (e.currentTarget.value === auto) {
+            updateElementStyle(elementStyle.key, "inherit");
+            parsedNumber = 0;
+            parsedUnit = e.currentTarget.value;
+            return;
+          }
           parsedUnit = e.currentTarget.value;
-          return;
-        }
-        parsedUnit = e.currentTarget.value;
 
-        const stringValue = parsedValueToString(
-          parsedNumber,
-          e.currentTarget.value,
-        );
-        updateElementStyle(elementStyle.key, stringValue);
-      }}
-      value={isEmpty() ? auto : parsedUnit}
-    >
-      <option value={auto}>{auto}</option>
-      {#if parsedUnit !== "" && !elementStyle.units.includes(parsedUnit)}
-        <option value={parsedUnit}>{parsedUnit}</option>
-      {/if}
-      {#each elementStyle.units ?? [] as option}
-        <option value={option}>{option}</option>
-      {/each}
-    </select>
+          const stringValue = parsedValueToString(
+            parsedNumber,
+            e.currentTarget.value,
+          );
+          updateElementStyle(elementStyle.key, stringValue);
+        }}
+        value={isEmpty() ? auto : parsedUnit}
+      >
+        <option value={auto}>{auto}</option>
+        {#if parsedUnit !== "" && !elementStyle.units.includes(parsedUnit)}
+          <option value={parsedUnit}>{parsedUnit}</option>
+        {/if}
+        {#each elementStyle.units ?? [] as option}
+          <option value={option}>{option}</option>
+        {/each}
+      </select>
+      <div
+        class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+      >
+        <ChevronDown />
+      </div>
+    </div>
   </div>
 {/if}
