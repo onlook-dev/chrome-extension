@@ -20,10 +20,19 @@ const config = {
         ring: "hsl(var(--ring) / <alpha-value>)",
         background: "hsl(var(--background) / <alpha-value>)",
         foreground: "hsl(var(--foreground) / <alpha-value>)",
+        brand: "var(--text-text-brand)",
+        surface: {
+          DEFAULT: "var(--surface-surface-default)",
+          brand: {
+            DEFAULT: "var(--surface-surface-brand)",
+            secondary: "var(--surface-surface-brand-secondary)"
+          },
+        },
         primary: {
           DEFAULT: "hsl(var(--primary) / <alpha-value>)",
-          foreground: "hsl(var(--primary-foreground) / <alpha-value>)",
+          foreground: "hsl(var(--primary-foreground) / <alpha-value>)"
         },
+        tertiary: "var(--text-text-tertiary)",
         secondary: {
           DEFAULT: "hsl(var(--secondary) / <alpha-value>)",
           foreground: "hsl(var(--secondary-foreground) / <alpha-value>)",

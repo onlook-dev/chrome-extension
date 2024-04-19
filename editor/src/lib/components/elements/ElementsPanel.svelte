@@ -19,7 +19,7 @@
   }}
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
-  class="fixed top-10 left-[calc(260px+20px)] {$elementsPanelVisible
+  class="transition fixed top-10 left-[calc(260px+20px)] {$elementsPanelVisible
     ? 'visible'
     : 'invisible'}"
 >

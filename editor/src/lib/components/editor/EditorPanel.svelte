@@ -10,12 +10,12 @@
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
   import CssTab from "./CssTab.svelte";
-  // import CodeTab from "./CodeTab.svelte";
 
   enum TabValue {
     CSS = "css",
     CODE = "code",
   }
+
   export let editTool: EditTool;
   let selectedTab: string = TabValue.CSS;
   let isInputFocused = false;
@@ -50,7 +50,7 @@
   }}
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
-  class="fixed top-10 right-2 overscroll-contain {$editorPanelVisible
+  class="transition fixed top-10 right-2 overscroll-contain {$editorPanelVisible
     ? 'visible'
     : 'visible'}"
 >
@@ -71,9 +71,6 @@
               class="bg-transparent p-0 text-xs"
               value={TabValue.CSS}>Element Appearance</Tabs.Trigger
             >
-            <!-- <Tabs.Trigger class="bg-transparent p-0 text-xs" value={TabValue.CODE}
-            >Code</Tabs.Trigger
-          > -->
             <div class="ml-auto flex items-center">
               <button
                 class="w-8 h-8 flex items-center justify-center transition hover:text-white/80"
@@ -95,9 +92,6 @@
             <Tabs.Content value={TabValue.CSS}
               ><CssTab {editTool} /></Tabs.Content
             >
-            <!-- <Tabs.Content value={TabValue.CODE}
-            ><CodeTab {editTool} /></Tabs.Content
-          > -->
           </div>
           <Card.Footer class="flex justify-between"></Card.Footer>
         </Tabs.Root>

@@ -19,9 +19,9 @@
   import ColorInput from "./inputs/ColorInput.svelte";
   import NumberUnitInput from "./inputs/NumberUnitInput.svelte";
   import TagInfo from "./inputs/TagInfo.svelte";
-  import SizeSection from "./inputs/SizeSection.svelte";
   import SpacingInput from "./inputs/SpacingInput.svelte";
   import TailwindInput from "./inputs/TailwindInput.svelte";
+  import AutolayoutInput from "./inputs/AutolayoutInput.svelte";
 
   export let editTool: EditTool;
   const applyChangeService = new ApplyChangesService();
@@ -91,10 +91,7 @@
     value={[...Object.keys(groupedStyles), custom]}
   >
     {#each Object.entries(groupedStyles) as [groupKey, elementStyles]}
-      {#if groupKey == ElementStyleGroup.Size}
-        <SizeSection {elementStyles} {updateElementStyle} />
-        <Separator class="mt-4" />
-      {:else if groupKey == ElementStyleGroup.Spacing}
+      {#if groupKey == ElementStyleGroup.Spacing}
         <Accordion.Item data-state="open" value={groupKey}>
           <Accordion.Trigger
             ><h2 class="text-xs">
@@ -124,6 +121,8 @@
                 <div class="text-end ml-auto">
                   {#if elementStyle.type === ElementStyleType.Select}
                     <SelectInput {elementStyle} {updateElementStyle} />
+                  {:else if elementStyle.type === ElementStyleType.Dimensions}
+                    <AutolayoutInput {elementStyle} {updateElementStyle} />
                   {:else if elementStyle.type === ElementStyleType.Color}
                     <ColorInput {elementStyle} {updateElementStyle} />
                   {:else if elementStyle.type === ElementStyleType.Number}
@@ -158,19 +157,6 @@
     <Accordion.Item data-state="open" value={custom}>
       <Accordion.Trigger><h2 class="text-xs">{custom}</h2></Accordion.Trigger>
       <Accordion.Content>
-        <!-- <div class="space-y-2 px-1">
-          <p class="text-xs w-24 mr-2 text-start opacity-60">CSS</p>
-          <Textarea
-            class="w-full text-xs break-normal"
-            placeholder="background-color: red;
-color: white;"
-            on:input={(event) => {
-              editTool.selectorEngine.selected.forEach((element) => {
-                element.style.cssText = event.currentTarget.value;
-              });
-            }}
-          />
-        </div> -->
         <TailwindInput {updateElementClass} {appendedClass} />
       </Accordion.Content>
     </Accordion.Item>

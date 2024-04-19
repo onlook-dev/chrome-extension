@@ -15,6 +15,7 @@ export interface ElementStyle {
 
 export enum ElementStyleType {
   Text = 'text',
+  Dimensions = 'dimensions',
   Number = 'number',
   Select = 'select',
   Color = 'color'
@@ -77,7 +78,7 @@ export const elementStyles: ElementStyle[] = [
     'width',
     '',
     'Width',
-    ElementStyleType.Number,
+    ElementStyleType.Dimensions,
     ElementStyleGroup.Position,
     [],
     elementStyleUnits,
@@ -87,7 +88,7 @@ export const elementStyles: ElementStyle[] = [
     'height',
     '',
     'Height',
-    ElementStyleType.Number,
+    ElementStyleType.Dimensions,
     ElementStyleGroup.Position,
     [],
     elementStyleUnits,
