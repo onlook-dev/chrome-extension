@@ -50,7 +50,7 @@
   }}
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
-  class="transition fixed top-10 right-2 overscroll-contain {$editorPanelVisible
+  class="fixed top-10 right-2 overscroll-contain {$editorPanelVisible
     ? 'visible'
     : 'visible'}"
 >

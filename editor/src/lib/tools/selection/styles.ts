@@ -135,22 +135,22 @@ export const elementStyles: ElementStyle[] = [
     { options: ['row', 'column'] }
   ),
 
-  new ElementStyle(
-    'alignItems',
-    'flex-start',
-    'X Align',
-    ElementStyleType.Select,
-    ElementStyleGroup.Layout,
-    { options: ['flex-start', 'center', 'flex-end', 'stretch'] }
-  ),
 
   new ElementStyle(
     'justifyContent',
     'flex-start',
+    'X Align',
+    ElementStyleType.Select,
+    ElementStyleGroup.Layout,
+    { options: ['flex-start', 'center', 'flex-end', 'space-between'] }
+  ),
+  new ElementStyle(
+    'alignItems',
+    'flex-start',
     'Y Align',
     ElementStyleType.Select,
     ElementStyleGroup.Layout,
-    { options: ['flex-start', 'center', 'flex-end', 'stretch'] }
+    { options: ['flex-start', 'center', 'flex-end', 'space-between'] }
   ),
 
   new ElementStyle(
@@ -318,14 +318,20 @@ export const elementStyles: ElementStyle[] = [
   ),
 
   new ElementStyle(
+    'backgroundColor',
+    '',
+    'Fill',
+    ElementStyleType.Color,
+    ElementStyleGroup.Style
+  ),
+
+  new ElementStyle(
     'border',
     '',
     'Border',
-    ElementStyleType.Number,
+    ElementStyleType.Text,
     ElementStyleGroup.Style,
     {
-      units: elementStyleUnits,
-      max: 1000,
       subGroup: ElementStyleSubGroup.Border
     }
   ),
@@ -368,11 +374,26 @@ export const elementStyles: ElementStyle[] = [
   ),
 
   new ElementStyle(
-    'backgroundColor',
+    'boxShadow',
     '',
-    'Fill',
+    'Shadow',
+    ElementStyleType.Text,
+    ElementStyleGroup.Style,
+    {
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Shadow
+    }
+  ),
+
+  new ElementStyle(
+    'shadowColor',
+    '',
+    'Color',
     ElementStyleType.Color,
-    ElementStyleGroup.Style
+    ElementStyleGroup.Style,
+    {
+      subGroup: ElementStyleSubGroup.Shadow
+    }
   ),
 
   // Text
