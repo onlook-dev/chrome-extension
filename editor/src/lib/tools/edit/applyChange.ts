@@ -13,24 +13,32 @@ export class ApplyChangesService {
 
   applyClass(el: HTMLElement, value: string, emit = true) {
     const oldVals = this.getAndSetOldVal(el, 'attr', 'className');
+    const oldClasses = oldVals.attr.className.split(' ');
+    const newClasses = value.split(' ');
 
-    // Get only the updated classes
-    const updatedClass = value.split(' ').filter((c) => !oldVals.attr.className.includes(c)).join(' ').trim();
+    // Filter out classes to be removed and prepare the list of classes to be added
+    const classesToAdd = newClasses.filter(c => !oldClasses.includes(c));
+    const classesToRemove = oldClasses.filter(c => !newClasses.includes(c));
 
-    // Apply original + new classes
-    el.className = `${oldVals.attr.className} ${tw`${updatedClass}`}`
+    // Apply only new classes that are not already present
+    const updatedClasses = oldClasses.filter(c => !classesToRemove.includes(c)).concat(classesToAdd).join(' ').trim();
+
+    // Set the updated classes
+    el.className = updatedClasses;
 
     // Update cache
     const selector = getUniqueSelector(el);
-    this.appendedClassCache.set(selector, value);
+    this.appendedClassCache.set(selector, updatedClasses);
 
-    if (!emit) return;
-    handleEditEvent({
-      el,
-      editType: EditType.CLASS,
-      newValue: { updated: updatedClass, full: value },
-      oldValue: { updated: '', full: oldVals.attr.className },
-    });
+    // Emit event if necessary
+    if (emit) {
+      handleEditEvent({
+        el,
+        editType: EditType.CLASS,
+        newValue: { updated: classesToAdd.join(' '), removed: classesToRemove.join(' '), full: updatedClasses },
+        oldValue: { updated: classesToRemove.join(' '), removed: classesToAdd.join(' '), full: oldVals.attr.className },
+      });
+    }
   }
 
   applyStyle(el: HTMLElement, key: string, value: string, emit = true) {
