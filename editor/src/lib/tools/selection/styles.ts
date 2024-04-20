@@ -374,6 +374,18 @@ export const elementStyles: ElementStyle[] = [
   ),
 
   new ElementStyle(
+    'borderStyle',
+    '',
+    'Style',
+    ElementStyleType.Select,
+    ElementStyleGroup.Style,
+    {
+      options: ['solid', 'dotted', 'dashed'],
+      subGroup: ElementStyleSubGroup.Border
+    }
+  ),
+
+  new ElementStyle(
     'boxShadow',
     '',
     'Shadow',

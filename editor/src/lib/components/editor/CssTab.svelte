@@ -101,7 +101,6 @@
         <Separator />
       {:else if groupKey === ElementStyleSubGroup.Border}
         Border
-        <Separator />
       {:else if groupKey === ElementStyleSubGroup.Shadow}
         Shadow
         <Separator />
@@ -109,7 +108,10 @@
         <Accordion.Item
           data-state="open"
           value={groupKey}
-          class={groupKey === ElementStyleGroup.Layout ? "border-b-0" : ""}
+          class={groupKey === ElementStyleGroup.Layout ||
+          groupKey === ElementStyleGroup.Style
+            ? "border-b-0"
+            : ""}
         >
           <Accordion.Trigger
             ><h2 class="text-xs font-semibold">
