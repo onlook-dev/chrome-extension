@@ -1,5 +1,5 @@
 import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$shared/models/editor';
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import { emitEditEvent } from '../messages';
 import { ApplyChangesService } from './applyChange';
 
@@ -43,18 +43,11 @@ export function addToHistory(event: EditEvent) {
 }
 
 export function undoLastEvent() {
-  historyStore.update(history => {
-    if (history.length === 0) {
-      return history;
-    }
-    const lastEvent = history[history.length - 1];
-    if (lastEvent) {
-      const reverseEvent: EditEvent = createReverseEvent(lastEvent);
-      applyEvent(reverseEvent);
-      redoStore.update(redo => [...redo, lastEvent]);
-    }
-    return history.slice(0, -1);
-  });
+  let history = get(historyStore);
+  if (history.length === 0) return;
+  const lastEvent = history.pop();
+  if (lastEvent)
+    undoEvent(lastEvent);
 }
 
 export function undoEvent(event: EditEvent) {
@@ -127,8 +120,8 @@ function applyTextEvent(event: EditEvent, element: HTMLElement) {
 function applyClassEvent(event: EditEvent, element: HTMLElement) {
   if (!element) return;
   Object.entries(event.newVal).forEach(([attr, newVal]) => {
-    if (attr === "full") return;
-    applyChangeService.applyClass(element, newVal);
+    if (attr !== "full") return;
+    applyChangeService.applyClass(element, newVal, false);
   });
 }
 

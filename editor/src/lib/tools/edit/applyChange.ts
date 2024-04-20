@@ -16,26 +16,23 @@ export class ApplyChangesService {
     const oldClasses = oldVals.attr.className.split(' ');
     const newClasses = value.split(' ');
 
-    // Filter out classes to be removed and prepare the list of classes to be added
-    const classesToAdd = newClasses.filter(c => !oldClasses.includes(c));
-    const classesToRemove = oldClasses.filter(c => !newClasses.includes(c));
-
-    // Apply only new classes that are not already present
-    const updatedClasses = oldClasses.filter(c => !classesToRemove.includes(c)).concat(classesToAdd).join(' ').trim();
-
     // Set the updated classes
-    el.className = updatedClasses;
+    el.className = tw`${value}`
 
     // Update cache
     const selector = getUniqueSelector(el);
-    this.appendedClassCache.set(selector, updatedClasses);
+    this.appendedClassCache.set(selector, value);
 
     // Emit event if necessary
     if (emit) {
+      // Filter out classes to be removed and prepare the list of classes to be added
+      const classesToAdd = newClasses.filter(c => !oldClasses.includes(c));
+      const classesToRemove = oldClasses.filter(c => !newClasses.includes(c));
+
       handleEditEvent({
         el,
         editType: EditType.CLASS,
-        newValue: { updated: classesToAdd.join(' '), removed: classesToRemove.join(' '), full: updatedClasses },
+        newValue: { updated: classesToAdd.join(' '), removed: classesToRemove.join(' '), full: value },
         oldValue: { updated: classesToRemove.join(' '), removed: classesToAdd.join(' '), full: oldVals.attr.className },
       });
     }
