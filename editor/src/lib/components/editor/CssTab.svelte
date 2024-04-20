@@ -20,7 +20,6 @@
   import NumberUnitInput from "./inputs/NumberUnitInput.svelte";
   import TagInfo from "./inputs/TagInfo.svelte";
   import TailwindInput from "./inputs/TailwindInput.svelte";
-  import AutolayoutInput from "./inputs/AutolayoutInput.svelte";
   import MarginSection from "./inputs/MarginPaddingSection.svelte";
   import TextInput from "./inputs/TextInput.svelte";
 
@@ -99,6 +98,12 @@
         <MarginSection {elementStyles} {updateElementStyle} />
       {:else if groupKey === ElementStyleSubGroup.Padding}
         <MarginSection {elementStyles} {updateElementStyle} />
+        <Separator />
+      {:else if groupKey === ElementStyleSubGroup.Border}
+        Border
+        <Separator />
+      {:else if groupKey === ElementStyleSubGroup.Shadow}
+        Shadow
         <Separator />
       {:else}
         <Accordion.Item

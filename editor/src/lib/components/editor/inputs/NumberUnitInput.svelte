@@ -37,7 +37,7 @@
   function isEmpty() {
     const numberIsEmpty = isNaN(parsedNumber) || parsedNumber === 0;
     const unitIsEmpty = parsedUnit === "";
-    return numberIsEmpty && unitIsEmpty;
+    return numberIsEmpty || unitIsEmpty;
   }
 </script>
 
