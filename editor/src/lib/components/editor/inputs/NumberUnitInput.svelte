@@ -67,6 +67,7 @@
           parsedUnit = "px";
         }
 
+        // TODO: Pull this into number unit
         // Process into unit if necessary
         const matches = e.currentTarget.value.match(
           /([-+]?[0-9]*\.?[0-9]+)([a-zA-Z%]*)/,

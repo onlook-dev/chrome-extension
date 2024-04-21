@@ -29,8 +29,8 @@
     (style) => style.value === elementStyles[0].value,
   );
 
-  let headerUpdateStyle = (key: string, value: string) => {
-    updateElementStyle(key, value, showGroup);
+  let updatedUpdateStyle = (key: string, value: string) => {
+    updateElementStyle(key, value, true);
   };
 </script>
 
@@ -42,7 +42,7 @@
           {elementStyle.displayName}
         </p>
         <div class="ml-auto h-8 flex flex-row w-32 space-x-2">
-          <TextInput {elementStyle} updateElementStyle={headerUpdateStyle} />
+          <TextInput {elementStyle} updateElementStyle={updatedUpdateStyle} />
           <ToggleGroup.Root
             size="sm"
             type="single"
@@ -85,7 +85,7 @@
             </p>
           {/if}
         </div>
-        <TextInput {elementStyle} {updateElementStyle} />
+        <TextInput {elementStyle} updateElementStyle={updatedUpdateStyle} />
       </div>
     {/if}
   {/each}
