@@ -1,33 +1,40 @@
 <script lang="ts">
     import {
-        BorderAll,
         BorderBottom,
         BorderLeft,
         BorderRight,
         BorderTop,
-        Corners,
     } from "radix-icons-svelte";
     import { slide } from "svelte/transition";
 
     import TextInput from "./TextInput.svelte";
-    import * as ToggleGroup from "$lib/components/ui/toggle-group";
     import type { ElementStyle } from "$lib/tools/selection/styles";
     import ColorInput from "./ColorInput.svelte";
 
     export let elementStyles: ElementStyle[] = [];
     export let updateElementStyle = (key: string, value: string) => {};
+
     let showGroup = false;
+    let colorUpdate = (key: string, value: string) => {
+        if (key === "borderColor") {
+            showGroup = value !== "";
+        }
+        updateElementStyle(key, value);
+    };
 </script>
 
 <div class="grid grid-cols-2 gap-2 mb-2">
     {#each elementStyles as elementStyle}
-        {#if elementStyle.key === "borderColor" || elementStyle.key === "shadowColor"}
+        {#if elementStyle.key === "borderColor"}
             <div class="flex flex-row items-center col-span-2">
                 <p class="text-xs text-left text-tertiary">
                     {elementStyle.displayName}
                 </p>
                 <div class="ml-auto h-8 flex flex-row w-32 space-x-2">
-                    <ColorInput {elementStyle} {updateElementStyle} />
+                    <ColorInput
+                        {elementStyle}
+                        updateElementStyle={colorUpdate}
+                    />
                 </div>
             </div>
         {:else if showGroup}

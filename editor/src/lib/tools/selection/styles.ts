@@ -429,17 +429,6 @@ export const elementStyles: ElementStyle[] = [
     }
   ),
 
-  new ElementStyle(
-    'shadowColor',
-    '',
-    'Shadow',
-    ElementStyleType.Color,
-    ElementStyleGroup.Style,
-    {
-      subGroup: ElementStyleSubGroup.Shadow
-    }
-  ),
-
   // Text
   new ElementStyle(
     'color',

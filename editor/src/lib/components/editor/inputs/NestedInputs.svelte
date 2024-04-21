@@ -1,6 +1,5 @@
 <script lang="ts">
   import {
-    Angle,
     BorderAll,
     BorderBottom,
     BorderLeft,
@@ -16,6 +15,7 @@
 
   import TextInput from "./TextInput.svelte";
   import * as ToggleGroup from "$lib/components/ui/toggle-group";
+
   import type { ElementStyle } from "$lib/tools/selection/styles";
 
   export let elementStyles: ElementStyle[] = [];
@@ -74,7 +74,6 @@
             </p>
           {/if}
         </div>
-
         <TextInput {elementStyle} {updateElementStyle} />
       </div>
     {/if}

@@ -11,7 +11,6 @@
 
   import { onDestroy, onMount } from "svelte";
   import { ApplyChangesService } from "$lib/tools/edit/applyChange";
-  import type { EditTool } from "$lib/tools/edit";
 
   import * as Accordion from "$lib/components/ui/accordion";
   import Separator from "../ui/separator/separator.svelte";
@@ -22,7 +21,9 @@
   import TailwindInput from "./inputs/TailwindInput.svelte";
   import NestedInputs from "./inputs/NestedInputs.svelte";
   import TextInput from "./inputs/TextInput.svelte";
-  import BorderShadowInput from "./inputs/BorderShadowInput.svelte";
+  import BorderInput from "./inputs/BorderInput.svelte";
+
+  import type { EditTool } from "$lib/tools/edit";
 
   export let editTool: EditTool;
   const applyChangeService = new ApplyChangesService();
@@ -95,9 +96,7 @@
       {:else if groupKey === ElementStyleSubGroup.Corners}
         <NestedInputs {elementStyles} {updateElementStyle} />
       {:else if groupKey === ElementStyleSubGroup.Border}
-        <BorderShadowInput {elementStyles} {updateElementStyle} />
-      {:else if groupKey === ElementStyleSubGroup.Shadow}
-        <BorderShadowInput {elementStyles} {updateElementStyle} />
+        <BorderInput {elementStyles} {updateElementStyle} />
         <Separator />
       {:else}
         <Accordion.Item
