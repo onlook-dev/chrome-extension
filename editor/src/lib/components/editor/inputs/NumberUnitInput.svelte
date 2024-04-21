@@ -1,38 +1,21 @@
 <script lang="ts">
-  import type { ElementStyle } from "$lib/tools/selection/styles";
+  import { NumberUnit } from "$lib/tools/selection/numberUnit";
   import { ChevronDown } from "radix-icons-svelte";
+  import type { ElementStyle } from "$lib/tools/selection/styles";
 
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
 
+  let numberUnit = new NumberUnit();
   let parsedNumber: number = 0;
   let parsedUnit: string = "";
-  let step = 1;
   let numberInputRef: HTMLInputElement;
   const auto = "auto";
-  $: [parsedNumber, parsedUnit] = stringToParsedValue(elementStyle.value);
 
-  const stringToParsedValue = (val: string): [number, string] => {
-    const matches = val.match(/([-+]?[0-9]*\.?[0-9]+)([a-zA-Z%]*)/);
-
-    let num = matches ? parseFloat(matches[1]) : 0;
-    let unit = matches && matches[2] ? matches[2] : "";
-
-    // Handle opacity, if no parsed unit, convert to percentage
-    if (elementStyle.key === "opacity" && unit === "") {
-      unit = "%";
-      num = num <= 1 ? num * 100 : num;
-    }
-
-    return [num, unit];
-  };
-
-  const parsedValueToString = (
-    floatValue: number | string,
-    unit: string,
-  ): string => {
-    return `${floatValue}${unit}`;
-  };
+  $: [parsedNumber, parsedUnit] = numberUnit.stringToParsedValue(
+    elementStyle.value,
+    elementStyle.key === "opacity",
+  );
 
   function isEmpty() {
     const numberIsEmpty = isNaN(parsedNumber) || parsedNumber === 0;
@@ -49,8 +32,8 @@
       class="w-full p-[6px] px-2 rounded border-none text-text bg-surface text-start focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       placeholder="--"
       value={isEmpty() ? "" : parsedNumber}
-      {step}
       on:keydown={(e) => {
+        let step = 1;
         if (e.key === "Enter") {
           e.currentTarget.blur();
           return;
@@ -65,11 +48,11 @@
           e.preventDefault();
         }
 
-        const stringValue = parsedValueToString(parsedNumber, parsedUnit);
+        const stringValue = numberUnit.parsedValueToString(
+          parsedNumber,
+          parsedUnit,
+        );
         updateElementStyle(elementStyle.key, stringValue);
-      }}
-      on:keyup={(e) => {
-        if (!e.shiftKey) step = 1;
       }}
       on:input={(e) => {
         if (
@@ -93,7 +76,10 @@
           parsedNumber = parseFloat(e.currentTarget.value);
         }
 
-        const stringValue = parsedValueToString(parsedNumber, parsedUnit);
+        const stringValue = numberUnit.parsedValueToString(
+          parsedNumber,
+          parsedUnit,
+        );
         updateElementStyle(elementStyle.key, stringValue);
       }}
     />
@@ -112,7 +98,7 @@
           }
           parsedUnit = e.currentTarget.value;
 
-          const stringValue = parsedValueToString(
+          const stringValue = numberUnit.parsedValueToString(
             parsedNumber,
             e.currentTarget.value,
           );
