@@ -48,6 +48,10 @@
           e.preventDefault();
         }
 
+        if (parsedNumber && (parsedUnit === auto || parsedUnit === "")) {
+          parsedUnit = "px";
+        }
+
         const stringValue = numberUnit.parsedValueToString(
           parsedNumber,
           parsedUnit,
