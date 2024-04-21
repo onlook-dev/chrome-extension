@@ -8,7 +8,13 @@ export class ApplyChangesService {
   constructor() { }
 
   getUpdatedClasses(el: HTMLElement): string {
-    return el.className.replace(/override:/g, '').trim();
+    try {
+      if (!el || !el.className || !el.className.replace) return '';
+      return el.className.replace(/override:/g, '').trim();
+    } catch (e) {
+      console.error('Error getting updated classes', e);
+      return '';
+    }
   }
 
   applyClass(el: HTMLElement, value: string, emit = true) {
