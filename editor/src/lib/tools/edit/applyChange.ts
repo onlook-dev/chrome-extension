@@ -14,13 +14,15 @@ export class ApplyChangesService {
   applyClass(el: HTMLElement, value: string, emit = true) {
     const oldVals = this.getAndSetOldVal(el, 'attr', 'className');
     const oldClasses = oldVals.attr.className.split(' ');
-    const newClasses = value.split(' ');
-    const classesToRemove = oldClasses.filter(c => !newClasses.includes(c));
-    const classesToAdd = newClasses.filter(c => !oldClasses.includes(c));
-    const originalClasses = oldClasses.filter(c => !classesToAdd.includes(c) && !classesToRemove.includes(c));
 
-    // Set the updated classes
-    el.className = tw`${originalClasses} override:(${classesToAdd})`;
+    // Process the inputs into new and old. Override with new when possible.
+    const newClasses = value.split(' ');
+    const removedClasses = oldClasses.filter(c => !newClasses.includes(c));
+    const updatedClasses = newClasses.filter(c => !oldClasses.includes(c));
+    const originalClasses = oldClasses.filter(c => !updatedClasses.includes(c) && !removedClasses.includes(c));
+
+    // Set the tailwind classes
+    el.className = tw`${originalClasses} override:(${updatedClasses})`;
 
     // Update cache
     const selector = getUniqueSelector(el);
@@ -28,12 +30,11 @@ export class ApplyChangesService {
 
     // Emit event if necessary
     if (emit) {
-
       handleEditEvent({
         el,
         editType: EditType.CLASS,
-        newValue: { updated: classesToAdd.join(' '), removed: classesToRemove.join(' '), full: value },
-        oldValue: { updated: classesToRemove.join(' '), removed: classesToAdd.join(' '), full: oldVals.attr.className },
+        newValue: { updated: updatedClasses.join(' '), removed: removedClasses.join(' '), full: value },
+        oldValue: { updated: removedClasses.join(' '), removed: updatedClasses.join(' '), full: oldVals.attr.className },
       });
     }
   }

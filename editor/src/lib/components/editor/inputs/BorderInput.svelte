@@ -21,8 +21,8 @@
 
     $: showGroup = elementStyles.some(
         (elementStyle) =>
-            elementStyle.key === "borderColor" &&
-            !(elementStyle.value === "" || elementStyle.value === "initial"),
+            elementStyle.key === "borderWidth" &&
+            !(elementStyle.value === "0px"),
     );
 
     let colorUpdate = (key: string, value: string) => {
