@@ -118,12 +118,17 @@
               {groupKey}
             </h2></Accordion.Trigger
           >
-          <Accordion.Content>
+          <Accordion.Content
+            class={groupKey === ElementStyleGroup.Layout ||
+            groupKey === ElementStyleGroup.Style
+              ? "pb-2"
+              : ""}
+          >
             {#if groupKey == ElementStyleGroup.Text}
               <TagInfo {el} />
             {/if}
             {#each elementStyles as elementStyle, i}
-              <div class="flex flex-row items-center {i === 0 ? '' : 'mt-4'}">
+              <div class="flex flex-row items-center {i === 0 ? '' : 'mt-2'}">
                 <p class="text-xs w-24 mr-2 text-start opacity-60">
                   {elementStyle.displayName}
                 </p>

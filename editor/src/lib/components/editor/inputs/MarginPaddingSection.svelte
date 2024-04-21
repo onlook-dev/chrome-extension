@@ -22,7 +22,7 @@
 <div class="grid grid-cols-2 gap-2 mb-2">
   {#each elementStyles as elementStyle}
     {#if elementStyle.key === "margin" || elementStyle.key === "padding"}
-      <div class="flex flex-row items-center pb-2 col-span-2">
+      <div class="flex flex-row items-center col-span-2">
         <p class="text-xs text-left text-tertiary">
           {elementStyle.displayName}
         </p>
