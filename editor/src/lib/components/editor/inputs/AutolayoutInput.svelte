@@ -32,14 +32,7 @@
             class="{inputWidth} rounded-sm p-1 px-2 text-xs border-none text-text bg-surface text-start focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             placeholder="--"
             on:input={(e) => {
-                const res = autoLayout.getStyles(
-                    LayoutProperty[elementStyle.key],
-                    LayoutMode[mode],
-                    e.currentTarget.value,
-                    el,
-                );
-                value = res.displayVal;
-                updateElementStyle(elementStyle.key, res[elementStyle.key]);
+                updateElementStyle(elementStyle.key, e.currentTarget.value);
             }}
         />
 
