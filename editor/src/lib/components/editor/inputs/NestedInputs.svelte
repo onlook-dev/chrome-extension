@@ -6,6 +6,10 @@
     BorderLeft,
     BorderRight,
     BorderTop,
+    CornerBottomLeft,
+    CornerBottomRight,
+    CornerTopLeft,
+    CornerTopRight,
     Corners,
   } from "radix-icons-svelte";
   import { slide } from "svelte/transition";
@@ -21,7 +25,7 @@
 
 <div class="grid grid-cols-2 gap-2 mb-2">
   {#each elementStyles as elementStyle}
-    {#if elementStyle.key === "margin" || elementStyle.key === "padding"}
+    {#if elementStyle.key === "margin" || elementStyle.key === "padding" || elementStyle.key === "borderRadius"}
       <div class="flex flex-row items-center col-span-2">
         <p class="text-xs text-left text-tertiary">
           {elementStyle.displayName}
@@ -56,6 +60,14 @@
             <BorderRight class="w-4 h-4 " />
           {:else if elementStyle.displayName === "Left"}
             <BorderLeft class="w-4 h-4 " />
+          {:else if elementStyle.displayName === "Top Right"}
+            <CornerTopRight class="w-4 h-4 0" />
+          {:else if elementStyle.displayName === "Top Left"}
+            <CornerTopLeft class="w-4 h-4 " />
+          {:else if elementStyle.displayName === "Bottom Right"}
+            <CornerBottomRight class="w-4 h-4 " />
+          {:else if elementStyle.displayName === "Bottom Left"}
+            <CornerBottomLeft class="w-4 h-4 " />
           {:else}
             <p class="text-xs text-left">
               {elementStyle.displayName}

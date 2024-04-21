@@ -32,6 +32,7 @@ export enum ElementStyleGroup {
 }
 
 export enum ElementStyleSubGroup {
+  Corners = 'Corners',
   Margin = 'Margin',
   Padding = 'Padding',
   Border = 'Border',
@@ -46,6 +47,7 @@ const groupOrder: (string)[] = [
   ElementStyleSubGroup.Margin,
   ElementStyleSubGroup.Padding,
   ElementStyleGroup.Style,
+  ElementStyleSubGroup.Corners,
   ElementStyleSubGroup.Border,
   ElementStyleSubGroup.Shadow,
   ElementStyleGroup.Text,
@@ -325,37 +327,79 @@ export const elementStyles: ElementStyle[] = [
     ElementStyleGroup.Style
   ),
 
+
   new ElementStyle(
-    'border',
+    'borderRadius',
     '',
-    'Border',
-    ElementStyleType.Text,
+    'Corners',
+    ElementStyleType.Number,
     ElementStyleGroup.Style,
     {
-      subGroup: ElementStyleSubGroup.Border
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Corners
+    }
+  ),
+
+  new ElementStyle(
+    'borderTopLeftRadius',
+    '',
+    'Top Left',
+    ElementStyleType.Number,
+    ElementStyleGroup.Style,
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Corners
+    }
+  ),
+
+  new ElementStyle(
+    'borderTopRightRadius',
+    '',
+    'Top Right',
+    ElementStyleType.Number,
+    ElementStyleGroup.Style,
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Corners
+    }
+  ),
+
+  new ElementStyle(
+    'borderBottomLeftRadius',
+    '',
+    'Bottom Left',
+    ElementStyleType.Number,
+    ElementStyleGroup.Style,
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Corners
+    }
+  ),
+
+  new ElementStyle(
+    'borderBottomRightRadius',
+    '',
+    'Bottom Right',
+    ElementStyleType.Number,
+    ElementStyleGroup.Style,
+    {
+      units: elementStyleUnits,
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Corners
     }
   ),
 
   new ElementStyle(
     'borderColor',
     '',
-    'Color',
+    'Border',
     ElementStyleType.Color,
     ElementStyleGroup.Style,
     {
-      subGroup: ElementStyleSubGroup.Border
-    }
-  ),
-
-  new ElementStyle(
-    'borderRadius',
-    '',
-    'Radius',
-    ElementStyleType.Number,
-    ElementStyleGroup.Style,
-    {
-      units: elementStyleUnits,
-      max: 1000,
       subGroup: ElementStyleSubGroup.Border
     }
   ),
@@ -386,21 +430,9 @@ export const elementStyles: ElementStyle[] = [
   ),
 
   new ElementStyle(
-    'boxShadow',
-    '',
-    'Shadow',
-    ElementStyleType.Text,
-    ElementStyleGroup.Style,
-    {
-      max: 1000,
-      subGroup: ElementStyleSubGroup.Shadow
-    }
-  ),
-
-  new ElementStyle(
     'shadowColor',
     '',
-    'Color',
+    'Shadow',
     ElementStyleType.Color,
     ElementStyleGroup.Style,
     {

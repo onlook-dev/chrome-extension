@@ -20,23 +20,16 @@
   import NumberUnitInput from "./inputs/NumberUnitInput.svelte";
   import TagInfo from "./inputs/TagInfo.svelte";
   import TailwindInput from "./inputs/TailwindInput.svelte";
-  import MarginSection from "./inputs/MarginPaddingSection.svelte";
+  import NestedInputs from "./inputs/NestedInputs.svelte";
   import TextInput from "./inputs/TextInput.svelte";
+  import BorderShadowInput from "./inputs/BorderShadowInput.svelte";
 
   export let editTool: EditTool;
   const applyChangeService = new ApplyChangesService();
   const custom = "Custom";
   let el: HTMLElement | undefined = undefined;
 
-  let groupedStyles: Record<string, ElementStyle[]> = {
-    [ElementStyleGroup.Size]: [],
-    [ElementStyleGroup.Position]: [],
-    [ElementStyleGroup.Layout]: [],
-    [ElementStyleSubGroup.Margin]: [],
-    [ElementStyleGroup.Style]: [],
-    [ElementStyleGroup.Text]: [],
-    [ElementStyleGroup.Effects]: [],
-  };
+  let groupedStyles: Record<string, ElementStyle[]> = {};
   let appendedClass: string[] = [];
   let unsubs: (() => void)[] = [];
 
@@ -95,14 +88,16 @@
   >
     {#each Object.entries(groupedStyles) as [groupKey, elementStyles]}
       {#if groupKey === ElementStyleSubGroup.Margin}
-        <MarginSection {elementStyles} {updateElementStyle} />
+        <NestedInputs {elementStyles} {updateElementStyle} />
       {:else if groupKey === ElementStyleSubGroup.Padding}
-        <MarginSection {elementStyles} {updateElementStyle} />
+        <NestedInputs {elementStyles} {updateElementStyle} />
         <Separator />
+      {:else if groupKey === ElementStyleSubGroup.Corners}
+        <NestedInputs {elementStyles} {updateElementStyle} />
       {:else if groupKey === ElementStyleSubGroup.Border}
-        Border
+        <BorderShadowInput {elementStyles} {updateElementStyle} />
       {:else if groupKey === ElementStyleSubGroup.Shadow}
-        Shadow
+        <BorderShadowInput {elementStyles} {updateElementStyle} />
         <Separator />
       {:else}
         <Accordion.Item
