@@ -35,7 +35,6 @@
     let colorUpdate = (key: string, value: string) => {
         if (key === "borderColor") {
             if (value === "" || value === "initial") {
-                updateElementStyle("borderWidth", "0px");
                 showGroup = false;
             } else {
                 showGroup = true;

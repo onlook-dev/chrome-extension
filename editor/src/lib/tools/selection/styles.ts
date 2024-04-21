@@ -405,11 +405,12 @@ export const elementStyles: ElementStyle[] = [
     }
   ),
 
+  // TODO: Why isn't this a unit type?
   new ElementStyle(
     'borderWidth',
     '',
     'Width',
-    ElementStyleType.Number,
+    ElementStyleType.Text,
     ElementStyleGroup.Style,
     {
       units: elementStyleUnits,
