@@ -24,7 +24,10 @@
     value: string,
     refresh?: boolean,
   ) => {};
-  let showGroup = false;
+
+  $: showGroup = !elementStyles.every(
+    (style) => style.value === elementStyles[0].value,
+  );
 
   let headerUpdateStyle = (key: string, value: string) => {
     updateElementStyle(key, value, showGroup);

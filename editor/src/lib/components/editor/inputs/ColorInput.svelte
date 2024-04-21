@@ -1,11 +1,11 @@
 <script lang="ts">
   import { stringToHex } from "$lib/tools/edit/colors";
   import type { ElementStyle } from "$lib/tools/selection/styles";
-  export let elementStyle: ElementStyle;
-  export let updateElementStyle: (key: string, value: string) => void;
   import { parse } from "culori";
   import { Cross2, Plus } from "radix-icons-svelte";
 
+  export let elementStyle: ElementStyle;
+  export let updateElementStyle: (key: string, value: string) => void;
   let colorInputRef;
   $: inputString = stringToHex(elementStyle.value);
   $: isNoneInput = inputString === "initial" || inputString === "";
