@@ -1,26 +1,26 @@
 import { EditType } from "$shared/models/editor";
 import { getUniqueSelector } from "../utilities";
 import { handleEditEvent } from "./handleEvents";
-import { tw } from 'twind'
+import { apply, tw } from 'twind'
 
 export class ApplyChangesService {
   appendedClassCache = new Map<string, string>();
   constructor() { }
 
   getUpdatedClasses(el: HTMLElement): string {
-    // Remove override directive
-    const classes = el.className.replace(/override:/g, '');
-
-    return classes;
+    return el.className.replace(/override:/g, '').trim();
   }
 
   applyClass(el: HTMLElement, value: string, emit = true) {
     const oldVals = this.getAndSetOldVal(el, 'attr', 'className');
     const oldClasses = oldVals.attr.className.split(' ');
     const newClasses = value.split(' ');
+    const classesToRemove = oldClasses.filter(c => !newClasses.includes(c));
+    const classesToAdd = newClasses.filter(c => !oldClasses.includes(c));
+    const originalClasses = oldClasses.filter(c => !classesToAdd.includes(c) && !classesToRemove.includes(c));
 
     // Set the updated classes
-    el.className = tw`override:(${value})`;
+    el.className = tw`${originalClasses} override:(${classesToAdd})`;
 
     // Update cache
     const selector = getUniqueSelector(el);
@@ -28,9 +28,6 @@ export class ApplyChangesService {
 
     // Emit event if necessary
     if (emit) {
-      // Filter out classes to be removed and prepare the list of classes to be added
-      const classesToAdd = newClasses.filter(c => !oldClasses.includes(c));
-      const classesToRemove = oldClasses.filter(c => !newClasses.includes(c));
 
       handleEditEvent({
         el,
