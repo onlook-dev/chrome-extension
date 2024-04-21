@@ -65,13 +65,17 @@
   }
 
   // TODO: This could be moved into editTool along with applyChangeService
-  function updateElementStyle(key, value) {
+  function updateElementStyle(key, value, refresh = false) {
     editTool.selectorEngine.selected.forEach((el) => {
       applyChangeService.applyStyle(el, key, value);
     });
     // Update the rects
     editTool.updateClickedRects(editTool.selectorEngine.selected);
     editTool.updateParentRect();
+
+    if (refresh) {
+      selectedElementsChanged(editTool.selectorEngine.selected);
+    }
   }
 
   function updateElementClass(newClass) {

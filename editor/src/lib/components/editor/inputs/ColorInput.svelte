@@ -49,7 +49,11 @@
   <button
     class="text-tertiary"
     on:click={() => {
-      inputString = "";
+      if (inputString === "") {
+        inputString = "#000000";
+      } else {
+        inputString = "";
+      }
       updateElementStyle(elementStyle.key, inputString);
     }}
   >
