@@ -58,11 +58,10 @@
       groupedStyles = groupElementStylesByGroup(computedStyles);
 
       // Remove text group if no text content
-      // TODO: Test, remove comment
-      // const immediateTextContent = getImmediateTextContent(el);
-      // if (!immediateTextContent || immediateTextContent === "") {
-      //   delete groupedStyles[ElementStyleGroup.Text];
-      // }
+      const immediateTextContent = getImmediateTextContent(el);
+      if (!immediateTextContent || immediateTextContent === "") {
+        delete groupedStyles[ElementStyleGroup.Text];
+      }
 
       // TODO: This is a hack because for some reason, string assignment aren't always reactive when assigning empty string.
       // But arrays are always reactive on assignment.

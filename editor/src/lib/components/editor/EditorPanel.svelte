@@ -52,7 +52,7 @@
   on:focusout={() => (isInputFocused = false)}
   class="fixed top-10 right-2 overscroll-contain {$editorPanelVisible
     ? 'visible'
-    : 'visible'}"
+    : 'invisible'}"
 >
   <div
     bind:this={cardRef}
