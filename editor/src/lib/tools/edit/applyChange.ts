@@ -8,7 +8,10 @@ export class ApplyChangesService {
   constructor() { }
 
   getUpdatedClasses(el: HTMLElement): string {
-    return el.className;
+    // Remove override directive
+    const classes = el.className.replace(/override:/g, '');
+
+    return classes;
   }
 
   applyClass(el: HTMLElement, value: string, emit = true) {
@@ -17,7 +20,7 @@ export class ApplyChangesService {
     const newClasses = value.split(' ');
 
     // Set the updated classes
-    el.className = tw`override:(${value})`
+    el.className = tw`override:(${value})`;
 
     // Update cache
     const selector = getUniqueSelector(el);
