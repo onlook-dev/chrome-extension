@@ -52,7 +52,7 @@
   <button
     class="text-tertiary"
     on:click={() => {
-      inputString = isNoneInput ? "#000000" : "initial";
+      inputString = isNoneInput ? "#000000" : "";
       updateElementStyle(elementStyle.key, inputString);
     }}
   >

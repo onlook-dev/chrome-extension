@@ -25,6 +25,7 @@
 
   import type { EditTool } from "$lib/tools/edit";
   import AutolayoutInput from "./inputs/AutolayoutInput.svelte";
+  import { historyStore, redoStore } from "$lib/tools/edit/history";
 
   export let editTool: EditTool;
   const applyChangeService = new ApplyChangesService();
@@ -38,6 +39,10 @@
   onMount(() => {
     unsubs.push(
       editTool.selectorEngine.selectedStore.subscribe(selectedElementsChanged),
+      // Refresh when undo redo happens
+      redoStore.subscribe(() => {
+        selectedElementsChanged(editTool.selectorEngine.selected);
+      }),
     );
   });
 

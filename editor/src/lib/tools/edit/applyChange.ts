@@ -17,7 +17,7 @@ export class ApplyChangesService {
     const newClasses = value.split(' ');
 
     // Set the updated classes
-    el.className = tw`${value}`
+    el.className = tw`override:(${value})`
 
     // Update cache
     const selector = getUniqueSelector(el);

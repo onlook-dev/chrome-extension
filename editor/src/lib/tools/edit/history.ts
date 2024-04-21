@@ -58,14 +58,17 @@ export function undoEvent(event: EditEvent) {
 }
 
 export function redoLastEvent() {
-  redoStore.update((redo) => {
-    const event: EditEvent = redo.pop();
-    if (event) {
-      applyEvent(event);
-      historyStore.update(history => [...history, event]);
-    }
-    return redo;
-  });
+  const redo = get(redoStore);
+  if (redo.length === 0) return;
+  const event: EditEvent = redo.pop();
+  if (event)
+    redoEvent(event);
+}
+
+export function redoEvent(event: EditEvent) {
+  applyEvent(event);
+  historyStore.update(history => [...history, event]);
+  redoStore.update(redo => redo.filter(e => e !== event));
 }
 
 function createReverseEvent(event: EditEvent): EditEvent {
