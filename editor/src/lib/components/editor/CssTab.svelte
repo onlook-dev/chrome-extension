@@ -24,6 +24,7 @@
   import BorderInput from "./inputs/BorderInput.svelte";
 
   import type { EditTool } from "$lib/tools/edit";
+  import AutolayoutInput from "./inputs/AutolayoutInput.svelte";
 
   export let editTool: EditTool;
   const applyChangeService = new ApplyChangesService();
@@ -134,7 +135,7 @@
                   {#if elementStyle.type === ElementStyleType.Select}
                     <SelectInput {elementStyle} {updateElementStyle} />
                   {:else if elementStyle.type === ElementStyleType.Dimensions}
-                    <NumberUnitInput {elementStyle} {updateElementStyle} />
+                    <AutolayoutInput {el} {elementStyle} {updateElementStyle} />
                   {:else if elementStyle.type === ElementStyleType.Color}
                     <ColorInput {elementStyle} {updateElementStyle} />
                   {:else if elementStyle.type === ElementStyleType.Number}

@@ -1,4 +1,5 @@
 import { elementStyleUnits } from "../edit/units"
+import { LayoutMode } from "./autolayout"
 
 export interface ElementStyle {
   key: string
@@ -102,7 +103,7 @@ export const elementStyles: ElementStyle[] = [
     ElementStyleType.Dimensions,
     ElementStyleGroup.Position,
     {
-      units: elementStyleUnits,
+      units: Object.values(LayoutMode),
       max: 1000
     }
   ),
@@ -113,7 +114,7 @@ export const elementStyles: ElementStyle[] = [
     ElementStyleType.Dimensions,
     ElementStyleGroup.Position,
     {
-      units: elementStyleUnits,
+      units: Object.values(LayoutMode),
       max: 1000
     }
   ),
