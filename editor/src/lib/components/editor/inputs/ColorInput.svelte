@@ -6,7 +6,9 @@
   import { parse } from "culori";
   import { Cross2, Plus } from "radix-icons-svelte";
 
+  let colorInputRef;
   $: inputString = stringToHex(elementStyle.value);
+  $: isNoneInput = inputString === "initial" || inputString === "";
 </script>
 
 <div
@@ -16,6 +18,7 @@
     class="overflow-hidden w-5 h-5 border-transparent rounded-[2px] relative"
   >
     <input
+      bind:this={colorInputRef}
       type="color"
       class="border-transparent absolute w-10 h-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
       value={inputString}
@@ -29,7 +32,7 @@
   <input
     class="w-16 text-xs border-none text-text bg-transparent text-start focus:outline-none focus:ring-0"
     type="text"
-    value={inputString}
+    value={inputString === "initial" ? "" : inputString}
     placeholder="None"
     on:keydown={(e) => {
       if (e.key === "Enter") {
@@ -49,15 +52,11 @@
   <button
     class="text-tertiary"
     on:click={() => {
-      if (inputString === "") {
-        inputString = "#000000";
-      } else {
-        inputString = "";
-      }
+      inputString = isNoneInput ? "#000000" : "initial";
       updateElementStyle(elementStyle.key, inputString);
     }}
   >
-    {#if inputString === ""}
+    {#if isNoneInput}
       <Plus />
     {:else}
       <Cross2 />

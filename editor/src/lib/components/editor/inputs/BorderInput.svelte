@@ -14,10 +14,14 @@
     export let elementStyles: ElementStyle[] = [];
     export let updateElementStyle = (key: string, value: string) => {};
 
-    let showGroup = false;
+    $: showGroup = elementStyles.some(
+        (elementStyle) =>
+            elementStyle.key === "borderColor" &&
+            !(elementStyle.value === "" || elementStyle.value === "initial"),
+    );
     let colorUpdate = (key: string, value: string) => {
         if (key === "borderColor") {
-            showGroup = value !== "";
+            showGroup = !(value === "" || value === "initial");
         }
         updateElementStyle(key, value);
     };

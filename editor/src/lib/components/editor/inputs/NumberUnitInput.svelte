@@ -105,7 +105,7 @@
         class="p-[6px] w-full px-2 rounded-sm border-none text-text bg-surface text-start appearance-none focus:outline-none focus:ring-0"
         on:input={(e) => {
           if (e.currentTarget.value === auto) {
-            updateElementStyle(elementStyle.key, "inherit");
+            updateElementStyle(elementStyle.key, "initial");
             parsedNumber = 0;
             parsedUnit = e.currentTarget.value;
             return;

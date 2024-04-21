@@ -27,7 +27,7 @@
   let showGroup = false;
 
   let headerUpdateStyle = (key: string, value: string) => {
-    updateElementStyle(key, value, true);
+    updateElementStyle(key, value, showGroup);
   };
 </script>
 

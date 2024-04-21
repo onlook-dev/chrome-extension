@@ -20,7 +20,7 @@
       value={elementStyle.value}
       onValueChange={(val) => {
         if (!val) {
-          updateElementStyle(elementStyle.key, "inherit");
+          updateElementStyle(elementStyle.key, "initial");
           return;
         }
         updateElementStyle(elementStyle.key, val);
