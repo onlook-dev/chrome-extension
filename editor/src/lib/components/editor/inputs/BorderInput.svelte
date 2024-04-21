@@ -8,8 +8,13 @@
     import { slide } from "svelte/transition";
 
     import TextInput from "./TextInput.svelte";
-    import type { ElementStyle } from "$lib/tools/selection/styles";
+    import {
+        ElementStyleType,
+        type ElementStyle,
+    } from "$lib/tools/selection/styles";
     import ColorInput from "./ColorInput.svelte";
+    import NumberUnitInput from "./NumberUnitInput.svelte";
+    import SelectInput from "./SelectInput.svelte";
 
     export let elementStyles: ElementStyle[] = [];
     export let updateElementStyle = (key: string, value: string) => {};
@@ -19,6 +24,7 @@
             elementStyle.key === "borderColor" &&
             !(elementStyle.value === "" || elementStyle.value === "initial"),
     );
+
     let colorUpdate = (key: string, value: string) => {
         if (key === "borderColor") {
             showGroup = !(value === "" || value === "initial");
@@ -27,7 +33,7 @@
     };
 </script>
 
-<div class="grid grid-cols-2 gap-2 mb-2">
+<div class="flex flex-col gap-2 mb-2">
     {#each elementStyles as elementStyle}
         {#if elementStyle.key === "borderColor"}
             <div class="flex flex-row items-center col-span-2">
@@ -42,24 +48,21 @@
                 </div>
             </div>
         {:else if showGroup}
-            <div transition:slide class="flex flex-row items-center">
-                <div class="w-12 text-tertiary">
-                    {#if elementStyle.displayName === "Top"}
-                        <BorderTop class="w-4 h-4" />
-                    {:else if elementStyle.displayName === "Bottom"}
-                        <BorderBottom class="w-4 h-4 0" />
-                    {:else if elementStyle.displayName === "Right"}
-                        <BorderRight class="w-4 h-4 " />
-                    {:else if elementStyle.displayName === "Left"}
-                        <BorderLeft class="w-4 h-4 " />
+            <div transition:slide class="ml-2 flex flex-row items-center">
+                <div class="text-tertiary">
+                    <p class="text-xs text-left">
+                        {elementStyle.displayName}
+                    </p>
+                </div>
+                <div class="w-32 ml-auto">
+                    {#if elementStyle.type === ElementStyleType.Select}
+                        <SelectInput {elementStyle} {updateElementStyle} />
+                    {:else if elementStyle.type === ElementStyleType.Number}
+                        <NumberUnitInput {elementStyle} {updateElementStyle} />
                     {:else}
-                        <p class="text-xs text-left">
-                            {elementStyle.displayName}
-                        </p>
+                        <TextInput {elementStyle} {updateElementStyle} />
                     {/if}
                 </div>
-
-                <TextInput {elementStyle} {updateElementStyle} />
             </div>
         {/if}
     {/each}
