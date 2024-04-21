@@ -25,9 +25,21 @@
             !(elementStyle.value === "0px"),
     );
 
+    $: if (!showGroup) {
+        elementStyles.map((elementStyle) => {
+            if (elementStyle.key === "borderColor")
+                elementStyle.value = "initial";
+        });
+    }
+
     let colorUpdate = (key: string, value: string) => {
         if (key === "borderColor") {
-            showGroup = !(value === "" || value === "initial");
+            if (value === "" || value === "initial") {
+                updateElementStyle("borderWidth", "0px");
+                showGroup = false;
+            } else {
+                showGroup = true;
+            }
         }
         updateElementStyle(key, value);
     };
