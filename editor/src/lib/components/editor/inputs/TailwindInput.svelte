@@ -9,7 +9,7 @@
   }
 </script>
 
-<div class="mt-4 space-y-2 px-1">
+<div class="space-y-2 px-1">
   <p class="text-xs w-24 mr-2 text-start opacity-60">Tailwind</p>
   <Textarea
     class="w-full text-xs break-normal"
