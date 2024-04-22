@@ -15,7 +15,7 @@
 
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
-  $: value = elementStyle.value;
+  let value = elementStyle.value;
   let lastValue = elementStyle.value;
 </script>
 
