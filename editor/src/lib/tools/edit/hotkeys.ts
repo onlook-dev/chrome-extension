@@ -14,7 +14,7 @@ export class HotKeys {
   metaKey: string;
   altKey: string;
   deleteKey: string;
-  toolKeyMaps: Record<ToolName, Record<string, () => void>>;
+  toolKeyMaps: Record<ToolName, Record<string, (e) => void>>;
 
   constructor(editTool: EditTool) {
     this.metaKey = window.navigator.platform.includes('Mac')
@@ -38,12 +38,24 @@ export class HotKeys {
 
     this.toolKeyMaps = {
       [ToolName.EDIT]: {
-        [`${this.metaKey}+z`]: () => undoLastEvent(),
-        [`${this.metaKey}+shift+z`]: () => redoLastEvent(),
+        [`${this.metaKey}+z`]: (e) => {
+          undoLastEvent()
+          e.preventDefault();
+          e.stopPropagation();
+        },
+        [`${this.metaKey}+shift+z`]: (e) => {
+          redoLastEvent()
+          e.preventDefault();
+          e.stopPropagation();
+        },
         // TODO: This is disabled for a separate task. Need to handle edge cases.
         // [`${this.metaKey}+c`]: () => editTool.copyElement(),
         // [`${this.metaKey}+v`]: () => editTool.pasteElement(),
-        [`${this.deleteKey}`]: () => editTool.deleteElement(),
+        [`${this.deleteKey}`]: (e) => {
+          editTool.deleteElement()
+          e.preventDefault();
+          e.stopPropagation();
+        },
       }
     }
   }

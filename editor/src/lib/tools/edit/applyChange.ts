@@ -1,36 +1,48 @@
 import { EditType } from "$shared/models/editor";
 import { getUniqueSelector } from "../utilities";
 import { handleEditEvent } from "./handleEvents";
-import { tw } from 'twind'
+import { apply, tw } from 'twind'
 
 export class ApplyChangesService {
   appendedClassCache = new Map<string, string>();
   constructor() { }
 
   getUpdatedClasses(el: HTMLElement): string {
-    return el.className;
+    try {
+      if (!el || !el.className || !el.className.replace) return '';
+      return el.className.replace(/override:/g, '').trim();
+    } catch (e) {
+      console.error('Error getting updated classes', e);
+      return '';
+    }
   }
 
   applyClass(el: HTMLElement, value: string, emit = true) {
     const oldVals = this.getAndSetOldVal(el, 'attr', 'className');
+    const oldClasses = oldVals.attr.className.split(' ');
 
-    // Get only the updated classes
-    const updatedClass = value.split(' ').filter((c) => !oldVals.attr.className.includes(c)).join(' ').trim();
+    // Process the inputs into new and old. Override with new when possible.
+    const newClasses = value.split(' ');
+    const removedClasses = oldClasses.filter(c => !newClasses.includes(c));
+    const updatedClasses = newClasses.filter(c => !oldClasses.includes(c));
+    const originalClasses = oldClasses.filter(c => !updatedClasses.includes(c) && !removedClasses.includes(c));
 
-    // Apply original + new classes
-    el.className = `${oldVals.attr.className} ${tw`${updatedClass}`}`
+    // Set the tailwind classes
+    el.className = tw`${originalClasses} override:(${updatedClasses})`;
 
     // Update cache
     const selector = getUniqueSelector(el);
     this.appendedClassCache.set(selector, value);
 
-    if (!emit) return;
-    handleEditEvent({
-      el,
-      editType: EditType.CLASS,
-      newValue: { updated: updatedClass, full: value },
-      oldValue: { updated: '', full: oldVals.attr.className },
-    });
+    // Emit event if necessary
+    if (emit) {
+      handleEditEvent({
+        el,
+        editType: EditType.CLASS,
+        newValue: { updated: updatedClasses.join(' '), removed: removedClasses.join(' '), full: value },
+        oldValue: { updated: removedClasses.join(' '), removed: updatedClasses.join(' '), full: oldVals.attr.className },
+      });
+    }
   }
 
   applyStyle(el: HTMLElement, key: string, value: string, emit = true) {

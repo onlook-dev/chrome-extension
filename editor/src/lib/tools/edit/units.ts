@@ -1,4 +1,4 @@
-export const elementStyleUnits = ['px', '%', 'rem', 'vh', 'vw',]
+export const elementStyleUnits = ['px', '%', 'rem', 'em', 'vh', 'vw',]
 
 const getViewportDimensions = (): { width: number, height: number } => {
   const width = window.innerWidth;

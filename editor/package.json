@@ -15,7 +15,7 @@
     "build:cpy": "npm run build && cp public/build/bundle.min.js ../extension/src/lib/editor/bundle.min.js",
     "start": "sirv public --no-clear",
     "check": "npm run shared && svelte-check",
-    "check:watch": "npm run shared && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "check:watch": "npm run shared && svelte-check --tsconfig ./tsconfig.json --watch",
     "pub": "npm run build && cp public/build/bundle.min.js umd && npm publish",
     "shared": "cp -r ../shared ."
   },

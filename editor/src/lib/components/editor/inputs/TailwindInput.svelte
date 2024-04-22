@@ -13,7 +13,7 @@
   <p class="text-xs w-24 mr-2 text-start opacity-60">Tailwind</p>
   <Textarea
     class="w-full text-xs break-normal"
-    placeholder="bg-red-500 text-white"
+    placeholder="Add tailwind classes here"
     value={appendedClass.length > 0 ? appendedClass[0] : ""}
     on:input={handleNewInput}
   />
