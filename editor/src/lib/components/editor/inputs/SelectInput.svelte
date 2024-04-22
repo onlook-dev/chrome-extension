@@ -15,6 +15,8 @@
 
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
+  $: value = elementStyle.value;
+  let lastValue = elementStyle.value;
 </script>
 
 {#if elementStyle}
@@ -23,12 +25,13 @@
       class="w-32 overflow-hidden"
       size="sm"
       type="single"
-      value={elementStyle.value}
+      bind:value
       onValueChange={(val) => {
         if (!val) {
-          updateElementStyle(elementStyle.key, "initial");
+          value = lastValue;
           return;
         }
+        lastValue = val;
         updateElementStyle(elementStyle.key, val);
       }}
     >

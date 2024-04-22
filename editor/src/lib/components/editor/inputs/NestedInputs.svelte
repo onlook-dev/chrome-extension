@@ -24,7 +24,6 @@
     value: string,
     refresh?: boolean,
   ) => {};
-
   $: showGroup = !elementStyles.every(
     (style) => style.value === elementStyles[0].value,
   );
@@ -48,6 +47,7 @@
             type="single"
             value={showGroup ? "true" : "false"}
             onValueChange={(val) => {
+              if (!val) return;
               showGroup = val === "true";
             }}
           >

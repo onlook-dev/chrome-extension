@@ -35,7 +35,7 @@
 {#if elementStyle}
     <div class="flex flex-row gap-1 justify-end">
         <input
-            {value}
+            value={value === "fit-content" ? "" : value}
             type="text"
             class="{inputWidth} rounded-sm p-1 px-2 text-xs border-none text-text bg-surface text-start focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             placeholder="--"
@@ -90,7 +90,7 @@
                         el,
                     );
                     mode = LayoutMode[e.currentTarget.value];
-                    value = res.displayVal;
+                    value = res[elementStyle.key];
                     updateElementStyle(elementStyle.key, res[elementStyle.key]);
                 }}
             >
