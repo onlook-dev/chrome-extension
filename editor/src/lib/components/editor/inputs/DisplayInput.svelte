@@ -1,6 +1,5 @@
 <script lang="ts">
     import { slide } from "svelte/transition";
-
     import TextInput from "./TextInput.svelte";
     import {
         ElementStyleType,
@@ -8,7 +7,7 @@
     } from "$lib/tools/selection/styles";
     import NumberUnitInput from "./NumberUnitInput.svelte";
     import SelectInput from "./SelectInput.svelte";
-    import ColumnRowInput from "./ColumnRowInput.svelte";
+    import RowColInput from "./RowColInput.svelte";
 
     export let elementStyles: ElementStyle[] = [];
     export let updateElementStyle = (
@@ -22,7 +21,6 @@
         grid = "grid",
         block = "block",
     }
-
     const DisplayGroup = {
         [DisplayType.flex]: [
             "flexDirection",
@@ -32,9 +30,7 @@
         ],
         [DisplayType.grid]: ["gridTemplateColumns", "gridTemplateRows", "gap"],
     };
-
     let type: DisplayType;
-
     $: elementStyles.map((elementStyle) => {
         if (elementStyle.key === "display")
             type = elementStyle.value as DisplayType;
@@ -76,7 +72,7 @@
                 </div>
                 <div class="w-32 ml-auto">
                     {#if elementStyle.key === "gridTemplateColumns" || elementStyle.key === "gridTemplateRows"}
-                        <ColumnRowInput {elementStyle} {updateElementStyle} />
+                        <RowColInput {elementStyle} {updateElementStyle} />
                     {:else if elementStyle.type === ElementStyleType.Select}
                         <SelectInput {elementStyle} {updateElementStyle} />
                     {:else if elementStyle.type === ElementStyleType.Number}

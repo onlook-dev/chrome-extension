@@ -34,6 +34,7 @@
 
 {#if elementStyle}
     <div class="flex flex-row gap-1 justify-end">
+        <!-- Show fit-content as empty because it's cooler -->
         <input
             value={value === "fit-content" ? "" : value}
             type="text"

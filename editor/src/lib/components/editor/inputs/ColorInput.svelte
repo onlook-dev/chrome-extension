@@ -9,6 +9,7 @@
   $: inputString = stringToHex(elementStyle.value);
   $: isNoneInput = inputString === "initial" || inputString === "";
 
+  // TODO: Move into color helper class
   const formatColorInput = (colorInput: string): string => {
     if (/^[0-9A-F]{6}$/i.test(colorInput)) {
       return "#" + colorInput;
