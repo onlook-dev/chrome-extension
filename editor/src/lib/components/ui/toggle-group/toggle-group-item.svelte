@@ -23,7 +23,7 @@
 			size: ctx.size || size,
 		}),
 		className,
-		"rounded-sm w-full",
+		"rounded-sm w-full text-tertiary active:text-primary",
 	)}
 	{value}
 	{...$$restProps}

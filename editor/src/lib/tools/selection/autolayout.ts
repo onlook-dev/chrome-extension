@@ -30,7 +30,7 @@ export class AutoLayout {
         switch (mode) {
             case LayoutMode.Fit:
                 props = {
-                    displayVal: 'fit-content',
+                    displayVal: '--',
                     [property]: 'fit-content'
                 }
                 break;

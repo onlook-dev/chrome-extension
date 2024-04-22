@@ -333,14 +333,6 @@ export const elementStyles: ElementStyle[] = [
       max: 100
     }
   ),
-  new ElementStyle(
-    'overflow',
-    'visible',
-    'Overflow',
-    ElementStyleType.Select,
-    ElementStyleGroup.Style,
-    { options: ['visible', 'hidden', 'scroll', 'auto'] }
-  ),
 
   new ElementStyle(
     'backgroundColor',

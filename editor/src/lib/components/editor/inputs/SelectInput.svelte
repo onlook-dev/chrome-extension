@@ -20,7 +20,7 @@
 {#if elementStyle}
   {#if elementStyle.options.length < 4}
     <ToggleGroup.Root
-      class="w-32"
+      class="w-32 overflow-hidden"
       size="sm"
       type="single"
       value={elementStyle.value}

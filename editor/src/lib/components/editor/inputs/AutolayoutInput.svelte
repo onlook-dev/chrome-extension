@@ -6,6 +6,7 @@
     } from "$lib/tools/selection/autolayout";
     import { NumberUnit } from "$lib/tools/selection/numberUnit";
     import type { ElementStyle } from "$lib/tools/selection/styles";
+    import { ChevronDown } from "radix-icons-svelte";
 
     export let el: HTMLElement;
     export let elementStyle: ElementStyle;
@@ -24,6 +25,11 @@
         value = res.value;
         mode = res.mode;
     }
+
+    const optionMap = {
+        Fit: "Hug",
+        Relative: "Rel",
+    };
 </script>
 
 {#if elementStyle}
@@ -70,29 +76,38 @@
                 updateElementStyle(elementStyle.key, stringValue);
             }}
         />
+        <div class="relative w-16">
+            <select
+                name={elementStyle.displayName}
+                value={mode}
+                placeholder="auto"
+                class="p-[6px] w-full px-2 text-start rounded border-none text-xs text-text bg-surface appearance-none focus:outline-none focus:ring-0 capitalize"
+                on:change={(e) => {
+                    const res = autoLayout.getStyles(
+                        LayoutProperty[elementStyle.key],
+                        LayoutMode[e.currentTarget.value],
+                        value,
+                        el,
+                    );
+                    mode = LayoutMode[e.currentTarget.value];
+                    value = res.displayVal;
+                    updateElementStyle(elementStyle.key, res[elementStyle.key]);
+                }}
+            >
+                {#each elementStyle.units ?? [] as option}
+                    <option class="bg-red" value={option}
+                        >{optionMap[option]
+                            ? optionMap[option]
+                            : option}</option
+                    >
+                {/each}
+            </select>
 
-        <select
-            name={elementStyle.displayName}
-            value={mode}
-            placeholder="auto"
-            class="text-xs {unitWidth} rounded-sm p-1 px-2 border-none text-text bg-surface {unitEnd
-                ? 'text-end'
-                : 'text-start'} focus:outline-none focus:ring-0"
-            on:change={(e) => {
-                const res = autoLayout.getStyles(
-                    LayoutProperty[elementStyle.key],
-                    LayoutMode[e.currentTarget.value],
-                    value,
-                    el,
-                );
-                mode = LayoutMode[e.currentTarget.value];
-                value = res.displayVal;
-                updateElementStyle(elementStyle.key, res[elementStyle.key]);
-            }}
-        >
-            {#each elementStyle.units ?? [] as option}
-                <option value={option}>{option}</option>
-            {/each}
-        </select>
+            <div
+                class="text-tertiary absolute inset-y-0 right-0 flex items-center pr-1 pointer-events-none"
+            >
+                <ChevronDown />
+            </div>
+        </div>
     </div>
 {/if}
