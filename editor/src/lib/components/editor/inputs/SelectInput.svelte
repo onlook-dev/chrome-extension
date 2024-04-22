@@ -14,9 +14,11 @@
   } from "radix-icons-svelte";
 
   export let elementStyle: ElementStyle;
-  export let updateElementStyle: (key: string, value: string) => void;
-  let value = elementStyle.value;
-  let lastValue = elementStyle.value;
+  export let updateElementStyle: (
+    key: string,
+    value: string,
+    refresh?: boolean,
+  ) => void;
 </script>
 
 {#if elementStyle}
@@ -25,13 +27,11 @@
       class="w-32 overflow-hidden"
       size="sm"
       type="single"
-      bind:value
+      value={elementStyle.value}
       onValueChange={(val) => {
         if (!val) {
-          value = lastValue;
           return;
         }
-        lastValue = val;
         updateElementStyle(elementStyle.key, val);
       }}
     >
