@@ -6,6 +6,11 @@
     TextAlignCenter,
     TextAlignLeft,
     TextAlignRight,
+    BorderSolid,
+    BorderDashed,
+    BorderDotted,
+    ArrowRight,
+    ArrowDown,
   } from "radix-icons-svelte";
 
   export let elementStyle: ElementStyle;
@@ -13,9 +18,10 @@
 </script>
 
 {#if elementStyle}
-  {#if elementStyle.key === "textAlign"}
+  {#if elementStyle.options.length < 4}
     <ToggleGroup.Root
       class="w-32"
+      size="sm"
       type="single"
       value={elementStyle.value}
       onValueChange={(val) => {
@@ -26,15 +32,29 @@
         updateElementStyle(elementStyle.key, val);
       }}
     >
-      <ToggleGroup.Item value="start"
-        ><TextAlignLeft class="w-4 h-5" /></ToggleGroup.Item
-      >
-      <ToggleGroup.Item value="center"
-        ><TextAlignCenter class="w-4 h-5" /></ToggleGroup.Item
-      >
-      <ToggleGroup.Item value="end"
-        ><TextAlignRight class="w-4 h-5" /></ToggleGroup.Item
-      >
+      {#each elementStyle.options ?? [] as option}
+        <ToggleGroup.Item class="capitalize text-xs" value={option}>
+          {#if option === "start"}
+            <TextAlignLeft />
+          {:else if option === "center"}
+            <TextAlignCenter />
+          {:else if option === "end"}
+            <TextAlignRight />
+          {:else if option === "solid"}
+            <BorderSolid />
+          {:else if option === "dashed"}
+            <BorderDashed />
+          {:else if option === "dotted"}
+            <BorderDotted />
+          {:else if option === "row"}
+            <ArrowRight />
+          {:else if option === "column"}
+            <ArrowDown />
+          {:else}
+            {option}
+          {/if}
+        </ToggleGroup.Item>
+      {/each}
     </ToggleGroup.Root>
   {:else}
     <div class="relative w-32">

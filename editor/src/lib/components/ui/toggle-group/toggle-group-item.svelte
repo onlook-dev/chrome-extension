@@ -23,7 +23,7 @@
 			size: ctx.size || size,
 		}),
 		className,
-		"rounded-sm",
+		"rounded-sm w-full",
 	)}
 	{value}
 	{...$$restProps}

@@ -14,7 +14,9 @@
 <div
   class="w-32 p-[6px] gap-2 bg-surface flex flex-row rounded-sm cursor-pointer"
 >
-  <div class="overflow-hidden w-5 h-5 border-transparent rounded-sm relative">
+  <div
+    class="overflow-hidden w-5 h-5 border-transparent rounded-[2px] relative"
+  >
     <input
       bind:this={colorInputRef}
       type="color"
