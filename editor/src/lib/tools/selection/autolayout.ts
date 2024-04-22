@@ -55,6 +55,10 @@ export class AutoLayout {
                 }
                 break;
             default:
+                props = {
+                    displayVal: value,
+                    [property]: value
+                }
                 break;
         }
         return props
