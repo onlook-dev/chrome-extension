@@ -109,11 +109,7 @@
             <TagInfo {el} />
           {/if}
           {#each Object.entries(subGroup) as [subGroupKey, elementStyles]}
-            {#if subGroupKey === ElementStyleSubGroup.Margin}
-              <NestedInputs {elementStyles} {updateElementStyle} />
-            {:else if subGroupKey === ElementStyleSubGroup.Padding}
-              <NestedInputs {elementStyles} {updateElementStyle} />
-            {:else if subGroupKey === ElementStyleSubGroup.Corners}
+            {#if subGroupKey === ElementStyleSubGroup.Margin || subGroupKey === ElementStyleSubGroup.Padding || subGroupKey === ElementStyleSubGroup.Corners}
               <NestedInputs {elementStyles} {updateElementStyle} />
             {:else if subGroupKey === ElementStyleSubGroup.Border}
               <BorderInput {elementStyles} {updateElementStyle} />
