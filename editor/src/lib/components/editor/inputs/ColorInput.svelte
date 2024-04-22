@@ -8,6 +8,13 @@
   export let updateElementStyle: (key: string, value: string) => void;
   $: inputString = stringToHex(elementStyle.value);
   $: isNoneInput = inputString === "initial" || inputString === "";
+
+  const formatColorInput = (colorInput: string): string => {
+    if (/^[0-9A-F]{6}$/i.test(colorInput)) {
+      return "#" + colorInput;
+    }
+    return colorInput;
+  };
 </script>
 
 <div
@@ -39,12 +46,14 @@
       }
     }}
     on:input={(event) => {
-      if (parse(event.currentTarget.value) === undefined) {
+      const formattedColor = formatColorInput(event.currentTarget.value);
+      if (parse(formattedColor) === undefined) {
         console.error("Invalid color");
         return;
+      } else {
+        inputString = formattedColor;
+        updateElementStyle(elementStyle.key, formattedColor);
       }
-      inputString = event.currentTarget.value;
-      updateElementStyle(elementStyle.key, event.currentTarget.value);
     }}
   />
   <button
