@@ -63,4 +63,12 @@ export class AutoLayout {
         }
         return props
     }
+
+    getRowColumnCount(value: string): number {
+        return value.split(' ').length;
+    }
+
+    generateRowColumnTemplate(value: string): string {
+        return `repeat(${value}, 1fr)`
+    }
 }

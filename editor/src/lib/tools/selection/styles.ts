@@ -129,7 +129,7 @@ export const elementStyles: ElementStyle[] = [
     ElementStyleType.Select,
     ElementStyleGroup.Layout,
     {
-      options: ['flex', 'grid', 'block'],
+      options: ['block', 'flex', 'grid'],
       subGroup: ElementStyleSubGroup.Display
     }
   ),
@@ -142,7 +142,6 @@ export const elementStyles: ElementStyle[] = [
     ElementStyleGroup.Layout,
     { options: ['row', 'column'], subGroup: ElementStyleSubGroup.Display }
   ),
-
 
   new ElementStyle(
     'justifyContent',
@@ -159,6 +158,24 @@ export const elementStyles: ElementStyle[] = [
     ElementStyleType.Select,
     ElementStyleGroup.Layout,
     { options: ['flex-start', 'center', 'flex-end', 'space-between'], subGroup: ElementStyleSubGroup.Display }
+  ),
+
+  new ElementStyle(
+    'gridTemplateColumns',
+    '',
+    'Columns',
+    ElementStyleType.Text,
+    ElementStyleGroup.Layout,
+    { subGroup: ElementStyleSubGroup.Display }
+  ),
+
+  new ElementStyle(
+    'gridTemplateRows',
+    '',
+    'Rows',
+    ElementStyleType.Text,
+    ElementStyleGroup.Layout,
+    { subGroup: ElementStyleSubGroup.Display }
   ),
 
   new ElementStyle(
