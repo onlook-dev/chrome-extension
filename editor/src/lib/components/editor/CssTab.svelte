@@ -26,13 +26,14 @@
   import type { EditTool } from "$lib/tools/edit";
   import AutolayoutInput from "./inputs/AutolayoutInput.svelte";
   import { redoStore } from "$lib/tools/edit/history";
+  import DisplayInput from "./inputs/DisplayInput.svelte";
 
   export let editTool: EditTool;
   const applyChangeService = new ApplyChangesService();
   const custom = "Custom";
   let el: HTMLElement | undefined = undefined;
 
-  let groupedStyles: Record<string, ElementStyle[]> = {};
+  let groupedStyles: Record<string, Record<string, ElementStyle[]>> = {};
   let appendedClass: string[] = [];
   let unsubs: (() => void)[] = [];
 
@@ -96,63 +97,57 @@
     multiple
     value={[...Object.keys(groupedStyles), custom]}
   >
-    {#each Object.entries(groupedStyles) as [groupKey, elementStyles]}
-      {#if groupKey === ElementStyleSubGroup.Margin}
-        <NestedInputs {elementStyles} {updateElementStyle} />
-      {:else if groupKey === ElementStyleSubGroup.Padding}
-        <NestedInputs {elementStyles} {updateElementStyle} />
-        <Separator />
-      {:else if groupKey === ElementStyleSubGroup.Corners}
-        <NestedInputs {elementStyles} {updateElementStyle} />
-      {:else if groupKey === ElementStyleSubGroup.Border}
-        <BorderInput {elementStyles} {updateElementStyle} />
-        <Separator />
-      {:else}
-        <Accordion.Item
-          data-state="open"
-          value={groupKey}
-          class={groupKey === ElementStyleGroup.Layout ||
-          groupKey === ElementStyleGroup.Style
-            ? "border-b-0"
-            : ""}
+    {#each Object.entries(groupedStyles) as [groupKey, subGroup]}
+      <Accordion.Item data-state="open" value={groupKey}>
+        <Accordion.Trigger
+          ><h2 class="text-xs font-semibold">
+            {groupKey}
+          </h2></Accordion.Trigger
         >
-          <Accordion.Trigger
-            ><h2 class="text-xs font-semibold">
-              {groupKey}
-            </h2></Accordion.Trigger
-          >
-          <Accordion.Content
-            class={groupKey === ElementStyleGroup.Layout ||
-            groupKey === ElementStyleGroup.Style
-              ? "pb-2"
-              : ""}
-          >
-            {#if groupKey == ElementStyleGroup.Text}
-              <TagInfo {el} />
-            {/if}
-            {#each elementStyles as elementStyle, i}
-              <div class="flex flex-row items-center {i === 0 ? '' : 'mt-2'}">
-                <p class="text-xs w-24 mr-2 text-start opacity-60">
-                  {elementStyle.displayName}
-                </p>
-                <div class="text-end ml-auto">
-                  {#if elementStyle.type === ElementStyleType.Select}
-                    <SelectInput {elementStyle} {updateElementStyle} />
-                  {:else if elementStyle.type === ElementStyleType.Dimensions}
-                    <AutolayoutInput {el} {elementStyle} {updateElementStyle} />
-                  {:else if elementStyle.type === ElementStyleType.Color}
-                    <ColorInput {elementStyle} {updateElementStyle} />
-                  {:else if elementStyle.type === ElementStyleType.Number}
-                    <NumberUnitInput {elementStyle} {updateElementStyle} />
-                  {:else}
-                    <TextInput {elementStyle} {updateElementStyle} />
-                  {/if}
+        <Accordion.Content>
+          {#if groupKey == ElementStyleGroup.Text}
+            <TagInfo {el} />
+          {/if}
+          {#each Object.entries(subGroup) as [subGroupKey, elementStyles]}
+            {#if subGroupKey === ElementStyleSubGroup.Margin}
+              <NestedInputs {elementStyles} {updateElementStyle} />
+            {:else if subGroupKey === ElementStyleSubGroup.Padding}
+              <NestedInputs {elementStyles} {updateElementStyle} />
+            {:else if subGroupKey === ElementStyleSubGroup.Corners}
+              <NestedInputs {elementStyles} {updateElementStyle} />
+            {:else if subGroupKey === ElementStyleSubGroup.Border}
+              <BorderInput {elementStyles} {updateElementStyle} />
+            {:else if subGroupKey === ElementStyleSubGroup.Display}
+              <DisplayInput {elementStyles} {updateElementStyle} />
+            {:else}
+              {#each elementStyles as elementStyle, i}
+                <div class="flex flex-row items-center {i === 0 ? '' : 'mt-2'}">
+                  <p class="text-xs w-24 mr-2 text-start opacity-60">
+                    {elementStyle.displayName}
+                  </p>
+                  <div class="text-end ml-auto">
+                    {#if elementStyle.type === ElementStyleType.Select}
+                      <SelectInput {elementStyle} {updateElementStyle} />
+                    {:else if elementStyle.type === ElementStyleType.Dimensions}
+                      <AutolayoutInput
+                        {el}
+                        {elementStyle}
+                        {updateElementStyle}
+                      />
+                    {:else if elementStyle.type === ElementStyleType.Color}
+                      <ColorInput {elementStyle} {updateElementStyle} />
+                    {:else if elementStyle.type === ElementStyleType.Number}
+                      <NumberUnitInput {elementStyle} {updateElementStyle} />
+                    {:else}
+                      <TextInput {elementStyle} {updateElementStyle} />
+                    {/if}
+                  </div>
                 </div>
-              </div>
-            {/each}
-          </Accordion.Content>
-        </Accordion.Item>
-      {/if}
+              {/each}
+            {/if}
+          {/each}
+        </Accordion.Content>
+      </Accordion.Item>
     {/each}
     <Accordion.Item data-state="open" value={custom}>
       <Accordion.Trigger><h2 class="text-xs">{custom}</h2></Accordion.Trigger>

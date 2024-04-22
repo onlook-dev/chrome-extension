@@ -38,6 +38,7 @@ export enum ElementStyleSubGroup {
   Padding = 'Padding',
   Border = 'Border',
   Shadow = 'Shadow',
+  Display = 'Display'
 }
 
 // Custom order for the groups
@@ -45,6 +46,7 @@ const groupOrder: (string)[] = [
   ElementStyleGroup.Size,
   ElementStyleGroup.Position,
   ElementStyleGroup.Layout,
+  ElementStyleSubGroup.Display,
   ElementStyleSubGroup.Margin,
   ElementStyleSubGroup.Padding,
   ElementStyleGroup.Style,
@@ -126,7 +128,10 @@ export const elementStyles: ElementStyle[] = [
     'Type',
     ElementStyleType.Select,
     ElementStyleGroup.Layout,
-    { options: ['flex', 'grid', 'block'] }
+    {
+      options: ['flex', 'grid', 'block'],
+      subGroup: ElementStyleSubGroup.Display
+    }
   ),
 
   new ElementStyle(
@@ -135,7 +140,7 @@ export const elementStyles: ElementStyle[] = [
     'Direction',
     ElementStyleType.Select,
     ElementStyleGroup.Layout,
-    { options: ['row', 'column'] }
+    { options: ['row', 'column'], subGroup: ElementStyleSubGroup.Display }
   ),
 
 
@@ -145,7 +150,7 @@ export const elementStyles: ElementStyle[] = [
     'X Align',
     ElementStyleType.Select,
     ElementStyleGroup.Layout,
-    { options: ['flex-start', 'center', 'flex-end', 'space-between'] }
+    { options: ['flex-start', 'center', 'flex-end', 'space-between'], subGroup: ElementStyleSubGroup.Display }
   ),
   new ElementStyle(
     'alignItems',
@@ -153,7 +158,7 @@ export const elementStyles: ElementStyle[] = [
     'Y Align',
     ElementStyleType.Select,
     ElementStyleGroup.Layout,
-    { options: ['flex-start', 'center', 'flex-end', 'space-between'] }
+    { options: ['flex-start', 'center', 'flex-end', 'space-between'], subGroup: ElementStyleSubGroup.Display }
   ),
 
   new ElementStyle(
@@ -162,10 +167,10 @@ export const elementStyles: ElementStyle[] = [
     'Gap',
     ElementStyleType.Number,
     ElementStyleGroup.Layout,
-
     {
       units: elementStyleUnits,
-      max: 1000
+      max: 1000,
+      subGroup: ElementStyleSubGroup.Display
     }
   ),
 
@@ -522,26 +527,31 @@ export function sortGroupsByCustomOrder(groups: Record<string, ElementStyle[]>):
   return sortedGroups;
 }
 
-export function groupElementStylesByGroup(styles: ElementStyle[]): Record<string, ElementStyle[]> {
-  return styles.reduce((groups: any, style) => {
-
-    if (style.subGroup) {
-      if (!groups[style.subGroup]) {
-        groups[style.subGroup] = []
-      }
-      groups[style.subGroup].push(style)
-      return sortGroupsByCustomOrder(groups)
-    }
-
-
-    // Initialize the group if it doesn't exist
+export function groupElementStylesByGroup(styles: ElementStyle[]): Record<string, Record<string, ElementStyle[]>> {
+  return styles.reduce((groups, style) => {
+    // Check and initialize the main group if it doesn't exist
     if (!groups[style.group]) {
-      groups[style.group] = []
+      groups[style.group] = {};
     }
-    // Add the current style to the correct group
-    groups[style.group].push(style)
-    return sortGroupsByCustomOrder(groups)
-  }, {})
+
+    // Check and initialize the subgroup within the main group if it doesn't exist
+    if (style.subGroup) {
+      if (!groups[style.group][style.subGroup]) {
+        groups[style.group][style.subGroup] = [];
+      }
+      // Add the style to the subgroup
+      groups[style.group][style.subGroup].push(style);
+    } else {
+      // If no subgroup is specified, use a default key to store styles directly under the group
+      const defaultKey = "default";
+      if (!groups[style.group][defaultKey]) {
+        groups[style.group][defaultKey] = [];
+      }
+      groups[style.group][defaultKey].push(style);
+    }
+
+    return sortGroupsByCustomOrder(groups);
+  }, {});
 }
 
 export function getElementComputedStylesData(el: HTMLElement) {
