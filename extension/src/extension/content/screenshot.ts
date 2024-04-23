@@ -12,6 +12,7 @@ export class ScreenshotService {
 		const element = document.querySelector(activity.selector) as HTMLElement
 		if (!element) return
 
+		// Crop the page by the element
 		const croppedImageUri = await this.cropPageByElement(element, canvas)
 
 		// Set before image or after image
@@ -24,7 +25,12 @@ export class ScreenshotService {
 
 	private getVisibleRect(el: HTMLElement, padding: number = 0): DOMRect {
 		const bounds = el.getBoundingClientRect();
-		let rect = { x: bounds.left + scrollX, y: bounds.top + window.scrollY, width: bounds.width, height: bounds.height };
+		let rect = {
+			x: bounds.left + scrollX,
+			y: bounds.top + window.scrollY,
+			width: bounds.width,
+			height: bounds.height
+		};
 
 		let visibleRect = DOMRect.fromRect(rect);
 
@@ -46,7 +52,6 @@ export class ScreenshotService {
 		if (visibleRect.width + visibleRect.x > document.body.scrollWidth) {
 			visibleRect.width = document.body.scrollWidth - visibleRect.x - padding;
 		}
-
 		if (visibleRect.height + visibleRect.y > document.documentElement.scrollHeight) {
 			visibleRect.height = document.documentElement.scrollHeight - visibleRect.y - padding;
 		}
@@ -81,8 +86,8 @@ export class ScreenshotService {
 			// Draw the cropped area on the new canvas
 			ctx.drawImage(
 				canvas,
-				rect.left * dpr, 		// x position on the source canvas, adjusted for scroll and scale
-				rect.top * dpr,  		// y position on the source canvas, adjusted for scroll and scale
+				rect.left * dpr, 		// x position on the source canvas, adjusted for scale
+				rect.top * dpr,  		// y position on the source canvas, adjusted for scale
 				rect.width * dpr, 		// width of the source rectangle
 				rect.height * dpr, 		// height of the source rectangle
 				0,                   	// x position on the destination canvas
@@ -98,6 +103,7 @@ export class ScreenshotService {
 	}
 
 	takePageScreenshot(): Promise<HTMLCanvasElement> {
+		// Filter our onlook elements
 		function filter(node: HTMLElement) {
 			try {
 				if (node.tagName.toUpperCase() === DATA_ONLOOK_ID.toUpperCase() || node.id === `#${DATA_ONLOOK_ID}` || node.hasAttribute(DATA_ONLOOK_IGNORE) || node.tagName.toUpperCase() === ONLOOK_TOOLBAR.toUpperCase()) {
@@ -109,6 +115,7 @@ export class ScreenshotService {
 			}
 		}
 
+		// Take entire body screenshot as a canvas
 		const canvas = htmlToImage.toCanvas(document.body, {
 			height: document.body.scrollHeight,
 			width: document.body.scrollWidth,
