@@ -26,9 +26,7 @@ export class PublishProjectService {
             revertActivityChanges(activity);
         }
 
-        // Wait for changes to apply
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
+        // Canvas of entire page without changes
         const beforeCanvas = await this.screenshotService.takePageScreenshot();
 
         // Take before screenshot
@@ -36,24 +34,22 @@ export class PublishProjectService {
             await this.screenshotService.takeActivityScreenshot(activity, beforeCanvas, true);
         }
 
-        // Update project before screenshot
-        const beforeScreenshot = beforeCanvas.toDataURL('image/png');
-        this.project.hostData.beforeImage = beforeScreenshot;
-
         // Apply activity
         for (const activity of activities) {
             applyActivityChanges(activity);
         }
 
+        // Canvas of entire page with changes
         const afterCanvas = await this.screenshotService.takePageScreenshot();
-
-        // Wait for changes to apply
-        await new Promise((resolve) => setTimeout(resolve, 100));
 
         // Take after screenshot
         for (const activity of activities) {
             await this.screenshotService.takeActivityScreenshot(activity, afterCanvas, false);
         }
+
+        // Update project before screenshot
+        const beforeScreenshot = beforeCanvas.toDataURL('image/png');
+        this.project.hostData.beforeImage = beforeScreenshot;
 
         // Update project after screenshot
         const afterScreenshot = afterCanvas.toDataURL('image/png');
