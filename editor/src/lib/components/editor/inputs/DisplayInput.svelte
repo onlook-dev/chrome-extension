@@ -1,66 +1,69 @@
 <script lang="ts">
-    import {
-        BorderBottom,
-        BorderLeft,
-        BorderRight,
-        BorderTop,
-    } from "radix-icons-svelte";
     import { slide } from "svelte/transition";
-
     import TextInput from "./TextInput.svelte";
     import {
         ElementStyleType,
         type ElementStyle,
     } from "$lib/tools/selection/styles";
-    import ColorInput from "./ColorInput.svelte";
     import NumberUnitInput from "./NumberUnitInput.svelte";
     import SelectInput from "./SelectInput.svelte";
+    import RowColInput from "./RowColInput.svelte";
 
     export let elementStyles: ElementStyle[] = [];
-    export let updateElementStyle = (key: string, value: string) => {};
+    export let updateElementStyle = (
+        key: string,
+        value: string,
+        refresh?: boolean,
+    ) => {};
 
-    $: showGroup = elementStyles.some(
-        (elementStyle) =>
-            elementStyle.key === "borderWidth" &&
-            !(elementStyle.value === "0px"),
-    );
-
-    $: if (!showGroup) {
-        elementStyles.map((elementStyle) => {
-            if (elementStyle.key === "borderColor")
-                elementStyle.value = "initial";
-        });
+    enum DisplayType {
+        flex = "flex",
+        grid = "grid",
+        block = "block",
     }
+    const DisplayGroup = {
+        [DisplayType.flex]: [
+            "flexDirection",
+            "justifyContent",
+            "alignItems",
+            "gap",
+        ],
+        [DisplayType.grid]: ["gridTemplateColumns", "gridTemplateRows", "gap"],
+    };
+    let type: DisplayType;
+    $: elementStyles.map((elementStyle) => {
+        if (elementStyle.key === "display")
+            type = elementStyle.value as DisplayType;
+    });
 
-    let colorUpdate = (key: string, value: string) => {
-        if (key === "borderColor") {
-            if (value === "" || value === "initial") {
-                // Clear out borders
-                updateElementStyle("borderWidth", "0px");
-                showGroup = false;
-            } else {
-                showGroup = true;
-            }
+    let updatedUpdateStyle = (key: string, value: string) => {
+        if (key === "display") {
+            type = value as DisplayType;
+            elementStyles.map((elementStyle) => {
+                if (elementStyle.key === "display") {
+                    elementStyle.value = value;
+                }
+            });
         }
-        updateElementStyle(key, value);
+        updateElementStyle(key, value, true);
     };
 </script>
 
 <div class="flex flex-col gap-2 mb-2">
     {#each elementStyles as elementStyle}
-        {#if elementStyle.key === "borderColor"}
+        {#if elementStyle.key === "display"}
             <div class="flex flex-row items-center col-span-2">
                 <p class="text-xs text-left text-tertiary">
                     {elementStyle.displayName}
                 </p>
                 <div class="ml-auto h-8 flex flex-row w-32 space-x-2">
-                    <ColorInput
+                    <SelectInput
                         {elementStyle}
-                        updateElementStyle={colorUpdate}
+                        updateElementStyle={updatedUpdateStyle}
                     />
                 </div>
             </div>
-        {:else if showGroup}
+        {:else if DisplayGroup[type] && DisplayGroup[type].includes(elementStyle.key)}
             <div transition:slide class="ml-2 flex flex-row items-center">
                 <div class="text-tertiary">
                     <p class="text-xs text-left">
@@ -68,7 +71,9 @@
                     </p>
                 </div>
                 <div class="w-32 ml-auto">
-                    {#if elementStyle.type === ElementStyleType.Select}
+                    {#if elementStyle.key === "gridTemplateColumns" || elementStyle.key === "gridTemplateRows"}
+                        <RowColInput {elementStyle} {updateElementStyle} />
+                    {:else if elementStyle.type === ElementStyleType.Select}
                         <SelectInput {elementStyle} {updateElementStyle} />
                     {:else if elementStyle.type === ElementStyleType.Number}
                         <NumberUnitInput {elementStyle} {updateElementStyle} />

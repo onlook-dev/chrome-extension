@@ -24,7 +24,6 @@
     value: string,
     refresh?: boolean,
   ) => {};
-
   $: showGroup = !elementStyles.every(
     (style) => style.value === elementStyles[0].value,
   );
@@ -34,7 +33,7 @@
   };
 </script>
 
-<div class="grid grid-cols-2 gap-2 mb-2">
+<div class="grid grid-cols-2 gap-2 my-2">
   {#each elementStyles as elementStyle}
     {#if elementStyle.key === "margin" || elementStyle.key === "padding" || elementStyle.key === "borderRadius"}
       <div class="flex flex-row items-center col-span-2">
@@ -48,6 +47,7 @@
             type="single"
             value={showGroup ? "true" : "false"}
             onValueChange={(val) => {
+              if (!val) return;
               showGroup = val === "true";
             }}
           >

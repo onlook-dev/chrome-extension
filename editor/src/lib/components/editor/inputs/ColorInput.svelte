@@ -6,17 +6,25 @@
 
   export let elementStyle: ElementStyle;
   export let updateElementStyle: (key: string, value: string) => void;
-  let colorInputRef;
   $: inputString = stringToHex(elementStyle.value);
   $: isNoneInput = inputString === "initial" || inputString === "";
+
+  // TODO: Move into color helper class
+  const formatColorInput = (colorInput: string): string => {
+    if (/^[0-9A-F]{6}$/i.test(colorInput)) {
+      return "#" + colorInput;
+    }
+    return colorInput;
+  };
 </script>
 
 <div
   class="w-32 p-[6px] gap-2 bg-surface flex flex-row rounded-sm cursor-pointer"
 >
-  <div class="overflow-hidden w-5 h-5 border-transparent rounded-sm relative">
+  <div
+    class="overflow-hidden w-5 h-5 border-transparent rounded-[2px] relative"
+  >
     <input
-      bind:this={colorInputRef}
       type="color"
       class="border-transparent absolute w-10 h-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
       value={inputString}
@@ -39,12 +47,14 @@
       }
     }}
     on:input={(event) => {
-      if (parse(event.currentTarget.value) === undefined) {
+      const formattedColor = formatColorInput(event.currentTarget.value);
+      if (parse(formattedColor) === undefined) {
         console.error("Invalid color");
         return;
+      } else {
+        inputString = formattedColor;
+        updateElementStyle(elementStyle.key, formattedColor);
       }
-      inputString = event.currentTarget.value;
-      updateElementStyle(elementStyle.key, event.currentTarget.value);
     }}
   />
   <button

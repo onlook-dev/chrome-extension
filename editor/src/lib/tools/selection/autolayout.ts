@@ -30,37 +30,40 @@ export class AutoLayout {
         switch (mode) {
             case LayoutMode.Fit:
                 props = {
-                    displayVal: 'fit-content',
                     [property]: 'fit-content'
                 }
                 break;
             case LayoutMode.Fill:
                 props = {
-                    displayVal: '100%',
                     [property]: "100%"
                 }
                 break;
             case LayoutMode.Relative:
                 const relativeValue = this.getRelativeValue(property, el)
                 props = {
-                    displayVal: relativeValue,
                     [property]: relativeValue
                 }
                 break;
             case LayoutMode.Fixed:
                 const literalVal = `${property === LayoutProperty.width ? el.clientWidth : el.clientHeight}px`
                 props = {
-                    displayVal: literalVal,
                     [property]: literalVal
                 }
                 break;
             default:
                 props = {
-                    displayVal: value,
                     [property]: value
                 }
                 break;
         }
         return props
+    }
+
+    getRowColumnCount(value: string): number {
+        return value.split(' ').length;
+    }
+
+    generateRowColumnTemplate(value: string): string {
+        return `repeat(${value}, 1fr)`
     }
 }
