@@ -1,6 +1,6 @@
 import type { Activity } from '$shared/models/activity'
 import { DATA_ONLOOK_ID, DATA_ONLOOK_IGNORE, ONLOOK_TOOLBAR } from '$shared/constants'
-import * as htmlToImage from 'html-to-image';
+import html2canvas from 'html2canvas'
 
 export class ScreenshotService {
 	pageScreenshot: string | undefined
@@ -104,7 +104,7 @@ export class ScreenshotService {
 
 	takePageScreenshot(): Promise<HTMLCanvasElement> {
 		// Filter our onlook elements
-		function filter(node: HTMLElement) {
+		function filter(node: Element) {
 			try {
 				if (node.tagName.toUpperCase() === DATA_ONLOOK_ID.toUpperCase() || node.id === `#${DATA_ONLOOK_ID}` || node.hasAttribute(DATA_ONLOOK_IGNORE) || node.tagName.toUpperCase() === ONLOOK_TOOLBAR.toUpperCase()) {
 					return false;
@@ -116,15 +116,12 @@ export class ScreenshotService {
 		}
 
 		// Take entire body screenshot as a canvas
-		const canvas = htmlToImage.toCanvas(document.body, {
+		const canvas = html2canvas(document.body, {
 			height: document.body.scrollHeight,
 			width: document.body.scrollWidth,
-			canvasWidth: document.body.scrollWidth,
-			canvasHeight: document.body.scrollHeight,
-			filter,
-			quality: 0,
-			pixelRatio: this.pixelRatio,
+			scale: this.pixelRatio,
 		})
+
 		return canvas;
 	}
 }

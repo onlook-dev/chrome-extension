@@ -10,7 +10,12 @@ export class PublishProjectService {
     constructor(private project: Project, private screenshotService: ScreenshotService) { }
 
     public async publish() {
-        await this.takeActivityScreenshots();
+        try {
+            await this.takeActivityScreenshots();
+        } catch (e) {
+            console.error("Error taking screenshots", e);
+        }
+
         await sendSaveProject(this.project);
         setEditorProjectSaved();
         sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
