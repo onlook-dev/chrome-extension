@@ -5,15 +5,14 @@ import { sendOpenUrlRequest, sendSaveProject } from "$lib/utils/messaging";
 import { DashboardRoutes } from "$shared/constants";
 import type { Project } from "$shared/models/project";
 import type { ScreenshotService } from "$extension/content/screenshot";
-import { consoleLogImage } from "$lib/utils/helpers";
 
 export class PublishProjectService {
     constructor(private project: Project, private screenshotService: ScreenshotService) { }
 
     public async publish() {
         await this.takeActivityScreenshots();
-        // await sendSaveProject(this.project);
-        // sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
+        await sendSaveProject(this.project);
+        sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
     }
 
     async takeActivityScreenshots() {
@@ -30,24 +29,23 @@ export class PublishProjectService {
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));
 
-        const beforeCanvas = await this.screenshotService.takePageScreenshot(false);
+        const beforeCanvas = await this.screenshotService.takePageScreenshot();
 
         // Take before screenshot
-        let refresh = true;
         for (const activity of activities) {
             await this.screenshotService.takeActivityScreenshot(activity, beforeCanvas, true);
         }
 
         // Update project before screenshot
-        // const beforeScreenshot = beforeCanvas.toDataURL('image/png');
-        // this.project.hostData.beforeImage = beforeScreenshot;
+        const beforeScreenshot = beforeCanvas.toDataURL('image/png');
+        this.project.hostData.beforeImage = beforeScreenshot;
 
         // Apply activity
         for (const activity of activities) {
             applyActivityChanges(activity);
         }
 
-        const afterCanvas = await this.screenshotService.takePageScreenshot(false);
+        const afterCanvas = await this.screenshotService.takePageScreenshot();
 
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -58,7 +56,7 @@ export class PublishProjectService {
         }
 
         // Update project after screenshot
-        // const afterScreenshot = afterCanvas.toDataURL('image/png');
-        // this.project.hostData.afterImage = afterScreenshot;
+        const afterScreenshot = afterCanvas.toDataURL('image/png');
+        this.project.hostData.previewImage = afterScreenshot;
     }
 }
