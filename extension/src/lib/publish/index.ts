@@ -1,4 +1,4 @@
-import { hideEditor, showEditor } from "$lib/editor/helpers";
+import { hideEditor, setEditorProjectSaved, showEditor } from "$lib/editor/helpers";
 import { applyActivityChanges, revertActivityChanges } from "$lib/utils/activity";
 import { baseUrl } from "$lib/utils/env";
 import { sendOpenUrlRequest, sendSaveProject } from "$lib/utils/messaging";
@@ -12,6 +12,7 @@ export class PublishProjectService {
     public async publish() {
         await this.takeActivityScreenshots();
         await sendSaveProject(this.project);
+        setEditorProjectSaved();
         sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
     }
 

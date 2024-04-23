@@ -5,7 +5,12 @@
   import { ToolName } from "$lib/tools";
   import { historyStore } from "$lib/tools/edit/history";
   import { ONLOOK_TOOLBAR } from "$shared/constants";
-  import { DATA_ONLOOK_EJECT, DATA_ONLOOK_INJECT } from "$lib/constants";
+  import {
+    DATA_ONLOOK_EJECT,
+    DATA_ONLOOK_INJECT,
+    DATA_ONLOOK_SAVED,
+  } from "$lib/constants";
+  import { savingProject } from "$lib/states/editor";
 
   let toolbarRef: Toolbar;
   let previousTool: ToolName | undefined = ToolName.EDIT;
@@ -24,6 +29,8 @@
       toolbarRef.updateTool(undefined);
     } else if (name === DATA_ONLOOK_INJECT && newValue === "true") {
       toolbarRef.updateTool(previousTool);
+    } else if (name === DATA_ONLOOK_SAVED && newValue === "true") {
+      savingProject.set(false);
     }
   }
 </script>

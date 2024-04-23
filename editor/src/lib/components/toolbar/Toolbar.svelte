@@ -1,12 +1,14 @@
 <script lang="ts">
-  import * as Card from "$lib/components/ui/card";
-  import { ExternalLink, Pencil1 } from "radix-icons-svelte";
-  import ToolBarAnimation from "./ToolbarAnimation.svelte";
-  import { ToolManager, ToolName } from "$lib/tools";
-  import EditorPanel from "../editor/EditorPanel.svelte";
-  import Button from "../ui/button/button.svelte";
   import { slide } from "svelte/transition";
   import { emitOpenProjectMessage } from "$lib/tools/messages";
+  import { ExternalLink, Pencil1, Shadow } from "radix-icons-svelte";
+  import { ToolManager, ToolName } from "$lib/tools";
+  import { savingProject } from "$lib/states/editor";
+
+  import * as Card from "$lib/components/ui/card";
+  import ToolBarAnimation from "./ToolbarAnimation.svelte";
+  import EditorPanel from "../editor/EditorPanel.svelte";
+  import Button from "../ui/button/button.svelte";
   import LayersPanel from "../layers/LayersPanel.svelte";
   import ElementsPanel from "../elements/ElementsPanel.svelte";
 
@@ -41,6 +43,7 @@
         on:click={() =>
           (activeToolName =
             activeToolName === ToolName.EDIT ? undefined : ToolName.EDIT)}
+        disabled={$savingProject}
       >
         {#if activeToolName === ToolName.EDIT}
           <svg
@@ -81,12 +84,24 @@
       {#if activeToolName !== ToolName.EDIT}
         <div transition:slide={{ axis: "x" }}>
           <Button
-            class="rounded-full border-none"
+            class="rounded-full border-none transition"
             variant="outline"
-            on:click={emitOpenProjectMessage}
-            ><ExternalLink class="h-4 w-4 mr-2" />
-            Open Project</Button
+            disabled={$savingProject}
+            on:click={() => {
+              savingProject.set(true);
+              emitOpenProjectMessage();
+              // Just in case, disable saving state after 10 seconds
+              setTimeout(() => savingProject.set(false), 10000);
+            }}
           >
+            {#if $savingProject}
+              <Shadow class="h-4 w-4 mr-2 animate-spin" />
+              Saving changes...
+            {:else}
+              <ExternalLink class="h-4 w-4 mr-2" />
+              Open Project
+            {/if}
+          </Button>
         </div>
       {/if}
     </Card.Root>
