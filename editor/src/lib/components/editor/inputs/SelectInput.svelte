@@ -53,6 +53,10 @@
             <ArrowRight />
           {:else if option === "column"}
             <ArrowDown />
+          {:else if option === "flex"}
+            Stack
+          {:else if option === "block"}
+            --
           {:else}
             {option}
           {/if}
