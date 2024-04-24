@@ -35,7 +35,7 @@ export default defineManifest(async env => ({
 		type: 'module'
 	},
 	action: {
-		default_popup: 'src/extension/popup/popup.html',
+		// default_popup: 'src/extension/popup/popup.html',
 		default_icon: {
 			'16': 'src/assets/icons/icon16.png',
 			'32': 'src/assets/icons/icon32.png',

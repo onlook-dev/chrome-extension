@@ -26,7 +26,8 @@ import {
 	getTabState,
 	getProjectById,
 	removeProjectFromTabs,
-	popupStateBucket
+	popupStateBucket,
+	getActiveUser
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { forwardToActiveProjectTab, updateTabActiveState } from './tabs'
@@ -40,6 +41,7 @@ import type { Activity } from '$shared/models/activity'
 import type { Comment } from '$shared/models/comment'
 import type { User } from '$shared/models/user'
 import { FirebaseProjectService } from '$lib/storage/project'
+import { toggleProjectTab } from '$lib/editor'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
@@ -80,6 +82,19 @@ const setListeners = () => {
 	})
 
 	chrome.runtime.onStartup.addListener(setStartupState)
+
+	chrome.action.onClicked.addListener((tab) => {
+		getActiveUser().then(user => {
+			if (!user) {
+				const authUrl = `${baseUrl}${DashboardRoutes.SIGNIN}`
+				chrome.tabs.create({ url: authUrl })
+				return
+			} else {
+				// Inject tab
+				toggleProjectTab(tab.id as number, '', true)
+			}
+		})
+	})
 
 	chrome.tabs.onUpdated.addListener(
 		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
