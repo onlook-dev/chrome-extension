@@ -6,22 +6,32 @@
     export let elementStyle: ElementStyle;
     export let updateElementStyle = (key: string, value: string) => {};
     export let inputWidth = "w-full";
-    export let overrideValue: string | undefined = undefined;
 
     $: value = elementStyle.value;
     let numberUnit = new NumberUnit();
+    let localValue = elementStyle.value;
+    let isFocused = false; // Add focus state tracking
+
+    $: if (!isFocused) {
+        localValue = elementStyle.value;
+    }
 </script>
 
 <input
     type="text"
     class="{inputWidth} p-[6px] text-xs px-2 rounded border-none text-text bg-surface text-start focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
     placeholder="--"
-    value={overrideValue ? overrideValue : value}
+    bind:value={localValue}
     on:input={(e) => {
         updateElementStyle(
             elementStyle.key,
             appendCssUnit(e.currentTarget.value),
         );
+    }}
+    on:focus={() => (isFocused = true)}
+    on:blur={() => {
+        isFocused = false;
+        updateElementStyle(elementStyle.key, appendCssUnit(localValue));
     }}
     on:keydown={(e) => {
         let step = 1;

@@ -19,25 +19,18 @@
   import type { ElementStyle } from "$lib/tools/selection/styles";
 
   export let elementStyles: ElementStyle[] = [];
-  export let updateElementStyle = (
-    key: string,
-    value: string,
-    refresh?: boolean,
-  ) => {};
+  export let updateElementStyle;
   let showGroup = false;
 
-  $: if (elementStyles) {
+  if (elementStyles) {
     showGroup = !elementStyles.every(
       (style) => style.value === elementStyles[0].value,
     );
   }
 
-  let updatedUpdateStyle = (key: string, value: string) => {
-    updateElementStyle(key, value);
-    showGroup = !elementStyles.every(
-      (style) => style.value === elementStyles[0].value,
-    );
-  };
+  function updatedUpdateElementStyle(key, value) {
+    updateElementStyle(key, value, true);
+  }
 </script>
 
 <div class="grid grid-cols-2 gap-2 my-2">
@@ -49,9 +42,8 @@
         </p>
         <div class="ml-auto h-8 flex flex-row w-32 space-x-2">
           <TextInput
-            overrideValue={showGroup ? "" : undefined}
             {elementStyle}
-            updateElementStyle={updatedUpdateStyle}
+            updateElementStyle={updatedUpdateElementStyle}
           />
           <ToggleGroup.Root
             size="sm"
