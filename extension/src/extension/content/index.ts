@@ -15,11 +15,13 @@ import { PopupRoutes } from '$lib/utils/constants'
 import { getCSSFramework } from '$lib/utils/styleFramework'
 import { PublishProjectService } from '$lib/publish'
 import { applyActivityChanges, revertActivityChanges } from '$lib/utils/activity'
+import { AltScreenshotService } from './altScreenshot'
 
 import type { EditEvent, } from '$shared/models/editor'
 import type { Project } from '$shared/models/project'
 
 const screenshotService = new ScreenshotService()
+const altScreenshotService = new AltScreenshotService()
 
 export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
@@ -41,7 +43,7 @@ export function setupListeners() {
 
 		if (message.type === MessageTypes.OPEN_PROJECT) {
 			getActiveProject().then((project) => {
-				const publishService = new PublishProjectService(project, screenshotService)
+				const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
 				publishService.publish()
 			})
 			return
@@ -96,7 +98,7 @@ export function setupListeners() {
 	})
 
 	getScreenshotStream.subscribe(async ([activity]) => {
-		screenshotService.takeActivityScreenshot(activity)
+		// screenshotService.takeActivityScreenshot(activity)
 	})
 }
 

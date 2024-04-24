@@ -288,7 +288,14 @@ const setListeners = () => {
 
 	// Open url from popup
 	openUrlRequestStream.subscribe(([url, sender]) => {
-		chrome.tabs.create({ url: url })
+		// Check if URL already exists in a tab, if so open that tab instead
+		chrome.tabs.query({ url }, tabs => {
+			if (tabs.length) {
+				chrome.tabs.update(tabs[0].id as number, { active: true })
+			} else {
+				chrome.tabs.create({ url })
+			}
+		})
 	})
 
 	// Style change from visbug and content script

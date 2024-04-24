@@ -26,7 +26,10 @@ export const SUPPORT_LINK = "mailto:support@onlook.dev";
 
 // Editor
 export const ONLOOK_TOOLBAR = "onlook-toolbar";
+export const ONLOOK_RECT_ID = "onlook-rect";
 export const DATA_ONLOOK_ID = "data-onlook-id";
+export const DATA_ONLOOK_IGNORE = "data-onlook-ignore";
+export const DATA_ONLOOK_SAVED = "data-onlook-saved";
 
 // Dashboard routes
 export enum DashboardRoutes {

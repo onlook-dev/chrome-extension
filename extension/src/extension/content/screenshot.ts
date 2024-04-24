@@ -1,44 +1,19 @@
 import type { Activity } from '$shared/models/activity'
-import { pageScreenshotResponseStream, sendPageScreenshotRequest } from '$lib/utils/messaging'
-import { nanoid } from 'nanoid'
-
-interface QueueItem {
-	activity: Activity
-	before: boolean
-	refresh: boolean
-}
+import { DATA_ONLOOK_ID, DATA_ONLOOK_IGNORE, ONLOOK_TOOLBAR } from '$shared/constants'
+import * as htmlToImage from 'html-to-image';
 
 export class ScreenshotService {
-	screenshotQueue: QueueItem[] = []
 	pageScreenshot: string | undefined
 	isProcessing: boolean = false;
+	pixelRatio = 1;
 
-	async takeActivityScreenshot(activity: Activity, before: boolean = false, refresh: boolean = false) {
-		this.screenshotQueue.push({ activity, before, refresh });
-		if (!this.isProcessing) {
-			this.isProcessing = true;
-			await this.processScreenshotQueue();
-			this.isProcessing = false;
-		}
-	}
-
-	private async processScreenshotQueue() {
-		while (this.screenshotQueue.length > 0) {
-			// Process item in queue 1 by 1
-			await this.processTakeActivityScreenshot(this.screenshotQueue[0])
-			// Remove the processed item from the queue
-			this.screenshotQueue.shift()
-		}
-	}
-
-	private async processTakeActivityScreenshot(queueItem: QueueItem) {
-		const { activity, before, refresh } = queueItem
+	async takeActivityScreenshot(activity: Activity, canvas: HTMLCanvasElement, before: boolean) {
 		// Get element
 		const element = document.querySelector(activity.selector) as HTMLElement
 		if (!element) return
-		// Get screenshot
-		const pageImageUri = await this.takePageScreenshot(refresh)
-		const croppedImageUri = await this.cropPageByElement(element, pageImageUri)
+
+		// Crop the page by the element
+		const croppedImageUri = await this.cropPageByElement(element, canvas)
 
 		// Set before image or after image
 		if (before) {
@@ -48,7 +23,15 @@ export class ScreenshotService {
 		}
 	}
 
-	getVisibleRect(rect: Object, padding: number = 0): DOMRect {
+	private getVisibleRect(el: HTMLElement, padding: number = 0): DOMRect {
+		const bounds = el.getBoundingClientRect();
+		let rect = {
+			x: bounds.left + scrollX,
+			y: bounds.top + window.scrollY,
+			width: bounds.width,
+			height: bounds.height
+		};
+
 		let visibleRect = DOMRect.fromRect(rect);
 
 		// Adjust for padding
@@ -58,19 +41,19 @@ export class ScreenshotService {
 		visibleRect.height += padding * 2;
 
 		// Ensure the rectangle does not exceed the viewport boundaries
-		if (visibleRect.x + visibleRect.width > window.innerWidth) {
-			visibleRect.width = window.innerWidth - visibleRect.x;
+		if (visibleRect.x + visibleRect.width > document.body.scrollWidth) {
+			visibleRect.width = document.body.scrollWidth - visibleRect.x;
 		}
-		if (visibleRect.y + visibleRect.height > window.innerHeight) {
-			visibleRect.height = window.innerHeight - visibleRect.y;
+		if (visibleRect.y + visibleRect.height > document.documentElement.scrollHeight) {
+			visibleRect.height = document.documentElement.scrollHeight - visibleRect.y;
 		}
 
 		// Adjust width and height if padding causes them to extend beyond viewport
-		if (visibleRect.width + visibleRect.x > window.innerWidth) {
-			visibleRect.width = window.innerWidth - visibleRect.x - padding;
+		if (visibleRect.width + visibleRect.x > document.body.scrollWidth) {
+			visibleRect.width = document.body.scrollWidth - visibleRect.x - padding;
 		}
-		if (visibleRect.height + visibleRect.y > window.innerHeight) {
-			visibleRect.height = window.innerHeight - visibleRect.y - padding;
+		if (visibleRect.height + visibleRect.y > document.documentElement.scrollHeight) {
+			visibleRect.height = document.documentElement.scrollHeight - visibleRect.y - padding;
 		}
 
 		// Ensure width and height are not negative after adjusting for padding
@@ -80,54 +63,69 @@ export class ScreenshotService {
 		return visibleRect;
 	}
 
-	private cropPageByElement(element: HTMLElement, pageImageUri: string): Promise<string> {
+	private cropPageByElement(element: HTMLElement, canvas: HTMLCanvasElement): Promise<string> {
 		return new Promise((resolve, reject) => {
-			let image = new Image();
-			let dataURL = pageImageUri;
-			// Get element bounding box
-			const hoverInfo = element.getBoundingClientRect()
+			// Get the bounding rectangle of the element
+			let rect = this.getVisibleRect(element, 20);
 
-			image.onload = () => {
-				let rect = { x: hoverInfo.left, y: hoverInfo.top, width: hoverInfo.width, height: hoverInfo.height };
-				let visibleRect = this.getVisibleRect(rect, 20);
-				let canvas: HTMLCanvasElement | undefined | null = document.createElement('canvas');
-				let ctx: CanvasRenderingContext2D | undefined | null = canvas.getContext('2d');
+			// Adjust for device pixel ratio. Use 1 default
+			const dpr = this.pixelRatio;
 
-				if (!ctx) return;
-				const zoomLevel = window.devicePixelRatio;
-				if (zoomLevel != 1.0) {
-					visibleRect.x *= zoomLevel;
-					visibleRect.y *= zoomLevel;
-					visibleRect.width *= zoomLevel;
-					visibleRect.height *= zoomLevel;
-				}
-				canvas.width = visibleRect.width;
-				canvas.height = visibleRect.height;
+			// Create a new canvas to perform the cropping
+			const croppedCanvas = document.createElement('canvas');
+			const ctx = croppedCanvas.getContext('2d');
+			if (!ctx) {
+				reject('Could not get 2d context from canvas');
+				return;
+			}
 
-				ctx.drawImage(image, visibleRect.x, visibleRect.y, visibleRect.width, visibleRect.height,
-					0, 0, visibleRect.width, visibleRect.height);
+			// Set dimensions for the cropped canvas
+			croppedCanvas.width = rect.width * dpr;
+			croppedCanvas.height = rect.height * dpr;
 
-				((croppedDataURL) => {
-					canvas = null;
-					ctx = null;
-					resolve(croppedDataURL);
-				})(canvas.toDataURL());
-			};
-			image.src = dataURL;
+			// Draw the cropped area on the new canvas
+			ctx.drawImage(
+				canvas,
+				rect.left * dpr, 		// x position on the source canvas, adjusted for scale
+				rect.top * dpr,  		// y position on the source canvas, adjusted for scale
+				rect.width * dpr, 		// width of the source rectangle
+				rect.height * dpr, 		// height of the source rectangle
+				0,                   	// x position on the destination canvas
+				0,                   	// y position on the destination canvas
+				rect.width * dpr,    	// width on the destination canvas
+				rect.height * dpr    	// height on the destination canvas
+			);
+
+			// Get the image URI
+			const elementImageUri = croppedCanvas.toDataURL('image/png');
+			resolve(elementImageUri);
 		});
-
 	}
 
-	takePageScreenshot(refresh: boolean): Promise<string> {
-		return new Promise((resolve, reject) => {
-			// TODO: If hiding editor, should setTimeout 50ms to ensure editor is hidden
-			let signature = nanoid()
-			const subscription = pageScreenshotResponseStream.subscribe(([data]) => {
-				if (data.signature !== signature) return;
-				resolve(data.image);
-				subscription.unsubscribe();
-			});
-			sendPageScreenshotRequest({ signature, refresh });
-		});
+	takePageScreenshot(): Promise<HTMLCanvasElement> {
+		// Filter our onlook elements
+		function filter(node: Element) {
+			try {
+				if (node.tagName.toUpperCase() === DATA_ONLOOK_ID.toUpperCase() || node.id === `#${DATA_ONLOOK_ID}` || node.hasAttribute(DATA_ONLOOK_IGNORE) || node.tagName.toUpperCase() === ONLOOK_TOOLBAR.toUpperCase()) {
+					return false;
+				}
+				return true;
+			} catch (e) {
+				return true;
+			}
+		}
+
+		// Take entire body screenshot as a canvas
+		const canvas = htmlToImage.toCanvas(document.body, {
+			height: document.body.scrollHeight,
+			width: document.body.scrollWidth,
+			canvasWidth: document.body.scrollWidth,
+			canvasHeight: document.body.scrollHeight,
+			filter,
+			quality: 0,
+			pixelRatio: this.pixelRatio,
+		})
+
+		return canvas;
 	}
 }
