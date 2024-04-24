@@ -24,13 +24,19 @@
     value: string,
     refresh?: boolean,
   ) => {};
+  let showGroup = false;
 
-  $: showGroup = !elementStyles.every(
-    (style) => style.value === elementStyles[0].value,
-  );
+  $: if (elementStyles) {
+    showGroup = !elementStyles.every(
+      (style) => style.value === elementStyles[0].value,
+    );
+  }
 
   let updatedUpdateStyle = (key: string, value: string) => {
-    updateElementStyle(key, value, true);
+    updateElementStyle(key, value);
+    showGroup = !elementStyles.every(
+      (style) => style.value === elementStyles[0].value,
+    );
   };
 </script>
 
@@ -43,7 +49,7 @@
         </p>
         <div class="ml-auto h-8 flex flex-row w-32 space-x-2">
           <TextInput
-            overrideValue={showGroup ? "--" : undefined}
+            overrideValue={showGroup ? "" : undefined}
             {elementStyle}
             updateElementStyle={updatedUpdateStyle}
           />

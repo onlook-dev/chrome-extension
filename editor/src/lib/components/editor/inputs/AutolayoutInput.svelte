@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { appendCssUnit } from "$lib/tools/edit/units";
     import {
         AutoLayout,
         LayoutMode,
@@ -28,38 +29,6 @@
         Fit: "Hug",
         Relative: "Rel",
     };
-
-    function appendCssUnit(input, defaultUnit = "px") {
-        const units = [
-            "px",
-            "em",
-            "rem",
-            "%",
-            "vh",
-            "vw",
-            "vmin",
-            "vmax",
-            "cm",
-            "mm",
-            "in",
-            "pt",
-            "pc",
-            "ex",
-            "ch",
-        ];
-        const regex = new RegExp(`^[-+]?\\d*\\.?\\d+(${units.join("|")})?$`);
-
-        if (regex.test(input)) {
-            // Check if the input ends with a unit
-            if (units.some((unit) => input.endsWith(unit))) {
-                return input;
-            } else {
-                return input + defaultUnit; // Append default unit if no unit is found
-            }
-        } else {
-            throw new Error("Invalid input");
-        }
-    }
 </script>
 
 {#if elementStyle}

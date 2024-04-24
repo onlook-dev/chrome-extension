@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { appendCssUnit } from "$lib/tools/edit/units";
     import { NumberUnit } from "$lib/tools/selection/numberUnit";
     import type { ElementStyle } from "$lib/tools/selection/styles";
 
@@ -17,7 +18,10 @@
     placeholder="--"
     value={overrideValue ? overrideValue : value}
     on:input={(e) => {
-        updateElementStyle(elementStyle.key, e.currentTarget.value);
+        updateElementStyle(
+            elementStyle.key,
+            appendCssUnit(e.currentTarget.value),
+        );
     }}
     on:keydown={(e) => {
         let step = 1;
