@@ -1,5 +1,20 @@
 export const elementStyleUnits = ['px', '%', 'rem', 'em', 'vh', 'vw',]
 
+export const appendCssUnit = (input: string, defaultUnit = "px") => {
+  const regex = new RegExp(`^[-+]?\\d*\\.?\\d+(${elementStyleUnits.join("|")})?$`);
+
+  if (regex.test(input)) {
+    // Check if the input ends with a unit
+    if (elementStyleUnits.some((unit) => input.endsWith(unit))) {
+      return input;
+    } else {
+      return input + defaultUnit; // Append default unit if no unit is found
+    }
+  } else {
+    throw new Error("Invalid input");
+  }
+}
+
 const getViewportDimensions = (): { width: number, height: number } => {
   const width = window.innerWidth;
   const height = window.innerHeight;

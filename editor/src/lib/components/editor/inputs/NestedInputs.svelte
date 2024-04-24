@@ -19,18 +19,18 @@
   import type { ElementStyle } from "$lib/tools/selection/styles";
 
   export let elementStyles: ElementStyle[] = [];
-  export let updateElementStyle = (
-    key: string,
-    value: string,
-    refresh?: boolean,
-  ) => {};
-  $: showGroup = !elementStyles.every(
-    (style) => style.value === elementStyles[0].value,
-  );
+  export let updateElementStyle;
+  let showGroup = false;
 
-  let updatedUpdateStyle = (key: string, value: string) => {
+  if (elementStyles) {
+    showGroup = !elementStyles.every(
+      (style) => style.value === elementStyles[0].value,
+    );
+  }
+
+  function updatedUpdateElementStyle(key, value) {
     updateElementStyle(key, value, true);
-  };
+  }
 </script>
 
 <div class="grid grid-cols-2 gap-2 my-2">
@@ -41,7 +41,10 @@
           {elementStyle.displayName}
         </p>
         <div class="ml-auto h-8 flex flex-row w-32 space-x-2">
-          <TextInput {elementStyle} updateElementStyle={updatedUpdateStyle} />
+          <TextInput
+            {elementStyle}
+            updateElementStyle={updatedUpdateElementStyle}
+          />
           <ToggleGroup.Root
             size="sm"
             type="single"
@@ -85,7 +88,7 @@
             </p>
           {/if}
         </div>
-        <TextInput {elementStyle} updateElementStyle={updatedUpdateStyle} />
+        <TextInput {elementStyle} {updateElementStyle} />
       </div>
     {/if}
   {/each}

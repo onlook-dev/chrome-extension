@@ -1,12 +1,5 @@
 <script lang="ts">
-    import {
-        BorderBottom,
-        BorderLeft,
-        BorderRight,
-        BorderTop,
-    } from "radix-icons-svelte";
     import { slide } from "svelte/transition";
-
     import TextInput from "./TextInput.svelte";
     import {
         ElementStyleType,

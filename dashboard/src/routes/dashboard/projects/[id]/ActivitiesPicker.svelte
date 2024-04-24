@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { TriangleDown } from 'svelte-radix';
+	import { EyeNone, Shadow, TriangleDown } from 'svelte-radix';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { shortenSelector, sortActivities } from '$shared/helpers';
 	import { writable } from 'svelte/store';
@@ -12,6 +12,8 @@
 	import type { Project } from '$shared/models/project';
 	import { FirebaseService } from '$lib/storage';
 	import { projectsMapStore } from '$lib/utils/store';
+	import { set } from 'firebase/database';
+	import { fade } from 'svelte/transition';
 
 	export let projectService: FirebaseService<Project>;
 	export let project: Project;
@@ -22,8 +24,13 @@
 	let container: HTMLDivElement;
 	let imageErrors: string[] = [];
 	let editable = writable(false);
+	let loadingImages = true;
 
 	onMount(() => {
+		setTimeout(() => {
+			loadingImages = false;
+		}, 10000);
+
 		resizeObserver = new ResizeObserver((entries) => {
 			const width = entries[0].contentRect.width;
 			if (!width || width === 0) return;
@@ -101,8 +108,14 @@
 				<Card.Header class="p-2 pb-1">
 					{#if !activity.previewImage || imageErrors.includes(activity.previewImage)}
 						<div
-							class="bg-stone-800 w-full rounded aspect-video mx-auto my-auto object-scale-down object-center"
-						></div>
+							class="text-tertiary bg-stone-800 w-full rounded aspect-video mx-auto my-auto object-scale-down object-center items-center justify-center flex"
+						>
+							{#if loadingImages}
+								<Shadow class="animate-spin" />
+							{:else}
+								<EyeNone />
+							{/if}
+						</div>
 					{:else}
 						<img
 							class="bg-black w-full rounded aspect-video mx-auto my-auto object-scale-down object-center"

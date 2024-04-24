@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { appendCssUnit } from "$lib/tools/edit/units";
     import {
         AutoLayout,
         LayoutMode,
@@ -11,9 +12,7 @@
     export let el: HTMLElement;
     export let elementStyle: ElementStyle;
     export let updateElementStyle: (key: string, value: string) => void;
-    export let unitEnd: boolean = false;
     export let inputWidth: string = "w-16";
-    export let unitWidth: string = "w-16";
 
     let autoLayout: AutoLayout = new AutoLayout();
     let numberUnit = new NumberUnit();
@@ -44,8 +43,9 @@
                 const res = autoLayout.getInputValues(e.currentTarget.value);
                 value = res.value;
                 mode = res.mode;
-                updateElementStyle(elementStyle.key, e.currentTarget.value);
+                updateElementStyle(elementStyle.key, appendCssUnit(res.value));
             }}
+            on:blur={() => (value = appendCssUnit(value))}
             on:keydown={(e) => {
                 let step = 1;
                 if (e.key === "Enter") {
