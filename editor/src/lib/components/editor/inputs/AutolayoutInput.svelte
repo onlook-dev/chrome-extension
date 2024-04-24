@@ -11,9 +11,7 @@
     export let el: HTMLElement;
     export let elementStyle: ElementStyle;
     export let updateElementStyle: (key: string, value: string) => void;
-    export let unitEnd: boolean = false;
     export let inputWidth: string = "w-16";
-    export let unitWidth: string = "w-16";
 
     let autoLayout: AutoLayout = new AutoLayout();
     let numberUnit = new NumberUnit();
@@ -30,6 +28,38 @@
         Fit: "Hug",
         Relative: "Rel",
     };
+
+    function appendCssUnit(input, defaultUnit = "px") {
+        const units = [
+            "px",
+            "em",
+            "rem",
+            "%",
+            "vh",
+            "vw",
+            "vmin",
+            "vmax",
+            "cm",
+            "mm",
+            "in",
+            "pt",
+            "pc",
+            "ex",
+            "ch",
+        ];
+        const regex = new RegExp(`^[-+]?\\d*\\.?\\d+(${units.join("|")})?$`);
+
+        if (regex.test(input)) {
+            // Check if the input ends with a unit
+            if (units.some((unit) => input.endsWith(unit))) {
+                return input;
+            } else {
+                return input + defaultUnit; // Append default unit if no unit is found
+            }
+        } else {
+            throw new Error("Invalid input");
+        }
+    }
 </script>
 
 {#if elementStyle}
@@ -44,8 +74,9 @@
                 const res = autoLayout.getInputValues(e.currentTarget.value);
                 value = res.value;
                 mode = res.mode;
-                updateElementStyle(elementStyle.key, e.currentTarget.value);
+                updateElementStyle(elementStyle.key, appendCssUnit(res.value));
             }}
+            on:blur={() => (value = appendCssUnit(value))}
             on:keydown={(e) => {
                 let step = 1;
                 if (e.key === "Enter") {

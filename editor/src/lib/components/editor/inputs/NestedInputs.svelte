@@ -24,6 +24,7 @@
     value: string,
     refresh?: boolean,
   ) => {};
+
   $: showGroup = !elementStyles.every(
     (style) => style.value === elementStyles[0].value,
   );
@@ -41,7 +42,11 @@
           {elementStyle.displayName}
         </p>
         <div class="ml-auto h-8 flex flex-row w-32 space-x-2">
-          <TextInput {elementStyle} updateElementStyle={updatedUpdateStyle} />
+          <TextInput
+            overrideValue={showGroup ? "--" : undefined}
+            {elementStyle}
+            updateElementStyle={updatedUpdateStyle}
+          />
           <ToggleGroup.Root
             size="sm"
             type="single"
@@ -85,7 +90,7 @@
             </p>
           {/if}
         </div>
-        <TextInput {elementStyle} updateElementStyle={updatedUpdateStyle} />
+        <TextInput {elementStyle} {updateElementStyle} />
       </div>
     {/if}
   {/each}

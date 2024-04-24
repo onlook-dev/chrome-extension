@@ -5,6 +5,8 @@
     export let elementStyle: ElementStyle;
     export let updateElementStyle = (key: string, value: string) => {};
     export let inputWidth = "w-full";
+    export let overrideValue: string | undefined = undefined;
+
     $: value = elementStyle.value;
     let numberUnit = new NumberUnit();
 </script>
@@ -13,7 +15,7 @@
     type="text"
     class="{inputWidth} p-[6px] text-xs px-2 rounded border-none text-text bg-surface text-start focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
     placeholder="--"
-    {value}
+    value={overrideValue ? overrideValue : value}
     on:input={(e) => {
         updateElementStyle(elementStyle.key, e.currentTarget.value);
     }}
