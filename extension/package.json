@@ -52,6 +52,7 @@
     "@types/valid-url": "^1.0.7",
     "firebase": "^10.7.1",
     "highlight.js": "^11.9.0",
+    "html-to-image": "^1.11.11",
     "html2canvas": "^1.4.1",
     "mixpanel": "^0.18.0",
     "mixpanel-browser": "juanfer0002/mixpanel-js-mv3#fetch-support-for-mv3-extensions",

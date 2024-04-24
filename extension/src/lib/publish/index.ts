@@ -5,15 +5,25 @@ import { sendOpenUrlRequest, sendSaveProject } from "$lib/utils/messaging";
 import { DashboardRoutes } from "$shared/constants";
 import type { Project } from "$shared/models/project";
 import type { ScreenshotService } from "$extension/content/screenshot";
+import type { AltScreenshotService } from "$extension/content/altScreenshot";
 
 export class PublishProjectService {
-    constructor(private project: Project, private screenshotService: ScreenshotService) { }
+    constructor(
+        private project: Project,
+        private screenshotService: ScreenshotService,
+        private altScreenshotService: AltScreenshotService
+    ) { }
 
     public async publish() {
         try {
             await this.takeActivityScreenshots();
         } catch (e) {
             console.error("Error taking screenshots", e);
+            try {
+                await this.altTakeActivityScreenshots();
+            } catch (e) {
+                console.error("Error taking alt screenshots", e);
+            }
         }
 
         await sendSaveProject(this.project);
@@ -60,5 +70,54 @@ export class PublishProjectService {
         // Update project after screenshot
         const afterScreenshot = afterCanvas.toDataURL('image/png');
         this.project.hostData.previewImage = afterScreenshot;
+    }
+
+    async altTakeActivityScreenshots() {
+        const activities = Object.values(this.project.activities);
+        if (activities.length === 0) {
+            return;
+        }
+
+        // Hide UI
+        hideEditor();
+
+        // Revert activity
+        for (const activity of activities) {
+            revertActivityChanges(activity);
+        }
+
+        // Wait for changes to apply
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        // Take before screenshot
+        let refresh = true;
+        for (const activity of activities) {
+            await this.altScreenshotService.takeActivityScreenshot(activity, true, refresh);
+            refresh = false;
+        }
+
+        // Update project before screenshot
+        this.project.hostData.beforeImage = await this.altScreenshotService.takePageScreenshot(false);
+
+        // Apply activity
+        for (const activity of activities) {
+            applyActivityChanges(activity);
+        }
+
+        // Wait for changes to apply
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        // Take after screenshot
+        refresh = true;
+        for (const activity of activities) {
+            await this.altScreenshotService.takeActivityScreenshot(activity, false, refresh);
+            refresh = false;
+        }
+
+        // Update project after screenshot
+        this.project.hostData.previewImage = await this.altScreenshotService.takePageScreenshot(false);
+
+        // Show UI
+        showEditor()
     }
 }

@@ -12,7 +12,6 @@ class OnlookToolbar extends HTMLElement {
 		this.style.position = 'fixed';
 		this.style.zIndex = '9999';
 		this.setAttribute(DATA_ONLOOK_IGNORE, 'true');
-		this.setAttribute("data-html2canvas-ignore", 'true');
 		// Attaches a shadow DOM
 		const shadowRoot = this.attachShadow({ mode: 'open' });
 

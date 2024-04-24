@@ -1,6 +1,6 @@
 import type { Activity } from '$shared/models/activity'
 import { DATA_ONLOOK_ID, DATA_ONLOOK_IGNORE, ONLOOK_TOOLBAR } from '$shared/constants'
-import html2canvas from 'html2canvas'
+import * as htmlToImage from 'html-to-image';
 
 export class ScreenshotService {
 	pageScreenshot: string | undefined
@@ -116,10 +116,14 @@ export class ScreenshotService {
 		}
 
 		// Take entire body screenshot as a canvas
-		const canvas = html2canvas(document.body, {
+		const canvas = htmlToImage.toCanvas(document.body, {
 			height: document.body.scrollHeight,
 			width: document.body.scrollWidth,
-			scale: this.pixelRatio,
+			canvasWidth: document.body.scrollWidth,
+			canvasHeight: document.body.scrollHeight,
+			filter,
+			quality: 0,
+			pixelRatio: this.pixelRatio,
 		})
 
 		return canvas;
