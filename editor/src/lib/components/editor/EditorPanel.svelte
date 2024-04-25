@@ -3,7 +3,7 @@
   import { draggable } from "@neodrag/svelte";
   import { Separator } from "$lib/components/ui/separator";
   import { editorPanelVisible } from "$lib/states/editor";
-  import { DragHandleDots2, LineHeight } from "radix-icons-svelte";
+  import { DragHandleDots2, Minus, Plus, Size } from "radix-icons-svelte";
 
   import type { EditTool } from "$lib/tools/edit";
 
@@ -72,17 +72,21 @@
               value={TabValue.CSS}>Element Appearance</Tabs.Trigger
             >
             <div class="ml-auto flex items-center">
-              <button
-                class="w-8 h-8 flex items-center justify-center transition hover:text-white/80"
-                on:click={collapsePanel}
-              >
-                <LineHeight class="w-4 h-4" />
-              </button>
               <div
                 class="w-8 h-8 flex items-center justify-center cursor-pointer transition hover:text-white/80"
               >
                 <DragHandleDots2 class="w-4 h-4 pointer-events-none	" />
               </div>
+              <button
+                class="w-8 h-8 flex items-center justify-center transition hover:text-white/80"
+                on:click={collapsePanel}
+              >
+                {#if panelCollapsed}
+                  <Size class="w-4 h-4" />
+                {:else}
+                  <Minus class="w-4 h-4" />
+                {/if}
+              </button>
             </div>
           </Tabs.List>
           <Separator class="mt-1" />
