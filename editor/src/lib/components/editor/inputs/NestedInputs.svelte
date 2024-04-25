@@ -22,7 +22,7 @@
   export let updateElementStyle;
   let showGroup = false;
 
-  if (elementStyles) {
+  $: if (elementStyles) {
     showGroup = !elementStyles.every(
       (style) => style.value === elementStyles[0].value,
     );
