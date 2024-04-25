@@ -58,6 +58,7 @@
             parsedUnit,
         );
         value = stringValue;
+        localValue = stringValue;
         updateElementStyle(elementStyle.key, stringValue);
     }}
 />
