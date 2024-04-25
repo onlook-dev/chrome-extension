@@ -90,6 +90,17 @@ const setListeners = () => {
 				chrome.tabs.create({ url: authUrl })
 				return
 			} else {
+				if (!tab.url) {
+					console.error('Tab URL not found')
+					return
+				}
+				if (tab.url.startsWith('chrome://') || tab.url.includes('chrome.google.com/webstore')) {
+					console.error('Cannot inject on chrome pages')
+					chrome.action.setBadgeText({ text: 'X', tabId: tab.id });
+					chrome.action.setBadgeBackgroundColor({ color: '#FF0000', tabId: tab.id });
+					// TODO: Open welcome page or dashboard instead?
+					return
+				}
 				// Inject tab
 				toggleProjectTab(tab.id as number, '', true)
 			}

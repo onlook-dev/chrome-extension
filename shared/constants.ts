@@ -40,6 +40,7 @@ export enum DashboardRoutes {
   PROJECTS = "/dashboard/projects",
   PRIVACY = "/privacy",
   GITHUB = "/github",
+  WELCOME = "/welcome",
 }
 
 export enum DashboardSearchParams {
