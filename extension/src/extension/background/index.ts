@@ -42,6 +42,7 @@ import type { Comment } from '$shared/models/comment'
 import type { User } from '$shared/models/user'
 import { FirebaseProjectService } from '$lib/storage/project'
 import { toggleProjectTab } from '$lib/editor'
+import { ProjectTabManager } from '$lib/project'
 
 let projectSubs: (() => void)[] = []
 let teamSubs: (() => void)[] = []
@@ -52,6 +53,7 @@ const projectService = new FirebaseProjectService()
 const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS)
 const userService = new FirebaseService<User>(FirestoreCollections.USERS)
 const editEventService = new EditEventService(projectService, forwardToActiveProjectTab)
+const projectTabManager = new ProjectTabManager()
 
 function setDefaultMaps() {
 	teamsMapBucket.set({})
@@ -102,49 +104,21 @@ const setListeners = () => {
 					return
 				}
 				// Inject tab
-				toggleProjectTab(tab.id as number, '', true)
+				projectTabManager.toggleTab(tab, '')
 			}
 		})
 	})
 
 	chrome.tabs.onUpdated.addListener(
-		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
-			// Remove tab info from state when it's refreshed
+		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
 			if (changeInfo.status === 'complete') {
-				const tabState = await getTabState(tabId)
-				if (tabState.state === InjectState.injected) {
-					// If tab should be injected, reinject it
-					saveTabState(tabId, {
-						projectId: '',
-						state: InjectState.none
-					}).then(() => {
-						return getProjectById(tabState.projectId)
-					}).then(project => {
-						updateTabActiveState(tab, project, true)
-					})
-				} else {
-					saveTabState(tabId, {
-						projectId: '',
-						state: InjectState.none
-					})
-				}
+				projectTabManager.handleTabRefreshed(tabId)
 			}
 		}
 	)
 
 	chrome.tabs.onRemoved.addListener((tabId: number) => {
-		// If tab includes active project, save its state
-		getTabState(tabId).then(tabState => {
-			if (!tabState) return
-			getActiveProject().then(activeProject => {
-				if (!activeProject) return
-				if (tabState.projectId == activeProject.id) projectService.post(activeProject)
-			})
-		})
-		saveTabState(tabId, {
-			projectId: '',
-			state: InjectState.none
-		})
+		projectTabManager.removeTabState(tabId)
 	})
 
 	subscribeToFirebaseAuthChanges()
