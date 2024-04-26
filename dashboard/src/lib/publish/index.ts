@@ -5,7 +5,8 @@ import { getProcessedActivities, updateContentChunk } from "./helpers";
 import { getStyleTranslationInput, getTextTranslationInput } from "./inputs";
 import { trackMixpanelEvent } from "$lib/mixpanel/client";
 
-import type { StyleFramework, User, FileContentData, PathInfo, ProcessedActivity } from "$shared/models";
+import type { User, FileContentData, PathInfo, ProcessedActivity } from "$shared/models";
+import { StyleFramework } from "$shared/models";
 import EventEmitter from 'events';
 
 export enum ProjectPublisherEventType {

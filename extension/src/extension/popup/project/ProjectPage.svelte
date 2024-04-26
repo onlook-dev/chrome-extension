@@ -19,7 +19,6 @@
 	import Stop from '~icons/carbon/stop-outline'
 	import SettingsTab from './SettingsTab.svelte'
 	import ActivitiesTab from './ActivitiesTab.svelte'
-	import CommentsTab from './CommentsTab.svelte'
 
 	import type { Project } from '$shared/models'
 
@@ -109,10 +108,6 @@
 		</div>
 
 		<input type="radio" name={tabsName} role="tab" class="tab hidden" aria-label="Comments" />
-		<div role="tabpanel" class="tab-content">
-			<CommentsTab {project} />
-		</div>
-
 		<input type="radio" name={tabsName} role="tab" class="tab" aria-label="Settings" />
 		<div role="tabpanel" class="tab-content">
 			<SettingsTab {project} />

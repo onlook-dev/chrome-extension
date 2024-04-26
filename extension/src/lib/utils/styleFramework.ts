@@ -1,4 +1,4 @@
-import type { StyleFramework } from "$shared/models";
+import { StyleFramework } from "$shared/models";
 
 async function isTailwindUsed() {
   // Function to fetch and read the content of a stylesheet
