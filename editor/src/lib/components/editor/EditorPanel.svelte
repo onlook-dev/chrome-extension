@@ -25,6 +25,7 @@
   let cardHeight = "80vh";
 
   onMount(() => {
+    console.log($editorPanelVisible);
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
         cardHeight = `${entry.contentRect.height}px`;

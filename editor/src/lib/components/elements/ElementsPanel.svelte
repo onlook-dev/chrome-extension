@@ -4,6 +4,7 @@
   import { elementsPanelVisible } from "$lib/states/editor";
   import ElementsTab from "./ElementsTab.svelte";
   import type { EditTool } from "$lib/tools/edit";
+  import { onMount } from "svelte";
 
   export let editTool: EditTool;
   let isInputFocused = false;

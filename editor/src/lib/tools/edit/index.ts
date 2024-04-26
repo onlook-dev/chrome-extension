@@ -17,7 +17,6 @@ export class EditTool implements Tool {
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
 		this.overlayManager = new OverlayManager();
-
 		// Initialize resize observer for click element resize
 		this.elResizeObserver = new ResizeObserver(entries => {
 			const observedElements = entries.map(entry => entry.target);
@@ -26,7 +25,10 @@ export class EditTool implements Tool {
 		window.addEventListener('resize', this.onScreenResize.bind(this));
 	}
 
-	onInit() { }
+	onInit() {
+		this.selectorEngine.select(document.body);
+		editorPanelVisible.set(true);
+	}
 
 	onDestroy() {
 		editorPanelVisible.set(false);
