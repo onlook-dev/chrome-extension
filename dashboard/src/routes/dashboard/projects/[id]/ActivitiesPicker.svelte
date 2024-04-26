@@ -63,11 +63,21 @@
 </script>
 
 <div class="bg-black flex flex-col w-full h-full space-y-6">
-	<div class="p-6 flex flex-col space-y-2">
-		<h1 class="text-xl focus:ring-0 focus:outline-none" contenteditable={true} on:blur={handleBlur}>
+	<div class="p-4 flex flex-col space-y-2">
+		<h1
+			class="rounded p-2 text-xl focus:ring-0 focus:outline-none border border-transparent focus:border-stone-800 hover:border-stone-800 transition"
+			contenteditable={true}
+			on:keypress={(e) => {
+				if (e.key === 'Enter') {
+					e.preventDefault();
+					e.currentTarget.blur();
+				}
+			}}
+			on:blur={handleBlur}
+		>
 			{project.name}
 		</h1>
-		<h2 class="text-xs text-white/60">
+		<h2 class="px-2 text-xs text-white/60">
 			{project.hostUrl}
 		</h2>
 	</div>
