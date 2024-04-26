@@ -3,32 +3,28 @@ import { ActivityStatus, type Activity } from '$shared/models/activity'
 import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { sendGetScreenshotRequest } from '$lib/utils/messaging'
 import { nanoid } from 'nanoid'
-import type { Project } from '$shared/models/project'
 import { convertEditEventToChangeObject } from './convert'
-import type { FirebaseProjectService } from '$lib/storage/project'
+import type { Project } from '$shared/models/project'
 
 export class EditEventService {
-  changeQueue: EditEvent[] = []
+  changeQueue: { tabId: number, editEvent: EditEvent }[] = []
 
-  constructor(private projectService: FirebaseProjectService, private forwardToActiveProjectTab: (activity: Activity, callback: (activity: Activity) => void) => void) { }
+  constructor(private forwardToActiveProjectTab: (activity: Activity, callback: (activity: Activity) => void) => void) { }
 
-  async handleEditEvent(editEvent: EditEvent) {
-    this.changeQueue.push(editEvent)
+  async handleEditEvent(editEvent: EditEvent, tabId: number) {
+    this.changeQueue.push({ editEvent, tabId })
 
     // Process the queue
     if (this.changeQueue.length === 1) {
       // Only start processing if this is the only item in the queue
       while (this.changeQueue.length > 0) {
-        const editEvent = this.changeQueue[0] // Get the first item from the queue without removing it
-        await this.processEditEvent(editEvent) // Process it
+        await this.processEditEvent(this.changeQueue[0]) // Process it
         this.changeQueue.shift() // Remove the processed item from the queue
       }
-      const activeProject = await getActiveProject()
-      this.projectService.post(activeProject)
     }
   }
 
-  async processEditEvent(editEvent: EditEvent) {
+  async processEditEvent({ tabId, editEvent }: { tabId: number, editEvent: EditEvent }) {
     // Get active project
     const activeProject = await getActiveProject()
     if (!activeProject) return

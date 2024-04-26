@@ -1,11 +1,11 @@
 import { MAX_TITLE_LENGTH } from "$shared/constants";
 import type { HostData } from "$shared/models/hostData";
 import type { Project } from "$shared/models/project";
+import { getBucket } from "@extend-chrome/storage";
 import { nanoid } from "nanoid";
-import { get, writable } from "svelte/store";
 
-const projectTabsStore = writable<{ [tabId: string]: Project }>({});
-const tabStateStore = writable<{ [tabId: string]: TabState }>({});
+const projectTabsBucket = getBucket<{ [tabId: string]: Project }>('PROJECT_TABS_MAP')
+const tabStateStore = getBucket<{ [tabId: string]: TabState }>('TABS_STATE_MAP')
 
 export enum TabState {
     injected = "injected",
@@ -41,7 +41,7 @@ export class ProjectTabManager {
         this.setTabState(tabId, TabState.injected)
     }
 
-    toggleTab = async (tab: chrome.tabs.Tab, projectId: string, inject?: boolean) => {
+    toggleTab = async (tab: chrome.tabs.Tab, inject?: boolean) => {
         if (!tab.id) throw new Error("Tab id not found");
         const tabState = await this.getTabState(tab.id)
 
@@ -50,7 +50,6 @@ export class ProjectTabManager {
             inject = !(tabState === TabState.injected)
         }
 
-        console.log("Toggling tab", tab.id, inject, tabState)
         if (inject) {
             if (tabState === TabState.ejected) {
                 this.restoreTab(tab.id)
@@ -62,8 +61,8 @@ export class ProjectTabManager {
         }
     }
 
-    getTabProject(tab: chrome.tabs.Tab): Project {
-        const projectsMap = get(projectTabsStore);
+    async getTabProject(tab: chrome.tabs.Tab): Promise<Project> {
+        const projectsMap = await projectTabsBucket.get()
         if (!tab.id) throw new Error("Tab id not found");
 
         if (!projectsMap[tab.id]) {
@@ -109,20 +108,16 @@ export class ProjectTabManager {
         return newProject;
     }
 
-    getTabState(tabId: number): TabState {
-        const stateMap = get(tabStateStore);
+    async getTabState(tabId: number): Promise<TabState> {
+        const stateMap = await tabStateStore.get();
         return stateMap[tabId] || TabState.none;
     }
 
-    setTabState(tabId: number, state: TabState) {
-        tabStateStore.update(stateMap => {
-            stateMap[tabId] = state;
-            return stateMap;
-        });
+    async setTabState(tabId: number, state: TabState) {
+        tabStateStore.set({ [tabId]: state })
     }
 
     handleTabRefreshed = async (tabId: number) => {
-        console.log("Tab refreshed", tabId)
         // When refreshed, script will be uninjected but we might want to restore injected state 
         const tabState = await this.getTabState(tabId)
         if (tabState === TabState.injected) {
@@ -135,9 +130,6 @@ export class ProjectTabManager {
     }
 
     removeTabState(tabId: number) {
-        tabStateStore.update(stateMap => {
-            delete stateMap[tabId];
-            return stateMap;
-        });
+        tabStateStore.remove(tabId.toString())
     }
 }

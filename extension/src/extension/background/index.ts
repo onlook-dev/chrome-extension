@@ -15,16 +15,11 @@ import {
 } from '$lib/utils/messaging'
 import {
 	authUserBucket,
-	getActiveProject,
-	InjectState,
 	projectsMapBucket,
 	teamsMapBucket,
 	userBucket,
 	usersMapBucket,
 	tabsMapBucket,
-	saveTabState,
-	getTabState,
-	getProjectById,
 	removeProjectFromTabs,
 	popupStateBucket,
 	getActiveUser
@@ -41,7 +36,6 @@ import type { Activity } from '$shared/models/activity'
 import type { Comment } from '$shared/models/comment'
 import type { User } from '$shared/models/user'
 import { FirebaseProjectService } from '$lib/storage/project'
-import { toggleProjectTab } from '$lib/editor'
 import { ProjectTabManager } from '$lib/project'
 
 let projectSubs: (() => void)[] = []
@@ -62,6 +56,16 @@ function setDefaultMaps() {
 	tabsMapBucket.set({})
 }
 
+function openOrCreateNewTab(url: string) {
+	return chrome.tabs.query({ url }, tabs => {
+		if (tabs.length) {
+			chrome.tabs.update(tabs[0].id as number, { active: true })
+		} else {
+			chrome.tabs.create({ url })
+		}
+	})
+}
+
 async function setStartupState() {
 	for (const cs of chrome.runtime.getManifest().content_scripts ?? []) {
 		for (const tab of await chrome.tabs.query({ url: cs.matches })) {
@@ -76,7 +80,10 @@ async function setStartupState() {
 		}
 	}
 }
+
 const setListeners = () => {
+	subscribeToFirebaseAuthChanges()
+
 	// Refresh tabs on update
 	chrome.runtime.onInstalled.addListener(() => {
 		setDefaultMaps()
@@ -88,30 +95,28 @@ const setListeners = () => {
 	chrome.action.onClicked.addListener((tab) => {
 		getActiveUser().then(user => {
 			if (!user) {
-				const authUrl = `${baseUrl}${DashboardRoutes.SIGNIN}`
-				chrome.tabs.create({ url: authUrl })
+				openOrCreateNewTab(`${baseUrl}${DashboardRoutes.SIGNIN}`)
 				return
 			} else {
 				if (!tab.url) {
-					console.error('Tab URL not found')
+					// This should never happen
+					console.error("Tab URL not found")
 					return
 				}
-				if (tab.url.startsWith('chrome://') || tab.url.includes('chrome.google.com/webstore')) {
-					console.error('Cannot inject on chrome pages')
-					chrome.action.setBadgeText({ text: 'X', tabId: tab.id });
-					chrome.action.setBadgeBackgroundColor({ color: '#FF0000', tabId: tab.id });
-					// TODO: Open welcome page or dashboard instead?
+				if (tab.url.startsWith('chrome://') || tab.url.includes('chromewebstore.google.com')) {
+					console.warn('Cannot inject on chrome pages, redirecting to dashboard.')
+					openOrCreateNewTab(`${baseUrl}${DashboardRoutes.DASHBOARD}`)
 					return
 				}
 				// Inject tab
-				projectTabManager.toggleTab(tab, '')
+				projectTabManager.toggleTab(tab)
 			}
 		})
 	})
 
 	chrome.tabs.onUpdated.addListener(
-		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
-			if (changeInfo.status === 'complete') {
+		async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
+			if (changeInfo.status == 'complete' && tab.url) {
 				projectTabManager.handleTabRefreshed(tabId)
 			}
 		}
@@ -121,7 +126,6 @@ const setListeners = () => {
 		projectTabManager.removeTabState(tabId)
 	})
 
-	subscribeToFirebaseAuthChanges()
 
 	// Forward messages to content script
 	activityRevertStream.subscribe(([detail]) => {
@@ -135,9 +139,7 @@ const setListeners = () => {
 
 	// Auth request from popup
 	authRequestStream.subscribe(() => {
-		const authUrl = `${baseUrl}${DashboardRoutes.SIGNIN}`
-		chrome.tabs.create({ url: authUrl })
-		return
+		openOrCreateNewTab(`${baseUrl}${DashboardRoutes.SIGNIN}`)
 	})
 
 	saveProjectStream.subscribe(([project]) => {
@@ -154,9 +156,7 @@ const setListeners = () => {
 	// Start editing request from popup
 	editProjectRequestStream.subscribe(([{ project, enable }]) => {
 		// Get tab if same host using pattern matching
-		const searchUrl = new URL(project.hostUrl).origin + '/*'
-
-		chrome.tabs.query({ url: searchUrl }, tabs => {
+		chrome.tabs.query({ url: project.hostUrl }, tabs => {
 			// Check if tab with same url exists
 			if (tabs?.length) {
 				// If tab exists and command is enable, also make it active
@@ -288,19 +288,17 @@ const setListeners = () => {
 
 	// Open url from popup
 	openUrlRequestStream.subscribe(([url, sender]) => {
-		// Check if URL already exists in a tab, if so open that tab instead
-		chrome.tabs.query({ url }, tabs => {
-			if (tabs.length) {
-				chrome.tabs.update(tabs[0].id as number, { active: true })
-			} else {
-				chrome.tabs.create({ url })
-			}
-		})
+		openOrCreateNewTab(url)
 	})
 
 	// Style change from visbug and content script
-	editEventStream.subscribe(([editEvent]) => {
-		editEventService.handleEditEvent(editEvent)
+	editEventStream.subscribe(([editEvent, sender]) => {
+		const tabId = sender.tab?.id
+		if (!tabId) {
+			console.error('Tab ID not found')
+			return
+		}
+		editEventService.handleEditEvent(editEvent, tabId)
 		trackEvent('Edit Event', { type: editEvent.editType })
 	})
 }
