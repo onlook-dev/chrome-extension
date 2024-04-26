@@ -102,7 +102,11 @@ export class EditTool implements Tool {
 	simulateClick(els: HTMLElement[]) {
 		if (!els) return;
 
-		this.selectorEngine.selectedStore.set(els);
+		this.selectorEngine.clear();
+		els.forEach((el) => {
+			this.selectorEngine.select(el);
+		});
+
 		this.overlayManager.clear();
 		this.elResizeObserver.disconnect();
 		this.selectorEngine.selected.forEach((el) => {
