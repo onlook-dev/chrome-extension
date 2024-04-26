@@ -1,18 +1,22 @@
-import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
-import { sendGetScreenshotRequest } from '$lib/utils/messaging'
+import { getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { nanoid } from 'nanoid'
 import { convertEditEventToChangeObject } from './convert'
-
 import { EditType, ActivityStatus } from '$shared/models'
+
 import type { Project, EditEvent, Activity, } from '$shared/models'
+import type { ProjectTabManager } from '$lib/tabs'
+
+interface QueueItem {
+  tab: chrome.tabs.Tab
+  editEvent: EditEvent
+}
 
 export class EditEventService {
-  changeQueue: { tabId: number, editEvent: EditEvent }[] = []
+  changeQueue: QueueItem[] = []
+  constructor(private projectTabManager: ProjectTabManager) { }
 
-  constructor(private forwardToActiveProjectTab: (activity: Activity, callback: (activity: Activity) => void) => void) { }
-
-  async handleEditEvent(editEvent: EditEvent, tabId: number) {
-    this.changeQueue.push({ editEvent, tabId })
+  async handleEditEvent(editEvent: EditEvent, tab: chrome.tabs.Tab) {
+    this.changeQueue.push({ editEvent, tab })
 
     // Process the queue
     if (this.changeQueue.length === 1) {
@@ -24,9 +28,9 @@ export class EditEventService {
     }
   }
 
-  async processEditEvent({ tabId, editEvent }: { tabId: number, editEvent: EditEvent }) {
+  private async processEditEvent({ tab, editEvent }: QueueItem) {
     // Get active project
-    const activeProject = await getActiveProject()
+    const activeProject = await this.projectTabManager.getTabProject(tab)
     if (!activeProject) return
 
     // Get and update activity
@@ -43,9 +47,6 @@ export class EditEventService {
     // Update and save project
     activeProject.activities[editEvent.selector] = activity
     projectsMapBucket.set({ [activeProject.id]: activeProject })
-
-    // Send to content script
-    this.forwardToActiveProjectTab(activity, sendGetScreenshotRequest)
   }
 
   async getOrCreateActivityFromEditEvent(project: Project, editEvent: EditEvent): Promise<Activity> {

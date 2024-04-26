@@ -43,11 +43,11 @@ export class BackgroundEventHandlers {
     entitiesService: EntitySubsciptionService
 
     constructor() {
+        this.projectTabManager = new ProjectTabManager()
         this.projectService = new FirebaseProjectService()
         this.teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS)
         this.userService = new FirebaseService<User>(FirestoreCollections.USERS)
-        this.editEventService = new EditEventService(forwardToActiveProjectTab)
-        this.projectTabManager = new ProjectTabManager()
+        this.editEventService = new EditEventService(this.projectTabManager)
         this.entitiesService = new EntitySubsciptionService(
             this.projectService,
             this.teamService,
@@ -161,8 +161,9 @@ export class BackgroundEventHandlers {
 
         // Start editing request from popup
         editProjectRequestStream.subscribe(([{ project, enable }]) => {
-            // Get tab if same host using pattern matching
-            chrome.tabs.query({ url: project.hostUrl }, tabs => {
+            // Add trailing slash if not present
+            const hostUrl = project.hostUrl.endsWith('/') ? project.hostUrl : `${project.hostUrl}/`
+            chrome.tabs.query({ url: hostUrl }, tabs => {
                 // Check if tab with same url exists
                 if (tabs?.length) {
                     // If tab exists and command is enable, also make it active
@@ -178,7 +179,7 @@ export class BackgroundEventHandlers {
                         // If tab doesn't exist and command is enable, create tab
                         chrome.tabs
                             .create({
-                                url: project.hostUrl
+                                url: hostUrl
                             })
                             .then((tab: chrome.tabs.Tab) => {
                                 updateTabActiveState(tab, project, enable)
@@ -205,12 +206,12 @@ export class BackgroundEventHandlers {
 
         // Style change from visbug and content script
         editEventStream.subscribe(([editEvent, sender]) => {
-            const tabId = sender.tab?.id
-            if (!tabId) {
+            const tab = sender.tab
+            if (!tab) {
                 console.error('Tab ID not found')
                 return
             }
-            this.editEventService.handleEditEvent(editEvent, tabId)
+            this.editEventService.handleEditEvent(editEvent, tab)
             trackEvent('Edit Event', { type: editEvent.editType })
         })
     }
