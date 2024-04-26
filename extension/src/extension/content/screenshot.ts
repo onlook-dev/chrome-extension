@@ -1,4 +1,4 @@
-import type { Activity } from '$shared/models/activity'
+import type { Activity } from '$shared/models'
 import { DATA_ONLOOK_ID, DATA_ONLOOK_IGNORE, ONLOOK_TOOLBAR } from '$shared/constants'
 import * as htmlToImage from 'html-to-image';
 

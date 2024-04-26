@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Project } from '$shared/models/project'
+	import type { Project } from '$shared/models'
 	import {
 		projectsMapBucket,
 		popupStateBucket,
@@ -7,8 +7,6 @@
 		getTeamById
 	} from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
-	import { FirebaseService } from '$lib/storage'
-	import { FirestoreCollections } from '$shared/constants'
 	import { sendEditProjectRequest } from '$lib/utils/messaging'
 	import { FirebaseProjectService } from '$lib/storage/project'
 

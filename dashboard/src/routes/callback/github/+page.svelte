@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
-	import type { Project } from '$shared/models/project';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
 	import { goto } from '$app/navigation';
+
+	import type { Project } from '$shared/models';
 
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	let installationId = $page.url.searchParams.get('installation_id') as string;

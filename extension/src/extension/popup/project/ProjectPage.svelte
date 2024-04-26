@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-
-	import type { Project } from '$shared/models/project'
 	import {
 		popupStateBucket,
 		getActiveProject,
@@ -22,6 +20,8 @@
 	import SettingsTab from './SettingsTab.svelte'
 	import ActivitiesTab from './ActivitiesTab.svelte'
 	import CommentsTab from './CommentsTab.svelte'
+
+	import type { Project } from '$shared/models'
 
 	const tabsName = 'project-tabs-id'
 	const projectService = new FirebaseProjectService()

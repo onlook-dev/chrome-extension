@@ -11,11 +11,9 @@
 	import { MAX_TITLE_LENGTH } from '$shared/constants'
 	import { nanoid } from 'nanoid'
 	import { FirebaseProjectService } from '$lib/storage/project'
-
-	import type { Project } from '$shared/models/project'
-	import type { HostData } from '$shared/models/hostData'
-
 	import validUrl from 'valid-url'
+
+	import type { Project, HostData } from '$shared/models'
 
 	const projectService = new FirebaseProjectService()
 	let projectName = ''

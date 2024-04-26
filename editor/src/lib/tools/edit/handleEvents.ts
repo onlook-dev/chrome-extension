@@ -1,6 +1,6 @@
 import { addToHistory } from "./history";
 import { getUniqueSelector } from "../utilities";
-import { EditType, type EditEvent, type InsertRemoveVal } from "$shared/models/editor";
+import { EditType, type EditEvent, type InsertRemoveVal } from "$shared/models";
 import { emitEditEvent } from "../messages";
 
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors

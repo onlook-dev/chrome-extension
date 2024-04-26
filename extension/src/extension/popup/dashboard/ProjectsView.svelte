@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import type { Project } from '$shared/models/project'
+	import type { Project } from '$shared/models'
 	import { projectsMapBucket, popupStateBucket, getTeamById } from '$lib/utils/localstorage'
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { sendOpenUrlRequest } from '$lib/utils/messaging'

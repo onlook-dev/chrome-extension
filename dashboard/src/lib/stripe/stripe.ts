@@ -8,9 +8,11 @@ import { getTeamFromPaymentId, setTeamTier } from '$lib/storage/team';
 import { stripeConfig, tierMapping } from '$lib/utils/env';
 import { paymentsMapStore, teamsMapStore } from '$lib/utils/store';
 import { FirestoreCollections } from '$shared/constants';
-import { PaymentStatus, type Payment } from '$shared/models/payment';
-import type { Team, Tier } from '$shared/models/team';
+import { PaymentStatus } from '$shared/models';
+
 import Stripe from 'stripe';
+
+import type { Team, Tier, Payment } from '$shared/models';
 
 export const stripe = new Stripe(stripeConfig.stripeKey, {
 	apiVersion: '2023-10-16',

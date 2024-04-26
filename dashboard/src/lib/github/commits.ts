@@ -1,6 +1,5 @@
 import { CustomOctokit } from "./octokit";
-import type { TreeItem } from '$shared/models/github';
-import type { FileContentData } from '$shared/models/translation';
+import type { FileContentData, TreeItem } from '$shared/models';
 
 export async function createCommit(
 	octokit: CustomOctokit,

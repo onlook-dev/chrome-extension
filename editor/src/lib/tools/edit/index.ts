@@ -1,12 +1,11 @@
 import { ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, } from '$lib/states/editor';
-import { debounce } from '$shared/helpers';
-import { EditType, type InsertRemoveVal } from '$shared/models/editor';
-import type { Tool } from '../index';
+import { EditType, type InsertRemoveVal } from '$shared/models';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getUniqueSelector } from '../utilities';
 import { handleEditEvent } from './handleEvents';
+import type { Tool } from '../index';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;

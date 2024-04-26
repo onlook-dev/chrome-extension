@@ -11,8 +11,9 @@ import {
 } from '$lib/utils/localstorage'
 import { FirebaseService } from '$lib/storage'
 import { FirestoreCollections } from '$shared/constants'
-import type { User } from '$shared/models/user'
 import { identifyUser } from '$lib/mixpanel'
+
+import type { User } from '$shared/models'
 
 // Use firebase user from dashboard
 export function signInUser(userJson: string) {

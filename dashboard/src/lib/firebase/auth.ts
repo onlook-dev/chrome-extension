@@ -10,7 +10,7 @@ import {
 } from '$lib/utils/store';
 import { FirestoreCollections, MessageTypes } from '$shared/constants';
 import { FirebaseService } from '$lib/storage';
-import type { User } from '$shared/models/user';
+import type { User } from '$shared/models';
 import { identifyMixpanelUser } from '$lib/mixpanel/client';
 import { USER_ID_KEY } from '$lib/utils/constants';
 

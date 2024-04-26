@@ -1,22 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import type { Project } from '$shared/models/project'
-	import type { Activity } from '$shared/models/activity'
-	import type { User } from '$shared/models/user'
 	import { usersMapBucket, projectsMapBucket } from '$lib/utils/localstorage'
 	import { sendActivityRevert, sendActivityApply } from '$lib/utils/messaging'
 	import { formatStyleChanges, formatAttrChanges } from '$shared/helpers'
-
+	import { FirebaseProjectService } from '$lib/storage/project'
 	import { CodeBlock, storeHighlightJs } from '@skeletonlabs/skeleton'
+
+	import 'highlight.js/styles/github.css'
 	import hljs from 'highlight.js/lib/core'
 	import css from 'highlight.js/lib/languages/css'
 	import html from 'highlight.js/lib/languages/xml'
-	import 'highlight.js/styles/github.css'
-
 	import ItemHeader from './ItemHeader.svelte'
 	import ClockArrow from '~icons/mdi/clock-arrow'
 	import Trash from '~icons/material-symbols/delete'
-	import { FirebaseProjectService } from '$lib/storage/project'
+
+	import type { Project, Activity, User } from '$shared/models'
 
 	export let project: Project
 

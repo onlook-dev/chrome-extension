@@ -1,13 +1,11 @@
 import { GithubService } from "$lib/github";
 import { TranslationService } from "$lib/translation";
-import { GithubSettings } from "$shared/models/github";
-import { Project } from "$shared/models/project";
-import { FileContentData, PathInfo, ProcessedActivity } from "$shared/models/translation";
-import { User } from "$shared/models/user";
+import { GithubSettings, Project } from "$shared/models";
 import { getProcessedActivities, updateContentChunk } from "./helpers";
 import { getStyleTranslationInput, getTextTranslationInput } from "./inputs";
 import { trackMixpanelEvent } from "$lib/mixpanel/client";
-import { StyleFramework } from "$shared/models/projectSettings";
+
+import type { StyleFramework, User, FileContentData, PathInfo, ProcessedActivity } from "$shared/models";
 import EventEmitter from 'events';
 
 export enum ProjectPublisherEventType {

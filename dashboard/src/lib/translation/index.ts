@@ -4,7 +4,7 @@ import { JsonOutputKeyToolsParser } from "@langchain/core/output_parsers/openai_
 import { Runnable } from "@langchain/core/runnables";
 import { InlineCssPromptService, TailwindPromptService, TextPromptService } from "./prompt";
 import { openAiConfig } from "$lib/utils/env";
-import { StyleFramework } from "$shared/models/projectSettings";
+import { StyleFramework } from "$shared/models";
 
 export class TranslationService {
   private openAi: Runnable;

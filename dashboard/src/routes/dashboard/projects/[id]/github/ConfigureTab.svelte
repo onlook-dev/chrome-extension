@@ -13,8 +13,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Collapsible from '$lib/components/ui/collapsible';
 
-	import type { Project } from '$shared/models/project';
-	import type { GithubRepo, GithubSettings } from '$shared/models/github';
+	import type { Project, GithubRepo, GithubSettings } from '$shared/models';
 
 	export let project: Project;
 

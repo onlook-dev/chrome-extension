@@ -5,8 +5,7 @@
 
 	import ImageComparer from '$lib/components/ui/image-compare';
 
-	import type { Activity } from '$shared/models/activity';
-	import type { Project } from '$shared/models/project';
+	import type { Activity, Project } from '$shared/models';
 
 	enum Mode {
 		Light = 'light',

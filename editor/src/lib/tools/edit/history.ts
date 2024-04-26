@@ -1,4 +1,4 @@
-import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$shared/models/editor';
+import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$shared/models';
 import { get, writable } from 'svelte/store';
 import { emitEditEvent } from '../messages';
 import { ApplyChangesService } from './applyChange';

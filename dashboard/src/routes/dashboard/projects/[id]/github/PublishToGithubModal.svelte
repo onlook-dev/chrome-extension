@@ -13,8 +13,7 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 
-	import type { Project } from '$shared/models/project';
-	import type { User } from '$shared/models/user';
+	import type { Project, User } from '$shared/models';
 
 	export let project: Project;
 	export let user: User;

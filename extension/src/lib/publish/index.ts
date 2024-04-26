@@ -3,7 +3,7 @@ import { applyActivityChanges, revertActivityChanges } from "$lib/utils/activity
 import { baseUrl } from "$lib/utils/env";
 import { sendOpenUrlRequest, sendSaveProject } from "$lib/utils/messaging";
 import { DashboardRoutes } from "$shared/constants";
-import type { Project } from "$shared/models/project";
+import type { Project } from "$shared/models";
 import type { ScreenshotService } from "$extension/content/screenshot";
 import type { AltScreenshotService } from "$extension/content/altScreenshot";
 

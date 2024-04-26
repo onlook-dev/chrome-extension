@@ -1,7 +1,7 @@
-import { EditType } from "$shared/models/editor";
+import { EditType } from "$shared/models";
 import { getUniqueSelector } from "../utilities";
 import { handleEditEvent } from "./handleEvents";
-import { apply, tw } from 'twind'
+import { tw } from 'twind'
 
 export class ApplyChangesService {
   appendedClassCache = new Map<string, string>();

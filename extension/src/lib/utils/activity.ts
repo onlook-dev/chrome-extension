@@ -1,4 +1,4 @@
-import type { Activity } from "$shared/models/activity"
+import type { Activity } from "$shared/models"
 
 // TODO: Use editor to apply event instead
 export function revertActivityChanges(activity: Activity) {

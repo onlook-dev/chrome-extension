@@ -1,5 +1,4 @@
-import { type EditEvent } from '$shared/models/editor'
-import { type ChangeValues } from '$shared/models/activity'
+import type { ChangeValues, EditEvent } from '$shared/models'
 
 // Look in tests for example. 
 export function convertEditEventToChangeObject(editEvent: EditEvent, changeObject: Record<string, ChangeValues>) {

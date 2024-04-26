@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
-	import type { User } from '$shared/models/user'
-	import type { Team } from '$shared/models/team'
-
 	import { PopupRoutes } from '$lib/utils/constants'
 	import { userBucket, teamsMapBucket, popupStateBucket } from '$lib/utils/localstorage'
 
 	import ProjectsView from './ProjectsView.svelte'
 	import AvatarDropdown from './AvatarDropdown.svelte'
 	import SideBarLine from '~icons/ri/side-bar-line'
+
+	import type { User, Team } from '$shared/models'
 
 	const dashboardDrawerId = 'dashboard-drawer'
 	let user: User | undefined

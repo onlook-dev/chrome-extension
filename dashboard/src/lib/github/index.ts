@@ -1,6 +1,6 @@
 import { fetchFileFromPath } from './files';
 import { createOrGetBranch } from "./branches";
-import { FileContentData } from "$shared/models/translation";
+import { FileContentData } from "$shared/models";
 import { createCommit } from "./commits";
 import { CustomOctokit, getOctokitByInstallationId } from "./octokit";
 import { createOrGetPullRequest } from "./pullRequests";

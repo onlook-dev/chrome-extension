@@ -1,10 +1,10 @@
-import { EditType, type EditEvent } from '$shared/models/editor'
-import { ActivityStatus, type Activity } from '$shared/models/activity'
 import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { sendGetScreenshotRequest } from '$lib/utils/messaging'
 import { nanoid } from 'nanoid'
 import { convertEditEventToChangeObject } from './convert'
-import type { Project } from '$shared/models/project'
+
+import { EditType, ActivityStatus } from '$shared/models'
+import type { Project, EditEvent, Activity, } from '$shared/models'
 
 export class EditEventService {
   changeQueue: { tabId: number, editEvent: EditEvent }[] = []

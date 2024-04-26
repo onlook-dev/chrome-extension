@@ -20,9 +20,7 @@
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { Textarea } from '$lib/components/ui/textarea';
 
-	import type { Project } from '$shared/models/project';
-	import type { GithubHistory } from '$shared/models/github';
-	import type { User } from '$shared/models/user';
+	import type { Project, GithubHistory, User } from '$shared/models';
 
 	import GitHub from '~icons/mdi/github';
 	import HistoriesView from './HistoriesView.svelte';

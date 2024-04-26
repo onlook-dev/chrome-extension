@@ -1,5 +1,5 @@
 import { MessageTypes } from "$shared/constants";
-import type { EditEvent } from "$shared/models/editor";
+import type { EditEvent } from "$shared/models";
 
 export function emitOpenProjectMessage() {
   window.postMessage({ type: MessageTypes.OPEN_PROJECT }, window.location.origin);

@@ -16,9 +16,7 @@
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 	import { Pencil2 } from 'svelte-radix';
 
-	import type { User } from '$shared/models/user';
-	import type { Activity } from '$shared/models/activity';
-	import type { Project } from '$shared/models/project';
+	import type { User, Activity, Project } from '$shared/models';
 
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';

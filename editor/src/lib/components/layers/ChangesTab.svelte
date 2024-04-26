@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type EditEvent, EditType } from "$shared/models/editor";
+  import { type EditEvent, EditType } from "$shared/models";
   import {
     historyStore,
     undoEvent,

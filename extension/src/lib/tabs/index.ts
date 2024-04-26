@@ -1,6 +1,5 @@
 import { MAX_TITLE_LENGTH } from "$shared/constants";
-import type { HostData } from "$shared/models/hostData";
-import type { Project } from "$shared/models/project";
+import type { Project, HostData } from "$shared/models";
 import { getBucket } from "@extend-chrome/storage";
 import { nanoid } from "nanoid";
 

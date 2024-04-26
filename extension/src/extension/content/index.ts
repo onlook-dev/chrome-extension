@@ -17,8 +17,7 @@ import { PublishProjectService } from '$lib/publish'
 import { applyActivityChanges, revertActivityChanges } from '$lib/utils/activity'
 import { AltScreenshotService } from './altScreenshot'
 
-import type { EditEvent, } from '$shared/models/editor'
-import type { Project } from '$shared/models/project'
+import type { EditEvent, Project } from '$shared/models'
 
 const screenshotService = new ScreenshotService()
 const altScreenshotService = new AltScreenshotService()

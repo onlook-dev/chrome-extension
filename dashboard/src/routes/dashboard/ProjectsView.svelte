@@ -3,12 +3,12 @@
 	import { onDestroy } from 'svelte';
 	import { DashboardRoutes, FirestoreCollections } from '$shared/constants';
 	import { projectsMapStore } from '$lib/utils/store';
-	import type { Team } from '$shared/models/team';
+	import { FirebaseService } from '$lib/storage';
 
 	import ArrowUp from '~icons/mingcute/arrow-up-fill';
 	import PinImage from '$lib/assets/tip-pin.png';
-	import { FirebaseService } from '$lib/storage';
-	import type { Project } from '$shared/models/project';
+
+	import type { Team, Project } from '$shared/models';
 
 	export let team: Team | undefined;
 	let unsubs: any[] = [];

@@ -4,16 +4,14 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { shortenSelector, sortActivities } from '$shared/helpers';
 	import { writable } from 'svelte/store';
+	import { FirebaseService } from '$lib/storage';
+	import { projectsMapStore } from '$lib/utils/store';
 
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
-	import type { Project } from '$shared/models/project';
-	import { FirebaseService } from '$lib/storage';
-	import { projectsMapStore } from '$lib/utils/store';
-	import { set } from 'firebase/database';
-	import { fade } from 'svelte/transition';
+	import type { Project } from '$shared/models';
 
 	export let projectService: FirebaseService<Project>;
 	export let project: Project;

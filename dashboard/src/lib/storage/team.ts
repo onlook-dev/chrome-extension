@@ -2,7 +2,7 @@ import {
 	getObjectFromCollectionWhere,
 } from '$lib/firebase/firestore';
 import { FirestoreCollections } from '$shared/constants';
-import type { Team, Tier } from '$shared/models/team';
+import type { Team, Tier } from '$shared/models';
 import { FirebaseService } from '.';
 
 export async function getTeamFromPaymentId(paymentId: string): Promise<Team> {

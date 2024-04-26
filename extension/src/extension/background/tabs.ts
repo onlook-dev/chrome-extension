@@ -8,11 +8,11 @@ import {
 	type VisbugState
 } from '$lib/utils/localstorage'
 import { toggleProjectTab } from '$lib/editor'
-import type { HostData } from '$shared/models/hostData'
-import type { Project } from '$shared/models/project'
 import { MessageReceiver, sendApplyProjectChanges } from '$lib/utils/messaging'
 import { captureTab } from './screenshot'
 import { FirebaseProjectService } from '$lib/storage/project'
+
+import type { HostData, Project } from '$shared/models'
 
 export const updateProjectTabHostWithDebounce = debounce((tab: chrome.tabs.Tab) => {
 	updateProjectTabHostData(tab)

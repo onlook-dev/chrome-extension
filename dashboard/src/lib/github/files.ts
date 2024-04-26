@@ -1,4 +1,4 @@
-import type { FileContentData } from "$shared/models/translation";
+import type { FileContentData } from "$shared/models";
 import type { CustomOctokit } from './octokit';
 
 export async function fetchFileFromPath(

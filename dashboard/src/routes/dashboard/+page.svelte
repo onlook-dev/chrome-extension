@@ -14,9 +14,7 @@
 	import NewTeamModal from './NewTeamModal.svelte';
 	import PlanModal from './PlanModal.svelte';
 
-	import type { Team } from '$shared/models/team';
-	import type { Payment } from '$shared/models/payment';
-	import type { User } from '$shared/models/user';
+	import type { Team, Payment, User } from '$shared/models';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);

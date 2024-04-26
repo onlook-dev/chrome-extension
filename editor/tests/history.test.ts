@@ -1,7 +1,7 @@
 // @ts-ignore - Module exists
 import { expect, test, describe, beforeEach } from 'bun:test';
 // @ts-ignore - Module exists
-import { EditType, type EditEvent } from '$shared/models/editor';
+import { EditType, type EditEvent } from '$shared/models';
 import { get } from 'svelte/store';
 import { historyStore, redoStore, addToHistory, undoLastEvent, redoLastEvent } from '../src/lib/tools/edit/history';
 
