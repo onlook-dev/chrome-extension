@@ -4,7 +4,7 @@
   import { slide } from "svelte/transition";
   import { draggable } from "@neodrag/svelte";
   import { editorPanelVisible, layersPanelCollapsed } from "$lib/states/editor";
-  import { DragHandleDots2, LineHeight, Minus, Size } from "radix-icons-svelte";
+  import { DragHandleDots2, Minus, Size } from "radix-icons-svelte";
 
   import LayersTab from "./LayersTab.svelte";
   import ChangesTab from "./ChangesTab.svelte";

@@ -3,13 +3,14 @@
   import { draggable } from "@neodrag/svelte";
   import { Separator } from "$lib/components/ui/separator";
   import { editorPanelVisible } from "$lib/states/editor";
-  import { DragHandleDots2, Minus, Plus, Size } from "radix-icons-svelte";
-
-  import type { EditTool } from "$lib/tools/edit";
+  import { DragHandleDots2, Minus, Size } from "radix-icons-svelte";
 
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
   import CssTab from "./CssTab.svelte";
+  import Button from "../ui/button/button.svelte";
+
+  import type { EditTool } from "$lib/tools/edit";
 
   enum TabValue {
     CSS = "css",
@@ -17,15 +18,14 @@
   }
 
   export let editTool: EditTool;
+  const cardWidth = "232px";
   let selectedTab: string = TabValue.CSS;
   let isInputFocused = false;
   let panelCollapsed = false;
   let cardRef: HTMLDivElement;
-  const cardWidth = "232px";
   let cardHeight = "80vh";
 
   onMount(() => {
-    console.log($editorPanelVisible);
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
         cardHeight = `${entry.contentRect.height}px`;
@@ -72,6 +72,7 @@
               class="bg-transparent p-0 text-xs"
               value={TabValue.CSS}>Element Appearance</Tabs.Trigger
             >
+            <Button class="">Yoo 6</Button>
             <div class="ml-auto flex items-center">
               <div
                 class="w-8 h-8 flex items-center justify-center cursor-pointer transition hover:text-white/80"

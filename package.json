@@ -4,11 +4,8 @@
   "description": "Onlook monorepo",
   "scripts": {
     "dev": "concurrently --kill-others \"npm run editor\" \"npm run dashboard\" \"npm run extension\"",
-    "dev:svelte": "concurrently --kill-others \"npm run editor:svelte\" \"npm run playground\"",
     "dev:docker": "concurrently --kill-others  \"npm run dev\" \"npm run docker\"",
     "editor": "cd editor && npm run dev:cpy",
-    "editor:svelte": "cd editor && npm run dev:cpy:svelte",
-    "playground": "cd playground && pnpm run dev",
     "dashboard": "cd dashboard && npm run dev",
     "extension": "cd extension && npm run dev",
     "install": "cd dashboard && npm install && cd ../extension && npm install && cd ../editor && npm install",
@@ -27,6 +24,7 @@
   },
   "homepage": "https://github.com/onlook-dev/monorepo#readme",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0"
   }
 }
