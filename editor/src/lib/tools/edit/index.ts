@@ -113,8 +113,6 @@ export class EditTool implements Tool {
 			this.overlayManager.addClickRect(el);
 			this.elResizeObserver.observe(el);
 		});
-		if (els.length > 0)
-			this.scrollElementIntoView(els[0]);
 	}
 
 	simulateHover = (el: HTMLElement) => {
