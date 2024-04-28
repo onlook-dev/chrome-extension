@@ -56,10 +56,6 @@ export interface EditProjectRequest {
 }
 
 // Messages
-export const [sendAuthRequest, authRequestStream] = getExtendedMessages<void>(
-	'REQUEST_AUTH',
-	MessageReceiver.BACKGROUND
-)
 
 export const [sendEditProjectRequest, editProjectRequestStream] =
 	getExtendedMessages<EditProjectRequest>('REQUEST_EDIT_PROJECT', MessageReceiver.BACKGROUND)

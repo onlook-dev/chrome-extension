@@ -1,5 +1,5 @@
 import { MessageService, MessageType } from '$shared/message'
-import { authUserBucket, getActiveProject, popupStateBucket, setActiveProject } from '$lib/utils/localstorage'
+import { authUserBucket } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
 	activityRevertStream,
@@ -9,9 +9,7 @@ import {
 	sendEditEvent,
 	sendEditProjectRequest
 } from '$lib/utils/messaging'
-import { baseUrl } from '$lib/utils/env'
 import { ScreenshotService } from './screenshot'
-import { PopupRoutes } from '$lib/utils/constants'
 import { getCSSFramework } from '$lib/utils/styleFramework'
 import { PublishProjectService } from '$lib/publish'
 import { applyActivityChanges, revertActivityChanges } from '$lib/utils/activity'
@@ -34,9 +32,10 @@ export function setupListeners() {
 	})
 
 	messageService.subscribe(MessageType.SAVE_PROJECT, async () => {
-		const project = await getActiveProject()
-		const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
-		publishService.publish()
+		// TODO: handle this
+		// const project = await getActiveProject()
+		// const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
+		// publishService.publish()
 	})
 
 	messageService.subscribe(MessageType.EDIT_PROJECT, (project: Project) => {
@@ -53,33 +52,34 @@ export function setupListeners() {
 	})
 
 	applyProjectChangesStream.subscribe(async () => {
-		const activeProject = await getActiveProject()
-		if (!activeProject) return
+		// TODO: handle this
+		// const activeProject = await getActiveProject()
+		// if (!activeProject) return
 
-		let shouldSaveProject = false
+		// let shouldSaveProject = false
 
-		// Get each activity and their style change
-		Object.values(activeProject.activities).forEach(activity => {
-			let activityMutated = applyActivityChanges(activity)
-			if (activityMutated) {
-				activeProject.activities[activity.selector] = activity
-				shouldSaveProject = true
-			}
-		})
+		// // Get each activity and their style change
+		// Object.values(activeProject.activities).forEach(activity => {
+		// 	let activityMutated = applyActivityChanges(activity)
+		// 	if (activityMutated) {
+		// 		activeProject.activities[activity.selector] = activity
+		// 		shouldSaveProject = true
+		// 	}
+		// })
 
-		// Get style framework if did not exist
-		if (!activeProject.projectSettings?.styleFramework) {
-			const styleFramework = await getCSSFramework()
-			activeProject.projectSettings = {
-				...activeProject.projectSettings,
-				styleFramework
-			}
-			shouldSaveProject = true
-		}
+		// // Get style framework if did not exist
+		// if (!activeProject.projectSettings?.styleFramework) {
+		// 	const styleFramework = await getCSSFramework()
+		// 	activeProject.projectSettings = {
+		// 		...activeProject.projectSettings,
+		// 		styleFramework
+		// 	}
+		// 	shouldSaveProject = true
+		// }
 
-		if (shouldSaveProject) {
-			sendSaveProject(activeProject)
-		}
+		// if (shouldSaveProject) {
+		// 	sendSaveProject(activeProject)
+		// }
 	})
 
 	getScreenshotStream.subscribe(async ([activity]) => {

@@ -1,14 +1,9 @@
 import { DashboardRoutes, FirestoreCollections } from '$shared/constants'
 import { baseUrl } from '$lib/utils/env'
 import {
-    activityRevertStream,
-    authRequestStream,
     editProjectRequestStream,
     openUrlRequestStream,
-    sendActivityRevert,
     editEventStream,
-    activityApplyStream,
-    sendActivityApply,
     saveProjectStream,
     sendPageScreenshotResponse,
     pageScreenshotRequestStream
@@ -18,12 +13,9 @@ import {
     projectsMapBucket,
     teamsMapBucket,
     usersMapBucket,
-    tabsMapBucket,
-    removeProjectFromTabs,
     getActiveUser
 } from '$lib/utils/localstorage'
 import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
-import { forwardToActiveProjectTab, updateTabActiveState } from './tabs'
 import { captureActiveTab } from './screenshot'
 import { EditEventService } from '$lib/editEvents'
 import { trackEvent } from '$lib/mixpanel'
@@ -33,6 +25,7 @@ import { ProjectTabManager } from '$lib/tabs'
 import { EntitySubsciptionService } from './entities'
 
 import type { Team, User } from '$shared/models'
+import { forwardToActiveTab } from './tabs'
 
 export class BackgroundEventHandlers {
     projectService: FirebaseProjectService
@@ -59,16 +52,23 @@ export class BackgroundEventHandlers {
         teamsMapBucket.set({})
         projectsMapBucket.set({})
         usersMapBucket.set({})
-        tabsMapBucket.set({})
     }
 
-    openOrCreateNewTab(url: string) {
-        return chrome.tabs.query({ url }, tabs => {
-            if (tabs.length) {
-                chrome.tabs.update(tabs[0].id as number, { active: true })
-            } else {
-                chrome.tabs.create({ url })
-            }
+    openOrCreateNewTab(url: string): Promise<chrome.tabs.Tab | undefined> {
+        // Normalize the URL by adding a slash if it doesn't end with one and doesn't have a query or fragment
+        const hasQueryOrFragment = url.includes('?') || url.includes('#');
+        const safeUrl = url + (url.endsWith('/') || hasQueryOrFragment ? '' : '/');
+
+        // Create promise to run after callback
+        return new Promise((resolve) => {
+            // Check if tab is already open
+            chrome.tabs.query({ url: safeUrl }, tabs => {
+                if (tabs.length) {
+                    chrome.tabs.update(tabs[0].id as number, { active: true }, resolve)
+                } else {
+                    chrome.tabs.create({ url }, resolve)
+                }
+            })
         })
     }
 
@@ -132,22 +132,6 @@ export class BackgroundEventHandlers {
             this.projectTabManager.removeTabState(tabId)
         })
 
-
-        // Forward messages to content script
-        activityRevertStream.subscribe(([detail]) => {
-            forwardToActiveProjectTab(detail, sendActivityRevert)
-        })
-
-        // Forward messages to content script
-        activityApplyStream.subscribe(([detail]) => {
-            forwardToActiveProjectTab(detail, sendActivityApply)
-        })
-
-        // Auth request from popup
-        authRequestStream.subscribe(() => {
-            this.openOrCreateNewTab(`${baseUrl}${DashboardRoutes.SIGNIN}`)
-        })
-
         saveProjectStream.subscribe(([project]) => {
             this.projectService.post(project)
             projectsMapBucket.set({ [project.id]: project })
@@ -156,39 +140,19 @@ export class BackgroundEventHandlers {
         pageScreenshotRequestStream.subscribe(async ([{ signature, refresh }]) => {
             // Send message back
             const image = await captureActiveTab(refresh)
-            forwardToActiveProjectTab({ image, signature }, sendPageScreenshotResponse)
+            forwardToActiveTab({ image, signature }, sendPageScreenshotResponse)
         })
 
-        // Start editing request from popup
+        // Start editing request (from dashboard -> content script -> background)
         editProjectRequestStream.subscribe(([{ project, enable }]) => {
             // Add trailing slash if not present
             const hostUrl = project.hostUrl.endsWith('/') ? project.hostUrl : `${project.hostUrl}/`
-            chrome.tabs.query({ url: hostUrl }, tabs => {
-                // Check if tab with same url exists
-                if (tabs?.length) {
-                    // If tab exists and command is enable, also make it active
-                    for (let i = 0; i < tabs.length; i++) {
-                        // Make first tab active
-                        if (enable && i === 0) {
-                            chrome.tabs.update(tabs[i].id as number, { active: true })
-                        }
-                        updateTabActiveState(tabs[i], project, enable)
-                    }
-                } else {
-                    if (enable) {
-                        // If tab doesn't exist and command is enable, create tab
-                        chrome.tabs
-                            .create({
-                                url: hostUrl
-                            })
-                            .then((tab: chrome.tabs.Tab) => {
-                                updateTabActiveState(tab, project, enable)
-                            })
-                    } else {
-                        // If tabs don't exist and command is disable, remove instances of project
-                        removeProjectFromTabs(project.id)
-                    }
+            this.openOrCreateNewTab(hostUrl).then((tab) => {
+                if (!tab) {
+                    console.error('Tab not found')
+                    return
                 }
+                this.projectTabManager.toggleTab(tab, enable)
             })
         })
 
@@ -199,7 +163,7 @@ export class BackgroundEventHandlers {
             }
         })
 
-        // Open url from popup
+        // Open url 
         openUrlRequestStream.subscribe(([url, sender]) => {
             this.openOrCreateNewTab(url)
         })
