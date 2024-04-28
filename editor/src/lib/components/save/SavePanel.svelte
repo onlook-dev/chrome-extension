@@ -2,39 +2,40 @@
     import { draggable } from "@neodrag/svelte";
     import { savePanelVisible } from "$lib/states/editor";
     import { ToolManager, ToolName } from "$lib/tools";
-    import { Dashboard, Pencil2, Share1, Share2 } from "radix-icons-svelte";
+    import { Dashboard, Pencil2, Share2 } from "radix-icons-svelte";
     import { onMount } from "svelte";
 
     import Logo from "./Logo.svelte";
     import Button from "../ui/button/button.svelte";
     import * as Card from "$lib/components/ui/card";
     import * as Accordion from "$lib/components/ui/accordion";
+    import ProjectItem from "./ProjectItem.svelte";
 
     import type { SaveTool } from "$lib/tools/save";
     import type { Project } from "$shared/models";
     import { slide } from "svelte/transition";
-    import SelectProjectView from "./SelectProjectView.svelte";
 
     export let toolManager: ToolManager;
 
     let saveTool: SaveTool = toolManager.saveTool;
     let isInputFocused = false;
-    let currentProject: Project | undefined = {
-        name: "New Project",
+    const defaultProj = {
+        id: "1",
+        name: "My Project",
         hostData: {
             favicon: "",
         },
     };
-    let projects: Project[] | any[] = [
-        currentProject,
-        currentProject,
-        currentProject,
-        currentProject,
-        currentProject,
-        currentProject,
-        currentProject,
-        currentProject,
-    ];
+
+    let currentProject: Project | undefined;
+    let projects: Project[] = [];
+    let selectableProjects = [];
+    $: if (currentProject) {
+        selectableProjects = [
+            currentProject,
+            ...projects.filter((p) => p.id !== currentProject?.id),
+        ];
+    }
 
     const accordianItem = "item-1";
     let accordianValue = "";
@@ -44,6 +45,11 @@
         saveTool.currentProjectStore.subscribe((value) => {
             if (!value || Object.keys(value).length === 0) return;
             currentProject = value;
+        });
+
+        saveTool.projectsStore.subscribe((value) => {
+            if (!value || value.length === 0) return;
+            projects = value;
         });
     });
 </script>
@@ -111,18 +117,33 @@
                                         Select a project to save changes to
                                     </p>
                                 {:else}
-                                    <SelectProjectView
-                                        project={currentProject}
-                                    />
+                                    <ProjectItem project={currentProject} />
                                 {/if}
                             </Accordion.Trigger>
                             <Accordion.Content
-                                class="px-2 max-h-[280px] overflow-auto"
+                                class="px-2 max-h-[280px] overflow-auto overscroll-contain"
                             >
-                                {#each projects as project}
-                                    <div class="mb-6">
-                                        <SelectProjectView {project} />
-                                    </div>
+                                {#each selectableProjects as project}
+                                    <button
+                                        class="w-full"
+                                        on:click={() => {
+                                            accordianValue = "";
+                                            console.log(
+                                                "Project clicked",
+                                                project,
+                                            );
+                                        }}
+                                    >
+                                        <div
+                                            class="transition rounded py-3 cursor-pointer hover:bg-surface px-2 -mx-2"
+                                        >
+                                            <ProjectItem
+                                                {project}
+                                                selected={currentProject.id ===
+                                                    project.id}
+                                            />
+                                        </div>
+                                    </button>
                                 {/each}
                             </Accordion.Content>
                         </Accordion.Item>

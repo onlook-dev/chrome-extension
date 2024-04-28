@@ -1,5 +1,5 @@
 import { MessageService, MessageType } from '$shared/message'
-import { authUserBucket } from '$lib/utils/localstorage'
+import { authUserBucket, projectsMapBucket } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
 	activityRevertStream,
@@ -44,6 +44,12 @@ export function setupListeners() {
 		const project = await projectTabManager.getTabProject(currentTab)
 		if (correlationId)
 			messageService.respond(project, correlationId)
+	})
+
+	messageService.subscribe(MessageType.GET_PROJECTS, async (payload, correlationId) => {
+		const projects = Object.values(await projectsMapBucket.get())
+		if (correlationId)
+			messageService.respond(projects, correlationId)
 	})
 
 	messageService.subscribe(MessageType.EDIT_PROJECT, (project: Project) => {

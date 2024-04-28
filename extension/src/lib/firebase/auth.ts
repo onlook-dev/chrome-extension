@@ -14,8 +14,7 @@ import { identifyUser } from '$lib/mixpanel'
 import type { User } from '$shared/models'
 
 // Use firebase user from dashboard
-export function signInUser(userJson: string) {
-	const userData = JSON.parse(userJson)
+export function signInUser(userData: any) {
 	const user: AuthUser = FirebaseUserImpl._fromJSON(auth as any, userData)
 	auth.updateCurrentUser(user).catch(err => {
 		alert(`Sign in failed: ${JSON.stringify(err)}`)

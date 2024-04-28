@@ -4,6 +4,7 @@ export enum MessageType {
     SAVE_PROJECT = "SAVE_PROJECT",
     EDIT_PROJECT = "EDIT_PROJECT",
     GET_PROJECT = "GET_PROJECT",
+    GET_PROJECTS = "GET_PROJECTS",
 
     // Generic type to get callback response
     RESPONSE = "RESPONSE"
