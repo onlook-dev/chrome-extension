@@ -5,21 +5,21 @@ import {
 	activityRevertStream,
 	applyProjectChangesStream,
 	getScreenshotStream,
-	sendSaveProject,
 	sendEditEvent,
 	sendEditProjectRequest
 } from '$lib/utils/messaging'
 import { ScreenshotService } from './screenshot'
-import { getCSSFramework } from '$lib/utils/styleFramework'
 import { PublishProjectService } from '$lib/publish'
 import { applyActivityChanges, revertActivityChanges } from '$lib/utils/activity'
 import { AltScreenshotService } from './altScreenshot'
+import { ProjectTabService } from '$lib/tabs'
 
 import type { EditEvent, Project } from '$shared/models'
 
 const screenshotService = new ScreenshotService()
 const altScreenshotService = new AltScreenshotService()
 const messageService = MessageService.getInstance()
+const projectTabManager = new ProjectTabService()
 
 export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
@@ -33,9 +33,17 @@ export function setupListeners() {
 
 	messageService.subscribe(MessageType.SAVE_PROJECT, async () => {
 		// TODO: handle this
-		// const project = await getActiveProject()
-		// const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
-		// publishService.publish()
+		const currentTab = await projectTabManager.getCurrentTab()
+		const project = await projectTabManager.getTabProject(currentTab)
+		const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
+		publishService.publish()
+	})
+
+	messageService.subscribe(MessageType.GET_PROJECT, async (payload, correlationId) => {
+		const currentTab = await projectTabManager.getCurrentTab()
+		const project = await projectTabManager.getTabProject(currentTab)
+		if (correlationId)
+			messageService.respond(project, correlationId)
 	})
 
 	messageService.subscribe(MessageType.EDIT_PROJECT, (project: Project) => {

@@ -66,7 +66,7 @@ export const [sendEditEvent, editEventStream] = getExtendedMessages<EditEvent>(
 )
 
 export const [sendOpenUrlRequest, openUrlRequestStream] = getExtendedMessages<string>(
-	'SEND_OPEN_URL_REQUEST',
+	'OPEN_URL_REQUEST',
 	MessageReceiver.BACKGROUND
 )
 
@@ -75,14 +75,23 @@ export const [sendSaveProject, saveProjectStream] = getExtendedMessages<Project>
 	MessageReceiver.BACKGROUND
 )
 
-
 export const [sendPageScreenshotRequest, pageScreenshotRequestStream] = getExtendedMessages<{ signature: string, refresh: boolean }>(
 	'PAGE_SCREENSHOT_REQUEST',
 	MessageReceiver.BACKGROUND
 )
 
+export const [sendGetTabId, tabIdRequestStream] = getExtendedMessages<void>(
+	'TAB_ID_REQUEST',
+	MessageReceiver.BACKGROUND
+)
+
 export const [sendPageScreenshotResponse, pageScreenshotResponseStream] = getExtendedMessages<{ image: string, signature: string }>(
 	'PAGE_SCREENSHOT_RESPONSE',
+	MessageReceiver.CONTENT
+)
+
+export const [sendTabIdResponse, tabIdResponseStream] = getExtendedMessages<chrome.tabs.Tab>(
+	'TAB_ID_RESPONSE',
 	MessageReceiver.CONTENT
 )
 

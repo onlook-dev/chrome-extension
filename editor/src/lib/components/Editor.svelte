@@ -5,7 +5,7 @@
   import ElementsPanel from "./elements/ElementsPanel.svelte";
   import SavePanel from "./save/SavePanel.svelte";
 
-  let activeToolName: ToolName | undefined = ToolName.EDIT;
+  let activeToolName: ToolName | undefined = ToolName.SAVE;
   let toolManager: ToolManager = new ToolManager(activeToolName);
   $: toolManager?.selectTool(activeToolName);
 

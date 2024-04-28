@@ -6,7 +6,9 @@ import {
     editEventStream,
     saveProjectStream,
     sendPageScreenshotResponse,
-    pageScreenshotRequestStream
+    pageScreenshotRequestStream,
+    tabIdRequestStream,
+    sendTabIdResponse
 } from '$lib/utils/messaging'
 import {
     authUserBucket,
@@ -21,7 +23,7 @@ import { EditEventService } from '$lib/editEvents'
 import { trackEvent } from '$lib/mixpanel'
 import { FirebaseService } from '$lib/storage'
 import { FirebaseProjectService } from '$lib/storage/project'
-import { ProjectTabManager } from '$lib/tabs'
+import { ProjectTabService } from '$lib/tabs'
 import { EntitySubsciptionService } from './entities'
 
 import type { Team, User } from '$shared/models'
@@ -32,11 +34,11 @@ export class BackgroundEventHandlers {
     teamService: FirebaseService<Team>
     userService: FirebaseService<User>
     editEventService: EditEventService
-    projectTabManager: ProjectTabManager
+    projectTabManager: ProjectTabService
     entitiesService: EntitySubsciptionService
 
     constructor() {
-        this.projectTabManager = new ProjectTabManager()
+        this.projectTabManager = new ProjectTabService()
         this.projectService = new FirebaseProjectService()
         this.teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS)
         this.userService = new FirebaseService<User>(FirestoreCollections.USERS)
@@ -131,6 +133,10 @@ export class BackgroundEventHandlers {
 
         chrome.tabs.onRemoved.addListener((tabId: number) => {
             this.projectTabManager.removeTabState(tabId)
+        })
+
+        tabIdRequestStream.subscribe(([_, sender]) => {
+            forwardToActiveTab(sender.tab, sendTabIdResponse)
         })
 
         saveProjectStream.subscribe(([project]) => {

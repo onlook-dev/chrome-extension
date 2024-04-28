@@ -1,7 +1,9 @@
+import { sendGetTabId, tabIdResponseStream } from "$lib/utils/messaging";
 import { MAX_TITLE_LENGTH } from "$shared/constants";
-import type { Project, HostData } from "$shared/models";
 import { getBucket } from "@extend-chrome/storage";
 import { nanoid } from "nanoid";
+import type { Project, HostData } from "$shared/models";
+import { getActiveUser } from "$lib/utils/localstorage";
 
 const projectTabsBucket = getBucket<{ [tabId: string]: Project }>('PROJECT_TABS_MAP')
 const tabStateStore = getBucket<{ [tabId: string]: TabState }>('TABS_STATE_MAP')
@@ -15,7 +17,7 @@ export enum TabState {
 // @ts-ignore - browser exists
 var platform = typeof browser === 'undefined' ? chrome : browser
 
-export class ProjectTabManager {
+export class ProjectTabService {
     injectTab = (tabId: number) => {
         platform.scripting.executeScript({
             target: { tabId: tabId },
@@ -38,6 +40,29 @@ export class ProjectTabManager {
             files: ['src/lib/editor/restore.js']
         })
         this.setTabState(tabId, TabState.injected)
+    }
+
+    getCurrentTab = async (): Promise<chrome.tabs.Tab> => {
+        return new Promise(async (resolve, reject) => {
+            if (chrome && chrome.tabs && chrome.tabs.query) {
+                // Background
+                const tabs = await chrome.tabs.query({ active: true, currentWindow: true })
+                if (!tabs[0].id) {
+                    reject("Tab id not found")
+                } else {
+                    resolve(tabs[0])
+                }
+            } else {
+                // Content script
+                sendGetTabId().then(() => {
+                    const subscription = tabIdResponseStream.subscribe(([data]) => {
+                        resolve(data)
+                        subscription.unsubscribe();
+                    });
+                    sendGetTabId();
+                })
+            }
+        })
     }
 
     toggleTab = async (tab: chrome.tabs.Tab, inject?: boolean) => {
@@ -81,7 +106,7 @@ export class ProjectTabManager {
         }
     }
 
-    createNewProject(tab: chrome.tabs.Tab): Project {
+    async createNewProject(tab: chrome.tabs.Tab): Promise<Project> {
         // Get name and host from tab info
         let projectName = tab.title || this.getDefaultname(tab.url);
 
@@ -90,17 +115,21 @@ export class ProjectTabManager {
             projectName = projectName.slice(0, MAX_TITLE_LENGTH)
         }
 
-        const projectUrl = tab.url
-        const teamId = "teamId" // TODO: Get active team id
+        const user = await getActiveUser();
+        if (!user) throw new Error("No user found");
 
+        const teamsIds = user?.teamIds || [];
+        if (!teamsIds.length) throw new Error("No teams found");
+
+        const projectUrl = tab.url
         const newProject = {
             id: nanoid(),
             name: projectName,
-            teamId: teamId,
+            teamId: teamsIds[0],
             hostUrl: projectUrl,
             activities: {},
             comments: [],
-            hostData: {} as HostData,
+            hostData: { favicon: tab.favIconUrl } as HostData,
             createdAt: new Date().toISOString(),
             githubHistoryIds: []
         } as Project

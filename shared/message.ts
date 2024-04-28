@@ -5,7 +5,7 @@ export enum MessageType {
     EDIT_PROJECT = "EDIT_PROJECT",
     GET_PROJECT = "GET_PROJECT",
 
-    // Generic response type to get callback response
+    // Generic type to get callback response
     RESPONSE = "RESPONSE"
 }
 
@@ -16,22 +16,21 @@ export interface IMessage {
     origin?: string;
 }
 
+/*
+    Usage:
 
-/**
- * 
- * Usage example:
- * 
- * const messageService = MessageService.getInstance();
- * 
- * // Publish and get response
- * messageService.publish(MessageType.GET_PROJECT, { projectId: "123" }, (response) => {
- *  console.log("Response for save project received:", response);
- * });
- * 
- * // Subscribe to a message type and send response
- * messageService.subscribe(MessageType.SAVE_PROJECT, (projectData, correlationId) => {
- *  messageService.publish(MessageType.RESPONSE, { project: "project" }, correlationId);
- * });
+    const messageService = MessageService.getInstance();
+    // Publish and get response
+    messageService.publish(MessageType.GET_PROJECT, { projectId: "123" }, (response) => {
+        console.log("Received project data:", response);
+    });
+
+    // Subscribe to a message type and send response
+    if (correlationId) {
+        messageService.publish(MessageType.RESPONSE, { status: "Edit successful" }, response => {
+            console.log("Edit response sent back.");
+        }, correlationId);
+    }
  */
 
 export class MessageService {
@@ -108,6 +107,15 @@ export class MessageService {
             this.listeners.set(correlationId, [callback]);
         }
 
+        window.postMessage(message, window.location.origin);
+    }
+
+    respond(payload: any, correlationId: string): void {
+        if (!correlationId) {
+            throw new Error("Response requires a valid correlationId.");
+        }
+
+        const message: IMessage = { type: MessageType.RESPONSE, payload: JSON.stringify(payload), correlationId };
         window.postMessage(message, window.location.origin);
     }
 }

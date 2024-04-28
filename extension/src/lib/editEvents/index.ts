@@ -4,7 +4,7 @@ import { convertEditEventToChangeObject } from './convert'
 import { EditType, ActivityStatus } from '$shared/models'
 
 import type { Project, EditEvent, Activity, } from '$shared/models'
-import type { ProjectTabManager } from '$lib/tabs'
+import type { ProjectTabService } from '$lib/tabs'
 
 interface QueueItem {
   tab: chrome.tabs.Tab
@@ -13,7 +13,7 @@ interface QueueItem {
 
 export class EditEventService {
   changeQueue: QueueItem[] = []
-  constructor(private projectTabManager: ProjectTabManager) { }
+  constructor(private projectTabManager: ProjectTabService) { }
 
   async handleEditEvent(editEvent: EditEvent, tab: chrome.tabs.Tab) {
     this.changeQueue.push({ editEvent, tab })
