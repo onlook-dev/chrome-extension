@@ -42,7 +42,7 @@
 
     onMount(() => {
         saveTool.currentProjectStore.subscribe((value) => {
-            if (!value) return;
+            if (!value || Object.keys(value).length === 0) return;
             currentProject = value;
         });
     });
@@ -65,7 +65,7 @@
     <Card.Root
         class="w-[400px] h-[{accordianExpanded
             ? '400px'
-            : '200px'}] backdrop-blur bg-background/90 pt-2"
+            : '200px'}] backdrop-blur bg-background/90 pt-2 overflow-hidden"
         style="transition: height 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
     >
         <Card.Header class="space-y-6">

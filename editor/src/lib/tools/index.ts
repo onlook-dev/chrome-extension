@@ -20,6 +20,7 @@ export interface Tool {
 
 export class ToolManager {
   selectedTool?: Tool | undefined;
+  selectedToolName?: ToolName | undefined;
   toolMap: Record<ToolName, Tool>
   editTool: EditTool;
   saveTool: SaveTool;
@@ -33,7 +34,7 @@ export class ToolManager {
     'dblclick': (e) => this.handleDoubleClick(e),
   };
 
-  constructor(toolName: ToolName,) {
+  constructor(toolName: ToolName = ToolName.EDIT) {
     this.editTool = new EditTool();
     this.saveTool = new SaveTool();
 
@@ -50,12 +51,10 @@ export class ToolManager {
   selectTool = (toolName?: ToolName) => {
     if (this.selectedTool) this.selectedTool.onDestroy();
     this.hotKeys.bindKeys(toolName);
-    if (!toolName) {
-      this.selectedTool = undefined;
-      return;
-    };
-    this.selectedTool = this.toolMap[toolName];
-    this.selectedTool.onInit();
+    this.selectedTool = this.toolMap[toolName] ?? undefined;
+    this.selectedToolName = toolName;
+    if (this.selectedTool)
+      this.selectedTool.onInit();
   }
 
   handleMouseOver = (e: MouseEvent) => {

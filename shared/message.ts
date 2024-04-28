@@ -68,7 +68,7 @@ export class MessageService {
             }
 
             // Handle correlation-specific callbacks if correlationId is provided
-            if (message.correlationId) {
+            if (message.correlationId && message.type === MessageType.RESPONSE) {
                 const correlationCallbacks = this.listeners.get(message.correlationId);
                 if (correlationCallbacks) {
                     correlationCallbacks.forEach(callback => callback(JSON.parse(message.payload)));

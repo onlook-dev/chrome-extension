@@ -5,16 +5,13 @@
   import ElementsPanel from "./elements/ElementsPanel.svelte";
   import SavePanel from "./save/SavePanel.svelte";
 
-  let activeToolName: ToolName | undefined = ToolName.SAVE;
-  let toolManager: ToolManager = new ToolManager(activeToolName);
-  $: toolManager?.selectTool(activeToolName);
+  let toolManager: ToolManager = new ToolManager();
 
-  export function getActiveToolName() {
-    return activeToolName;
+  export function getActiveToolName(): ToolName {
+    return toolManager.selectedToolName;
   }
 
   export function updateTool(toolName: ToolName) {
-    activeToolName = toolName;
     toolManager?.selectTool(toolName);
   }
 </script>

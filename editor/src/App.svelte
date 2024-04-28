@@ -1,7 +1,5 @@
 <script lang="ts">
   import "./app.pcss";
-  import Editor from "./lib/components/Editor.svelte";
-
   import { ToolName } from "$lib/tools";
   import { historyStore } from "$lib/tools/edit/history";
   import { ONLOOK_TOOLBAR } from "$shared/constants";
@@ -11,6 +9,8 @@
     DATA_ONLOOK_SAVED,
   } from "$lib/constants";
   import { savingProject } from "$lib/states/editor";
+
+  import Editor from "./lib/components/Editor.svelte";
 
   let editor: Editor;
   let previousTool: ToolName | undefined = ToolName.EDIT;
