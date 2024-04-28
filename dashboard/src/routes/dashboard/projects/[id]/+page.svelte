@@ -5,7 +5,6 @@
 	import {
 		DashboardRoutes,
 		DashboardSearchParams,
-		MessageTypes,
 		MAX_TITLE_LENGTH,
 		FirestoreCollections
 	} from '$shared/constants';
@@ -15,6 +14,7 @@
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 	import { Pencil2 } from 'svelte-radix';
+	import { MessageService, MessageType } from '$shared/message';
 
 	import type { User, Activity, Project } from '$shared/models';
 
@@ -28,6 +28,7 @@
 	import ActivityDetail from './ActivityDetail.svelte';
 
 	let project: Project | undefined;
+	let messageService: MessageService;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	const userService = new FirebaseService<User>(FirestoreCollections.USERS);
 
@@ -43,6 +44,7 @@
 	}
 
 	onMount(async () => {
+		messageService = MessageService.getInstance();
 		auth.onAuthStateChanged((user) => {
 			if (!user) {
 				goto(DashboardRoutes.SIGNIN);
@@ -92,13 +94,7 @@
 	});
 
 	function requestEditProject() {
-		window.postMessage(
-			{
-				type: MessageTypes.EDIT_PROJECT,
-				project: project
-			},
-			window.location.origin
-		);
+		messageService.publish(MessageType.EDIT_PROJECT, project);
 		trackMixpanelEvent('Edit Project', { projectId: project?.id });
 	}
 </script>

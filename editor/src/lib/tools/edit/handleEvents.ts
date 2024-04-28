@@ -1,9 +1,10 @@
 import { addToHistory } from "./history";
 import { getUniqueSelector } from "../utilities";
 import { EditType, type EditEvent, type InsertRemoveVal } from "$shared/models";
-import { emitEditEvent } from "../messages";
+import { MessageService, MessageType } from "$shared/message";
 
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
+const messageService = MessageService.getInstance();
 
 function debounce(func, wait) {
   const timeouts = {};
@@ -55,7 +56,7 @@ function undebounceHandleEditEvent(param: HandleEditEventParams) {
     componentId: param.el.dataset.onlookComponentId
   };
   addToHistory(event);
-  emitEditEvent(event);
+  messageService.publish(MessageType.EDIT_EVENT, event);
 }
 
 let debouncedHandleEditEvent = debounce(undebounceHandleEditEvent, 1000);

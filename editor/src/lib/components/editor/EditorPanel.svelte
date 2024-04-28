@@ -11,13 +11,17 @@
   import Button from "../ui/button/button.svelte";
 
   import type { EditTool } from "$lib/tools/edit";
+  import { ToolName, type ToolManager } from "$lib/tools";
+  import { historyStore } from "$lib/tools/edit/history";
 
   enum TabValue {
     CSS = "css",
     CODE = "code",
   }
 
-  export let editTool: EditTool;
+  export let toolManager: ToolManager;
+  let editTool: EditTool = toolManager.editTool;
+
   const cardWidth = "232px";
   let selectedTab: string = TabValue.CSS;
   let isInputFocused = false;
@@ -67,12 +71,17 @@
     <Card.Root class="backdrop-blur h-full bg-background/90 pt-2">
       <Card.Content>
         <Tabs.Root bind:value={selectedTab} class="w-full h-full">
-          <Tabs.List class="handle bg-transparent p-0 gap-4 w-full select-none	">
-            <Tabs.Trigger
+          <Tabs.List class="handle bg-transparent p-0 gap-4 w-full select-none">
+            <!-- <Tabs.Trigger
               class="bg-transparent p-0 text-xs"
               value={TabValue.CSS}>Element Appearance</Tabs.Trigger
+            > -->
+            <Button
+              class="h-6 rounded-sm text-xs transition"
+              variant="primary"
+              on:click={() => toolManager.selectTool(ToolName.SAVE)}
+              >Finish Designing</Button
             >
-            <Button class="">Yoo 6</Button>
             <div class="ml-auto flex items-center">
               <div
                 class="w-8 h-8 flex items-center justify-center cursor-pointer transition hover:text-white/80"

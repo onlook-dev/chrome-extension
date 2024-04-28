@@ -1,7 +1,11 @@
 import { EditTool } from "./edit";
-import { HotKeys } from "./edit/hotkeys";
+import { SaveTool } from "./save";
+
+import { HotKeys } from "./hotkeys";
+
 export enum ToolName {
   EDIT = 'edit',
+  SAVE = 'save',
 }
 
 export interface Tool {
@@ -18,6 +22,7 @@ export class ToolManager {
   selectedTool?: Tool | undefined;
   toolMap: Record<ToolName, Tool>
   editTool: EditTool;
+  saveTool: SaveTool;
   hotKeys: HotKeys;
 
   eventsMap = {
@@ -30,9 +35,12 @@ export class ToolManager {
 
   constructor(toolName: ToolName,) {
     this.editTool = new EditTool();
+    this.saveTool = new SaveTool();
+
     this.hotKeys = new HotKeys(this.editTool);
     this.toolMap = {
       [ToolName.EDIT]: this.editTool,
+      [ToolName.SAVE]: this.saveTool,
     }
     // Set up tools
     this.setListeners();

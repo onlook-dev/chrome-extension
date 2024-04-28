@@ -1,4 +1,4 @@
-import { MessageTypes } from '$shared/constants'
+import { MessageService, MessageType } from '$shared/message'
 import { authUserBucket, getActiveProject, popupStateBucket, setActiveProject } from '$lib/utils/localstorage'
 import {
 	activityApplyStream,
@@ -21,41 +21,27 @@ import type { EditEvent, Project } from '$shared/models'
 
 const screenshotService = new ScreenshotService()
 const altScreenshotService = new AltScreenshotService()
+const messageService = MessageService.getInstance()
 
 export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
-	window.addEventListener('message', event => {
-		if (event.source != window) return
+	messageService.subscribe(MessageType.DASHBOARD_AUTH, (user) => {
+		authUserBucket.set({ authUser: user })
+	})
 
-		const message = event.data
+	messageService.subscribe(MessageType.EDIT_EVENT, (event: EditEvent) => {
+		sendEditEvent(event)
+	})
 
-		if (message.type === MessageTypes.DASHBOARD_AUTH && event.origin === baseUrl && message.user) {
-			authUserBucket.set({ authUser: message.user })
-			return
-		}
+	messageService.subscribe(MessageType.SAVE_PROJECT, async () => {
+		const project = await getActiveProject()
+		const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
+		publishService.publish()
+	})
 
-		if (message.type === MessageTypes.EDIT_EVENT) {
-			const editorStyleChange = message.detail as EditEvent
-			sendEditEvent(editorStyleChange)
-			return
-		}
-
-		if (message.type === MessageTypes.OPEN_PROJECT) {
-			getActiveProject().then((project) => {
-				const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
-				publishService.publish()
-			})
-			return
-		}
-
-		if (message.type === MessageTypes.EDIT_PROJECT) {
-			if (message.project) {
-				let project = message.project as Project
-				setActiveProject(project.id)
-				popupStateBucket.set({ activeRoute: PopupRoutes.PROJECT, activeProjectId: project.id })
-				sendEditProjectRequest({ project, enable: true })
-			}
-		}
+	messageService.subscribe(MessageType.EDIT_PROJECT, (project: Project) => {
+		// Pass to background script
+		sendEditProjectRequest({ project, enable: true })
 	})
 
 	activityRevertStream.subscribe(([activity, sender]) => {

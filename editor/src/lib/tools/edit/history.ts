@@ -1,10 +1,11 @@
 import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$shared/models';
 import { get, writable } from 'svelte/store';
-import { emitEditEvent } from '../messages';
+import { MessageService, MessageType } from '$shared/message';
 import { ApplyChangesService } from './applyChange';
 
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
+const messageService = MessageService.getInstance();
 const applyChangeService = new ApplyChangesService();
 
 function compareKeys(a: Record<string, string>, b: Record<string, string>): boolean {
@@ -169,7 +170,7 @@ function applyEvent(event: EditEvent, emit: boolean = true) {
       break;
   }
   if (emit)
-    emitEditEvent(event);
+    messageService.publish(MessageType.EDIT_EVENT, event);
 }
 
 export function toggleEventVisibility(event: EditEvent, visible: boolean) {

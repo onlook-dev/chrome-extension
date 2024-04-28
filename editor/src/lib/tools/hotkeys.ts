@@ -1,8 +1,8 @@
 import hotkeys from "hotkeys-js";
-import { redoLastEvent, undoLastEvent } from "./history";
-import { ToolName } from "..";
-import type { EditTool } from ".";
+import { redoLastEvent, undoLastEvent } from "./edit/history";
+import { ToolName } from ".";
 import { ONLOOK_TOOLBAR } from "$shared/constants";
+import type { EditTool } from "./edit";
 
 hotkeys.filter = function (event) {
   var target = (event.target || event.srcElement || event.currentTarget) as HTMLElement;
@@ -56,7 +56,8 @@ export class HotKeys {
           e.preventDefault();
           e.stopPropagation();
         },
-      }
+      },
+      [ToolName.SAVE]: {},
     }
   }
 
