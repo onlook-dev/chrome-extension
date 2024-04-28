@@ -169,7 +169,7 @@ export class BackgroundEventHandlers {
             this.openOrCreateNewTab(url)
         })
 
-        // Style change from visbug and content script
+        // Style change from (editor -> content script -> background)
         editEventStream.subscribe(([editEvent, sender]) => {
             const tab = sender.tab
             if (!tab) {
