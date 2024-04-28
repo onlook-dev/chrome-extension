@@ -57,8 +57,9 @@ export class BackgroundEventHandlers {
     openOrCreateNewTab(url: string): Promise<chrome.tabs.Tab | undefined> {
         // Normalize the URL by adding a slash if it doesn't end with one and doesn't have a query or fragment
         const hasQueryOrFragment = url.includes('?') || url.includes('#');
-        const safeUrl = url + (url.endsWith('/') || hasQueryOrFragment ? '' : '/');
+        const safeUrl = url + (url.endsWith('/') || hasQueryOrFragment ? '*' : '/*');
 
+        console.log('Opening tab', safeUrl)
         // Create promise to run after callback
         return new Promise((resolve) => {
             // Check if tab is already open
@@ -74,10 +75,10 @@ export class BackgroundEventHandlers {
 
     async setStartupState() {
         for (const cs of chrome.runtime.getManifest().content_scripts ?? []) {
-            for (const tab of await chrome.tabs.query({ url: cs.matches })) {
+            const tabs = await chrome.tabs.query({ url: cs.matches })
+            for (const tab of tabs) {
                 if (tab.url && tab.url.match(/(chrome|chrome-extension):\/\//gi)) continue;
                 if (tab.id === undefined) continue
-
                 chrome.scripting.executeScript({
                     target: { tabId: tab.id, allFrames: cs.all_frames },
                     files: cs.js ?? [],
