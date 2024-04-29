@@ -23,7 +23,7 @@ import { EditEventService } from '$lib/editEvents'
 import { trackEvent } from '$lib/mixpanel'
 import { FirebaseService } from '$lib/storage'
 import { FirebaseProjectService } from '$lib/storage/project'
-import { ProjectTabService } from '$lib/tabs'
+import { ProjectTabService } from '$lib/projects'
 import { EntitySubsciptionService } from './entities'
 
 import { ProjectStatus, type Team, type User } from '$shared/models'
@@ -105,6 +105,9 @@ export class BackgroundEventHandlers {
             getActiveUser().then(user => {
                 if (!user) {
                     this.openOrCreateNewTab(`${baseUrl}${DashboardRoutes.SIGNIN}`)
+                    if (tab) {
+                        this.projectTabManager.toggleTab(tab, false)
+                    }
                     return
                 } else {
                     if (!tab.url) {

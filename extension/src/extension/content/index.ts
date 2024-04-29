@@ -12,7 +12,7 @@ import { ScreenshotService } from './screenshot'
 import { PublishProjectService } from '$lib/publish'
 import { applyActivityChanges, revertActivityChanges } from '$lib/utils/activity'
 import { AltScreenshotService } from './altScreenshot'
-import { ProjectTabService } from '$lib/tabs'
+import { ProjectTabService } from '$lib/projects'
 
 import { ProjectStatus, type EditEvent, type Project } from '$shared/models'
 
@@ -50,7 +50,11 @@ export function setupListeners() {
 		}
 	})
 
-	messageService.subscribe(MessageType.SAVE_PROJECT, async () => {
+	messageService.subscribe(MessageType.PUBLISH_PROJECT, async (payload, correlationId) => {
+		if (correlationId)
+			// Confirm save received
+			messageService.respond({}, correlationId)
+
 		const currentTab = await projectTabManager.getCurrentTab()
 		const project = await projectTabManager.getTabProject(currentTab)
 		const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)

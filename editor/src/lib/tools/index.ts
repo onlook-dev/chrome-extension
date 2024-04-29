@@ -1,5 +1,5 @@
 import { EditTool } from "./edit";
-import { SaveTool } from "./save";
+import { PublishTool } from "./publish";
 
 import { HotKeys } from "./hotkeys";
 
@@ -23,7 +23,7 @@ export class ToolManager {
   selectedToolName?: ToolName | undefined;
   toolMap: Record<ToolName, Tool>
   editTool: EditTool;
-  saveTool: SaveTool;
+  publishTool: PublishTool;
   hotKeys: HotKeys;
 
   eventsMap = {
@@ -36,12 +36,12 @@ export class ToolManager {
 
   constructor(toolName: ToolName = ToolName.EDIT) {
     this.editTool = new EditTool();
-    this.saveTool = new SaveTool();
+    this.publishTool = new PublishTool();
 
     this.hotKeys = new HotKeys(this.editTool);
     this.toolMap = {
       [ToolName.EDIT]: this.editTool,
-      [ToolName.SAVE]: this.saveTool,
+      [ToolName.SAVE]: this.publishTool,
     }
     // Set up tools
     this.setListeners();

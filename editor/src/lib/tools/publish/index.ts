@@ -7,7 +7,7 @@ import retry from 'async-retry';
 import type { Tool } from "..";
 import type { Project } from "$shared/models";
 
-export class SaveTool implements Tool {
+export class PublishTool implements Tool {
     messageService = MessageService.getInstance();
     currentProjectStore = writable<Project | undefined>(undefined);
     projectsStore = writable<Project[]>([]);
@@ -23,7 +23,7 @@ export class SaveTool implements Tool {
         })
 
         // Create screenshots
-        this.prepareSave();
+        this.prepare();
     }
 
     onDestroy(): void {
@@ -63,6 +63,10 @@ export class SaveTool implements Tool {
         });
     }
 
+    public publish = () => {
+        return this.publishWithTimeout(MessageType.PUBLISH_PROJECT, {}, 3, 2, 1000, 3000);
+    };
+
     private getActiveProject = () => {
         return this.publishWithTimeout(MessageType.GET_PROJECT, {}, 3, 2, 1000, 3000);
     }
@@ -71,10 +75,7 @@ export class SaveTool implements Tool {
         return this.publishWithTimeout(MessageType.GET_PROJECTS, {}, 3, 2, 1000, 3000);
     };
 
-    private prepareSave = () => {
+    private prepare = () => {
         this.publishWithTimeout(MessageType.PREPARE_SAVE, {}, 3, 2, 1000, 3000);
-        // Saving state if needed
-        // savingProject.set(true);
-        // setTimeout(() => savingProject.set(false), 10000);
     }
 }

@@ -3,7 +3,7 @@
   import EditorPanel from "./editor/EditorPanel.svelte";
   import LayersPanel from "./layers/LayersPanel.svelte";
   import ElementsPanel from "./elements/ElementsPanel.svelte";
-  import SavePanel from "./save/SavePanel.svelte";
+  import PublishPanel from "./publish/PublishPanel.svelte";
 
   let toolManager: ToolManager = new ToolManager();
 
@@ -17,6 +17,6 @@
 </script>
 
 <EditorPanel {toolManager} />
-<SavePanel {toolManager} />
+<PublishPanel {toolManager} />
 <LayersPanel editTool={toolManager?.editTool} />
 <ElementsPanel editTool={toolManager?.editTool} />

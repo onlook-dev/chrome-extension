@@ -1,7 +1,7 @@
 <script lang="ts">
     import * as Avatar from "$lib/components/ui/avatar/index.js";
     import { timeSince } from "$shared/helpers";
-    import type { Project } from "$shared/models";
+    import { ProjectStatus, type Project } from "$shared/models";
     import { CheckCircled } from "radix-icons-svelte";
 
     export let project: Project;
@@ -22,6 +22,7 @@
                 {project.name}
             </p>
             <p class="text-xs text-tertiary">
+                {project.status === ProjectStatus.PUBLISHED ? "" : "Draft · "}
                 Last edited {timeSince(
                     new Date(project.updatedAt ?? project.createdAt),
                 )} ago

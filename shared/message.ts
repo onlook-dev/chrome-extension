@@ -13,7 +13,7 @@ export enum MessageType {
 
     // Saving
     PREPARE_SAVE = "PREPARE_SAVE",
-    SAVE_PROJECT = "SAVE_PROJECT",
+    PUBLISH_PROJECT = "PUBLISH_PROJECT",
 
     // Generic type to get callback response
     RESPONSE = "RESPONSE"

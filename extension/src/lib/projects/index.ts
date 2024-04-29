@@ -2,12 +2,12 @@ import { sendGetTabId, tabIdResponseStream } from "$lib/utils/messaging";
 import { MAX_TITLE_LENGTH } from "$shared/constants";
 import { getBucket } from "@extend-chrome/storage";
 import { nanoid } from "nanoid";
-import { getActiveUser } from "$lib/utils/localstorage";
+import { getActiveUser, getProjectById, projectsMapBucket } from "$lib/utils/localstorage";
 import { ProjectStatus } from "$shared/models";
 import type { Project, HostData } from "$shared/models";
 
-const projectTabsBucket = getBucket<{ [tabId: string]: Project }>('PROJECT_TABS_MAP')
-const tabStateStore = getBucket<{ [tabId: string]: TabState }>('TABS_STATE_MAP')
+const tabProjectIdBucket = getBucket<{ [tabId: string]: string }>('TABS_PROJECT_ID_MAP')
+const tabStateBucket = getBucket<{ [tabId: string]: TabState }>('TABS_STATE_MAP')
 
 export enum TabState {
     injected = "injected",
@@ -87,16 +87,19 @@ export class ProjectTabService {
     }
 
     async getTabProject(tab: chrome.tabs.Tab): Promise<Project> {
-        const projectsMap = await projectTabsBucket.get()
+        const projectsMap = await tabProjectIdBucket.get()
         if (!tab.id) throw new Error("Tab id not found");
-        console.log("Tab id", tab.id, projectsMap[tab.id])
-        if (!projectsMap[tab.id]) {
-            projectsMap[tab.id] = await this.createNewProject(tab);
+
+        let projectId = projectsMap[tab.id];
+        if (!projectId) {
+            const newProject = await this.createNewProject(tab);
+            projectId = newProject.id;
+            // Save new project in maps
+            tabProjectIdBucket.set({ [tab.id]: newProject.id })
+            projectsMapBucket.set({ [newProject.id]: newProject })
         }
 
-        // Save project
-        projectTabsBucket.set(projectsMap)
-        return projectsMap[tab.id];
+        return getProjectById(projectId);
     }
 
     getDefaultname(url: string | undefined): string {
@@ -143,12 +146,12 @@ export class ProjectTabService {
     }
 
     async getTabState(tabId: number): Promise<TabState> {
-        const stateMap = await tabStateStore.get();
+        const stateMap = await tabStateBucket.get();
         return stateMap[tabId] || TabState.none;
     }
 
     async setTabState(tabId: number, state: TabState) {
-        tabStateStore.set({ [tabId]: state })
+        tabStateBucket.set({ [tabId]: state })
     }
 
     handleTabRefreshed = async (tabId: number) => {
@@ -164,6 +167,6 @@ export class ProjectTabService {
     }
 
     removeTabState(tabId: number) {
-        tabStateStore.remove(tabId.toString())
+        tabStateBucket.remove(tabId.toString())
     }
 }

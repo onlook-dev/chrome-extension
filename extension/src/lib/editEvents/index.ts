@@ -4,7 +4,7 @@ import { convertEditEventToChangeObject } from './convert'
 import { EditType, ActivityStatus, ProjectStatus } from '$shared/models'
 
 import type { Project, EditEvent, Activity, } from '$shared/models'
-import type { ProjectTabService } from '$lib/tabs'
+import type { ProjectTabService } from '$lib/projects'
 
 interface QueueItem {
   tab: chrome.tabs.Tab
@@ -49,7 +49,6 @@ export class EditEventService {
     activeProject.status = ProjectStatus.DRAFT
     activeProject.updatedAt = new Date().toISOString()
     projectsMapBucket.set({ [activeProject.id]: activeProject })
-    console.log('Project updated with activity: ', activeProject)
   }
 
   async getOrCreateActivityFromEditEvent(project: Project, editEvent: EditEvent): Promise<Activity> {

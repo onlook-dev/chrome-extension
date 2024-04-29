@@ -11,13 +11,13 @@
     import * as Accordion from "$lib/components/ui/accordion";
     import ProjectItem from "./ProjectItem.svelte";
 
-    import type { SaveTool } from "$lib/tools/save";
+    import type { PublishTool } from "$lib/tools/publish";
     import type { Project } from "$shared/models";
     import { slide } from "svelte/transition";
 
     export let toolManager: ToolManager;
 
-    let saveTool: SaveTool = toolManager.saveTool;
+    let publishTool: PublishTool = toolManager.publishTool;
     let isInputFocused = false;
     let currentProject: Project | undefined;
     let projects: Project[] = [];
@@ -42,12 +42,12 @@
     $: accordianExpanded = accordianValue === accordianItem;
 
     onMount(() => {
-        saveTool.currentProjectStore.subscribe((value) => {
+        publishTool.currentProjectStore.subscribe((value) => {
             if (!value || Object.keys(value).length === 0) return;
             currentProject = value;
         });
 
-        saveTool.projectsStore.subscribe((value) => {
+        publishTool.projectsStore.subscribe((value) => {
             if (!value || value.length === 0) return;
             projects = value;
         });
@@ -97,8 +97,11 @@
                         ><Pencil2 class="mr-2" />
                         Resume Designing
                     </Button>
-                    <Button variant="primary"
-                        ><Dashboard class="mr-2" />Open in Dashboard</Button
+                    <Button
+                        variant="primary"
+                        on:click={() => {
+                            publishTool.publish();
+                        }}><Dashboard class="mr-2" />Open in Dashboard</Button
                     >
                 </div>
             {/if}
@@ -131,10 +134,7 @@
                                         class="w-full"
                                         on:click={() => {
                                             accordianValue = "";
-                                            console.log(
-                                                "Project clicked",
-                                                project,
-                                            );
+                                            // TODO: Merge project
                                         }}
                                     >
                                         <div
