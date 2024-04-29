@@ -1,10 +1,18 @@
 export enum MessageType {
+    // Auth
     DASHBOARD_AUTH = "DASHBOARD_AUTH",
+
+    // Edit
     EDIT_EVENT = "EDIT_EVENT",
-    SAVE_PROJECT = "SAVE_PROJECT",
     EDIT_PROJECT = "EDIT_PROJECT",
+
+    // Getting
     GET_PROJECT = "GET_PROJECT",
     GET_PROJECTS = "GET_PROJECTS",
+
+    // Saving
+    PREPARE_SAVE = "PREPARE_SAVE",
+    SAVE_PROJECT = "SAVE_PROJECT",
 
     // Generic type to get callback response
     RESPONSE = "RESPONSE"

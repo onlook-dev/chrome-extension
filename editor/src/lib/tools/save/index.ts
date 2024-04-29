@@ -1,9 +1,11 @@
 import { savePanelVisible, savingProject } from "$lib/states/editor";
 import { MessageService, MessageType } from "$shared/message";
+import { writable } from "svelte/store";
+
+import retry from 'async-retry';
 
 import type { Tool } from "..";
 import type { Project } from "$shared/models";
-import { get, writable } from "svelte/store";
 
 export class SaveTool implements Tool {
     messageService = MessageService.getInstance();
@@ -31,25 +33,43 @@ export class SaveTool implements Tool {
     onDoubleClick(el: MouseEvent): void { }
     onScreenResize(el: Event): void { }
 
-    private getActiveProject = () => {
-        return new Promise((resolve, reject) => {
-            this.messageService.publish(MessageType.GET_PROJECT, {}, (project: Project) => {
-                resolve(project);
+    publishWithTimeout(messageType, payload, retries = 3, factor = 2, minTimeout = 1000, timeout = 5000) {
+        return retry(() => {
+            return new Promise((resolve, reject) => {
+                let timeoutHandle = setTimeout(() => {
+                    reject(new Error('Timeout waiting for response'));
+                }, timeout);
+
+                this.messageService.publish(messageType, payload, (response) => {
+                    clearTimeout(timeoutHandle);
+                    if (response) {
+                        resolve(response);
+                    } else {
+                        reject(new Error('No response received'));
+                    }
+                });
             });
-        })
+        }, {
+            retries: retries,
+            factor: factor,
+            minTimeout: minTimeout,
+            onRetry: (err, attempt) => {
+                console.log(`Attempt ${attempt}: Retrying ${messageType}`);
+            }
+        });
+    }
+
+    private getActiveProject = () => {
+        return this.publishWithTimeout(MessageType.GET_PROJECT, {}, 3, 2, 1000, 3000);
     }
 
     private getProjects = () => {
-        return new Promise((resolve, reject) => {
-            this.messageService.publish(MessageType.GET_PROJECTS, {}, (projects: Project[]) => {
-                resolve(projects);
-            });
-        })
-    }
+        return this.publishWithTimeout(MessageType.GET_PROJECTS, {}, 3, 2, 1000, 3000);
+    };
 
-    prepareSave = () => {
+    private prepareSave = () => {
         savingProject.set(true);
-        this.messageService.publish(MessageType.SAVE_PROJECT)
+        this.messageService.publish(MessageType.PREPARE_SAVE);
         // Just in case, disable saving state after 10 seconds
         setTimeout(() => savingProject.set(false), 10000);
     }

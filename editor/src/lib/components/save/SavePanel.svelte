@@ -2,7 +2,7 @@
     import { draggable } from "@neodrag/svelte";
     import { savePanelVisible } from "$lib/states/editor";
     import { ToolManager, ToolName } from "$lib/tools";
-    import { Dashboard, Pencil2, Share2 } from "radix-icons-svelte";
+    import { Dashboard, Pencil2, Shadow, Share2 } from "radix-icons-svelte";
     import { onMount } from "svelte";
 
     import Logo from "./Logo.svelte";
@@ -19,14 +19,6 @@
 
     let saveTool: SaveTool = toolManager.saveTool;
     let isInputFocused = false;
-    const defaultProj = {
-        id: "1",
-        name: "My Project",
-        hostData: {
-            favicon: "",
-        },
-    };
-
     let currentProject: Project | undefined;
     let projects: Project[] = [];
     let selectableProjects = [];
@@ -148,6 +140,13 @@
                             </Accordion.Content>
                         </Accordion.Item>
                     </Accordion.Root>
+                {:else}
+                    <div
+                        class="text-tertiary text-sm flex flex-row justify-center items-center mt-2"
+                    >
+                        <p>Loading project</p>
+                        <Shadow class=" ml-2 w-4 h-4 animate-spin" />
+                    </div>
                 {/if}
             </div>
         </Card.Content>
