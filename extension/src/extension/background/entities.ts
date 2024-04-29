@@ -5,13 +5,13 @@ import type { FirebaseProjectService } from "$lib/storage/project"
 import type { Activity, Team, User } from "$shared/models"
 
 export class EntitySubsciptionService {
-    // TODO: Should move subscriptions into its own service
     projectSubs: (() => void)[] = []
     teamSubs: (() => void)[] = []
     userSubs: (() => void)[] = []
     activeProjectSub: (() => void) | null = null
 
     constructor(private projectService: FirebaseProjectService, private teamService: FirebaseService<Team>, private userService: FirebaseService<User>) { }
+
     listen() {
         // User  change from signing in
         userBucket.valueStream.subscribe(async ({ user }) => {

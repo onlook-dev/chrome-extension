@@ -61,7 +61,6 @@ export class BackgroundEventHandlers {
         const hasQueryOrFragment = url.includes('?') || url.includes('#');
         const safeUrl = url + (url.endsWith('/') || hasQueryOrFragment ? '*' : '/*');
 
-        console.log('Opening tab', safeUrl)
         // Create promise to run after callback
         return new Promise((resolve) => {
             // Check if tab is already open
@@ -92,6 +91,7 @@ export class BackgroundEventHandlers {
 
     listen = () => {
         subscribeToFirebaseAuthChanges()
+        this.entitiesService.listen()
 
         // Refresh tabs on update
         chrome.runtime.onInstalled.addListener(() => {

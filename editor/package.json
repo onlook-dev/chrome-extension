@@ -1,5 +1,5 @@
 {
-  "name": "@onlook/bonfire-editor",
+  "name": "@onlook/editor",
   "version": "0.0.5",
   "main": "public/build/bundle.min.js",
   "type": "module",
