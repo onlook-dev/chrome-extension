@@ -62,17 +62,19 @@ export class MessageService {
     private handleMessage(event: MessageEvent) {
         if (this.allowedOrigins.has(event.origin)) {
             const message: IMessage = event.data;
+            let payload = message.payload ? JSON.parse(message.payload) : message.payload;
+
             // Handle general subscribers
             const subscribers = this.listeners.get(message.type);
             if (subscribers) {
-                subscribers.forEach(callback => callback(JSON.parse(message.payload), message.correlationId));
+                subscribers.forEach(callback => callback(payload, message.correlationId));
             }
 
             // Handle correlation-specific callbacks if correlationId is provided
             if (message.correlationId && message.type === MessageType.RESPONSE) {
                 const correlationCallbacks = this.listeners.get(message.correlationId);
                 if (correlationCallbacks) {
-                    correlationCallbacks.forEach(callback => callback(JSON.parse(message.payload)));
+                    correlationCallbacks.forEach(callback => callback(payload));
                     this.listeners.delete(message.correlationId); // Clean up after handling
                 }
             }
