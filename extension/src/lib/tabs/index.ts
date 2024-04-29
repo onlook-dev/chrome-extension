@@ -2,8 +2,9 @@ import { sendGetTabId, tabIdResponseStream } from "$lib/utils/messaging";
 import { MAX_TITLE_LENGTH } from "$shared/constants";
 import { getBucket } from "@extend-chrome/storage";
 import { nanoid } from "nanoid";
-import type { Project, HostData } from "$shared/models";
 import { getActiveUser } from "$lib/utils/localstorage";
+import { ProjectStatus } from "$shared/models";
+import type { Project, HostData } from "$shared/models";
 
 const projectTabsBucket = getBucket<{ [tabId: string]: Project }>('PROJECT_TABS_MAP')
 const tabStateStore = getBucket<{ [tabId: string]: TabState }>('TABS_STATE_MAP')
@@ -131,7 +132,8 @@ export class ProjectTabService {
             comments: [],
             hostData: { favicon: tab.favIconUrl } as HostData,
             createdAt: new Date().toISOString(),
-            githubHistoryIds: []
+            githubHistoryIds: [],
+            status: ProjectStatus.DRAFT
         } as Project
         return newProject;
     }

@@ -1,6 +1,7 @@
 export enum MessageType {
     // Auth
-    DASHBOARD_AUTH = "DASHBOARD_AUTH",
+    DASHBOARD_SIGN_IN = "DASHBOARD_SIGN_IN",
+    DASHBOARD_SIGN_OUT = "DASHBOARD_SIGN_OUT",
 
     // Edit
     EDIT_EVENT = "EDIT_EVENT",

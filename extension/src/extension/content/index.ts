@@ -14,7 +14,7 @@ import { applyActivityChanges, revertActivityChanges } from '$lib/utils/activity
 import { AltScreenshotService } from './altScreenshot'
 import { ProjectTabService } from '$lib/tabs'
 
-import type { EditEvent, Project } from '$shared/models'
+import { ProjectStatus, type EditEvent, type Project } from '$shared/models'
 
 const screenshotService = new ScreenshotService()
 const altScreenshotService = new AltScreenshotService()
@@ -23,16 +23,36 @@ const projectTabManager = new ProjectTabService()
 
 export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
-	messageService.subscribe(MessageType.DASHBOARD_AUTH, (user) => {
+	messageService.subscribe(MessageType.DASHBOARD_SIGN_IN, (user) => {
 		authUserBucket.set({ authUser: user })
+	})
+
+	messageService.subscribe(MessageType.DASHBOARD_SIGN_OUT, () => {
+		console.log('User signed out')
+		authUserBucket.clear()
 	})
 
 	messageService.subscribe(MessageType.EDIT_EVENT, (event: EditEvent) => {
 		sendEditEvent(event)
 	})
 
+	messageService.subscribe(MessageType.PREPARE_SAVE, async (payload, correlationId) => {
+		if (correlationId)
+			// Confirm save received
+			messageService.respond({}, correlationId)
+
+		const currentTab = await projectTabManager.getCurrentTab()
+		const project = await projectTabManager.getTabProject(currentTab)
+
+		// Prepare project for saving
+		if (!project.status || project.status === ProjectStatus.DRAFT) {
+			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
+			publishService.prepare()
+			console.log(project)
+		}
+	})
+
 	messageService.subscribe(MessageType.SAVE_PROJECT, async () => {
-		// TODO: handle this
 		const currentTab = await projectTabManager.getCurrentTab()
 		const project = await projectTabManager.getTabProject(currentTab)
 		const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)

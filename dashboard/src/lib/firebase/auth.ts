@@ -19,7 +19,7 @@ export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged((authUser) => {
 		if (authUser) {
 			// Send authUser to extension
-			MessageService.getInstance().publish(MessageType.DASHBOARD_AUTH, authUser);
+			MessageService.getInstance().publish(MessageType.DASHBOARD_SIGN_IN, authUser);
 
 			// Listen and update user from remote
 			(new FirebaseService<User>(FirestoreCollections.USERS)).subscribe(authUser.uid, (user) => {
@@ -33,6 +33,7 @@ export function subscribeToFirebaseAuthChanges() {
 			});
 			localStorage.setItem(USER_ID_KEY, authUser.uid);
 		} else {
+			MessageService.getInstance().publish(MessageType.DASHBOARD_SIGN_OUT);
 			// Clear data when signed out
 			userStore.set(undefined);
 			usersMapStore.set(new Map());

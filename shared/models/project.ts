@@ -13,6 +13,7 @@ export interface Project {
   comments: Comment[];
   activities: Record<string, Activity>;
   createdAt: string;
+  status?: ProjectStatus;
 
   // GitHub
   githubHistoryIds: string[];
@@ -21,4 +22,12 @@ export interface Project {
 
   // Settings
   projectSettings?: ProjectSettings;
+}
+
+export enum ProjectStatus {
+  DRAFT = "draft",
+  PREPARED = "prepared",
+  PUBLISHED = "published",
+  ARCHIVED = "archived",
+  DELETED = "deleted",
 }

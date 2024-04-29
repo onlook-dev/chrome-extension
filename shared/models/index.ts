@@ -8,6 +8,8 @@ export type { ProcessedActivity, PathInfo, FileContentData, StyleTranslationInpu
 export type { HostData } from './hostData';
 export type { Payment } from './payment';
 
+// Enums, not types
+export { ProjectStatus } from './project';
 export { StyleFramework } from './projectSettings';
 export { PaymentStatus } from './payment';
 export { Tier, Role } from './team';

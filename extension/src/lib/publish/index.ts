@@ -3,7 +3,7 @@ import { applyActivityChanges, revertActivityChanges } from "$lib/utils/activity
 import { baseUrl } from "$lib/utils/env";
 import { sendOpenUrlRequest, sendSaveProject } from "$lib/utils/messaging";
 import { DashboardRoutes } from "$shared/constants";
-import type { Project } from "$shared/models";
+import { ProjectStatus, type Project } from "$shared/models";
 import type { ScreenshotService } from "$extension/content/screenshot";
 import type { AltScreenshotService } from "$extension/content/altScreenshot";
 
@@ -15,6 +15,16 @@ export class PublishProjectService {
     ) { }
 
     public async publish() {
+        if (this.project.status !== ProjectStatus.PREPARED)
+            await this.prepare();
+
+        await sendSaveProject(this.project);
+        // setEditorProjectSaved();
+        sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
+        this.project.status = ProjectStatus.PUBLISHED;
+    }
+
+    public async prepare() {
         try {
             await this.takeActivityScreenshots();
         } catch (e) {
@@ -25,10 +35,7 @@ export class PublishProjectService {
                 console.error("Error taking alt screenshots", e);
             }
         }
-
-        await sendSaveProject(this.project);
-        setEditorProjectSaved();
-        sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
+        this.project.status = ProjectStatus.PREPARED;
     }
 
     async takeActivityScreenshots() {

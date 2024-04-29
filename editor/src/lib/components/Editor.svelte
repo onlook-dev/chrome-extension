@@ -5,7 +5,7 @@
   import ElementsPanel from "./elements/ElementsPanel.svelte";
   import SavePanel from "./save/SavePanel.svelte";
 
-  let toolManager: ToolManager = new ToolManager(ToolName.SAVE);
+  let toolManager: ToolManager = new ToolManager();
 
   export function getActiveToolName(): ToolName {
     return toolManager.selectedToolName;

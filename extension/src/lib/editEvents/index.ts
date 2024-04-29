@@ -1,7 +1,7 @@
 import { getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { nanoid } from 'nanoid'
 import { convertEditEventToChangeObject } from './convert'
-import { EditType, ActivityStatus } from '$shared/models'
+import { EditType, ActivityStatus, ProjectStatus } from '$shared/models'
 
 import type { Project, EditEvent, Activity, } from '$shared/models'
 import type { ProjectTabService } from '$lib/tabs'
@@ -46,7 +46,9 @@ export class EditEventService {
 
     // Update and save project
     activeProject.activities[editEvent.selector] = activity
+    activeProject.status = ProjectStatus.DRAFT
     projectsMapBucket.set({ [activeProject.id]: activeProject })
+    console.log('Project updated with activity: ', activeProject)
   }
 
   async getOrCreateActivityFromEditEvent(project: Project, editEvent: EditEvent): Promise<Activity> {

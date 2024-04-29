@@ -22,6 +22,7 @@
     let currentProject: Project | undefined;
     let projects: Project[] = [];
     let selectableProjects = [];
+
     $: if (currentProject) {
         selectableProjects = [
             currentProject,
@@ -56,9 +57,12 @@
     }}
     on:focusin={() => (isInputFocused = true)}
     on:focusout={() => (isInputFocused = false)}
-    class="fixed top-[calc(50vh-200px)] left-[calc(50vw-170px)] {$savePanelVisible
+    class="fixed top-[calc(50vh-{accordianExpanded
+        ? '200px'
+        : '100px'})] left-[calc(50vw-170px)] {$savePanelVisible
         ? 'visible'
         : 'invisible'}"
+    style="transition: top 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
 >
     <Card.Root
         class="w-[400px] h-[{accordianExpanded

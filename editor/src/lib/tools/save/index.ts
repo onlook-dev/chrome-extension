@@ -21,6 +21,9 @@ export class SaveTool implements Tool {
         this.getProjects().then((projects: Project[]) => {
             this.projectsStore.set(projects);
         })
+
+        // Create screenshots
+        this.prepareSave();
     }
 
     onDestroy(): void {
@@ -33,6 +36,7 @@ export class SaveTool implements Tool {
     onDoubleClick(el: MouseEvent): void { }
     onScreenResize(el: Event): void { }
 
+    // TODO: This could be its own helper 
     publishWithTimeout(messageType, payload, retries = 3, factor = 2, minTimeout = 1000, timeout = 5000) {
         return retry(() => {
             return new Promise((resolve, reject) => {
@@ -68,10 +72,10 @@ export class SaveTool implements Tool {
     };
 
     private prepareSave = () => {
-        savingProject.set(true);
-        this.messageService.publish(MessageType.PREPARE_SAVE);
-        // Just in case, disable saving state after 10 seconds
-        setTimeout(() => savingProject.set(false), 10000);
+        this.publishWithTimeout(MessageType.PREPARE_SAVE, {}, 3, 2, 1000, 3000);
+        // Saving state if needed
+        // savingProject.set(true);
+        // setTimeout(() => savingProject.set(false), 10000);
     }
 
     save = () => {

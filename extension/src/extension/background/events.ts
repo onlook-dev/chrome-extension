@@ -17,7 +17,7 @@ import {
     usersMapBucket,
     getActiveUser
 } from '$lib/utils/localstorage'
-import { signInUser, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
+import { signInUser, signOut, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { captureActiveTab } from './screenshot'
 import { EditEventService } from '$lib/editEvents'
 import { trackEvent } from '$lib/mixpanel'
@@ -166,7 +166,10 @@ export class BackgroundEventHandlers {
         // Auth user changes from content script
         authUserBucket.valueStream.subscribe(({ authUser }) => {
             if (authUser) {
+                console.log('User signed in')
                 signInUser(authUser)
+            } else {
+                signOut()
             }
         })
 
