@@ -37,7 +37,7 @@ export class SaveTool implements Tool {
     onScreenResize(el: Event): void { }
 
     // TODO: This could be its own helper 
-    publishWithTimeout(messageType, payload, retries = 3, factor = 2, minTimeout = 1000, timeout = 5000) {
+    private publishWithTimeout(messageType, payload, retries = 3, factor = 2, minTimeout = 1000, timeout = 5000) {
         return retry(() => {
             return new Promise((resolve, reject) => {
                 let timeoutHandle = setTimeout(() => {
@@ -76,13 +76,5 @@ export class SaveTool implements Tool {
         // Saving state if needed
         // savingProject.set(true);
         // setTimeout(() => savingProject.set(false), 10000);
-    }
-
-    save = () => {
-        console.log('Save');
-    }
-
-    listenForMessages = () => {
-
     }
 }

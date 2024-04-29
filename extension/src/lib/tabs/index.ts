@@ -89,10 +89,13 @@ export class ProjectTabService {
     async getTabProject(tab: chrome.tabs.Tab): Promise<Project> {
         const projectsMap = await projectTabsBucket.get()
         if (!tab.id) throw new Error("Tab id not found");
-
+        console.log("Tab id", tab.id, projectsMap[tab.id])
         if (!projectsMap[tab.id]) {
-            projectsMap[tab.id] = this.createNewProject(tab);
+            projectsMap[tab.id] = await this.createNewProject(tab);
         }
+
+        // Save project
+        projectTabsBucket.set(projectsMap)
         return projectsMap[tab.id];
     }
 
@@ -132,6 +135,7 @@ export class ProjectTabService {
             comments: [],
             hostData: { favicon: tab.favIconUrl } as HostData,
             createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
             githubHistoryIds: [],
             status: ProjectStatus.DRAFT
         } as Project

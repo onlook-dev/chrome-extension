@@ -1,11 +1,12 @@
 import { hideEditor, setEditorProjectSaved, showEditor } from "$lib/editor/helpers";
 import { applyActivityChanges, revertActivityChanges } from "$lib/utils/activity";
 import { baseUrl } from "$lib/utils/env";
-import { sendOpenUrlRequest, sendSaveProject } from "$lib/utils/messaging";
+import { sendOpenUrlRequest, sendPublishProjectRequest } from "$lib/utils/messaging";
 import { DashboardRoutes } from "$shared/constants";
 import { ProjectStatus, type Project } from "$shared/models";
 import type { ScreenshotService } from "$extension/content/screenshot";
 import type { AltScreenshotService } from "$extension/content/altScreenshot";
+import { projectsMapBucket } from "$lib/utils/localstorage";
 
 export class PublishProjectService {
     constructor(
@@ -18,13 +19,16 @@ export class PublishProjectService {
         if (this.project.status !== ProjectStatus.PREPARED)
             await this.prepare();
 
-        await sendSaveProject(this.project);
+        await sendPublishProjectRequest(this.project);
         // setEditorProjectSaved();
         sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
-        this.project.status = ProjectStatus.PUBLISHED;
     }
 
     public async prepare() {
+        if (this.project.status === ProjectStatus.PREPARED) {
+            console.log("Project already prepared");
+            return;
+        }
         try {
             await this.takeActivityScreenshots();
         } catch (e) {
@@ -36,6 +40,9 @@ export class PublishProjectService {
             }
         }
         this.project.status = ProjectStatus.PREPARED;
+        // Save locally
+        projectsMapBucket.set({ [this.project.id]: this.project })
+        console.log("Project prepared");
     }
 
     async takeActivityScreenshots() {

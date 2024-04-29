@@ -47,6 +47,7 @@ export class EditEventService {
     // Update and save project
     activeProject.activities[editEvent.selector] = activity
     activeProject.status = ProjectStatus.DRAFT
+    activeProject.updatedAt = new Date().toISOString()
     projectsMapBucket.set({ [activeProject.id]: activeProject })
     console.log('Project updated with activity: ', activeProject)
   }

@@ -28,7 +28,6 @@ export function setupListeners() {
 	})
 
 	messageService.subscribe(MessageType.DASHBOARD_SIGN_OUT, () => {
-		console.log('User signed out')
 		authUserBucket.clear()
 	})
 
@@ -48,7 +47,6 @@ export function setupListeners() {
 		if (!project.status || project.status === ProjectStatus.DRAFT) {
 			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
 			publishService.prepare()
-			console.log(project)
 		}
 	})
 

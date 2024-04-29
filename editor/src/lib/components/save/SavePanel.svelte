@@ -26,7 +26,14 @@
     $: if (currentProject) {
         selectableProjects = [
             currentProject,
-            ...projects.filter((p) => p.id !== currentProject?.id),
+            ...projects
+                .filter((p) => p.id !== currentProject?.id)
+                .sort((a, b) => {
+                    return (a.updatedAt || a.createdAt) >
+                        (b.updatedAt || b.createdAt)
+                        ? -1
+                        : 1;
+                }),
         ];
     }
 

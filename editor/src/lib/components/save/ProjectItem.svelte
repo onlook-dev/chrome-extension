@@ -1,5 +1,6 @@
 <script lang="ts">
     import * as Avatar from "$lib/components/ui/avatar/index.js";
+    import { timeSince } from "$shared/helpers";
     import type { Project } from "$shared/models";
     import { CheckCircled } from "radix-icons-svelte";
 
@@ -20,7 +21,11 @@
             <p>
                 {project.name}
             </p>
-            <p class="text-xs text-tertiary">New Project • Created Now</p>
+            <p class="text-xs text-tertiary">
+                Last edited {timeSince(
+                    new Date(project.updatedAt ?? project.createdAt),
+                )} ago
+            </p>
         </div>
         {#if selected}
             <CheckCircled class="ml-auto w-4 h-4 text-green-500" />

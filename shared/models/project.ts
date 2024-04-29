@@ -13,6 +13,7 @@ export interface Project {
   comments: Comment[];
   activities: Record<string, Activity>;
   createdAt: string;
+  updatedAt?: string;
   status?: ProjectStatus;
 
   // GitHub

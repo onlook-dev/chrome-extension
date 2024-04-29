@@ -4,7 +4,7 @@ import {
     editProjectRequestStream,
     openUrlRequestStream,
     editEventStream,
-    saveProjectStream,
+    publishProjectStream,
     sendPageScreenshotResponse,
     pageScreenshotRequestStream,
     tabIdRequestStream,
@@ -26,7 +26,7 @@ import { FirebaseProjectService } from '$lib/storage/project'
 import { ProjectTabService } from '$lib/tabs'
 import { EntitySubsciptionService } from './entities'
 
-import type { Team, User } from '$shared/models'
+import { ProjectStatus, type Team, type User } from '$shared/models'
 import { forwardToActiveTab } from './tabs'
 
 export class BackgroundEventHandlers {
@@ -139,7 +139,8 @@ export class BackgroundEventHandlers {
             forwardToActiveTab(sender.tab, sendTabIdResponse)
         })
 
-        saveProjectStream.subscribe(([project]) => {
+        publishProjectStream.subscribe(([project]) => {
+            project.status = ProjectStatus.PUBLISHED
             this.projectService.post(project)
             projectsMapBucket.set({ [project.id]: project })
         })
@@ -166,7 +167,6 @@ export class BackgroundEventHandlers {
         // Auth user changes from content script
         authUserBucket.valueStream.subscribe(({ authUser }) => {
             if (authUser) {
-                console.log('User signed in')
                 signInUser(authUser)
             } else {
                 signOut()
