@@ -70,7 +70,6 @@
 					if (!firebaseProject || !Object.keys(firebaseProject).length) {
 						return;
 					}
-					console.log('Project:', firebaseProject);
 					$projectsMapStore.set(projectId, firebaseProject);
 					projectsMapStore.set($projectsMapStore);
 					project = firebaseProject;

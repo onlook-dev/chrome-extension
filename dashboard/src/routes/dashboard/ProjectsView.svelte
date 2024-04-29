@@ -19,7 +19,7 @@
 		if (!$projectsMapStore.has(projectId)) {
 			projectService
 				.subscribe(projectId, (firebaseProject) => {
-					if (!firebaseProject) return;
+					if (!firebaseProject || !Object.keys(firebaseProject)) return;
 					projectsMapStore.update((map) => map.set(projectId, firebaseProject));
 				})
 				.then((unsubscribe) => {
@@ -47,7 +47,7 @@
 >
 	{#if team?.projectIds.length}
 		{#each team?.projectIds.map((id) => $projectsMapStore.get(id)) as project}
-			{#if project}
+			{#if project && Object.keys(project).length}
 				<button
 					on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
 					class="transition rounded space-y-4 p-4 border border-black hover:bg-surface hover:border-stone-700 block"

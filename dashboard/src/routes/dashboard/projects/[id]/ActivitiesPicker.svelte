@@ -10,14 +10,15 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
-	import { type Project } from '$shared/models';
+	import type { Project, Team } from '$shared/models';
 	import { goto } from '$app/navigation';
-	import { DashboardRoutes } from '$shared/constants';
+	import { DashboardRoutes, FirestoreCollections } from '$shared/constants';
 
 	export let projectService: FirebaseService<Project>;
 	export let project: Project;
 	export let activeActivityId: string;
 
+	let teamsService: FirebaseService<Team> = new FirebaseService(FirestoreCollections.TEAMS);
 	let resizeObserver: ResizeObserver;
 	let activityCols = 'grid-cols-4';
 	let container: HTMLDivElement;
@@ -62,25 +63,26 @@
 	}
 
 	function deleteProject() {
-		projectService.delete(project.id).then(() => {
-			// Remove project from team locally. Cloud functions will handle db.
-			teamsMapStore.update((teamsMap) => {
-				const team = teamsMap.get(project.teamId);
-				if (!team) return teamsMap;
+		projectService
+			.delete(project.id)
+			.then(async () => {
+				// Remove project from team
+				const team = $teamsMapStore.get(project.teamId);
+				if (team) {
+					team.projectIds = team.projectIds.filter((id) => id !== project.id);
+					await teamsService.post(team, false);
+					teamsMapStore.update((teamsMap) => teamsMap.set(team.id, team));
+				}
 
-				team.projectIds = team.projectIds.filter((id) => id !== project.id);
-				teamsMap.set(team.id, team);
-				return teamsMap;
+				// Remove project from store
+				projectsMapStore.update((projectsMap) => {
+					projectsMap.delete(project.id);
+					return projectsMap;
+				});
+			})
+			.finally(() => {
+				goto(DashboardRoutes.DASHBOARD);
 			});
-
-			// Remove project from store
-			projectsMapStore.update((projectsMap) => {
-				projectsMap.delete(project.id);
-				return projectsMap;
-			});
-
-			goto(DashboardRoutes.DASHBOARD);
-		});
 	}
 </script>
 
