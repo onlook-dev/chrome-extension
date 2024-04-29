@@ -62,27 +62,25 @@
 	}
 
 	function deleteProject() {
-		projectService
-			.delete(project.id)
-			.then(() => {
-				// Remove project from store
-				projectsMapStore.update((projectsMap) => {
-					projectsMap.delete(project.id);
-					return projectsMap;
-				});
+		projectService.delete(project.id).then(() => {
+			// Remove project from team locally. Cloud functions will handle db.
+			teamsMapStore.update((teamsMap) => {
+				const team = teamsMap.get(project.teamId);
+				if (!team) return teamsMap;
 
-				// Remove project from team locally. Cloud functions will handle db.
-				teamsMapStore.update((teamsMap) => {
-					const team = teamsMap.get(project.teamId);
-					if (!team) return teamsMap;
-					team.projectIds = team.projectIds.filter((id) => id !== project.id);
-					teamsMap.set(team.id, team);
-					return teamsMap;
-				});
-			})
-			.finally(() => {
-				goto(DashboardRoutes.DASHBOARD);
+				team.projectIds = team.projectIds.filter((id) => id !== project.id);
+				teamsMap.set(team.id, team);
+				return teamsMap;
 			});
+
+			// Remove project from store
+			projectsMapStore.update((projectsMap) => {
+				projectsMap.delete(project.id);
+				return projectsMap;
+			});
+
+			goto(DashboardRoutes.DASHBOARD);
+		});
 	}
 </script>
 

@@ -13,7 +13,7 @@
 	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
-	import { Pencil2 } from 'svelte-radix';
+	import { Pencil2, Shadow } from 'svelte-radix';
 	import { MessageService, MessageType } from '$shared/message';
 
 	import type { User, Activity, Project } from '$shared/models';
@@ -67,6 +67,10 @@
 		} else {
 			projectService
 				.subscribe(projectId, async (firebaseProject) => {
+					if (!firebaseProject || !Object.keys(firebaseProject).length) {
+						return;
+					}
+					console.log('Project:', firebaseProject);
 					$projectsMapStore.set(projectId, firebaseProject);
 					projectsMapStore.set($projectsMapStore);
 					project = firebaseProject;
@@ -148,8 +152,9 @@
 			{/if}
 		</Resizable.PaneGroup>
 	{:else}
-		<div class="flex flex-col items-center justify-center h-full">
-			<p class="text-gray-500">Loading...</p>
+		<div class="flex flex-row items-center justify-center h-full">
+			<Shadow class="animate-spin mr-2" />
+			<p class="text-gray-500">Loading Project...</p>
 		</div>
 	{/if}
 </div>

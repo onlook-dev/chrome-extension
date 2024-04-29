@@ -19,6 +19,7 @@
 		if (!$projectsMapStore.has(projectId)) {
 			projectService
 				.subscribe(projectId, (firebaseProject) => {
+					if (!firebaseProject) return;
 					projectsMapStore.update((map) => map.set(projectId, firebaseProject));
 				})
 				.then((unsubscribe) => {
