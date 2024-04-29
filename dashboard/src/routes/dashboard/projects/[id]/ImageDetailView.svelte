@@ -75,8 +75,8 @@
 				canvasClass="transition {mode === Mode.Dark
 					? 'bg-stone-200 text-surface'
 					: 'bg-surface text-tertiary'}"
-				beforeImage={project.hostData.beforeImage}
-				afterImage={project.hostData.previewImage}
+				beforeImage={project.hostData?.beforeImage}
+				afterImage={project.hostData?.previewImage}
 			/>
 		{/if}
 	</div>

@@ -52,14 +52,14 @@
 					class="transition rounded space-y-4 p-4 border border-black hover:bg-surface hover:border-stone-700 block"
 				>
 					<figure class="">
-						{#if project?.hostData.previewImage}
+						{#if project?.hostData?.previewImage}
 							<img
-								src={project.hostData.previewImage}
+								src={project.hostData?.previewImage}
 								alt={project.name}
 								class="object-cover object-top aspect-video rounded w-full"
 							/>
 						{:else}
-							<div class="bg-gray-700 aspect-video rounded w-full" />
+							<div class="bg-surface aspect-video rounded w-full" />
 						{/if}
 					</figure>
 					<div class="flex items-center space-x-2">

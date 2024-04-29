@@ -9,7 +9,7 @@ export interface Project {
   name: string;
   teamId: string;
   hostUrl: string;
-  hostData: HostData;
+  hostData?: HostData;
   comments: Comment[];
   activities: Record<string, Activity>;
   createdAt: string;

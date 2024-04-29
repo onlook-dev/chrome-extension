@@ -1,17 +1,18 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { EyeNone, Shadow, TriangleDown } from 'svelte-radix';
+	import { EyeNone, Gear, Shadow, Trash, TriangleDown } from 'svelte-radix';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { shortenSelector, sortActivities } from '$shared/helpers';
-	import { writable } from 'svelte/store';
 	import { FirebaseService } from '$lib/storage';
-	import { projectsMapStore } from '$lib/utils/store';
+	import { projectsMapStore, teamsMapStore } from '$lib/utils/store';
 
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
-	import type { Project } from '$shared/models';
+	import { type Project } from '$shared/models';
+	import { goto } from '$app/navigation';
+	import { DashboardRoutes } from '$shared/constants';
 
 	export let projectService: FirebaseService<Project>;
 	export let project: Project;
@@ -21,7 +22,6 @@
 	let activityCols = 'grid-cols-4';
 	let container: HTMLDivElement;
 	let imageErrors: string[] = [];
-	let editable = writable(false);
 	let loadingImages = true;
 
 	onMount(() => {
@@ -60,23 +60,64 @@
 	function handleImageError(imageUrl: string) {
 		imageErrors = [...imageErrors, imageUrl];
 	}
+
+	function deleteProject() {
+		projectService
+			.delete(project.id)
+			.then(() => {
+				// Remove project from store
+				projectsMapStore.update((projectsMap) => {
+					projectsMap.delete(project.id);
+					return projectsMap;
+				});
+
+				// Remove project from team locally. Cloud functions will handle db.
+				teamsMapStore.update((teamsMap) => {
+					const team = teamsMap.get(project.teamId);
+					if (!team) return teamsMap;
+					team.projectIds = team.projectIds.filter((id) => id !== project.id);
+					teamsMap.set(team.id, team);
+					return teamsMap;
+				});
+			})
+			.finally(() => {
+				goto(DashboardRoutes.DASHBOARD);
+			});
+	}
 </script>
 
 <div class="bg-black flex flex-col w-full h-full space-y-6">
 	<div class="p-4 flex flex-col space-y-2">
-		<h1
-			class="rounded p-2 text-xl focus:ring-0 focus:outline-none border border-transparent focus:border-stone-800 hover:border-stone-800 transition"
-			contenteditable={true}
-			on:keypress={(e) => {
-				if (e.key === 'Enter') {
-					e.preventDefault();
-					e.currentTarget.blur();
-				}
-			}}
-			on:blur={handleBlur}
-		>
-			{project.name}
-		</h1>
+		<div class="flex flex-row">
+			<h1
+				class="rounded p-2 text-xl focus:ring-0 focus:outline-none border border-transparent focus:border-stone-800 hover:border-stone-800 transition"
+				contenteditable={true}
+				on:keypress={(e) => {
+					if (e.key === 'Enter') {
+						e.preventDefault();
+						e.currentTarget.blur();
+					}
+				}}
+				on:blur={handleBlur}
+			>
+				{project.name}
+			</h1>
+			<div class="ml-auto">
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger>
+						<Button variant="ghost" class=" text-tertiary">
+							<Gear class="w-4 h-4" />
+						</Button>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content class="w-56 text-red-600">
+						<DropdownMenu.Item on:click={deleteProject}>
+							<Trash class="mr-2 h-4 w-4" />
+							<span>Delete Project</span>
+						</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			</div>
+		</div>
 		<h2 class="px-2 text-xs text-white/60">
 			{project.hostUrl}
 		</h2>
