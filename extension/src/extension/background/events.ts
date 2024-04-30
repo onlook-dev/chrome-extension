@@ -128,9 +128,8 @@ export class BackgroundEventHandlers {
 
         chrome.tabs.onUpdated.addListener(
             async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
-                if (changeInfo.status == 'complete' && tab.url) {
-                    this.projectTabManager.handleTabRefreshed(tabId)
-                }
+                if (changeInfo.status !== 'complete') return
+                this.projectTabManager.handleTabRefreshed(tabId, tab.url)
             }
         )
 

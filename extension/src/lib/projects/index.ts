@@ -23,6 +23,10 @@ export class ProjectTabService {
         platform.scripting.executeScript({
             target: { tabId: tabId },
             files: ['src/lib/editor/inject.js']
+        }).then(() => {
+            // Just in case tab was already injected. Can happen in navigation. 
+            // This could cause bugs in the future if we extend restore functionalities. Best way to do this rn.
+            this.restoreTab(tabId)
         })
         this.setTabState(tabId, TabState.injected)
     }
@@ -64,6 +68,42 @@ export class ProjectTabService {
                 })
             }
         })
+    }
+
+    mergeProjects = async (currentProject: Project, targetProject: Project) => {
+        // Move activities from currentProject over to targetProject
+        const currentActivities = currentProject.activities || {}
+        const targetActivities = targetProject.activities || {}
+        const mergedActivityKeys = new Set([...Object.keys(currentActivities), ...Object.keys(targetActivities)])
+        for (const activityKey of mergedActivityKeys) {
+            const currentActivity = currentActivities[activityKey] || {}
+            const targetActivity = targetActivities[activityKey] || {}
+
+            const mergedStyleChangeKeys = new Set([...Object.keys(currentActivity.styleChanges || {}), ...Object.keys(targetActivity.styleChanges || {})])
+            // Merge styleChanges from each activity, 
+            // if there is a conflict, currentActivity wins
+            for (const styleChangeKey of mergedStyleChangeKeys) {
+                targetActivity.styleChanges = {
+                    ...targetActivity.styleChanges,
+                    [styleChangeKey]: currentActivity.styleChanges[styleChangeKey] || targetActivity.styleChanges[styleChangeKey]
+                }
+            }
+
+            // Merge textChanges from each activity
+            targetActivity.textChanges = {
+                ...targetActivity.textChanges,
+                ...currentActivity.textChanges
+            }
+
+            // Merge attributeChanges from each activity
+            targetActivities.attributeChanges = {
+                ...targetActivities.attributeChanges,
+                ...currentActivity.attributeChanges
+            }
+        }
+
+        // Merge project
+
     }
 
     assignProjectToTab = async (tab: chrome.tabs.Tab, project: Project) => {
@@ -160,14 +200,12 @@ export class ProjectTabService {
         tabStateBucket.set({ [tabId]: state })
     }
 
-    handleTabRefreshed = async (tabId: number) => {
-        // When refreshed, script will be uninjected but we might want to restore injected state 
+    handleTabRefreshed = async (tabId: number, url: string | undefined) => {
         const tabState = await this.getTabState(tabId)
         if (tabState === TabState.injected) {
             // Re-inject
             this.injectTab(tabId)
         } else {
-            // Set to none
             this.setTabState(tabId, TabState.none)
         }
     }
