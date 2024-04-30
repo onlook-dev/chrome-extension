@@ -24,7 +24,6 @@
   },
   "homepage": "https://github.com/onlook-dev/monorepo#readme",
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "nodemon": "^3.1.0"
+    "concurrently": "^8.2.2"
   }
 }

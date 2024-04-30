@@ -2,7 +2,6 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-
 	import { auth } from '$lib/firebase';
 	import { DashboardRoutes, DashboardSearchParams, FirestoreCollections } from '$shared/constants';
 	import { paymentsMapStore, teamsMapStore, userStore } from '$lib/utils/store';
