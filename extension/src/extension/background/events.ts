@@ -163,6 +163,7 @@ export class BackgroundEventHandlers {
                     console.error('Tab not found')
                     return
                 }
+                this.projectTabManager.assignProjectToTab(tab, project)
                 this.projectTabManager.toggleTab(tab, enable)
             })
         })

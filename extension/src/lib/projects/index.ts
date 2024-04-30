@@ -66,6 +66,12 @@ export class ProjectTabService {
         })
     }
 
+    assignProjectToTab = async (tab: chrome.tabs.Tab, project: Project) => {
+        if (!tab.id) throw new Error("Tab id not found");
+        tabProjectIdBucket.set({ [tab.id]: project.id })
+        projectsMapBucket.set({ [project.id]: project })
+    }
+
     toggleTab = async (tab: chrome.tabs.Tab, inject?: boolean) => {
         if (!tab.id) throw new Error("Tab id not found");
         const tabState = await this.getTabState(tab.id)

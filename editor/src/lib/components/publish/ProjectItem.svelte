@@ -18,7 +18,7 @@
     </Avatar.Root>
     <div class="text-sm ml-2 flex flex-row items-center w-full">
         <div class="text-start">
-            <p>
+            <p class="truncate w-64">
                 {project.name}
             </p>
             <p class="text-xs text-tertiary">
