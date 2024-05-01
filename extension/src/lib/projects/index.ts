@@ -91,6 +91,13 @@ export class ProjectTabService {
     }
 
     removeProject = (project: Project): Promise<void> => {
+        // Remove project from any existing tab
+        const tabMaps = tabProjectIdBucket.get()
+        Object.entries(tabMaps).forEach(async ([tabId, projectId]) => {
+            if (projectId === project.id) {
+                await tabProjectIdBucket.remove(tabId)
+            }
+        })
         return projectsMapBucket.remove(project.id ?? '')
     }
 
