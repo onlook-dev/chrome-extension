@@ -1,10 +1,11 @@
-import { sendGetTabId, tabIdResponseStream } from "$lib/utils/messaging";
+import { sendApplyProjectChanges, sendGetTabId, tabIdResponseStream } from "$lib/utils/messaging";
 import { MAX_TITLE_LENGTH } from "$shared/constants";
 import { getBucket } from "@extend-chrome/storage";
 import { nanoid } from "nanoid";
 import { getActiveUser, getProjectById, projectsMapBucket } from "$lib/utils/localstorage";
 import { ProjectStatus } from "$shared/models";
 import type { Project, HostData } from "$shared/models";
+import { forwardToActiveTab } from "$lib/utils/helpers";
 
 const tabProjectIdBucket = getBucket<{ [tabId: string]: string }>('TABS_PROJECT_ID_MAP')
 const tabStateBucket = getBucket<{ [tabId: string]: TabState }>('TABS_STATE_MAP')
@@ -179,6 +180,9 @@ export class ProjectTabService {
         if (tabState === TabState.injected) {
             // Re-inject
             this.injectTab(tabId)
+            setTimeout(() => {
+                forwardToActiveTab({}, sendApplyProjectChanges)
+            }, 100)
         } else {
             this.setTabState(tabId, TabState.none)
         }

@@ -9,13 +9,13 @@ export class EventListenerService {
     listen() {
         MessageService.getInstance().subscribe(MessageType.APPLY_EDIT_EVENTS, (events: EditEvent[]) => {
             events.forEach(event => {
-                applyEvent(event)
+                applyEvent(event, false)
             })
         })
 
         MessageService.getInstance().subscribe(MessageType.REVERT_EDIT_EVENTS, (events: EditEvent[]) => {
             events.forEach(event => {
-                applyEvent(createReverseEvent(event))
+                applyEvent(createReverseEvent(event), false)
             })
         })
     }

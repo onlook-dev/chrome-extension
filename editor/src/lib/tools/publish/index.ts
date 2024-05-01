@@ -64,17 +64,19 @@ export class PublishTool implements Tool {
     getActiveProject = () => {
         return this.publishWithTimeout(MessageType.GET_PROJECT, {}, 3, 2, 1000, 3000).then((project: Project) => {
             this.currentProjectStore.set(project);
+            return project;
         });
     }
 
     getProjects = () => {
         this.publishWithTimeout(MessageType.GET_PROJECTS, {}, 3, 2, 1000, 3000).then((projects: Project[]) => {
             this.projectsStore.set(projects);
+            return projects;
         })
 
     };
 
-    private prepare = () => {
+    prepare = () => {
         this.publishWithTimeout(MessageType.PREPARE_SAVE, {}, 3, 2, 1000, 3000);
     }
 

@@ -13,7 +13,7 @@
     import ProjectItem from "./ProjectItem.svelte";
 
     import type { PublishTool } from "$lib/tools/publish";
-    import type { Project } from "$shared/models";
+    import { ProjectStatus, type Project } from "$shared/models";
 
     export let toolManager: ToolManager;
 

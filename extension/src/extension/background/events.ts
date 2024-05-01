@@ -28,7 +28,7 @@ import { ProjectTabService } from '$lib/projects'
 import { EntitySubsciptionService } from './entities'
 
 import { ProjectStatus, type Team, type User } from '$shared/models'
-import { forwardToActiveTab } from './tabs'
+import { forwardToActiveTab } from '$lib/utils/helpers'
 
 export class BackgroundEventHandlers {
     projectService: FirebaseProjectService
