@@ -51,15 +51,13 @@ export class PublishProjectService {
             this.project.hostData = {};
         }
 
-        if (activities.length === 0) {
-            if (!this.project.hostData?.previewImage) {
-                this.project.hostData.previewImage = (await this.screenshotService.takePageScreenshot()).toDataURL('image/png');;
-            }
-            return;
-        }
+        if (activities.length === 0) return;
 
         // Revert activity
         this.projectChangeService.applyProjectChanges(this.project, true);
+
+        // Wait for changes to apply
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         // Canvas of entire page without changes
         const beforeCanvas = await this.screenshotService.takePageScreenshot();
@@ -73,11 +71,11 @@ export class PublishProjectService {
         const beforeScreenshot = beforeCanvas.toDataURL('image/png');
         this.project.hostData.beforeImage = beforeScreenshot;
 
-        consoleLogImage(beforeScreenshot);
-
-
         // Apply activity
         this.projectChangeService.applyProjectChanges(this.project);
+
+        // Wait for changes to apply
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         // Canvas of entire page with changes
         const afterCanvas = await this.screenshotService.takePageScreenshot();
@@ -110,9 +108,7 @@ export class PublishProjectService {
         hideEditor();
 
         // Revert activity
-        for (const activity of activities) {
-            this.projectChangeService.revertActivityChanges(activity);
-        }
+        this.projectChangeService.applyProjectChanges(this.project, true);
 
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -128,9 +124,7 @@ export class PublishProjectService {
         this.project.hostData.beforeImage = await this.altScreenshotService.takePageScreenshot(false);
 
         // Apply activity
-        for (const activity of activities) {
-            this.projectChangeService.applyActivityChanges(activity);
-        }
+        this.projectChangeService.applyProjectChanges(this.project);
 
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));

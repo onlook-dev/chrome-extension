@@ -105,11 +105,7 @@ export function setupListeners() {
 			messageService.respond({}, correlationId)
 
 		// Apply project changes
-		const shouldSave = await projectChangeService.applyProjectChanges(newProject)
-		if (shouldSave) {
-			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
-			publishService.publish()
-		}
+		await projectChangeService.applyProjectChanges(newProject)
 	})
 
 	applyProjectChangesStream.subscribe(async () => {
@@ -117,11 +113,7 @@ export function setupListeners() {
 		const project = await projectTabManager.getTabProject(tab)
 
 		// Apply project changes
-		const shouldSave = await projectChangeService.applyProjectChanges(project)
-		if (shouldSave) {
-			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
-			publishService.publish()
-		}
+		await projectChangeService.applyProjectChanges(project)
 	})
 }
 
