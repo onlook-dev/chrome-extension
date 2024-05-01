@@ -1,3 +1,4 @@
+import { EditEventService } from "$lib/editEvents";
 import { getCSSFramework } from "$lib/utils/styleFramework";
 import { MessageService, MessageType } from "$shared/message";
 
@@ -43,12 +44,12 @@ export class ProjectChangeService {
     }
 
 
-    async applyProjectChanges(project: Project) {
-        if (!project) return
+    async applyProjectChanges(project: Project): Promise<boolean> {
+        if (!project) return false
 
         let shouldSaveProject = false
 
-        // // Get each activity and their style change
+        // Get each activity and their style change
         Object.values(project.activities).forEach(activity => {
             let activityMutated = this.applyActivityChanges(activity)
             if (activityMutated) {
@@ -57,7 +58,7 @@ export class ProjectChangeService {
             }
         })
 
-        // // Get style framework if did not exist
+        // Get style framework if did not exist
         if (!project.projectSettings?.styleFramework) {
             const styleFramework = await getCSSFramework()
             project.projectSettings = {
@@ -67,14 +68,7 @@ export class ProjectChangeService {
             shouldSaveProject = true
         }
 
-        if (shouldSaveProject) {
-            // Save project
-            // sendSaveProject(project)
-        }
-    }
-
-    revertActivityChanges(activity: Activity) {
-        MessageService.getInstance().publish(MessageType.REVERT_EDIT_EVENT, activity)
+        return shouldSaveProject
     }
 
     applyActivityChanges(activity: Activity): boolean {
@@ -85,7 +79,9 @@ export class ProjectChangeService {
                 return true
             }
         }
-        MessageService.getInstance().publish(MessageType.APPLY_EDIT_EVENT, activity)
+
+        // TODO: Create edit event and send apply
+=        MessageService.getInstance().publish(MessageType.APPLY_EDIT_EVENT, activity)
         return false
     }
 

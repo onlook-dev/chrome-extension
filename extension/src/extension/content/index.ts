@@ -85,9 +85,16 @@ export function setupListeners() {
 			messageService.respond(projects, correlationId)
 	})
 
-	messageService.subscribe(MessageType.EDIT_PROJECT, (project: Project) => {
+	messageService.subscribe(MessageType.EDIT_PROJECT, async (project: Project) => {
 		// Pass to background script
 		sendEditProjectRequest({ project, enable: true })
+
+		// Apply project changes
+		const shouldSave = await projectChangeService.applyProjectChanges(project)
+		if (shouldSave) {
+			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
+			publishService.publish()
+		}
 	})
 
 	messageService.subscribe(MessageType.MERGE_PROJECT, async (project, correlationId) => {
@@ -102,6 +109,13 @@ export function setupListeners() {
 
 		if (correlationId)
 			messageService.respond({}, correlationId)
+
+		// Apply project changes
+		const shouldSave = await projectChangeService.applyProjectChanges(newProject)
+		if (shouldSave) {
+			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
+			publishService.publish()
+		}
 	})
 }
 
