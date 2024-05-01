@@ -1,6 +1,7 @@
 import { MessageService, MessageType } from '$shared/message'
 import { authUserBucket, projectsMapBucket } from '$lib/utils/localstorage'
 import {
+	applyProjectChangesStream,
 	sendEditEvent,
 	sendEditProjectRequest
 } from '$lib/utils/messaging'
@@ -88,13 +89,6 @@ export function setupListeners() {
 	messageService.subscribe(MessageType.EDIT_PROJECT, async (project: Project) => {
 		// Pass to background script
 		sendEditProjectRequest({ project, enable: true })
-
-		// Apply project changes
-		const shouldSave = await projectChangeService.applyProjectChanges(project)
-		if (shouldSave) {
-			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
-			publishService.publish()
-		}
 	})
 
 	messageService.subscribe(MessageType.MERGE_PROJECT, async (project, correlationId) => {
@@ -112,6 +106,18 @@ export function setupListeners() {
 
 		// Apply project changes
 		const shouldSave = await projectChangeService.applyProjectChanges(newProject)
+		if (shouldSave) {
+			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
+			publishService.publish()
+		}
+	})
+
+	applyProjectChangesStream.subscribe(async () => {
+		const tab = await projectTabManager.getCurrentTab()
+		const project = await projectTabManager.getTabProject(tab)
+
+		// Apply project changes
+		const shouldSave = await projectChangeService.applyProjectChanges(project)
 		if (shouldSave) {
 			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
 			publishService.publish()

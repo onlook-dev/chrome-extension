@@ -72,7 +72,7 @@ export function redoEvent(event: EditEvent) {
   redoStore.update(redo => redo.filter(e => e !== event));
 }
 
-function createReverseEvent(event: EditEvent): EditEvent {
+export function createReverseEvent(event: EditEvent): EditEvent {
   switch (event.editType) {
     case EditType.INSERT:
       return {
@@ -150,7 +150,7 @@ function applyRemoveEvent(event: EditEvent, parent: HTMLElement) {
   if (el) el.remove();
 }
 
-function applyEvent(event: EditEvent, emit: boolean = true) {
+export function applyEvent(event: EditEvent, emit: boolean = true) {
   const element: HTMLElement | undefined = document.querySelector(event.selector);
   switch (event.editType) {
     case EditType.STYLE:

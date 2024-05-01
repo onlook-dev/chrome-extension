@@ -93,3 +93,8 @@ export const [sendTabIdResponse, tabIdResponseStream] = getExtendedMessages<chro
 	'TAB_ID_RESPONSE',
 	MessageReceiver.CONTENT
 )
+
+export const [sendApplyProjectChanges, applyProjectChangesStream] = getExtendedMessages<void>(
+	'APPLY_PROJECT_CHANGES',
+	MessageReceiver.CONTENT
+)

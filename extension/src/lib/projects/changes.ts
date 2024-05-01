@@ -1,8 +1,8 @@
-import { EditEventService } from "$lib/editEvents";
+import { convertChangeObjectToEditEvents } from "$lib/editEvents/convert";
 import { getCSSFramework } from "$lib/utils/styleFramework";
 import { MessageService, MessageType } from "$shared/message";
 
-import type { Activity, Project } from "$shared/models";
+import { EditType, type Activity, type EditEvent, type Project } from "$shared/models";
 
 export class ProjectChangeService {
     constructor() { }
@@ -71,7 +71,16 @@ export class ProjectChangeService {
         return shouldSaveProject
     }
 
+    revertActivityChanges(activity: Activity) {
+        const editEvents: EditEvent[] = this.getEditEventsFromActivity(activity)
+        MessageService.getInstance().publish(MessageType.REVERT_EDIT_EVENTS, editEvents)
+    }
+
     applyActivityChanges(activity: Activity): boolean {
+        const editEvents: EditEvent[] = this.getEditEventsFromActivity(activity)
+        MessageService.getInstance().publish(MessageType.APPLY_EDIT_EVENTS, editEvents)
+
+        // Update path if possible
         const element = document.querySelector(activity.selector) as any
         if (element) {
             if (activity.path !== element.dataset.onlookId) {
@@ -79,10 +88,27 @@ export class ProjectChangeService {
                 return true
             }
         }
-
-        // TODO: Create edit event and send apply
-=        MessageService.getInstance().publish(MessageType.APPLY_EDIT_EVENT, activity)
         return false
     }
 
+    getEditEventsFromActivity(activity: Activity): EditEvent[] {
+        const editEvents: EditEvent[] = []
+        for (const [key, changeValues] of Object.entries(activity.styleChanges)) {
+            const event = convertChangeObjectToEditEvents(activity.selector, EditType.STYLE, { [key]: changeValues })
+            editEvents.push(...event)
+        }
+        if (activity.textChanges) {
+            for (const [key, changeValues] of Object.entries(activity.textChanges)) {
+                const event = convertChangeObjectToEditEvents(activity.selector, EditType.TEXT, { [key]: changeValues })
+                editEvents.push(...event)
+            }
+        }
+        if (activity.attributeChanges) {
+            for (const [key, changeValues] of Object.entries(activity.attributeChanges)) {
+                const event = convertChangeObjectToEditEvents(activity.selector, EditType.CLASS, { [key]: changeValues })
+                editEvents.push(...event)
+            }
+        }
+        return editEvents
+    }
 }

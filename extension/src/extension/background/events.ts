@@ -8,7 +8,8 @@ import {
     sendPageScreenshotResponse,
     pageScreenshotRequestStream,
     tabIdRequestStream,
-    sendTabIdResponse
+    sendTabIdResponse,
+    sendApplyProjectChanges
 } from '$lib/utils/messaging'
 import {
     authUserBucket,
@@ -154,17 +155,21 @@ export class BackgroundEventHandlers {
         })
 
         // Start editing request (from dashboard -> content script -> background)
-        editProjectRequestStream.subscribe(([{ project, enable }]) => {
+        editProjectRequestStream.subscribe(async ([{ project, enable }]) => {
             // Add trailing slash if not present
             const hostUrl = project.hostUrl.endsWith('/') ? project.hostUrl : `${project.hostUrl}/`
-            this.openOrCreateNewTab(hostUrl).then((tab) => {
-                if (!tab) {
-                    console.error('Tab not found')
-                    return
-                }
-                this.projectTabManager.setTabProject(tab, project)
-                this.projectTabManager.toggleTab(tab, enable)
-            })
+            const tab = await this.openOrCreateNewTab(hostUrl)
+            if (!tab) {
+                console.error('Tab not found')
+                return
+            }
+            await this.projectTabManager.setTabProject(tab, project)
+            await this.projectTabManager.toggleTab(tab, enable)
+
+            // Forward message after a delay to ensure content script is loaded
+            setTimeout(() => {
+                forwardToActiveTab({}, sendApplyProjectChanges)
+            }, 500)
         })
 
         // Auth user changes from content script
