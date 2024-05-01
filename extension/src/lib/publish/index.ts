@@ -7,6 +7,7 @@ import { ProjectStatus, type Project } from "$shared/models";
 import type { ScreenshotService } from "$extension/content/screenshot";
 import type { AltScreenshotService } from "$extension/content/altScreenshot";
 import type { ProjectChangeService } from "$lib/projects/changes";
+import { consoleLogImage } from "$lib/utils/helpers";
 
 export class PublishProjectService {
     constructor(
@@ -41,7 +42,7 @@ export class PublishProjectService {
         }
         this.project.status = ProjectStatus.PREPARED;
         // Save locally
-        projectsMapBucket.set({ [this.project.id]: this.project })
+        await projectsMapBucket.set({ [this.project.id]: this.project })
     }
 
     async takeActivityScreenshots() {
@@ -58,9 +59,7 @@ export class PublishProjectService {
         }
 
         // Revert activity
-        for (const activity of activities) {
-            this.projectChangeService.revertActivityChanges(activity);
-        }
+        this.projectChangeService.applyProjectChanges(this.project, true);
 
         // Canvas of entire page without changes
         const beforeCanvas = await this.screenshotService.takePageScreenshot();
@@ -70,10 +69,15 @@ export class PublishProjectService {
             await this.screenshotService.takeActivityScreenshot(activity, beforeCanvas, true);
         }
 
+        // Update project before screenshot
+        const beforeScreenshot = beforeCanvas.toDataURL('image/png');
+        this.project.hostData.beforeImage = beforeScreenshot;
+
+        consoleLogImage(beforeScreenshot);
+
+
         // Apply activity
-        for (const activity of activities) {
-            this.projectChangeService.applyActivityChanges(activity);
-        }
+        this.projectChangeService.applyProjectChanges(this.project);
 
         // Canvas of entire page with changes
         const afterCanvas = await this.screenshotService.takePageScreenshot();
@@ -83,13 +87,11 @@ export class PublishProjectService {
             await this.screenshotService.takeActivityScreenshot(activity, afterCanvas, false);
         }
 
-        // Update project before screenshot
-        const beforeScreenshot = beforeCanvas.toDataURL('image/png');
-        this.project.hostData.beforeImage = beforeScreenshot;
-
         // Update project after screenshot
         const afterScreenshot = afterCanvas.toDataURL('image/png');
         this.project.hostData.previewImage = afterScreenshot;
+
+        consoleLogImage(afterScreenshot);
     }
 
     async altTakeActivityScreenshots() {

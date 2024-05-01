@@ -44,14 +44,20 @@ export class ProjectChangeService {
     }
 
 
-    async applyProjectChanges(project: Project): Promise<boolean> {
+    async applyProjectChanges(project: Project, revert: boolean = false): Promise<boolean> {
         if (!project) return false
 
         let shouldSaveProject = false
 
+        const editEvents = this.getEditEventsFromProject(project)
+        if (editEvents.length > 0) {
+            MessageService.getInstance().publish(revert ? MessageType.REVERT_EDIT_EVENTS : MessageType.APPLY_EDIT_EVENTS, editEvents)
+            shouldSaveProject = true
+        }
+
         // Get each activity and their style change
         Object.values(project.activities).forEach(activity => {
-            let activityMutated = this.applyActivityChanges(activity)
+            let activityMutated = this.updateActivityPath(activity)
             if (activityMutated) {
                 project.activities[activity.selector] = activity
                 shouldSaveProject = true
@@ -71,15 +77,15 @@ export class ProjectChangeService {
         return shouldSaveProject
     }
 
-    revertActivityChanges(activity: Activity) {
-        const editEvents: EditEvent[] = this.getEditEventsFromActivity(activity)
-        MessageService.getInstance().publish(MessageType.REVERT_EDIT_EVENTS, editEvents)
+    getEditEventsFromProject(project: Project): EditEvent[] {
+        const editEvents: EditEvent[] = []
+        for (const activity of Object.values(project.activities)) {
+            editEvents.push(...this.getEditEventsFromActivity(activity))
+        }
+        return editEvents
     }
 
-    applyActivityChanges(activity: Activity): boolean {
-        const editEvents: EditEvent[] = this.getEditEventsFromActivity(activity)
-        MessageService.getInstance().publish(MessageType.APPLY_EDIT_EVENTS, editEvents)
-
+    updateActivityPath(activity: Activity): boolean {
         // Update path if possible
         const element = document.querySelector(activity.selector) as any
         if (element) {

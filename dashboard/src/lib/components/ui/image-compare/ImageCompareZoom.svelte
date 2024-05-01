@@ -24,8 +24,8 @@
 
 	async function updateImages() {
 		[left, right] = await Promise.all([
-			loadImage(afterImage ?? beforeImage ?? ''),
-			loadImage(beforeImage ?? afterImage ?? '')
+			loadImage(beforeImage ?? afterImage ?? ''),
+			loadImage(afterImage ?? beforeImage ?? '')
 		]);
 		cx = canvas.getContext('2d')!;
 		options = {

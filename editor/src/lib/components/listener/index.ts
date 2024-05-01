@@ -1,4 +1,3 @@
-import { ApplyChangesService } from "$lib/tools/edit/applyChange"
 import { applyEvent, createReverseEvent } from "$lib/tools/edit/history"
 import { MessageService, MessageType } from "$shared/message"
 import type { EditEvent } from "$shared/models"
