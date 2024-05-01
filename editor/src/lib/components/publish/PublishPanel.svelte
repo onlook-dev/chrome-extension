@@ -62,7 +62,11 @@
     function selectProject(project: Project) {
         accordianValue = "";
         if (currentProject?.id === project.id) return;
-        publishTool.merge(project);
+
+        publishTool.merge(project).then(() => {
+            publishTool.getActiveProject();
+            publishTool.getProjects();
+        });
     }
 </script>
 

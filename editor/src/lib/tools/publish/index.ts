@@ -58,7 +58,7 @@ export class PublishTool implements Tool {
     };
 
     public merge = (project: Project) => {
-        return this.publishWithTimeout(MessageType.MERGE_PROJECT, { project }, 3, 2, 1000, 3000);
+        return this.publishWithTimeout(MessageType.MERGE_PROJECT, project, 3, 2, 1000, 3000);
     }
 
     getActiveProject = () => {

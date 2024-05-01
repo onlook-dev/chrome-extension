@@ -81,8 +81,6 @@ export function setupListeners() {
 			})
 		}
 
-		console.log('Projects', projects)
-
 		if (correlationId)
 			messageService.respond(projects, correlationId)
 	})
@@ -92,16 +90,13 @@ export function setupListeners() {
 		sendEditProjectRequest({ project, enable: true })
 	})
 
-	messageService.subscribe(MessageType.MERGE_PROJECT, async (targetProject: Project, correlationId) => {
+	messageService.subscribe(MessageType.MERGE_PROJECT, async (project, correlationId) => {
 		const projectChangeService = new ProjectChangeService()
 		const currentTab = await projectTabManager.getCurrentTab()
 		const currentProject = await projectTabManager.getTabProject(currentTab)
-		const newProject = projectChangeService.mergeProjects(currentProject, targetProject)
+		const newProject = projectChangeService.mergeProjects(currentProject, project)
 
 		// Save over target project and remove currentProject
-		console.log('Current project', currentProject)
-		console.log('Target project', targetProject)
-		console.log('Merged project', newProject)
 		await projectTabManager.setTabProject(currentTab, newProject)
 		await projectTabManager.removeProject(currentProject)
 

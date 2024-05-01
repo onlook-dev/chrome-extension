@@ -102,7 +102,6 @@ export class ProjectTabService {
 
     async getTabProject(tab: chrome.tabs.Tab): Promise<Project> {
         const tabProjectMap = await tabProjectIdBucket.get()
-        console.log("Tab project map", tabProjectMap)
         if (!tab.id) throw new Error("Tab id not found");
 
         let projectId = tabProjectMap[tab.id];
@@ -113,10 +112,6 @@ export class ProjectTabService {
             await tabProjectIdBucket.set({ [tab.id]: newProject.id })
             await projectsMapBucket.set({ [newProject.id]: newProject })
         }
-
-        console.log("Project id", projectId)
-        console.log("Projects", await projectsMapBucket.get())
-        console.log("Project", await getProjectById(projectId))
         return getProjectById(projectId);
     }
 
