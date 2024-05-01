@@ -14,6 +14,7 @@
 
     import type { PublishTool } from "$lib/tools/publish";
     import { ProjectStatus, type Project } from "$shared/models";
+    import { MessageService } from "$shared/message";
 
     export let toolManager: ToolManager;
 
@@ -22,7 +23,7 @@
     let currentProject: Project | undefined;
     let projects: Project[] = [];
     let selectableProjects = [];
-
+    let saving = false;
     $: if (currentProject) {
         selectableProjects = [
             currentProject,
@@ -66,6 +67,14 @@
         publishTool.merge(project).then(() => {
             publishTool.getActiveProject();
             publishTool.getProjects();
+        });
+    }
+
+    function publish() {
+        if (!currentProject) return;
+        saving = true;
+        publishTool.publish().then(() => {
+            saving = false;
         });
     }
 </script>
@@ -115,11 +124,16 @@
                     </Button>
                     <Button
                         variant="primary"
-                        disabled={!currentProject}
-                        on:click={() => {
-                            publishTool.publish();
-                        }}><Dashboard class="mr-2" />Open in Dashboard</Button
+                        disabled={!currentProject || saving}
+                        on:click={publish}
                     >
+                        {#if saving}
+                            <Shadow class="mr-2 animate-spin" />
+                            Saving project
+                        {:else}
+                            <Dashboard class="mr-2" />Open in Dashboard
+                        {/if}
+                    </Button>
                 </div>
             {/if}
         </Card.Header>
