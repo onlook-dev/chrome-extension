@@ -91,22 +91,18 @@ export class ProjectTabService {
     }
 
     removeProject = (project: Project): Promise<void> => {
-        return projectsMapBucket.remove(project.id)
+        return projectsMapBucket.remove(project.id ?? '')
     }
 
-    setTabProject = async (tab: chrome.tabs.Tab, project: Project) => {
+    setTabProject = async (tab: chrome.tabs.Tab, project: Project): Promise<void> => {
         if (!tab.id) throw new Error("Tab id not found");
-        tabProjectIdBucket.set({ [tab.id]: project.id })
-        projectsMapBucket.set({ [project.id]: project })
+        await tabProjectIdBucket.set({ [tab.id]: project.id })
+        await projectsMapBucket.set({ [project.id]: project })
     }
 
     async getTabProject(tab: chrome.tabs.Tab): Promise<Project> {
         const tabProjectMap = await tabProjectIdBucket.get()
-
-        console.error("Getting tab project")
-        console.log(tabProjectMap)
-        console.log(await projectsMapBucket.get())
-
+        console.log("Tab project map", tabProjectMap)
         if (!tab.id) throw new Error("Tab id not found");
 
         let projectId = tabProjectMap[tab.id];
@@ -118,6 +114,9 @@ export class ProjectTabService {
             await projectsMapBucket.set({ [newProject.id]: newProject })
         }
 
+        console.log("Project id", projectId)
+        console.log("Projects", await projectsMapBucket.get())
+        console.log("Project", await getProjectById(projectId))
         return getProjectById(projectId);
     }
 
@@ -133,7 +132,6 @@ export class ProjectTabService {
     }
 
     async createNewProject(tab: chrome.tabs.Tab): Promise<Project> {
-        console.log("Creating new project")
         // Get name and host from tab info
         let projectName = tab.title || this.getDefaultname(tab.url);
 

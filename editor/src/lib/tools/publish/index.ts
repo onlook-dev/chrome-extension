@@ -14,14 +14,6 @@ export class PublishTool implements Tool {
 
     onInit(): void {
         savePanelVisible.set(true);
-        this.getActiveProject().then((project: Project) => {
-            this.currentProjectStore.set(project)
-            this.prepare();
-        })
-
-        this.getProjects().then((projects: Project[]) => {
-            this.projectsStore.set(projects);
-        })
     }
 
     onDestroy(): void {
@@ -69,12 +61,17 @@ export class PublishTool implements Tool {
         return this.publishWithTimeout(MessageType.MERGE_PROJECT, { project }, 3, 2, 1000, 3000);
     }
 
-    private getActiveProject = () => {
-        return this.publishWithTimeout(MessageType.GET_PROJECT, {}, 3, 2, 1000, 3000);
+    getActiveProject = () => {
+        return this.publishWithTimeout(MessageType.GET_PROJECT, {}, 3, 2, 1000, 3000).then((project: Project) => {
+            this.currentProjectStore.set(project);
+        });
     }
 
-    private getProjects = () => {
-        return this.publishWithTimeout(MessageType.GET_PROJECTS, {}, 3, 2, 1000, 3000);
+    getProjects = () => {
+        this.publishWithTimeout(MessageType.GET_PROJECTS, {}, 3, 2, 1000, 3000).then((projects: Project[]) => {
+            this.projectsStore.set(projects);
+        })
+
     };
 
     private prepare = () => {

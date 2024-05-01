@@ -9,6 +9,7 @@ describe('ProjectChangeService', () => {
 
     test('should merge project', () => {
         const currentProject = {
+            id: '1',
             activities: {
                 'activity1': {
                     styleChanges: {
@@ -39,6 +40,7 @@ describe('ProjectChangeService', () => {
             updatedAt: '1'
         } as Project;
         const targetProject = {
+            id: '2',
             activities: {
                 'activity1': {
                     styleChanges: {
@@ -68,6 +70,7 @@ describe('ProjectChangeService', () => {
             updatedAt: '2'
         } as Project;
         const mergedProject = {
+            id: '2',
             activities: {
                 'activity1': {
                     styleChanges: {

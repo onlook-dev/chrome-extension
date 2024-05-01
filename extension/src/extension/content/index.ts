@@ -59,7 +59,6 @@ export function setupListeners() {
 	})
 
 	messageService.subscribe(MessageType.GET_PROJECT, async (payload, correlationId) => {
-		console.log('GET_PROJECT')
 		const currentTab = await projectTabManager.getCurrentTab()
 		const project = await projectTabManager.getTabProject(currentTab)
 		if (correlationId)
@@ -67,7 +66,23 @@ export function setupListeners() {
 	})
 
 	messageService.subscribe(MessageType.GET_PROJECTS, async (payload, correlationId) => {
-		const projects = Object.values(await projectsMapBucket.get())
+		const currentTab = await projectTabManager.getCurrentTab()
+		let projects = []
+
+		if (currentTab.url) {
+			const currentHost = new URL(currentTab.url).hostname
+			const map = await projectsMapBucket.get()
+			projects = Object.values(map).filter((project: Project) => {
+				if (!project || !project.hostUrl)
+					return false
+				// Filter for projects with the same URL host
+				const projectHost = new URL(project.hostUrl).hostname
+				return currentHost === projectHost
+			})
+		}
+
+		console.log('Projects', projects)
+
 		if (correlationId)
 			messageService.respond(projects, correlationId)
 	})
@@ -78,15 +93,17 @@ export function setupListeners() {
 	})
 
 	messageService.subscribe(MessageType.MERGE_PROJECT, async (targetProject: Project, correlationId) => {
-		console.log('Merge project', targetProject)
 		const projectChangeService = new ProjectChangeService()
 		const currentTab = await projectTabManager.getCurrentTab()
 		const currentProject = await projectTabManager.getTabProject(currentTab)
 		const newProject = projectChangeService.mergeProjects(currentProject, targetProject)
 
 		// Save over target project and remove currentProject
-		await projectTabManager.removeProject(currentProject)
+		console.log('Current project', currentProject)
+		console.log('Target project', targetProject)
+		console.log('Merged project', newProject)
 		await projectTabManager.setTabProject(currentTab, newProject)
+		await projectTabManager.removeProject(currentProject)
 
 		if (correlationId)
 			messageService.respond({}, correlationId)

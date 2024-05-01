@@ -39,6 +39,12 @@
 
     const accordianItem = "item-1";
     let accordianValue = "";
+
+    $: if ($savePanelVisible === true) {
+        publishTool.getActiveProject();
+        publishTool.getProjects();
+    }
+
     $: accordianExpanded = accordianValue === accordianItem;
 
     onMount(() => {
