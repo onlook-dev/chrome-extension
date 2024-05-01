@@ -5,7 +5,7 @@ import { HotKeys } from "./hotkeys";
 
 export enum ToolName {
   EDIT = 'edit',
-  SAVE = 'save',
+  PUBLISH = 'publish',
 }
 
 export interface Tool {
@@ -41,7 +41,7 @@ export class ToolManager {
     this.hotKeys = new HotKeys(this.editTool);
     this.toolMap = {
       [ToolName.EDIT]: this.editTool,
-      [ToolName.SAVE]: this.publishTool,
+      [ToolName.PUBLISH]: this.publishTool,
     }
     // Set up tools
     this.setListeners();
@@ -49,6 +49,7 @@ export class ToolManager {
   }
 
   selectTool = (toolName?: ToolName) => {
+    if (toolName === this.selectedToolName) return
     if (this.selectedTool) this.selectedTool.onDestroy();
     this.hotKeys.bindKeys(toolName);
     this.selectedTool = this.toolMap[toolName] ?? undefined;

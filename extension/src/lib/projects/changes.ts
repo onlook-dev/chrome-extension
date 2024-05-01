@@ -48,7 +48,6 @@ export class ProjectChangeService {
 
         let shouldSaveProject = false
 
-        console.log('Applying project changes')
         // // Get each activity and their style change
         Object.values(project.activities).forEach(activity => {
             let activityMutated = this.applyActivityChanges(activity)

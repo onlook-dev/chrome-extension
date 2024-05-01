@@ -57,7 +57,7 @@ export class HotKeys {
           e.stopPropagation();
         },
       },
-      [ToolName.SAVE]: {},
+      [ToolName.PUBLISH]: {},
     }
   }
 

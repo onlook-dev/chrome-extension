@@ -79,7 +79,7 @@
             <Button
               class="h-6 rounded-sm text-xs transition"
               variant="primary"
-              on:click={() => toolManager.selectTool(ToolName.SAVE)}
+              on:click={() => toolManager.selectTool(ToolName.PUBLISH)}
               >Finish Designing</Button
             >
             <div class="ml-auto flex items-center">

@@ -1,4 +1,4 @@
-import { savePanelVisible, savingProject } from "$lib/states/editor";
+import { savePanelVisible } from "$lib/states/editor";
 import { MessageService, MessageType } from "$shared/message";
 import { writable } from "svelte/store";
 
@@ -16,14 +16,12 @@ export class PublishTool implements Tool {
         savePanelVisible.set(true);
         this.getActiveProject().then((project: Project) => {
             this.currentProjectStore.set(project)
+            this.prepare();
         })
 
         this.getProjects().then((projects: Project[]) => {
             this.projectsStore.set(projects);
         })
-
-        // Create screenshots
-        this.prepare();
     }
 
     onDestroy(): void {
@@ -67,6 +65,10 @@ export class PublishTool implements Tool {
         return this.publishWithTimeout(MessageType.PUBLISH_PROJECT, {}, 3, 2, 1000, 3000);
     };
 
+    public merge = (project: Project) => {
+        return this.publishWithTimeout(MessageType.MERGE_PROJECT, { project }, 3, 2, 1000, 3000);
+    }
+
     private getActiveProject = () => {
         return this.publishWithTimeout(MessageType.GET_PROJECT, {}, 3, 2, 1000, 3000);
     }
@@ -78,4 +80,5 @@ export class PublishTool implements Tool {
     private prepare = () => {
         this.publishWithTimeout(MessageType.PREPARE_SAVE, {}, 3, 2, 1000, 3000);
     }
+
 }

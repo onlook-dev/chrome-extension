@@ -70,13 +70,6 @@ export class ProjectTabService {
         })
     }
 
-
-    assignProjectToTab = async (tab: chrome.tabs.Tab, project: Project) => {
-        if (!tab.id) throw new Error("Tab id not found");
-        tabProjectIdBucket.set({ [tab.id]: project.id })
-        projectsMapBucket.set({ [project.id]: project })
-    }
-
     toggleTab = async (tab: chrome.tabs.Tab, inject?: boolean) => {
         if (!tab.id) throw new Error("Tab id not found");
         const tabState = await this.getTabState(tab.id)
@@ -97,17 +90,32 @@ export class ProjectTabService {
         }
     }
 
+    removeProject = (project: Project): Promise<void> => {
+        return projectsMapBucket.remove(project.id)
+    }
+
+    setTabProject = async (tab: chrome.tabs.Tab, project: Project) => {
+        if (!tab.id) throw new Error("Tab id not found");
+        tabProjectIdBucket.set({ [tab.id]: project.id })
+        projectsMapBucket.set({ [project.id]: project })
+    }
+
     async getTabProject(tab: chrome.tabs.Tab): Promise<Project> {
-        const projectsMap = await tabProjectIdBucket.get()
+        const tabProjectMap = await tabProjectIdBucket.get()
+
+        console.error("Getting tab project")
+        console.log(tabProjectMap)
+        console.log(await projectsMapBucket.get())
+
         if (!tab.id) throw new Error("Tab id not found");
 
-        let projectId = projectsMap[tab.id];
+        let projectId = tabProjectMap[tab.id];
         if (!projectId) {
             const newProject = await this.createNewProject(tab);
             projectId = newProject.id;
             // Save new project in maps
-            tabProjectIdBucket.set({ [tab.id]: newProject.id })
-            projectsMapBucket.set({ [newProject.id]: newProject })
+            await tabProjectIdBucket.set({ [tab.id]: newProject.id })
+            await projectsMapBucket.set({ [newProject.id]: newProject })
         }
 
         return getProjectById(projectId);
@@ -125,6 +133,7 @@ export class ProjectTabService {
     }
 
     async createNewProject(tab: chrome.tabs.Tab): Promise<Project> {
+        console.log("Creating new project")
         // Get name and host from tab info
         let projectName = tab.title || this.getDefaultname(tab.url);
 

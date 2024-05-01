@@ -4,6 +4,7 @@
     import { ToolManager, ToolName } from "$lib/tools";
     import { Dashboard, Pencil2, Shadow, Share2 } from "radix-icons-svelte";
     import { onMount } from "svelte";
+    import { slide } from "svelte/transition";
 
     import Logo from "./Logo.svelte";
     import Button from "../ui/button/button.svelte";
@@ -13,7 +14,6 @@
 
     import type { PublishTool } from "$lib/tools/publish";
     import type { Project } from "$shared/models";
-    import { slide } from "svelte/transition";
 
     export let toolManager: ToolManager;
 
@@ -52,6 +52,12 @@
             projects = value;
         });
     });
+
+    function selectProject(project: Project) {
+        accordianValue = "";
+        if (currentProject?.id === project.id) return;
+        publishTool.merge(project);
+    }
 </script>
 
 <div
@@ -99,6 +105,7 @@
                     </Button>
                     <Button
                         variant="primary"
+                        disabled={!currentProject}
                         on:click={() => {
                             publishTool.publish();
                         }}><Dashboard class="mr-2" />Open in Dashboard</Button
@@ -132,10 +139,7 @@
                                 {#each selectableProjects as project}
                                     <button
                                         class="w-full"
-                                        on:click={() => {
-                                            accordianValue = "";
-                                            // TODO: Merge project
-                                        }}
+                                        on:click={() => selectProject(project)}
                                     >
                                         <div
                                             class="transition rounded py-3 cursor-pointer hover:bg-surface px-2 -mx-2"
