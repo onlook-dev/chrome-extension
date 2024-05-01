@@ -6,6 +6,8 @@ export enum MessageType {
     // Edit
     EDIT_EVENT = "EDIT_EVENT",
     EDIT_PROJECT = "EDIT_PROJECT",
+    APPLY_EDIT_EVENT = "APPLY_EDIT_EVENT",
+    REVERT_EDIT_EVENT = "REVERT_EDIT_EVENT",
 
     // Getting
     GET_PROJECT = "GET_PROJECT",

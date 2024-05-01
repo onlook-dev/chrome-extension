@@ -1,18 +1,14 @@
 import { MessageService, MessageType } from '$shared/message'
 import { authUserBucket, projectsMapBucket } from '$lib/utils/localstorage'
 import {
-	activityApplyStream,
-	activityRevertStream,
-	applyProjectChangesStream,
-	getScreenshotStream,
 	sendEditEvent,
 	sendEditProjectRequest
 } from '$lib/utils/messaging'
 import { ScreenshotService } from './screenshot'
 import { PublishProjectService } from '$lib/publish'
-import { applyActivityChanges, revertActivityChanges } from '$lib/utils/activity'
 import { AltScreenshotService } from './altScreenshot'
 import { ProjectTabService } from '$lib/projects'
+import { ProjectChangeService } from '$lib/projects/changes'
 
 import { ProjectStatus, type EditEvent, type Project } from '$shared/models'
 
@@ -20,6 +16,7 @@ const screenshotService = new ScreenshotService()
 const altScreenshotService = new AltScreenshotService()
 const messageService = MessageService.getInstance()
 const projectTabManager = new ProjectTabService()
+const projectChangeService = new ProjectChangeService()
 
 export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
@@ -45,7 +42,7 @@ export function setupListeners() {
 
 		// Prepare project for saving
 		if (!project.status || project.status === ProjectStatus.DRAFT) {
-			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
+			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
 			publishService.prepare()
 		}
 	})
@@ -57,7 +54,7 @@ export function setupListeners() {
 
 		const currentTab = await projectTabManager.getCurrentTab()
 		const project = await projectTabManager.getTabProject(currentTab)
-		const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
+		const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
 		publishService.publish()
 	})
 
@@ -78,54 +75,10 @@ export function setupListeners() {
 		// Pass to background script
 		sendEditProjectRequest({ project, enable: true })
 	})
-
-	activityRevertStream.subscribe(([activity, sender]) => {
-		revertActivityChanges(activity)
-	})
-
-	activityApplyStream.subscribe(([activity, sender]) => {
-		applyActivityChanges(activity)
-	})
-
-	applyProjectChangesStream.subscribe(async () => {
-		// TODO: handle this
-		// const activeProject = await getActiveProject()
-		// if (!activeProject) return
-
-		// let shouldSaveProject = false
-
-		// // Get each activity and their style change
-		// Object.values(activeProject.activities).forEach(activity => {
-		// 	let activityMutated = applyActivityChanges(activity)
-		// 	if (activityMutated) {
-		// 		activeProject.activities[activity.selector] = activity
-		// 		shouldSaveProject = true
-		// 	}
-		// })
-
-		// // Get style framework if did not exist
-		// if (!activeProject.projectSettings?.styleFramework) {
-		// 	const styleFramework = await getCSSFramework()
-		// 	activeProject.projectSettings = {
-		// 		...activeProject.projectSettings,
-		// 		styleFramework
-		// 	}
-		// 	shouldSaveProject = true
-		// }
-
-		// if (shouldSaveProject) {
-		// 	sendSaveProject(activeProject)
-		// }
-	})
-
-	getScreenshotStream.subscribe(async ([activity]) => {
-		// screenshotService.takeActivityScreenshot(activity)
-	})
 }
 
 try {
 	setupListeners()
-	console.log('Content script loaded!')
 } catch (e) {
 	console.error(e)
 }

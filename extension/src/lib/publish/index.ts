@@ -1,19 +1,19 @@
 import { hideEditor, showEditor } from "$lib/editor/helpers";
-import { applyActivityChanges, revertActivityChanges } from "$lib/utils/activity";
 import { baseUrl } from "$lib/utils/env";
 import { sendOpenUrlRequest, sendPublishProjectRequest } from "$lib/utils/messaging";
 import { DashboardRoutes } from "$shared/constants";
-import { ProjectStatus, type Project } from "$shared/models";
 import { projectsMapBucket } from "$lib/utils/localstorage";
-
+import { ProjectStatus, type Project } from "$shared/models";
 import type { ScreenshotService } from "$extension/content/screenshot";
 import type { AltScreenshotService } from "$extension/content/altScreenshot";
+import type { ProjectChangeService } from "$lib/projects/changes";
 
 export class PublishProjectService {
     constructor(
         private project: Project,
         private screenshotService: ScreenshotService,
-        private altScreenshotService: AltScreenshotService
+        private altScreenshotService: AltScreenshotService,
+        private projectChangeService: ProjectChangeService
     ) { }
 
     public async publish() {
@@ -46,15 +46,20 @@ export class PublishProjectService {
 
     async takeActivityScreenshots() {
         const activities = Object.values(this.project.activities);
+        if (!this.project.hostData) {
+            this.project.hostData = {};
+        }
+
         if (activities.length === 0) {
-            if (!this.project.hostData.previewImage)
+            if (!this.project.hostData?.previewImage) {
                 this.project.hostData.previewImage = (await this.screenshotService.takePageScreenshot()).toDataURL('image/png');;
+            }
             return;
         }
 
         // Revert activity
         for (const activity of activities) {
-            revertActivityChanges(activity);
+            this.projectChangeService.revertActivityChanges(activity);
         }
 
         // Canvas of entire page without changes
@@ -67,7 +72,7 @@ export class PublishProjectService {
 
         // Apply activity
         for (const activity of activities) {
-            applyActivityChanges(activity);
+            this.projectChangeService.applyActivityChanges(activity);
         }
 
         // Canvas of entire page with changes
@@ -89,6 +94,10 @@ export class PublishProjectService {
 
     async altTakeActivityScreenshots() {
         const activities = Object.values(this.project.activities);
+        if (!this.project.hostData) {
+            this.project.hostData = {};
+        }
+
         if (activities.length === 0) {
             if (!this.project.hostData.previewImage)
                 this.project.hostData.previewImage = await this.altScreenshotService.takePageScreenshot(false);
@@ -100,7 +109,7 @@ export class PublishProjectService {
 
         // Revert activity
         for (const activity of activities) {
-            revertActivityChanges(activity);
+            this.projectChangeService.revertActivityChanges(activity);
         }
 
         // Wait for changes to apply
@@ -118,7 +127,7 @@ export class PublishProjectService {
 
         // Apply activity
         for (const activity of activities) {
-            applyActivityChanges(activity);
+            this.projectChangeService.applyActivityChanges(activity);
         }
 
         // Wait for changes to apply

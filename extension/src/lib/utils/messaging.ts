@@ -3,7 +3,7 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 import type { MouseEvent } from '$shared/constants'
-import type { Activity, Project, EditEvent } from '$shared/models'
+import type { Project, EditEvent } from '$shared/models'
 import type { SendOptions } from '@extend-chrome/messages/types/types'
 
 export enum MessageReceiver {
@@ -56,7 +56,6 @@ export interface EditProjectRequest {
 }
 
 // Messages
-
 export const [sendEditProjectRequest, editProjectRequestStream] =
 	getExtendedMessages<EditProjectRequest>('REQUEST_EDIT_PROJECT', MessageReceiver.BACKGROUND)
 
@@ -71,7 +70,7 @@ export const [sendOpenUrlRequest, openUrlRequestStream] = getExtendedMessages<st
 )
 
 export const [sendPublishProjectRequest, publishProjectStream] = getExtendedMessages<Project>(
-	'PUBLIC_PROJECT_REQUEST',
+	'PUBLISH_PROJECT_REQUEST',
 	MessageReceiver.BACKGROUND
 )
 
@@ -92,25 +91,5 @@ export const [sendPageScreenshotResponse, pageScreenshotResponseStream] = getExt
 
 export const [sendTabIdResponse, tabIdResponseStream] = getExtendedMessages<chrome.tabs.Tab>(
 	'TAB_ID_RESPONSE',
-	MessageReceiver.CONTENT
-)
-
-export const [sendApplyProjectChanges, applyProjectChangesStream] = getExtendedMessages<void>(
-	'APPLY_PROJECT_CHANGES',
-	MessageReceiver.CONTENT
-)
-
-export const [sendActivityApply, activityApplyStream] = getExtendedMessages<Activity>(
-	'ACTIVITY_APPLY',
-	MessageReceiver.CONTENT
-)
-
-export const [sendActivityRevert, activityRevertStream] = getExtendedMessages<Activity>(
-	'ACTIVITY_REVERT',
-	MessageReceiver.CONTENT
-)
-
-export const [sendGetScreenshotRequest, getScreenshotStream] = getExtendedMessages<Activity>(
-	'ACTIVITY_SCREENSHOT',
 	MessageReceiver.CONTENT
 )
