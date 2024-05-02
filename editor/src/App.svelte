@@ -7,10 +7,11 @@
   import { ONLOOK_TOOLBAR } from "$shared/constants";
   import {
     DATA_ONLOOK_EJECT,
+    DATA_ONLOOK_HOVER,
     DATA_ONLOOK_INJECT,
     DATA_ONLOOK_SAVED,
   } from "$lib/constants";
-  import { savingProject } from "$lib/states/editor";
+  import { mouseCaptured, savingProject } from "$lib/states/editor";
 
   let toolbarRef: Toolbar;
   let previousTool: ToolName | undefined = ToolName.EDIT;
@@ -31,6 +32,12 @@
       toolbarRef.updateTool(previousTool);
     } else if (name === DATA_ONLOOK_SAVED && newValue === "true") {
       savingProject.set(false);
+    } else if (name === DATA_ONLOOK_HOVER) {
+      if (newValue === "true") {
+        mouseCaptured.set(true);
+      } else {
+        mouseCaptured.set(false);
+      }
     }
   }
 </script>

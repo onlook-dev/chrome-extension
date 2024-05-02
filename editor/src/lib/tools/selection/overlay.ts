@@ -1,6 +1,8 @@
 import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ID } from "$lib/constants";
+import { mouseCaptured } from "$lib/states/editor";
 import { ONLOOK_TOOLBAR } from "$shared/constants";
 import { nanoid } from 'nanoid';
+import { get } from "svelte/store";
 
 interface Rect {
     element: HTMLElement;
@@ -60,11 +62,13 @@ class RectImpl extends HTMLElement implements Rect {
         this.showPopover && this.showPopover()
 
         // Render toolbar after
-        const toolbar = document.querySelector(ONLOOK_TOOLBAR) as HTMLElement
-        if (toolbar) {
-            toolbar.setAttribute('popover', 'manual')
-            toolbar.hidePopover && toolbar.hidePopover()
-            toolbar.showPopover && toolbar.showPopover()
+        if (!get(mouseCaptured)) {
+            const toolbar = document.querySelector(ONLOOK_TOOLBAR) as HTMLElement
+            if (toolbar) {
+                toolbar.setAttribute('popover', 'manual')
+                toolbar.hidePopover && toolbar.hidePopover()
+                toolbar.showPopover && toolbar.showPopover()
+            }
         }
     }
 

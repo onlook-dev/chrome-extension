@@ -3,7 +3,7 @@ import config from '../twind.config';
 import 'construct-style-sheets-polyfill';
 import { twind, cssom, observe } from '@twind/core';
 import { ONLOOK_TOOLBAR } from '$shared/constants';
-import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED, ONLOOK_EDITABLE } from '$/lib/constants';
+import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED, ONLOOK_EDITABLE, DATA_ONLOOK_HOVER } from '$/lib/constants';
 
 class OnlookToolbar extends HTMLElement {
 	app: any;
@@ -35,7 +35,7 @@ class OnlookToolbar extends HTMLElement {
 	}
 
 	static get observedAttributes() {
-		return [DATA_ONLOOK_EJECT, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED];
+		return [DATA_ONLOOK_EJECT, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED, DATA_ONLOOK_HOVER];
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
@@ -45,11 +45,24 @@ class OnlookToolbar extends HTMLElement {
 	connectedCallback() {
 		this.setAttribute('popover', 'manual')
 		this.showPopover && this.showPopover();
+
+		this.addEventListener('mouseenter', this.handleMouseEnter);
+		this.addEventListener('mouseleave', this.handleMouseLeave);
 	}
 
 	disconnectedCallback() {
 		this.hidePopover && this.hidePopover();
+		this.removeEventListener('mouseenter', this.handleMouseEnter);
+		this.removeEventListener('mouseleave', this.handleMouseLeave);
 	}
+
+	handleMouseEnter = () => {
+		this.setAttribute(DATA_ONLOOK_HOVER, 'true');
+	};
+
+	handleMouseLeave = () => {
+		this.removeAttribute(DATA_ONLOOK_HOVER);
+	};
 }
 
 function injectGlobalStyles() {
