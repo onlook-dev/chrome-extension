@@ -29,7 +29,8 @@ class RectImpl extends HTMLElement implements Rect {
         this.rectElement.setAttribute('stroke-linecap', 'round')
         this.rectElement.setAttribute('stroke-linejoin', 'round')
         this.svgElement.appendChild(this.rectElement)
-        this.element.style.position = 'fixed'
+
+        this.element.style.position = 'absolute'
         this.element.style.pointerEvents = 'none' // Ensure it doesn't interfere with other interactions
         this.element.style.zIndex = '999'
         this.element.setAttribute(DATA_ONLOOK_IGNORE, 'true');

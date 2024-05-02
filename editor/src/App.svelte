@@ -7,7 +7,6 @@
   import { ONLOOK_TOOLBAR } from "$shared/constants";
   import {
     DATA_ONLOOK_EJECT,
-    DATA_ONLOOK_HOVER,
     DATA_ONLOOK_INJECT,
     DATA_ONLOOK_SAVED,
   } from "$lib/constants";
