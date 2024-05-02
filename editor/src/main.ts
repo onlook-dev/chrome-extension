@@ -3,15 +3,23 @@ import config from '../twind.config';
 import 'construct-style-sheets-polyfill';
 import { twind, cssom, observe } from '@twind/core';
 import { ONLOOK_TOOLBAR } from '$shared/constants';
-import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED, ONLOOK_EDITABLE } from '$/lib/constants';
+import { DATA_ONLOOK_EJECT, DATA_ONLOOK_HOVER, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED, ONLOOK_EDITABLE } from '$/lib/constants';
 
 class OnlookToolbar extends HTMLElement {
 	app: any;
+
 	constructor() {
 		super();
 		this.style.position = 'fixed';
 		this.style.zIndex = '9999';
+		this.style.backgroundColor = 'transparent'
+		this.style.border = 'none'
+		this.style.overflow = 'visible'
+		this.style.inset = '0 auto auto 0'
+		this.style.width = '0'
+		this.style.height = '0'
 		this.setAttribute(DATA_ONLOOK_IGNORE, 'true');
+
 		// Attaches a shadow DOM
 		const shadowRoot = this.attachShadow({ mode: 'open' });
 
@@ -34,7 +42,14 @@ class OnlookToolbar extends HTMLElement {
 		this.app.handleValueUpdate(name, oldValue, newValue);
 	}
 
-	connectedCallback() { }
+	connectedCallback() {
+		this.setAttribute('popover', 'manual')
+		this.showPopover && this.showPopover();
+	}
+
+	disconnectedCallback() {
+		this.hidePopover && this.hidePopover();
+	}
 }
 
 function injectGlobalStyles() {

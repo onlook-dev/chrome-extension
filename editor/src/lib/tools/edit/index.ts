@@ -1,12 +1,11 @@
 import { ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, } from '$lib/states/editor';
-import { debounce } from '$shared/helpers';
 import { EditType, type InsertRemoveVal } from '$shared/models/editor';
-import type { Tool } from '../index';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getUniqueSelector } from '../utilities';
 import { handleEditEvent } from './handleEvents';
+import type { Tool } from '../index';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
@@ -25,6 +24,7 @@ export class EditTool implements Tool {
 			this.onElementResize(observedElements);
 		});
 		window.addEventListener('resize', this.onScreenResize.bind(this));
+		window.addEventListener('scroll', this.onScreenResize.bind(this));
 	}
 
 	onInit() { }
@@ -71,10 +71,9 @@ export class EditTool implements Tool {
 	}
 
 	onScreenResize(e: Event): void {
-		setTimeout(() => {
-			this.updateClickedRects(this.selectorEngine.selected);
-			this.updateParentRect();
-		}, 500);
+		this.overlayManager.updateHoverRect((this.selectorEngine.hovered));
+		this.updateClickedRects(this.selectorEngine.selected);
+		this.updateParentRect();
 	}
 
 	onElementResize(els: Element[]): void {

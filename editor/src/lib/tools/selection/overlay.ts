@@ -1,4 +1,5 @@
 import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ID } from "$lib/constants";
+import { ONLOOK_TOOLBAR } from "$shared/constants";
 import { nanoid } from 'nanoid';
 
 interface Rect {
@@ -51,11 +52,19 @@ class RectImpl extends HTMLElement implements Rect {
         this.svgElement.setAttribute('viewBox', `0 0 ${width} ${height}`)
         this.rectElement.setAttribute('width', width)
         this.rectElement.setAttribute('height', height)
-        this.element.style.top = `${top + window.scrollY}px`
-        this.element.style.left = `${left + window.scrollX}px`
+        this.element.style.top = `${top}px`
+        this.element.style.left = `${left}px`
 
         this.hidePopover && this.hidePopover()
         this.showPopover && this.showPopover()
+
+        // Render toolbar after
+        const toolbar = document.querySelector(ONLOOK_TOOLBAR) as HTMLElement
+        if (toolbar) {
+            toolbar.setAttribute('popover', 'manual')
+            toolbar.hidePopover && toolbar.hidePopover()
+            toolbar.showPopover && toolbar.showPopover()
+        }
     }
 
     connectedCallback() {
@@ -259,7 +268,7 @@ class ClickRect extends RectImpl {
         this.updatePadding(padding, { width, height, });
 
         // Render the base rect (the element itself) on top
-        super.render({ width, height, top, left });
+        super.render({ width, height, top, left, });
     }
 }
 
@@ -271,8 +280,8 @@ class ParentRect extends RectImpl {
         this.rectElement.setAttribute('stroke-dasharray', '5')
     }
 
-    render({ width, height, top, left }) {
-        super.render({ width, height, top, left })
+    render(rect) {
+        super.render(rect)
     }
 }
 
@@ -307,7 +316,6 @@ export class OverlayManager {
         const margin = window.getComputedStyle(el).margin
         const padding = window.getComputedStyle(el).padding
         clickRect.render({ width: rect.width, height: rect.height, top: rect.top, left: rect.left, padding, margin });
-
     }
 
     updateParentRect = (el: HTMLElement) => {
@@ -329,7 +337,7 @@ export class OverlayManager {
 
     removeClickedRects = () => {
         this.clickedRects.forEach(clickRect => {
-            clickRect.element.remove()
+            clickRect.remove()
         })
         this.clickedRects = []
     }
