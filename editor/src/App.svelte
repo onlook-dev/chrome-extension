@@ -33,11 +33,7 @@
     } else if (name === DATA_ONLOOK_SAVED && newValue === "true") {
       savingProject.set(false);
     } else if (name === DATA_ONLOOK_HOVER) {
-      if (newValue === "true") {
-        mouseCaptured.set(true);
-      } else {
-        mouseCaptured.set(false);
-      }
+      mouseCaptured.set(newValue === "true");
     }
   }
 </script>

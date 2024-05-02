@@ -71,7 +71,6 @@ export class EditTool implements Tool {
 	}
 
 	onScreenResize(e: Event): void {
-		this.overlayManager.updateHoverRect((this.selectorEngine.hovered));
 		this.updateClickedRects(this.selectorEngine.selected);
 		this.updateParentRect();
 	}
