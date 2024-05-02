@@ -8,13 +8,12 @@
 
     import Logo from "./Logo.svelte";
     import Button from "../ui/button/button.svelte";
+    import ProjectItem from "./ProjectItem.svelte";
     import * as Card from "$lib/components/ui/card";
     import * as Accordion from "$lib/components/ui/accordion";
-    import ProjectItem from "./ProjectItem.svelte";
 
     import type { PublishTool } from "$lib/tools/publish";
-    import { ProjectStatus, type Project } from "$shared/models";
-    import { MessageService } from "$shared/message";
+    import type { Project } from "$shared/models";
 
     export let toolManager: ToolManager;
 
