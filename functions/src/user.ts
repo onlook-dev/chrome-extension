@@ -2,14 +2,10 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as nanoid from "nanoid";
 
-import {
-  FirestoreCollections.USERS,
-  FirestoreCollections.TEAMS,
-  FirestoreCollections.PROJECTS,
-} from "../../shared/constants";
+import { FirestoreCollections } from "../../shared/constants";
 import { Team, Role } from "../../shared/models/team";
-import type { User } from "../../shared/models/user";
 import { addProjectsToTeam, duplicateProject } from "../utils/helpers";
+import type { User } from "../../shared/models/user";
 
 const isProd = admin.instanceId().app.options.projectId === "onlook-prod";
 
@@ -101,8 +97,8 @@ export const deleteUser = functions.auth.user().onDelete(async (user) => {
 
       if (!teamData) return;
 
-      if (teamData && Object.keys(teamData.users).length === 1) {
-        // Delete team if user is the only member
+      // Delete team if user is the only member
+      if (teamData && teamData.users[user.uid] && Object.keys(teamData.users).length === 1) {
         await teamRef.delete();
       } else {
         // Remove user from team

@@ -1,10 +1,7 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 
-import {
-  FirestoreCollections.USERS,
-  FirestoreCollections.TEAMS,
-} from "../../shared/constants";
+import { FirestoreCollections } from "../../shared/constants";
 import { Team } from "../../shared/models/team";
 
 export const createTeam = functions.firestore
