@@ -45,17 +45,10 @@ class OnlookToolbar extends HTMLElement {
 	connectedCallback() {
 		this.setAttribute('popover', 'manual')
 		this.showPopover && this.showPopover();
-
-		this.addEventListener('mouseenter', this.handleMouseEnter);
-		this.addEventListener('click', this.handleMouseEnter);
-		this.addEventListener('mouseleave', this.handleMouseLeave);
 	}
 
 	disconnectedCallback() {
 		this.hidePopover && this.hidePopover();
-		this.removeEventListener('mouseenter', this.handleMouseEnter);
-		this.removeEventListener('click', this.handleMouseEnter);
-		this.removeEventListener('mouseleave', this.handleMouseLeave);
 	}
 
 	handleMouseEnter = () => {

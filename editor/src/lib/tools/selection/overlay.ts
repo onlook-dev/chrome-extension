@@ -12,15 +12,13 @@ interface Rect {
     render: (rect: { width: number, height: number, top: number, left: number }) => void;
 }
 
-class RectImpl extends HTMLElement implements Rect {
+class RectImpl implements Rect {
     element: HTMLElement;
     svgNamespace: string = 'http://www.w3.org/2000/svg'
     svgElement: Element;
     rectElement: Element;
 
     constructor() {
-        super()
-
         this.element = document.createElement('div')
         this.svgElement = document.createElementNS(this.svgNamespace, 'svg')
         this.svgElement.setAttribute('overflow', 'visible')
@@ -39,14 +37,6 @@ class RectImpl extends HTMLElement implements Rect {
         this.element.setAttribute('id', ONLOOK_RECT_ID)
         this.element.appendChild(this.svgElement)
 
-        // Popover fixes
-        this.style.backgroundColor = 'transparent'
-        this.style.border = 'none'
-        this.style.overflow = 'visible'
-        this.style.inset = '0 auto auto 0'
-
-        this.appendChild(this.element)
-        this.setAttribute('popover', 'manual')
     }
 
     render({ width, height, top, left }) {
@@ -58,27 +48,10 @@ class RectImpl extends HTMLElement implements Rect {
         this.element.style.top = `${top}px`
         this.element.style.left = `${left}px`
 
-        this.hidePopover && this.hidePopover()
-        this.showPopover && this.showPopover()
+        // this.hidePopover && this.hidePopover()
+        // this.showPopover && this.showPopover()
 
-        // Render toolbar after
-        if (!get(mouseCaptured)) {
-            const toolbar = document.querySelector(ONLOOK_TOOLBAR) as HTMLElement
-            if (toolbar) {
-                toolbar.setAttribute('popover', 'manual')
-                toolbar.hidePopover && toolbar.hidePopover()
-                toolbar.showPopover && toolbar.showPopover()
-            }
-        }
-    }
 
-    connectedCallback() {
-        this.setAttribute('popover', 'manual')
-        this.showPopover && this.showPopover()
-    }
-
-    disconnectedCallback() {
-        this.hidePopover && this.hidePopover()
     }
 }
 
@@ -291,18 +264,20 @@ class ParentRect extends RectImpl {
 }
 
 export class OverlayManager {
+    rectPopover: RectPopover
     hoverRect: HoverRect
     clickedRects: ClickRect[]
     parentRect: ParentRect
 
     constructor() {
+        this.rectPopover = new RectPopover();
         this.hoverRect = new HoverRect();
-
         this.clickedRects = [];
         this.parentRect = new ParentRect();
 
-        document.body.appendChild(this.hoverRect)
-        document.body.appendChild(this.parentRect)
+        this.rectPopover.appendChild(this.hoverRect.element)
+        this.rectPopover.appendChild(this.parentRect.element)
+        document.body.appendChild(this.rectPopover)
     }
 
     clear = () => {
@@ -314,7 +289,7 @@ export class OverlayManager {
     addClickRect = (el: HTMLElement) => {
         if (!el) return
         const clickRect = new ClickRect()
-        document.body.appendChild(clickRect)
+        this.rectPopover.appendChild(clickRect.element)
         this.clickedRects.push(clickRect)
 
         const rect = el.getBoundingClientRect()
@@ -342,7 +317,7 @@ export class OverlayManager {
 
     removeClickedRects = () => {
         this.clickedRects.forEach(clickRect => {
-            clickRect.remove()
+            clickRect.element.remove()
         })
         this.clickedRects = []
     }
@@ -352,7 +327,35 @@ export class OverlayManager {
     }
 }
 
-customElements.define('rect-impl', RectImpl);
-customElements.define('hover-rect', HoverRect);
-customElements.define('click-rect', ClickRect);
-customElements.define('parent-rect', ParentRect);
+
+class RectPopover extends HTMLElement {
+    constructor() {
+        super()
+        // Popover fixes
+        this.style.backgroundColor = 'transparent'
+        this.style.border = 'none'
+        this.style.overflow = 'visible'
+        this.style.inset = '0 auto auto 0'
+    }
+
+    connectedCallback() {
+        this.setAttribute('popover', 'manual')
+        this.showPopover && this.showPopover()
+
+        // // Render toolbar after
+        if (!get(mouseCaptured)) {
+            const toolbar = document.querySelector(ONLOOK_TOOLBAR) as HTMLElement
+            if (toolbar) {
+                toolbar.setAttribute('popover', 'manual')
+                toolbar.hidePopover && toolbar.hidePopover()
+                toolbar.showPopover && toolbar.showPopover()
+            }
+        }
+    }
+
+    disconnectedCallback() {
+        this.hidePopover && this.hidePopover()
+    }
+}
+
+customElements.define('rect-popover', RectPopover);
