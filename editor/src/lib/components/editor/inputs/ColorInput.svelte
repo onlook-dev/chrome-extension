@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { mouseCaptured } from "$lib/states/editor";
   import { stringToHex } from "$lib/tools/edit/colors";
   import { parse } from "culori";
   import { Cross2, Plus } from "radix-icons-svelte";
@@ -30,7 +29,6 @@
       class="border-transparent absolute w-10 h-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
       value={inputString}
       on:input={(event) => {
-        mouseCaptured.set(true);
         inputString = event.currentTarget.value;
         updateElementStyle(elementStyle.key, event.currentTarget.value);
       }}

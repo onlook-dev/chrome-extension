@@ -1,8 +1,6 @@
 import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ID } from "$lib/constants";
-import { mouseCaptured } from "$lib/states/editor";
 import { ONLOOK_TOOLBAR } from "$shared/constants";
 import { nanoid } from 'nanoid';
-import { get } from "svelte/store";
 
 interface Rect {
     element: HTMLElement;
@@ -275,8 +273,8 @@ export class OverlayManager {
         this.clickedRects = [];
         this.parentRect = new ParentRect();
 
-        this.rectPopover.appendChild(this.hoverRect.element)
-        this.rectPopover.appendChild(this.parentRect.element)
+        this.rectPopover.shadow.appendChild(this.hoverRect.element)
+        this.rectPopover.shadow.appendChild(this.parentRect.element)
         document.body.appendChild(this.rectPopover)
     }
 
@@ -289,7 +287,7 @@ export class OverlayManager {
     addClickRect = (el: HTMLElement) => {
         if (!el) return
         const clickRect = new ClickRect()
-        this.rectPopover.appendChild(clickRect.element)
+        this.rectPopover.shadow.appendChild(clickRect.element)
         this.clickedRects.push(clickRect)
 
         const rect = el.getBoundingClientRect()
@@ -329,6 +327,7 @@ export class OverlayManager {
 
 
 class RectPopover extends HTMLElement {
+    shadow: ShadowRoot;
     constructor() {
         super()
         // Popover fixes
@@ -336,20 +335,20 @@ class RectPopover extends HTMLElement {
         this.style.border = 'none'
         this.style.overflow = 'visible'
         this.style.inset = '0 auto auto 0'
+
+        // Create shadow root
+        this.shadow = this.attachShadow({ mode: 'open' });
     }
 
     connectedCallback() {
         this.setAttribute('popover', 'manual')
         this.showPopover && this.showPopover()
 
-        // // Render toolbar after
-        if (!get(mouseCaptured)) {
-            const toolbar = document.querySelector(ONLOOK_TOOLBAR) as HTMLElement
-            if (toolbar) {
-                toolbar.setAttribute('popover', 'manual')
-                toolbar.hidePopover && toolbar.hidePopover()
-                toolbar.showPopover && toolbar.showPopover()
-            }
+        const toolbar = document.querySelector(ONLOOK_TOOLBAR) as HTMLElement
+        if (toolbar) {
+            toolbar.setAttribute('popover', 'manual')
+            toolbar.hidePopover && toolbar.hidePopover()
+            toolbar.showPopover && toolbar.showPopover()
         }
     }
 

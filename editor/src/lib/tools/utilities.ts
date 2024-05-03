@@ -83,3 +83,20 @@ export const getUniqueSelector = (el: HTMLElement): string => {
   }
   return selector
 }
+
+export const rehoistPopovers = () => {
+  // TODO: Just add a class to these instead
+
+  const rectPopover = document.querySelector('rect-popover') as HTMLElement
+  if (rectPopover) {
+    rectPopover.hidePopover && rectPopover.hidePopover()
+    rectPopover.showPopover && rectPopover.showPopover()
+  }
+
+  // This should be last
+  const onlookToolbar = document.querySelector(ONLOOK_TOOLBAR) as HTMLElement
+  if (onlookToolbar) {
+    onlookToolbar.hidePopover && onlookToolbar.hidePopover()
+    onlookToolbar.showPopover && onlookToolbar.showPopover()
+  }
+}

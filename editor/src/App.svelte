@@ -11,7 +11,7 @@
     DATA_ONLOOK_INJECT,
     DATA_ONLOOK_SAVED,
   } from "$lib/constants";
-  import { mouseCaptured, savingProject } from "$lib/states/editor";
+  import { savingProject } from "$lib/states/editor";
 
   let toolbarRef: Toolbar;
   let previousTool: ToolName | undefined = ToolName.EDIT;
@@ -31,8 +31,6 @@
       toolbarRef.updateTool(previousTool);
     } else if (name === DATA_ONLOOK_SAVED && newValue === "true") {
       savingProject.set(false);
-    } else if (name === DATA_ONLOOK_HOVER) {
-      mouseCaptured.set(newValue === "true");
     }
   }
 </script>

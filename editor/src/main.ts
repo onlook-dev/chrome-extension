@@ -50,14 +50,6 @@ class OnlookToolbar extends HTMLElement {
 	disconnectedCallback() {
 		this.hidePopover && this.hidePopover();
 	}
-
-	handleMouseEnter = () => {
-		this.setAttribute(DATA_ONLOOK_HOVER, 'true');
-	};
-
-	handleMouseLeave = () => {
-		this.removeAttribute(DATA_ONLOOK_HOVER);
-	};
 }
 
 function injectGlobalStyles() {
