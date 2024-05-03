@@ -11,8 +11,9 @@ const isProd = admin.instanceId().app.options.projectId === "onlook-prod";
 const DEV_PORTFOLIO_DEMO = "R9P9ESZDSJEotGheG7Tmg";
 const DEV_DASHBOARD_DEMO = "fSbhXa18h1eTp4l_H29P3";
 
+// Team: rmpcbGKvTWsSQVXtl_DTl
 const PROD_PORTFOLIO_DEMO = "G6f9dpFk-4gpCnHpRUZSi";
-const PROD_DASHBOARD_DEMO = "UT4qBdpFQtqzTzMRQEE20";
+const PROD_DASHBOARD_DEMO = "a1YqFucGbaqykf_ZT5s1A";
 
 const DEMO_PORTFOLIO = isProd ? PROD_PORTFOLIO_DEMO : DEV_PORTFOLIO_DEMO;
 const DEMO_DASHBOARD = isProd ? PROD_DASHBOARD_DEMO : DEV_DASHBOARD_DEMO;
