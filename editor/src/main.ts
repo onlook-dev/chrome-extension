@@ -3,7 +3,7 @@ import config from '../twind.config';
 import 'construct-style-sheets-polyfill';
 import { twind, cssom, observe } from '@twind/core';
 import { ONLOOK_TOOLBAR } from '$shared/constants';
-import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED, ONLOOK_EDITABLE, DATA_ONLOOK_HOVER } from '$/lib/constants';
+import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED, ONLOOK_EDITABLE, } from '$/lib/constants';
 
 class OnlookToolbar extends HTMLElement {
 	app: any;
@@ -35,7 +35,7 @@ class OnlookToolbar extends HTMLElement {
 	}
 
 	static get observedAttributes() {
-		return [DATA_ONLOOK_EJECT, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED, DATA_ONLOOK_HOVER];
+		return [DATA_ONLOOK_EJECT, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED,];
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
