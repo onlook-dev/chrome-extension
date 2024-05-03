@@ -1,8 +1,8 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 
-import { FirestoreCollections } from "../../shared/constants";
-import { Team } from "../../shared/models/team";
+import {FirestoreCollections} from "../../shared/constants";
+import {Team} from "../../shared/models/team";
 
 export const createTeam = functions.firestore
   .document(`${FirestoreCollections.TEAMS}/{teamId}`)
@@ -43,7 +43,7 @@ export const deleteTeam = functions.firestore
   });
 
 export const addUserToTeam = functions.https.onCall(async (data) => {
-  const { userId, teamId, role } = data;
+  const {userId, teamId, role} = data;
 
   // Update team with user id and role
   const teamRef = admin

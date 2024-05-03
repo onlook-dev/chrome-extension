@@ -2,26 +2,26 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as nanoid from "nanoid";
 
-import { FirestoreCollections } from "../../shared/constants";
-import { Team, Role } from "../../shared/models/team";
-import { addProjectsToTeam, duplicateProject } from "../utils/helpers";
-import type { User } from "../../shared/models/user";
+import {FirestoreCollections} from "../../shared/constants";
+import {Team, Role} from "../../shared/models/team";
+import {addProjectsToTeam, duplicateProject} from "../utils/helpers";
+import type {User} from "../../shared/models/user";
 
 const isProd = admin.instanceId().app.options.projectId === "onlook-prod";
 
 const DEV_PORTFOLIO_DEMO = "R9P9ESZDSJEotGheG7Tmg";
 const DEV_DASHBOARD_DEMO = "fSbhXa18h1eTp4l_H29P3";
 
-const PROD_PORTFOLIO_DEMO = "mWr_Sy2ovPKx3f2E0utB0";
-const PROD_DASHBOARD_DEMO = "tcGuRMeiGrFvEyyM18CZp";
+const PROD_PORTFOLIO_DEMO = "G6f9dpFk-4gpCnHpRUZSi";
+const PROD_DASHBOARD_DEMO = "UT4qBdpFQtqzTzMRQEE20";
 
 const DEMO_PORTFOLIO = isProd ? PROD_PORTFOLIO_DEMO : DEV_PORTFOLIO_DEMO;
 const DEMO_DASHBOARD = isProd ? PROD_DASHBOARD_DEMO : DEV_DASHBOARD_DEMO;
 
 const demos = [DEMO_PORTFOLIO, DEMO_DASHBOARD];
-const demoProjects: string[] = [];
 
 export const createUser = functions.auth.user().onCreate(async (user) => {
+  const demoProjects: string[] = [];
   const defaultTeam = {
     id: nanoid.nanoid(),
     name: `${user.displayName}'s Team`,
@@ -98,7 +98,9 @@ export const deleteUser = functions.auth.user().onDelete(async (user) => {
       if (!teamData) return;
 
       // Delete team if user is the only member
-      if (teamData && teamData.users[user.uid] && Object.keys(teamData.users).length === 1) {
+      if (teamData && teamData.users[user.uid] &&
+        Object.keys(teamData.users).length === 1
+      ) {
         await teamRef.delete();
       } else {
         // Remove user from team
