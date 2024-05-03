@@ -45,11 +45,6 @@ class RectImpl implements Rect {
         this.rectElement.setAttribute('height', height)
         this.element.style.top = `${top}px`
         this.element.style.left = `${left}px`
-
-        // this.hidePopover && this.hidePopover()
-        // this.showPopover && this.showPopover()
-
-
     }
 }
 
@@ -324,7 +319,6 @@ export class OverlayManager {
         this.parentRect.render({ width: 0, height: 0, top: 0, left: 0 })
     }
 }
-
 
 class RectPopover extends HTMLElement {
     shadow: ShadowRoot;
