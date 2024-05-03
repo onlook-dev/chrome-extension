@@ -265,7 +265,9 @@
 			class="underline hover:opacity-80">Read the docs to learn more</a
 		>
 	{:else}
-		<p class="text-center text-lg">Nothing to publish</p>
-		<p class="text-center text-lg">Use the extension to make some edits!</p>
+		<div class="mt-8">
+			<p class="text-center">Nothing to publish</p>
+			<p class="text-center">Use the extension to make some edits!</p>
+		</div>
 	{/if}
 </div>

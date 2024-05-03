@@ -68,7 +68,7 @@
 	>
 	<dialog id={modalId} class="modal">
 		<Card.Root class="text-primary modal-box w-full h-[80%] flex flex-col">
-			<Card.Header><h1 class="text-xl font-light">Publish to Github</h1></Card.Header>
+			<Card.Header><h1 class="text-lg font-light">Publish to Github</h1></Card.Header>
 			<Card.Content>
 				{#if project?.installationId}
 					<Tabs.Root value={selectedTab} class="w-full">
