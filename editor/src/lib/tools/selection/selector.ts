@@ -1,5 +1,5 @@
 import { get, writable, type Writable } from "svelte/store";
-import { deepElementFromPoint, getByDataOnlookId, getDataOnlookId, isOffBounds } from "../utilities";
+import { deepElementFromPoint, getByDataOnlookId, getDataOnlookId, isOffBounds, rehoistPopovers } from "../utilities";
 
 export class SelectorEngine {
   page = document.body
@@ -52,7 +52,7 @@ export class SelectorEngine {
     if (this.editing) return;
 
     if (!e.shiftKey) {
-      this.selectSingle(target);
+      this.select(target, true);
     } else {
       document.getSelection().removeAllRanges();
       if (get(this.selectedStore).includes(target)) {
@@ -85,16 +85,20 @@ export class SelectorEngine {
     const targets = [item]
     const dataOnlookId = getDataOnlookId(item);
     dataOnlookId && targets.push(...getByDataOnlookId(dataOnlookId));
-
     this.selectedStore.update((s) => [...targets])
   }
 
-  select(item) {
+  select(item, clear = false) {
     const targets = [item]
     const dataOnlookId = getDataOnlookId(item);
     dataOnlookId && targets.push(...getByDataOnlookId(dataOnlookId));
 
-    this.selectedStore.update((s) => [...s, ...targets])
+    if (clear) {
+      this.selectedStore.update((s) => [...targets])
+    } else {
+      this.selectedStore.update((s) => [...s, ...targets])
+    }
+    rehoistPopovers();
   }
 
   unselect(item) {

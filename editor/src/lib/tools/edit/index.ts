@@ -23,6 +23,7 @@ export class EditTool implements Tool {
 			this.onElementResize(observedElements);
 		});
 		window.addEventListener('resize', this.onScreenResize.bind(this));
+		window.addEventListener('scroll', this.onScreenResize.bind(this));
 	}
 
 	onInit() {
@@ -72,10 +73,9 @@ export class EditTool implements Tool {
 	}
 
 	onScreenResize(e: Event): void {
-		setTimeout(() => {
-			this.updateClickedRects(this.selectorEngine.selected);
-			this.updateParentRect();
-		}, 500);
+		this.overlayManager.updateHoverRect(this.selectorEngine.hovered);
+		this.updateClickedRects(this.selectorEngine.selected);
+		this.updateParentRect();
 	}
 
 	onElementResize(els: Element[]): void {

@@ -14,7 +14,6 @@
 
   let editor: Editor;
   let previousTool: ToolName | undefined = ToolName.EDIT;
-
   window.addEventListener("beforeunload", function (e) {
     // If changes in page, prompt user before reload
     if ($historyStore.length > 0) {

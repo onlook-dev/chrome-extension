@@ -1,8 +1,8 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 
-import {FirestoreCollections} from "../../shared/constants";
-import type {Project} from "../../shared/models";
+import { FirestoreCollections } from "../../shared/constants";
+import type { Project } from "../../shared/models";
 
 export const createProject = functions.firestore
   .document(`${FirestoreCollections.PROJECTS}/{projectId}`)

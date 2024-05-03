@@ -3,7 +3,6 @@ import { finder } from '$lib/tools/selection/uniqueSelector'
 
 export const deepElementFromPoint = (x, y): HTMLElement => {
   const el = document.elementFromPoint(x, y)
-
   const crawlShadows = node => {
     if (node?.shadowRoot) {
       const potential = node.shadowRoot.elementFromPoint(x, y)
@@ -18,6 +17,13 @@ export const deepElementFromPoint = (x, y): HTMLElement => {
   const nested_shadow = crawlShadows(el)
 
   return nested_shadow || el
+}
+
+export const isFixed = elem => {
+  do {
+    if (window.getComputedStyle(elem).position == 'fixed') return true;
+  } while (elem = elem.offsetParent);
+  return false;
 }
 
 export const isOffBounds = node => node?.closest && (node.closest(ONLOOK_TOOLBAR) || node.closest(`#${ONLOOK_TOOLBAR}`))
@@ -76,4 +82,20 @@ export const getUniqueSelector = (el: HTMLElement): string => {
     console.error("Error creating selector ", e);
   }
   return selector
+}
+
+export const rehoistPopovers = () => {
+  // TODO: Just add a class to these instead
+  const rectPopover = document.querySelector('rect-popover') as HTMLElement
+  if (rectPopover) {
+    rectPopover.hidePopover && rectPopover.hidePopover()
+    rectPopover.showPopover && rectPopover.showPopover()
+  }
+
+  // This should be last one to hoist to show up above rects
+  const onlookToolbar = document.querySelector(ONLOOK_TOOLBAR) as HTMLElement
+  if (onlookToolbar) {
+    onlookToolbar.hidePopover && onlookToolbar.hidePopover()
+    onlookToolbar.showPopover && onlookToolbar.showPopover()
+  }
 }
