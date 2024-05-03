@@ -113,10 +113,7 @@
 			<Breadcrumb.Root class="mr-auto ">
 				<Breadcrumb.List>
 					<Breadcrumb.Item>
-						<Breadcrumb.Link
-							href="{DashboardRoutes.DASHBOARD}?{DashboardSearchParams.TEAM}={project?.teamId}"
-							>Onlook</Breadcrumb.Link
-						>
+						<Breadcrumb.Link href={DashboardRoutes.DASHBOARD}>Onlook</Breadcrumb.Link>
 					</Breadcrumb.Item>
 					<Breadcrumb.Separator class="p-0 m-0" />
 					<Breadcrumb.Item>
