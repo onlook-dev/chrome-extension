@@ -2,9 +2,9 @@ import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import * as nanoid from "nanoid";
 
-import { FirestoreCollections } from "../../shared/constants";
-import { addProjectsToTeam, duplicateProject } from "../utils/helpers";
-import { type User, Team, Role } from "../../shared/models";
+import {FirestoreCollections} from "../../shared/constants";
+import {addProjectsToTeam, duplicateProject} from "../utils/helpers";
+import {type User, Team, Role} from "../../shared/models";
 
 const isProd = admin.instanceId().app.options.projectId === "onlook-prod";
 

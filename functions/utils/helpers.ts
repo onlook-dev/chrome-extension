@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 
-import { FirestoreCollections } from "../../shared/constants";
-import { Project, ProjectStatus, Team } from "../../shared/models";
+import {FirestoreCollections} from "../../shared/constants";
+import {Project, ProjectStatus, Team} from "../../shared/models";
 
 export async function duplicateProject(
   projectId: string,
