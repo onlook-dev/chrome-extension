@@ -48,7 +48,7 @@ export class InteractionService {
         }));
     }
 
-    async getCommand(prompt: string): Promise<string> {
+    async prompt(prompt: string): Promise<string> {
         const response = (await this.openAi.invoke(prompt)) as { code: string }
         return response.code;
     }

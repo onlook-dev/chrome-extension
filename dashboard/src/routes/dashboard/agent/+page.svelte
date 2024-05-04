@@ -2,6 +2,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { onMount } from 'svelte';
+	import { InteractionService } from './helper';
 
 	enum Author {
 		User = 'User',
@@ -15,23 +16,19 @@
 
 	let value = '';
 	let logs: Chats[] = [];
+	let service: InteractionService;
 
 	onMount(() => {
-		const test = document.getElementById('test') as HTMLDivElement;
-
-		test.addEventListener('click', () => {
-			test.style.backgroundColor = 'red';
-		});
+		service = new InteractionService();
 	});
 
-	function submitInput() {
+	async function submitInput() {
 		if (!value) return;
-		logs = [
-			...logs,
-			{ author: Author.User, message: value },
-			{ author: Author.Agent, message: value }
-		];
-		value = '';
+		logs = [...logs, { author: Author.User, message: value }];
+
+		const res = await service.prompt(value);
+		console.log(res);
+		logs = [...logs, { author: Author.Agent, message: JSON.stringify(res) }];
 	}
 </script>
 
@@ -55,7 +52,7 @@
 		<div id="test" class="w-10 h-10 bg-stone-500"></div>
 	</div>
 
-	<div class="mt-10 w-96 h-full flex flex-col overflow-auto">
+	<div class="mt-10 w-96 h-full flex flex-col overflow-auto space-y-2">
 		{#each logs as log}
 			{#if log.author === Author.User}
 				<div class="bg-blue-500 text-white p-2 rounded ml-auto">{log.message}</div>
