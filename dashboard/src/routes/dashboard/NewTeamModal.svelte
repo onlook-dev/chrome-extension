@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Tier } from '$shared/models/team';
+	import {} from '$shared/models';
 	import { teamsMapStore, userStore } from '$lib/utils/store';
-	import { Role, type Team } from '$shared/models/team';
+	import { Role, Tier, type Team } from '$shared/models';
 	import { nanoid } from 'nanoid';
 	import { FirestoreCollections, MAX_TITLE_LENGTH } from '$shared/constants';
 	import { FirebaseService } from '$lib/storage';

@@ -39,7 +39,7 @@ import {
 	PUBLIC_PROD_MIXPANEL_TOKEN
 } from '$env/static/public';
 
-import { Tier } from '$shared/models/team';
+import { Tier } from '$shared/models';
 
 const testFirebaseConfig = {
 	apiKey: PUBLIC_TEST_API_KEY,

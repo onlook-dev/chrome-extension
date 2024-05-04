@@ -1,5 +1,4 @@
-import type { Activity } from "$shared/models/activity";
-import type { ProcessedActivity, PathInfo } from "$shared/models/translation";
+import type { ProcessedActivity, PathInfo, Activity } from "$shared/models";
 
 export function getProcessedActivities(
   activities: Record<string, Activity>,

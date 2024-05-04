@@ -1,110 +1,124 @@
-import { MessageTypes } from '$shared/constants'
-import { authUserBucket, getActiveProject, popupStateBucket, setActiveProject } from '$lib/utils/localstorage'
+import { MessageService, MessageType } from '$shared/message'
+import { authUserBucket, projectsMapBucket } from '$lib/utils/localstorage'
 import {
-	activityApplyStream,
-	activityRevertStream,
 	applyProjectChangesStream,
-	getScreenshotStream,
-	sendSaveProject,
 	sendEditEvent,
 	sendEditProjectRequest
 } from '$lib/utils/messaging'
-import { baseUrl } from '$lib/utils/env'
 import { ScreenshotService } from './screenshot'
-import { PopupRoutes } from '$lib/utils/constants'
-import { getCSSFramework } from '$lib/utils/styleFramework'
 import { PublishProjectService } from '$lib/publish'
-import { applyActivityChanges, revertActivityChanges } from '$lib/utils/activity'
 import { AltScreenshotService } from './altScreenshot'
+import { ProjectTabService } from '$lib/projects'
+import { ProjectChangeService } from '$lib/projects/changes'
 
-import type { EditEvent, } from '$shared/models/editor'
-import type { Project } from '$shared/models/project'
+import { ProjectStatus, type EditEvent, type Project } from '$shared/models'
 
 const screenshotService = new ScreenshotService()
 const altScreenshotService = new AltScreenshotService()
+const messageService = MessageService.getInstance()
+const projectTabManager = new ProjectTabService()
+const projectChangeService = new ProjectChangeService()
 
 export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
-	window.addEventListener('message', event => {
-		if (event.source != window) return
+	messageService.subscribe(MessageType.DASHBOARD_SIGN_IN, (user) => {
+		authUserBucket.set({ authUser: user })
+	})
 
-		const message = event.data
+	messageService.subscribe(MessageType.DASHBOARD_SIGN_OUT, () => {
+		authUserBucket.clear()
+	})
 
-		if (message.type === MessageTypes.DASHBOARD_AUTH && event.origin === baseUrl && message.user) {
-			authUserBucket.set({ authUser: message.user })
-			return
+	messageService.subscribe(MessageType.EDIT_EVENT, (event: EditEvent) => {
+		sendEditEvent(event)
+	})
+
+	messageService.subscribe(MessageType.PREPARE_SAVE, async (payload, correlationId) => {
+		if (correlationId)
+			// Confirm save received
+			messageService.respond({}, correlationId)
+
+		const currentTab = await projectTabManager.getCurrentTab()
+		const project = await projectTabManager.getTabProject(currentTab)
+
+		// Prepare project for saving
+		if (!project.status || project.status === ProjectStatus.DRAFT) {
+			const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
+			publishService.prepare()
 		}
+	})
 
-		if (message.type === MessageTypes.EDIT_EVENT) {
-			const editorStyleChange = message.detail as EditEvent
-			sendEditEvent(editorStyleChange)
-			return
-		}
+	messageService.subscribe(MessageType.PUBLISH_PROJECT, async (payload, correlationId) => {
+		const currentTab = await projectTabManager.getCurrentTab()
+		const project = await projectTabManager.getTabProject(currentTab)
+		const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
+		await publishService.publish()
 
-		if (message.type === MessageTypes.OPEN_PROJECT) {
-			getActiveProject().then((project) => {
-				const publishService = new PublishProjectService(project, screenshotService, altScreenshotService)
-				publishService.publish()
+		if (correlationId)
+			// Confirm save received
+			messageService.respond({}, correlationId)
+	})
+
+	messageService.subscribe(MessageType.GET_PROJECT, async (payload, correlationId) => {
+		const currentTab = await projectTabManager.getCurrentTab()
+		const project = await projectTabManager.getTabProject(currentTab)
+		if (correlationId)
+			messageService.respond(project, correlationId)
+	})
+
+	messageService.subscribe(MessageType.GET_PROJECTS, async (payload, correlationId) => {
+		const currentTab = await projectTabManager.getCurrentTab()
+		let projects = []
+
+		if (currentTab.url) {
+			const currentHost = new URL(currentTab.url).hostname
+			const map = await projectsMapBucket.get()
+			projects = Object.values(map).filter((project: Project) => {
+				if (!project || !project.hostUrl)
+					return false
+				// Filter for projects with the same URL host
+				const projectHost = new URL(project.hostUrl).hostname
+				return currentHost === projectHost
 			})
-			return
 		}
 
-		if (message.type === MessageTypes.EDIT_PROJECT) {
-			if (message.project) {
-				let project = message.project as Project
-				setActiveProject(project.id)
-				popupStateBucket.set({ activeRoute: PopupRoutes.PROJECT, activeProjectId: project.id })
-				sendEditProjectRequest({ project, enable: true })
-			}
-		}
+		if (correlationId)
+			messageService.respond(projects, correlationId)
 	})
 
-	activityRevertStream.subscribe(([activity, sender]) => {
-		revertActivityChanges(activity)
+	messageService.subscribe(MessageType.EDIT_PROJECT, async (project: Project) => {
+		// Pass to background script
+		sendEditProjectRequest({ project, enable: true })
 	})
 
-	activityApplyStream.subscribe(([activity, sender]) => {
-		applyActivityChanges(activity)
+	messageService.subscribe(MessageType.MERGE_PROJECT, async (project, correlationId) => {
+		const projectChangeService = new ProjectChangeService()
+		const currentTab = await projectTabManager.getCurrentTab()
+		const currentProject = await projectTabManager.getTabProject(currentTab)
+		const newProject = projectChangeService.mergeProjects(currentProject, project)
+
+		// Save over target project and remove currentProject
+		await projectTabManager.setTabProject(currentTab, newProject)
+		await projectTabManager.removeProject(currentProject)
+
+		if (correlationId)
+			messageService.respond({}, correlationId)
+
+		// Apply project changes
+		await projectChangeService.applyProjectChanges(newProject)
 	})
 
 	applyProjectChangesStream.subscribe(async () => {
-		const activeProject = await getActiveProject()
-		if (!activeProject) return
+		const tab = await projectTabManager.getCurrentTab()
+		const project = await projectTabManager.getTabProject(tab)
 
-		let shouldSaveProject = false
-
-		// Get each activity and their style change
-		Object.values(activeProject.activities).forEach(activity => {
-			let activityMutated = applyActivityChanges(activity)
-			if (activityMutated) {
-				activeProject.activities[activity.selector] = activity
-				shouldSaveProject = true
-			}
-		})
-
-		// Get style framework if did not exist
-		if (!activeProject.projectSettings?.styleFramework) {
-			const styleFramework = await getCSSFramework()
-			activeProject.projectSettings = {
-				...activeProject.projectSettings,
-				styleFramework
-			}
-			shouldSaveProject = true
-		}
-
-		if (shouldSaveProject) {
-			sendSaveProject(activeProject)
-		}
-	})
-
-	getScreenshotStream.subscribe(async ([activity]) => {
-		// screenshotService.takeActivityScreenshot(activity)
+		// Apply project changes
+		await projectChangeService.applyProjectChanges(project)
 	})
 }
 
 try {
 	setupListeners()
-	console.log('Content script loaded!')
 } catch (e) {
 	console.error(e)
 }

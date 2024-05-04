@@ -1,7 +1,11 @@
 import { EditTool } from "./edit";
-import { HotKeys } from "./edit/hotkeys";
+import { PublishTool } from "./publish";
+
+import { HotKeys } from "./hotkeys";
+
 export enum ToolName {
   EDIT = 'edit',
+  PUBLISH = 'publish',
 }
 
 export interface Tool {
@@ -16,8 +20,10 @@ export interface Tool {
 
 export class ToolManager {
   selectedTool?: Tool | undefined;
+  selectedToolName?: ToolName | undefined;
   toolMap: Record<ToolName, Tool>
   editTool: EditTool;
+  publishTool: PublishTool;
   hotKeys: HotKeys;
 
   eventsMap = {
@@ -28,11 +34,14 @@ export class ToolManager {
     'dblclick': (e) => this.handleDoubleClick(e),
   };
 
-  constructor(toolName: ToolName,) {
+  constructor(toolName: ToolName = ToolName.EDIT) {
     this.editTool = new EditTool();
+    this.publishTool = new PublishTool();
+
     this.hotKeys = new HotKeys(this.editTool);
     this.toolMap = {
       [ToolName.EDIT]: this.editTool,
+      [ToolName.PUBLISH]: this.publishTool,
     }
     // Set up tools
     this.setListeners();
@@ -40,14 +49,13 @@ export class ToolManager {
   }
 
   selectTool = (toolName?: ToolName) => {
+    if (toolName === this.selectedToolName) return
     if (this.selectedTool) this.selectedTool.onDestroy();
     this.hotKeys.bindKeys(toolName);
-    if (!toolName) {
-      this.selectedTool = undefined;
-      return;
-    };
-    this.selectedTool = this.toolMap[toolName];
-    this.selectedTool.onInit();
+    this.selectedTool = this.toolMap[toolName] ?? undefined;
+    this.selectedToolName = toolName;
+    if (this.selectedTool)
+      this.selectedTool.onInit();
   }
 
   handleMouseOver = (e: MouseEvent) => {

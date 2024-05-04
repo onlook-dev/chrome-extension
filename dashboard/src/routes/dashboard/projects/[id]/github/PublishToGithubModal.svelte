@@ -13,8 +13,7 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 
-	import type { Project } from '$shared/models/project';
-	import type { User } from '$shared/models/user';
+	import type { Project, User } from '$shared/models';
 
 	export let project: Project;
 	export let user: User;
@@ -69,7 +68,7 @@
 	>
 	<dialog id={modalId} class="modal">
 		<Card.Root class="text-primary modal-box w-full h-[80%] flex flex-col">
-			<Card.Header><h1 class="text-xl font-light">Publish to Github</h1></Card.Header>
+			<Card.Header><h1 class="text-lg font-light">Publish to Github</h1></Card.Header>
 			<Card.Content>
 				{#if project?.installationId}
 					<Tabs.Root value={selectedTab} class="w-full">

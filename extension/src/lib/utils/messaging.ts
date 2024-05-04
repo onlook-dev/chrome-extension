@@ -1,11 +1,10 @@
-import type { MouseEvent } from '$shared/constants'
-import type { Activity } from '$shared/models/activity'
-import type { Project } from '$shared/models/project'
-import type { EditEvent } from '$shared/models/editor'
 import { getMessage } from '@extend-chrome/messages'
-import type { SendOptions } from '@extend-chrome/messages/types/types'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
+
+import type { MouseEvent } from '$shared/constants'
+import type { Project, EditEvent } from '$shared/models'
+import type { SendOptions } from '@extend-chrome/messages/types/types'
 
 export enum MessageReceiver {
 	CONTENT = 'CONTENT',
@@ -57,11 +56,6 @@ export interface EditProjectRequest {
 }
 
 // Messages
-export const [sendAuthRequest, authRequestStream] = getExtendedMessages<void>(
-	'REQUEST_AUTH',
-	MessageReceiver.BACKGROUND
-)
-
 export const [sendEditProjectRequest, editProjectRequestStream] =
 	getExtendedMessages<EditProjectRequest>('REQUEST_EDIT_PROJECT', MessageReceiver.BACKGROUND)
 
@@ -71,18 +65,22 @@ export const [sendEditEvent, editEventStream] = getExtendedMessages<EditEvent>(
 )
 
 export const [sendOpenUrlRequest, openUrlRequestStream] = getExtendedMessages<string>(
-	'SEND_OPEN_URL_REQUEST',
+	'OPEN_URL_REQUEST',
 	MessageReceiver.BACKGROUND
 )
 
-export const [sendSaveProject, saveProjectStream] = getExtendedMessages<Project>(
-	'SAVE_PROJECT',
+export const [sendPublishProjectRequest, publishProjectStream] = getExtendedMessages<Project>(
+	'PUBLISH_PROJECT_REQUEST',
 	MessageReceiver.BACKGROUND
 )
-
 
 export const [sendPageScreenshotRequest, pageScreenshotRequestStream] = getExtendedMessages<{ signature: string, refresh: boolean }>(
 	'PAGE_SCREENSHOT_REQUEST',
+	MessageReceiver.BACKGROUND
+)
+
+export const [sendGetTabId, tabIdRequestStream] = getExtendedMessages<void>(
+	'TAB_ID_REQUEST',
 	MessageReceiver.BACKGROUND
 )
 
@@ -91,22 +89,12 @@ export const [sendPageScreenshotResponse, pageScreenshotResponseStream] = getExt
 	MessageReceiver.CONTENT
 )
 
+export const [sendTabIdResponse, tabIdResponseStream] = getExtendedMessages<chrome.tabs.Tab>(
+	'TAB_ID_RESPONSE',
+	MessageReceiver.CONTENT
+)
+
 export const [sendApplyProjectChanges, applyProjectChangesStream] = getExtendedMessages<void>(
 	'APPLY_PROJECT_CHANGES',
-	MessageReceiver.CONTENT
-)
-
-export const [sendActivityApply, activityApplyStream] = getExtendedMessages<Activity>(
-	'ACTIVITY_APPLY',
-	MessageReceiver.CONTENT
-)
-
-export const [sendActivityRevert, activityRevertStream] = getExtendedMessages<Activity>(
-	'ACTIVITY_REVERT',
-	MessageReceiver.CONTENT
-)
-
-export const [sendGetScreenshotRequest, getScreenshotStream] = getExtendedMessages<Activity>(
-	'ACTIVITY_SCREENSHOT',
 	MessageReceiver.CONTENT
 )

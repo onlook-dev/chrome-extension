@@ -1,6 +1,6 @@
 import { ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, } from '$lib/states/editor';
-import { EditType, type InsertRemoveVal } from '$shared/models/editor';
+import { EditType, type InsertRemoveVal } from '$shared/models';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getUniqueSelector } from '../utilities';
@@ -17,7 +17,6 @@ export class EditTool implements Tool {
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
 		this.overlayManager = new OverlayManager();
-
 		// Initialize resize observer for click element resize
 		this.elResizeObserver = new ResizeObserver(entries => {
 			const observedElements = entries.map(entry => entry.target);
@@ -27,7 +26,10 @@ export class EditTool implements Tool {
 		window.addEventListener('scroll', this.onScreenResize.bind(this));
 	}
 
-	onInit() { }
+	onInit() {
+		this.selectorEngine.select(document.body);
+		editorPanelVisible.set(true);
+	}
 
 	onDestroy() {
 		editorPanelVisible.set(false);
@@ -100,15 +102,17 @@ export class EditTool implements Tool {
 	simulateClick(els: HTMLElement[]) {
 		if (!els) return;
 
-		this.selectorEngine.selectedStore.set(els);
+		this.selectorEngine.clear();
+		els.forEach((el) => {
+			this.selectorEngine.select(el);
+		});
+
 		this.overlayManager.clear();
 		this.elResizeObserver.disconnect();
 		this.selectorEngine.selected.forEach((el) => {
 			this.overlayManager.addClickRect(el);
 			this.elResizeObserver.observe(el);
 		});
-		if (els.length > 0)
-			this.scrollElementIntoView(els[0]);
 	}
 
 	simulateHover = (el: HTMLElement) => {

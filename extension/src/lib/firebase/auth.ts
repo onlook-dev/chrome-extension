@@ -3,20 +3,18 @@ import { auth } from './firebase'
 import { UserImpl as FirebaseUserImpl } from '@firebase/auth/internal'
 import {
 	authUserBucket,
-	popupStateBucket,
 	projectsMapBucket,
 	teamsMapBucket,
 	userBucket,
-	tabsMapBucket
 } from '$lib/utils/localstorage'
 import { FirebaseService } from '$lib/storage'
 import { FirestoreCollections } from '$shared/constants'
-import type { User } from '$shared/models/user'
 import { identifyUser } from '$lib/mixpanel'
 
+import type { User } from '$shared/models'
+
 // Use firebase user from dashboard
-export function signInUser(userJson: string) {
-	const userData = JSON.parse(userJson)
+export function signInUser(userData: any) {
 	const user: AuthUser = FirebaseUserImpl._fromJSON(auth as any, userData)
 	auth.updateCurrentUser(user).catch(err => {
 		alert(`Sign in failed: ${JSON.stringify(err)}`)
@@ -36,10 +34,8 @@ export function subscribeToFirebaseAuthChanges() {
 			// Clear data when signed out
 			userBucket.clear()
 			authUserBucket.clear()
-			popupStateBucket.clear()
 			projectsMapBucket.clear()
 			teamsMapBucket.clear()
-			tabsMapBucket.clear()
 		}
 	})
 }

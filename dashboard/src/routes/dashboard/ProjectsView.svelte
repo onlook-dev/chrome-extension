@@ -3,12 +3,12 @@
 	import { onDestroy } from 'svelte';
 	import { DashboardRoutes, FirestoreCollections } from '$shared/constants';
 	import { projectsMapStore } from '$lib/utils/store';
-	import type { Team } from '$shared/models/team';
+	import { FirebaseService } from '$lib/storage';
 
 	import ArrowUp from '~icons/mingcute/arrow-up-fill';
 	import PinImage from '$lib/assets/tip-pin.png';
-	import { FirebaseService } from '$lib/storage';
-	import type { Project } from '$shared/models/project';
+
+	import type { Team, Project } from '$shared/models';
 
 	export let team: Team | undefined;
 	let unsubs: any[] = [];
@@ -19,6 +19,7 @@
 		if (!$projectsMapStore.has(projectId)) {
 			projectService
 				.subscribe(projectId, (firebaseProject) => {
+					if (!firebaseProject || !Object.keys(firebaseProject)) return;
 					projectsMapStore.update((map) => map.set(projectId, firebaseProject));
 				})
 				.then((unsubscribe) => {
@@ -46,20 +47,20 @@
 >
 	{#if team?.projectIds.length}
 		{#each team?.projectIds.map((id) => $projectsMapStore.get(id)) as project}
-			{#if project}
+			{#if project && Object.keys(project).length}
 				<button
 					on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
 					class="transition rounded space-y-4 p-4 border border-black hover:bg-surface hover:border-stone-700 block"
 				>
 					<figure class="">
-						{#if project?.hostData.previewImage}
+						{#if project?.hostData?.previewImage}
 							<img
-								src={project.hostData.previewImage}
+								src={project.hostData?.previewImage}
 								alt={project.name}
 								class="object-cover object-top aspect-video rounded w-full"
 							/>
 						{:else}
-							<div class="bg-gray-700 aspect-video rounded w-full" />
+							<div class="bg-surface aspect-video rounded w-full" />
 						{/if}
 					</figure>
 					<div class="flex items-center space-x-2">

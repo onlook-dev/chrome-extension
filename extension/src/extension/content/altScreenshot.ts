@@ -1,4 +1,4 @@
-import type { Activity } from '$shared/models/activity'
+import type { Activity } from '$shared/models'
 import { pageScreenshotResponseStream, sendPageScreenshotRequest } from '$lib/utils/messaging'
 import { nanoid } from 'nanoid'
 

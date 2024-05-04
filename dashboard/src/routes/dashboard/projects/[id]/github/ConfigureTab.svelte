@@ -13,8 +13,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Collapsible from '$lib/components/ui/collapsible';
 
-	import type { Project } from '$shared/models/project';
-	import type { GithubRepo, GithubSettings } from '$shared/models/github';
+	import type { Project, GithubRepo, GithubSettings } from '$shared/models';
 
 	export let project: Project;
 
@@ -173,22 +172,22 @@
 			</div>
 		</div>
 	{:else}
-		<div class="flex flex-row gap-3">
-			<input
+		<div class="flex flex-row gap-3 mt-4">
+			<Input
 				bind:value={filterTerm}
-				class="input input-bordered w-full"
+				class="input input-bordered w-full border-stone-800"
 				type="text"
 				placeholder="Search for repository"
 			/>
 		</div>
-		<div class="border py-2 divide-y rounded-lg max-h-80 overflow-auto">
+		<div class="border py-2 divide-y rounded max-h-80 overflow-auto">
 			{#if loadingRepos}
 				<div class="w-full text-center">
 					<div class="loading h-10"></div>
 				</div>
 			{:else if filteredRepositories.length === 0}
 				<div class="flex items-center justify-center h-full">
-					<p class="text-gray-500">No repositories found</p>
+					<p class="text-tertiary">No repositories found</p>
 				</div>
 			{/if}
 
@@ -196,11 +195,9 @@
 				<div class="flex flex-row justify-between items-center p-4">
 					<div>
 						<p class="text-sm">{repo.name}</p>
-						<p class="text-xs text-gray-600">{repo.owner}</p>
+						<p class="text-xs text-tertiary">{repo.owner}</p>
 					</div>
-					<button on:click={() => connectRepoToProject(repo)} class="btn btn-outline btn-sm"
-						>Connect</button
-					>
+					<Button on:click={() => connectRepoToProject(repo)} variant="outline">Connect</Button>
 				</div>
 			{/each}
 		</div>

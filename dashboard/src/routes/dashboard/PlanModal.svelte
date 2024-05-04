@@ -2,13 +2,13 @@
 	import { setTeamPaymentId } from '$lib/storage/team';
 	import { priceIdMapping } from '$lib/utils/env';
 	import { paymentsMapStore, teamsMapStore } from '$lib/utils/store';
-	import { PaymentStatus, type Payment } from '$shared/models/payment';
+	import { PaymentStatus, Tier, type Payment } from '$shared/models';
 	import { nanoid } from 'nanoid';
-	import { Tier } from '$shared/models/team';
 	import { getStripeSubscriptionEnd } from '$lib/stripe/stripe';
-	import PlanFeatureRow from './PlanFeatureRow.svelte';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
+
+	import PlanFeatureRow from './PlanFeatureRow.svelte';
 
 	export let teamId: string;
 	const modalId = 'plan-modal';

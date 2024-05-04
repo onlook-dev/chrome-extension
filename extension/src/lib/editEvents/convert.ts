@@ -1,5 +1,4 @@
-import { type EditEvent } from '$shared/models/editor'
-import { type ChangeValues } from '$shared/models/activity'
+import type { ChangeValues, EditEvent, EditType } from '$shared/models'
 
 // Look in tests for example. 
 export function convertEditEventToChangeObject(editEvent: EditEvent, changeObject: Record<string, ChangeValues>) {
@@ -31,4 +30,21 @@ export function convertEditEventToChangeObject(editEvent: EditEvent, changeObjec
   });
 
   return changeObject;
+}
+
+export function convertChangeObjectToEditEvents(selector: string, editType: EditType, changeObject: Record<string, ChangeValues>): EditEvent[] {
+  const editEvents: EditEvent[] = [];
+
+  Object.entries(changeObject).forEach(([key, { oldVal, newVal }]) => {
+    const editEvent: EditEvent = {
+      selector,
+      createdAt: new Date().toISOString(),
+      editType,
+      oldVal: { [key]: oldVal },
+      newVal: { [key]: newVal }
+    };
+    editEvents.push(editEvent);
+  });
+
+  return editEvents;
 }

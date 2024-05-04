@@ -23,7 +23,10 @@
 	$: afterImage, updateImages();
 
 	async function updateImages() {
-		[left, right] = await Promise.all([loadImage(beforeImage ?? ''), loadImage(afterImage ?? '')]);
+		[left, right] = await Promise.all([
+			loadImage(beforeImage ?? afterImage ?? ''),
+			loadImage(afterImage ?? beforeImage ?? '')
+		]);
 		cx = canvas.getContext('2d')!;
 		options = {
 			width: Math.max(left.width, right.width) + padding * 2,
@@ -57,15 +60,11 @@
 	onMount(updateImages);
 </script>
 
-{#if beforeImage && afterImage}
+{#if beforeImage || afterImage}
 	<ImageComparison class="w-full h-full">
 		<canvas class={canvasClass} use:panzoom={options} slot="left" />
 		<canvas class={canvasClass} bind:this={canvas} slot="right" id="right" />
 	</ImageComparison>
-{:else if beforeImage || afterImage}
-	<div class="w-full h-full flex items-center p-10">
-		<img class="object-scale-down" src={beforeImage ?? afterImage} alt="Screenshot" />
-	</div>
 {:else}
 	<div class="flex flex-row items-center">
 		<EyeNone class="mr-2" />

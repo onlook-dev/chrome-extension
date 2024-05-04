@@ -9,5 +9,5 @@ Set up a `.env` file in order to add Firebase configurations. See `.env.example`
 
 ## Front-end libs
 
-- Component library: [DaisyUI](https://daisyui.com/components/)
-- Icon library: [Unplugin Icon](https://github.com/unplugin/unplugin-icons/) + [Iconify](https://icon-sets.iconify.design/)
+- [ShadCN](https://daisyui.com/components/)
+- [Radix Icon](https://www.radix-ui.com/icons)

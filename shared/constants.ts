@@ -13,14 +13,6 @@ export enum FirestoreCollections {
 export const MAX_TITLE_LENGTH = 50;
 export const MAX_DESCRIPTION_LENGTH = 250;
 
-// Messaging
-export enum MessageTypes {
-  DASHBOARD_AUTH = "DASHBOARD_AUTH",
-  EDIT_EVENT = "EDIT_EVENT",
-  OPEN_PROJECT = "OPEN_PROJECT",
-  EDIT_PROJECT = "EDIT_PROJECT",
-}
-
 // Links
 export const SUPPORT_LINK = "mailto:support@onlook.dev";
 
@@ -40,6 +32,7 @@ export enum DashboardRoutes {
   PROJECTS = "/dashboard/projects",
   PRIVACY = "/privacy",
   GITHUB = "/github",
+  WELCOME = "/welcome",
 }
 
 export enum DashboardSearchParams {

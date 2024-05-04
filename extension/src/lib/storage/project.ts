@@ -1,7 +1,7 @@
 import { storeImageUri } from "$lib/firebase/functions";
 import { FirestoreCollections } from "$shared/constants";
 import { isBase64ImageString } from "$shared/helpers";
-import type { Project } from "$shared/models/project";
+import type { Project } from "$shared/models";
 import { FirebaseService } from ".";
 
 export class FirebaseProjectService extends FirebaseService<Project> {

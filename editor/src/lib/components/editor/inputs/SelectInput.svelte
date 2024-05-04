@@ -19,6 +19,17 @@
     value: string,
     refresh?: boolean,
   ) => void;
+
+  let overrideOptionMap = {
+    "flex-start": "start",
+    "flex-end": "end",
+    "space-between": "stretch",
+    "space-around": "around",
+    "space-evenly": "evenly",
+    "flex-start flex-end": "between",
+    "flex-start flex-start": "around",
+    "flex-end flex-end": "evenly",
+  };
 </script>
 
 {#if elementStyle}
@@ -77,7 +88,9 @@
           <option value={elementStyle.value}>{elementStyle.value}</option>
         {/if}
         {#each elementStyle.options ?? [] as option}
-          <option value={option}>{option}</option>
+          <option value={option}>
+            {overrideOptionMap[option] ?? option}
+          </option>
         {/each}
       </select>
       <div

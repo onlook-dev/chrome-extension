@@ -5,8 +5,7 @@
 
 	import ImageComparer from '$lib/components/ui/image-compare';
 
-	import type { Activity } from '$shared/models/activity';
-	import type { Project } from '$shared/models/project';
+	import type { Activity, Project } from '$shared/models';
 
 	enum Mode {
 		Light = 'light',
@@ -76,8 +75,8 @@
 				canvasClass="transition {mode === Mode.Dark
 					? 'bg-stone-200 text-surface'
 					: 'bg-surface text-tertiary'}"
-				beforeImage={project.hostData.beforeImage}
-				afterImage={project.hostData.previewImage}
+				beforeImage={project.hostData?.beforeImage}
+				afterImage={project.hostData?.previewImage}
 			/>
 		{/if}
 	</div>

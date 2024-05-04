@@ -1,4 +1,4 @@
-import type { GithubRepo } from "$shared/models/github";
+import type { GithubRepo } from "$shared/models";
 import { getOctokitByInstallationId, type CustomOctokit } from "./octokit";
 
 export const getReposByInstallation = async (installationId: string): Promise<{ repos: GithubRepo[] }> => {

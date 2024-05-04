@@ -1,9 +1,6 @@
 import { writable, type Writable } from 'svelte/store';
-import type { Project } from '$shared/models/project';
-import type { User } from '$shared/models/user';
-import type { Team } from '$shared/models/team';
-import type { Payment } from '$shared/models/payment';
-import type { GithubHistory } from '$shared/models/github';
+import type { Project, User, Team, Payment, GithubHistory } from '$shared/models';
+
 
 export const userStore = <Writable<User | undefined>>writable(undefined);
 export const usersMapStore = <Writable<Map<string, User>>>writable(new Map());

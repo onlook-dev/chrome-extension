@@ -71,7 +71,7 @@
     {mouseLeave}
   />
 {/if}
-<Separator />
+<!-- <Separator /> -->
 
 <!-- TODO: If enable this, change height above to h-[calc(60vh-8rem)] -->
 <!-- <div class="mt-4 items-center text-xs">

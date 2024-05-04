@@ -1,7 +1,5 @@
 <script lang="ts">
   import "./app.pcss";
-  import Toolbar from "./lib/components/toolbar/Toolbar.svelte";
-
   import { ToolName } from "$lib/tools";
   import { historyStore } from "$lib/tools/edit/history";
   import { ONLOOK_TOOLBAR } from "$shared/constants";
@@ -12,7 +10,9 @@
   } from "$lib/constants";
   import { savingProject } from "$lib/states/editor";
 
-  let toolbarRef: Toolbar;
+  import Editor from "./lib/components/Editor.svelte";
+
+  let editor: Editor;
   let previousTool: ToolName | undefined = ToolName.EDIT;
   window.addEventListener("beforeunload", function (e) {
     // If changes in page, prompt user before reload
@@ -24,10 +24,10 @@
 
   export function handleValueUpdate(name, oldValue, newValue) {
     if (name === DATA_ONLOOK_EJECT && newValue === "true") {
-      previousTool = toolbarRef.getActiveToolName();
-      toolbarRef.updateTool(undefined);
+      previousTool = editor.getActiveToolName();
+      editor.updateTool(undefined);
     } else if (name === DATA_ONLOOK_INJECT && newValue === "true") {
-      toolbarRef.updateTool(previousTool);
+      editor.updateTool(previousTool);
     } else if (name === DATA_ONLOOK_SAVED && newValue === "true") {
       savingProject.set(false);
     }
@@ -35,5 +35,5 @@
 </script>
 
 <div id={ONLOOK_TOOLBAR}>
-  <Toolbar bind:this={toolbarRef} />
+  <Editor bind:this={editor} />
 </div>

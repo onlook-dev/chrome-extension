@@ -1,10 +1,11 @@
-import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$shared/models/editor';
+import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$shared/models';
 import { get, writable } from 'svelte/store';
-import { emitEditEvent } from '../messages';
+import { MessageService, MessageType } from '$shared/message';
 import { ApplyChangesService } from './applyChange';
 
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
+const messageService = MessageService.getInstance();
 const applyChangeService = new ApplyChangesService();
 
 function compareKeys(a: Record<string, string>, b: Record<string, string>): boolean {
@@ -71,7 +72,7 @@ export function redoEvent(event: EditEvent) {
   redoStore.update(redo => redo.filter(e => e !== event));
 }
 
-function createReverseEvent(event: EditEvent): EditEvent {
+export function createReverseEvent(event: EditEvent): EditEvent {
   switch (event.editType) {
     case EditType.INSERT:
       return {
@@ -149,7 +150,7 @@ function applyRemoveEvent(event: EditEvent, parent: HTMLElement) {
   if (el) el.remove();
 }
 
-function applyEvent(event: EditEvent, emit: boolean = true) {
+export function applyEvent(event: EditEvent, emit: boolean = true) {
   const element: HTMLElement | undefined = document.querySelector(event.selector);
   switch (event.editType) {
     case EditType.STYLE:
@@ -169,7 +170,7 @@ function applyEvent(event: EditEvent, emit: boolean = true) {
       break;
   }
   if (emit)
-    emitEditEvent(event);
+    messageService.publish(MessageType.EDIT_EVENT, event);
 }
 
 export function toggleEventVisibility(event: EditEvent, visible: boolean) {

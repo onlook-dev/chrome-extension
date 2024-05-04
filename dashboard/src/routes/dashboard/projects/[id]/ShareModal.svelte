@@ -4,8 +4,7 @@
 	import { onMount } from 'svelte';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
-	import type { Team } from '$shared/models/team';
-	import type { User } from '$shared/models/user';
+	import type { Team, User } from '$shared/models';
 	import CopyIcon from '~icons/mdi/content-copy';
 	import Share from '~icons/solar/share-outline';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';

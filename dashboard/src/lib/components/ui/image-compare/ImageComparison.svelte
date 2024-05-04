@@ -46,9 +46,11 @@
 </script>
 
 <div class={$$props.class} id="container" style:--position={formatter.format(position)}>
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class={$$props.class} id="left" draggable="false" on:dragstart={() => false}>
 		<slot name="left" />
 	</div>
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class={$$props.class} id="right" draggable="false" on:dragstart={() => false}>
 		<slot name="right" />
 	</div>

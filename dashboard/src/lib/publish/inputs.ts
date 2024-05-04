@@ -1,5 +1,4 @@
-import type { Activity, ChangeValues } from "$shared/models/activity";
-import type { PathInfo, StyleTranslationInput, TextTranslationInput } from "$shared/models/translation";
+import type { Activity, ChangeValues, PathInfo, StyleTranslationInput, TextTranslationInput } from "$shared/models";
 
 export function getStyleTranslationInput(content: string, pathInfo: PathInfo, activity: Activity): StyleTranslationInput {
   const code = getCodeChunkFromContent(content, pathInfo, false);

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import PullRequest from '~icons/ph/git-pull-request-bold';
 	import Restore from '~icons/ic/baseline-restore';
-	import type { GithubHistory } from '$shared/models/github';
+	import type { GithubHistory } from '$shared/models';
 	import * as Collapsible from '$lib/components/ui/collapsible';
 
 	export let githubHistories: GithubHistory[] = [];

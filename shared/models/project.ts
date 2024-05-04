@@ -9,10 +9,12 @@ export interface Project {
   name: string;
   teamId: string;
   hostUrl: string;
-  hostData: HostData;
+  hostData?: HostData;
   comments: Comment[];
   activities: Record<string, Activity>;
   createdAt: string;
+  updatedAt?: string;
+  status?: ProjectStatus;
 
   // GitHub
   githubHistoryIds: string[];
@@ -21,4 +23,12 @@ export interface Project {
 
   // Settings
   projectSettings?: ProjectSettings;
+}
+
+export enum ProjectStatus {
+  DRAFT = "draft",
+  PREPARED = "prepared",
+  PUBLISHED = "published",
+  ARCHIVED = "archived",
+  DELETED = "deleted",
 }

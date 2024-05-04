@@ -1,8 +1,7 @@
 import * as admin from "firebase-admin";
 
 import {FirestoreCollections} from "../../shared/constants";
-import {Project} from "../../shared/models/project";
-import {Team} from "../../shared/models/team";
+import {Project, ProjectStatus, Team} from "../../shared/models";
 
 export async function duplicateProject(
   projectId: string,
@@ -26,6 +25,9 @@ export async function duplicateProject(
     ...originalProjectData,
     id: newProjectId,
     teamId: teamId,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    status: ProjectStatus.PUBLISHED,
   } as Project;
 }
 

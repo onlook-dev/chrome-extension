@@ -2,7 +2,7 @@ import {
 	getObjectFromCollectionWhere
 } from '$lib/firebase/firestore';
 import { FirestoreCollections } from '$shared/constants';
-import type { Payment, PaymentStatus } from '$shared/models/payment';
+import type { Payment, PaymentStatus } from '$shared/models';
 import { FirebaseService } from '.';
 
 export async function getPaymentFromSessionId(checkoutSessionId: string): Promise<Payment> {

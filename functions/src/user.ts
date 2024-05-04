@@ -3,17 +3,17 @@ import * as functions from "firebase-functions";
 import * as nanoid from "nanoid";
 
 import {FirestoreCollections} from "../../shared/constants";
-import {Team, Role} from "../../shared/models/team";
 import {addProjectsToTeam, duplicateProject} from "../utils/helpers";
-import type {User} from "../../shared/models/user";
+import {type User, Team, Role} from "../../shared/models";
 
 const isProd = admin.instanceId().app.options.projectId === "onlook-prod";
 
 const DEV_PORTFOLIO_DEMO = "R9P9ESZDSJEotGheG7Tmg";
-const DEV_DASHBOARD_DEMO = "fSbhXa18h1eTp4l_H29P3";
+const DEV_DASHBOARD_DEMO = "p_yQgvago3Qacpn7plteT";
 
+// Team: rmpcbGKvTWsSQVXtl_DTl
 const PROD_PORTFOLIO_DEMO = "G6f9dpFk-4gpCnHpRUZSi";
-const PROD_DASHBOARD_DEMO = "UT4qBdpFQtqzTzMRQEE20";
+const PROD_DASHBOARD_DEMO = "a1YqFucGbaqykf_ZT5s1A";
 
 const DEMO_PORTFOLIO = isProd ? PROD_PORTFOLIO_DEMO : DEV_PORTFOLIO_DEMO;
 const DEMO_DASHBOARD = isProd ? PROD_DASHBOARD_DEMO : DEV_DASHBOARD_DEMO;

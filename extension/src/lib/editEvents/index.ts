@@ -1,36 +1,36 @@
-import { EditType, type EditEvent } from '$shared/models/editor'
-import { ActivityStatus, type Activity } from '$shared/models/activity'
-import { getActiveProject, getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
-import { sendGetScreenshotRequest } from '$lib/utils/messaging'
+import { getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
 import { nanoid } from 'nanoid'
-import type { Project } from '$shared/models/project'
 import { convertEditEventToChangeObject } from './convert'
-import type { FirebaseProjectService } from '$lib/storage/project'
+import { EditType, ActivityStatus, ProjectStatus } from '$shared/models'
+
+import type { Project, EditEvent, Activity, } from '$shared/models'
+import type { ProjectTabService } from '$lib/projects'
+
+interface QueueItem {
+  tab: chrome.tabs.Tab
+  editEvent: EditEvent
+}
 
 export class EditEventService {
-  changeQueue: EditEvent[] = []
+  changeQueue: QueueItem[] = []
+  constructor(private projectTabManager: ProjectTabService) { }
 
-  constructor(private projectService: FirebaseProjectService, private forwardToActiveProjectTab: (activity: Activity, callback: (activity: Activity) => void) => void) { }
-
-  async handleEditEvent(editEvent: EditEvent) {
-    this.changeQueue.push(editEvent)
+  async handleEditEvent(editEvent: EditEvent, tab: chrome.tabs.Tab) {
+    this.changeQueue.push({ editEvent, tab })
 
     // Process the queue
     if (this.changeQueue.length === 1) {
       // Only start processing if this is the only item in the queue
       while (this.changeQueue.length > 0) {
-        const editEvent = this.changeQueue[0] // Get the first item from the queue without removing it
-        await this.processEditEvent(editEvent) // Process it
+        await this.processEditEvent(this.changeQueue[0]) // Process it
         this.changeQueue.shift() // Remove the processed item from the queue
       }
-      const activeProject = await getActiveProject()
-      this.projectService.post(activeProject)
     }
   }
 
-  async processEditEvent(editEvent: EditEvent) {
+  private async processEditEvent({ tab, editEvent }: QueueItem) {
     // Get active project
-    const activeProject = await getActiveProject()
+    const activeProject = await this.projectTabManager.getTabProject(tab)
     if (!activeProject) return
 
     // Get and update activity
@@ -46,10 +46,9 @@ export class EditEventService {
 
     // Update and save project
     activeProject.activities[editEvent.selector] = activity
+    activeProject.status = ProjectStatus.DRAFT
+    activeProject.updatedAt = new Date().toISOString()
     projectsMapBucket.set({ [activeProject.id]: activeProject })
-
-    // Send to content script
-    this.forwardToActiveProjectTab(activity, sendGetScreenshotRequest)
   }
 
   async getOrCreateActivityFromEditEvent(project: Project, editEvent: EditEvent): Promise<Activity> {

@@ -3,25 +3,30 @@
   import { draggable } from "@neodrag/svelte";
   import { Separator } from "$lib/components/ui/separator";
   import { editorPanelVisible } from "$lib/states/editor";
-  import { DragHandleDots2, Minus, Plus, Size } from "radix-icons-svelte";
-
-  import type { EditTool } from "$lib/tools/edit";
+  import { DragHandleDots2, Minus, Size } from "radix-icons-svelte";
 
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
   import CssTab from "./CssTab.svelte";
+  import Button from "../ui/button/button.svelte";
+
+  import type { EditTool } from "$lib/tools/edit";
+  import { ToolName, type ToolManager } from "$lib/tools";
+  import { historyStore } from "$lib/tools/edit/history";
 
   enum TabValue {
     CSS = "css",
     CODE = "code",
   }
 
-  export let editTool: EditTool;
+  export let toolManager: ToolManager;
+  let editTool: EditTool = toolManager.editTool;
+
+  const cardWidth = "232px";
   let selectedTab: string = TabValue.CSS;
   let isInputFocused = false;
   let panelCollapsed = false;
   let cardRef: HTMLDivElement;
-  const cardWidth = "232px";
   let cardHeight = "80vh";
 
   onMount(() => {
@@ -66,10 +71,16 @@
     <Card.Root class="backdrop-blur h-full bg-background/90 pt-2">
       <Card.Content>
         <Tabs.Root bind:value={selectedTab} class="w-full h-full">
-          <Tabs.List class="handle bg-transparent p-0 gap-4 w-full select-none	">
-            <Tabs.Trigger
+          <Tabs.List class="handle bg-transparent p-0 gap-4 w-full select-none">
+            <!-- <Tabs.Trigger
               class="bg-transparent p-0 text-xs"
               value={TabValue.CSS}>Element Appearance</Tabs.Trigger
+            > -->
+            <Button
+              class="h-6 rounded-sm text-xs transition"
+              variant="primary"
+              on:click={() => toolManager.selectTool(ToolName.PUBLISH)}
+              >Finish Designing</Button
             >
             <div class="ml-auto flex items-center">
               <div

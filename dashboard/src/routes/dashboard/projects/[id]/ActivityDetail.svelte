@@ -10,8 +10,7 @@
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 
-	import type { Activity } from '$shared/models/activity';
-	import type { Project } from '$shared/models/project';
+	import type { Activity, Project } from '$shared/models';
 
 	export let activity: Activity;
 	export let project: Project;

@@ -8,9 +8,10 @@ import {
 	userStore,
 	usersMapStore
 } from '$lib/utils/store';
-import { FirestoreCollections, MessageTypes } from '$shared/constants';
+import { FirestoreCollections } from '$shared/constants';
+import { MessageType, MessageService } from '$shared/message';
 import { FirebaseService } from '$lib/storage';
-import type { User } from '$shared/models/user';
+import type { User } from '$shared/models';
 import { identifyMixpanelUser } from '$lib/mixpanel/client';
 import { USER_ID_KEY } from '$lib/utils/constants';
 
@@ -18,17 +19,10 @@ export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged((authUser) => {
 		if (authUser) {
 			// Send authUser to extension
-			window.postMessage(
-				{
-					type: MessageTypes.DASHBOARD_AUTH,
-					user: JSON.stringify(authUser.toJSON())
-				},
-				window.location.origin
-			);
+			MessageService.getInstance().publish(MessageType.DASHBOARD_SIGN_IN, authUser);
 
-			const userServices = new FirebaseService<User>(FirestoreCollections.USERS);
 			// Listen and update user from remote
-			userServices.subscribe(authUser.uid, (user) => {
+			(new FirebaseService<User>(FirestoreCollections.USERS)).subscribe(authUser.uid, (user) => {
 				userStore.set(user);
 				identifyMixpanelUser(user.id, {
 					$name: user.name,
@@ -39,6 +33,7 @@ export function subscribeToFirebaseAuthChanges() {
 			});
 			localStorage.setItem(USER_ID_KEY, authUser.uid);
 		} else {
+			MessageService.getInstance().publish(MessageType.DASHBOARD_SIGN_OUT);
 			// Clear data when signed out
 			userStore.set(undefined);
 			usersMapStore.set(new Map());
