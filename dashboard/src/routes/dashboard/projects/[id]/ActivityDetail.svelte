@@ -139,16 +139,18 @@
 				added
 				<span class="text-sky-300">class</span>
 				value
-				<span class="text-brand">{activity.attributeChanges.full.newVal}</span>
+				<span class="text-brand">{activity.attributeChanges.full?.newVal}</span>
 			{:else}
 				updated
 				<span class="text-sky-300">class</span>
 				from
-				<span class="text-brand"> {activity.attributeChanges.full.oldVal}</span>
+				<span class="text-brand"> {activity.attributeChanges.full?.oldVal ?? ''}</span>
 				to
-				<span class="text-brand"> {activity.attributeChanges.full.newVal}</span>
-				with new attributes:
-				<span class="text-brand"> {activity.attributeChanges.updated.newVal}</span>
+				<span class="text-brand"> {activity.attributeChanges.full?.newVal ?? ''}</span>
+				{#if activity.attributeChanges.updated}
+					with new attributes:
+					<span class="text-brand"> {activity.attributeChanges.updated?.newVal ?? ''}</span>
+				{/if}
 			{/if}
 		</p>
 	{/if}

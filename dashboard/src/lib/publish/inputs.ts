@@ -40,12 +40,12 @@ export const getCssStringFromStyleChanges = (styleChanges: Record<string, Change
 }
 
 export const getTailwindStringFromAttributeChange = (attributeChange: Record<string, ChangeValues>) => {
-  return attributeChange.updated.newVal;
+  return attributeChange.updated?.newVal ?? "";
 }
 
 export const getTextFromTextChanges = (textChanges: Record<string, ChangeValues>) => {
-  const oldText = textChanges.text.oldVal;
-  const newText = textChanges.text.newVal;
+  const oldText = textChanges.text?.oldVal ?? '';
+  const newText = textChanges.text?.newVal ?? '';
   return { oldText, newText };
 }
 
