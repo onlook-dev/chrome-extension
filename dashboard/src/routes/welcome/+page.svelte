@@ -1,10 +1,6 @@
 <script>
-	import { Button } from '$lib/components/ui/button';
-	import * as Card from '$lib/components/ui/card';
 	import BackgroundImage from '$lib/assets/signin-bg.png';
 	import { DashboardRoutes } from '$shared/constants';
-	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 </script>
 
 <div
@@ -14,43 +10,43 @@
 	<div class="flex flex-col w-2/3 items-center">
 		<h1 class="text-2xl text-white text-start w-full">Title</h1>
 		<div class="flex flex-row w-full">
-			<Card.Root class="w-1/2 h-1/2 rounded-none px-4">
-				<Card.Header class="text-light">
+			<div class="w-1/2 h-1/2 rounded-none px-4">
+				<div class="text-light">
 					<h1 class="">Onlook</h1>
 					<h2 class="text-tertiary">Where Creativity meets Code</h2>
-				</Card.Header>
-				<Card.Content class="space-y-4">
+				</div>
+				<div class="space-y-4">
 					<div class="w-full h-12 bg-stone-100"></div>
-				</Card.Content>
-				<Card.Footer class="flex flex-col">
+				</div>
+				<div class="flex flex-col">
 					<p>Hello</p>
 					<p>World</p>
-				</Card.Footer>
-			</Card.Root>
-			<Card.Root class="w-1/2 h-1/2 rounded-none px-4">
-				<Card.Header class="text-light">
+				</div>
+			</div>
+			<div class="w-1/2 h-1/2 rounded-none px-4">
+				<div class="text-light">
 					<h1 class="">Onlook</h1>
 					<h2 class="text-tertiary">Where Creativity meets Code</h2>
-				</Card.Header>
-				<Card.Content class="space-y-4">
+				</div>
+				<div class="space-y-4">
 					<div class="w-full h-12 bg-stone-100"></div>
-				</Card.Content>
-				<Card.Footer class="flex flex-col">
+				</div>
+				<div class="flex flex-col">
 					<p>Hello</p>
 					<p>World</p>
-				</Card.Footer>
-			</Card.Root>
+				</div>
+			</div>
 		</div>
 
-		<Card.Root class="w-full h-1/2 rounded-none px-4">
-			<Card.Header class="text-light">
+		<div class="w-full h-1/2 rounded-none px-4">
+			<div class="text-light">
 				<h1 class="text-2xl">Onlook</h1>
 				<h2 class="text-xl text-tertiary">Where Creativity meets Code</h2>
-			</Card.Header>
-			<Card.Content class="space-y-4">
+			</div>
+			<div class="space-y-4">
 				<div class="w-full h-12 bg-stone-100"></div>
-			</Card.Content>
-			<Card.Footer>
+			</div>
+			<div>
 				<p class="text-sm font-light">
 					<span class="text-tertiary">By clicking on Sign-In, you agree to Onlook’s</span>
 					<!-- TODO: Add terms of service -->
@@ -58,7 +54,7 @@
 					<span class="text-tertiary">and</span>
 					<a href={DashboardRoutes.PRIVACY} target="_blank">Privacy Policy</a>.
 				</p>
-			</Card.Footer>
-		</Card.Root>
+			</div>
+		</div>
 	</div>
 </div>
