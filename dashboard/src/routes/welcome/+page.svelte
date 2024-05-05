@@ -8,7 +8,6 @@
 	style="background-image: url({BackgroundImage}); background-size: cover; background-position: center;"
 >
 	<div class="flex flex-col w-2/3 items-center gap-6">
-	
 		<h1 class="text-2xl text-white text-start w-full">Let's push some pix</h1>
 		<div class="flex flex-row w-full gap-2.5 h-auto bg-black p-2.5 h-auto">
 			<div class="w-1/2 h-1/2 rounded-none px-4">
@@ -23,8 +22,9 @@
 					<p class="text-white">Hello</p>
 					<p>World</p>
 				</div>
-			<div class="bg-black h-auto p-2">
-			<div class="w-1/2 h-1/2 rounded-none px-4">
+			</div>
+
+			<div class="w-1/2 rounded-none px-4 bg-black h-auto p-2">
 				<div class="text-white">
 					<h1 class="">Onlook</h1>
 					<h2 class="text-tertiary">Where Creativity meets Code</h2>
