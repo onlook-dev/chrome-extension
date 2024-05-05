@@ -13,18 +13,23 @@ import { z } from "zod";
  * to the model along with the class name.
  */
 
-class TranslationTool extends StructuredTool {
-    name = "modify_code";
-    description = "A tool to process modified code with changes.";
+class ManipulateElementTool extends StructuredTool {
+    name = "manipulate_element";
+    description = "Manipulates an HTML element based on the specified action, key, and value. Actions include modifying styles, adding/removing classes or attributes, manipulating inner HTML, and handling events.";
+
     schema = z.object({
-        code: z.string().describe("The modified code chunk with the required changes implemented."),
+        action: z.string().describe("Specifies the type of manipulation to perform. Supported actions include 'style', 'function', 'addClass', 'removeClass', 'setAttribute', 'removeAttribute', 'addEventListener', 'removeEventListener', 'toggleVisibility', 'setInnerHTML', 'appendInnerHTML'."),
+        key: z.string().describe("Depending on the action, this represents the CSS style property, function name, class name, attribute name, event type, or directly relates to inner HTML manipulation."),
+        value: z.string().optional().describe("The value to set for the given key. This could be the value of a style property, arguments for an anonymous function, URL for an attribute like 'src', or content for inner HTML.")
     });
+
     async _call(params: z.infer<typeof this.schema>) {
-        return "The answer";
+        // Implement the interaction with the DOM or simulate the result based on parameters
+        return "The manipulation has been applied based on the provided parameters.";
     }
 }
 
-const translationTool = convertToOpenAITool(new TranslationTool());
+const tool = convertToOpenAITool(new ManipulateElementTool());
 
 export class InteractionService {
     private openAi: Runnable;
@@ -40,16 +45,15 @@ export class InteractionService {
             temperature: 0,
             cache: true,
         }).bind({
-            tools: [translationTool],
-            tool_choice: translationTool
+            tools: [tool],
+            tool_choice: tool
         }).pipe(new JsonOutputKeyToolsParser({
-            keyName: translationTool.function.name,
+            keyName: tool.function.name,
             returnSingle: true,
         }));
     }
 
     async prompt(prompt: string): Promise<string> {
-        const response = (await this.openAi.invoke(prompt)) as { code: string }
-        return response.code;
+        return await this.openAi.invoke(prompt)
     }
 }
