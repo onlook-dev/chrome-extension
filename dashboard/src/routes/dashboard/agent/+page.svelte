@@ -35,6 +35,7 @@
 		const res = (await service.prompt(value)) as any;
 		manipulateElement('#test', res.action, res.key, res.value);
 		logs = [...logs, { author: Author.Agent, message: JSON.stringify(res) }];
+		value = '';
 	}
 	function manipulateElement(selector: string, action: string, key: string, value: string) {
 		const element = document.querySelector(selector);
