@@ -97,7 +97,7 @@
 	}
 </script>
 
-<div class="flex flex-col w-screen h-screen items-center mt-20">
+<div class="flex flex-col w-screen h-screen items-center mt-20" style="margin-top: 20px; padding: 20px; height: 100vh; align-items: center; flex-direction: column; width: 100%; justify-content: center; margin: 0px;"></div>
 	<form class="flex flex-row space-x-2 w-96">
 		<Input
 			on:keypress={(e) => {
@@ -117,12 +117,12 @@
 		<div id="test" class="w-10 h-10 bg-stone-500"></div>
 	</div>
 
-	<div class="mt-10 w-96 h-full flex flex-col overflow-auto space-y-2">
+	<div class="mt-10 w-96 h-full flex flex-col overflow-auto space-y-2" style="height: 100%; padding: 10px; border-color: #c9c9c9; border-radius: 5px; border-width: 1px;">
 		{#each logs as log}
 			{#if log.author === Author.User}
 				<div class="bg-blue-500 text-white p-2 rounded ml-auto">{log.message}</div>
 			{:else}
-				<div class="bg-green-500 text-white p-2 rounded mr-auto">{log.message}</div>
+				<div class="bg-green-500 text-white p-2 rounded mr-auto" style="height: fit-content; width: 50%;">{log.message}</div>
 			{/if}
 		{/each}
 	</div>
