@@ -15,6 +15,7 @@
 	import * as Resizable from '$lib/components/ui/resizable';
 
 	import type { Team, Payment, User } from '$shared/models';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
@@ -72,7 +73,7 @@
 <div class="dark w-screen h-screen bg-black">
 	<Resizable.PaneGroup direction="horizontal">
 		<Resizable.Pane class="min-w-56" minSize={8} defaultSize={8}>
-			<div class="w-full h-full p-0 bg-surface text-primary text-sm">
+			<div class="flex flex-col w-full h-full p-0 bg-surface text-primary text-sm">
 				<!-- Sidebar content -->
 				<AvatarDropdown {user} />
 				<!-- Project folder navigation -->
@@ -108,6 +109,14 @@
 					<div class="px-6 py-2">
 						<NewTeamModal />
 					</div>
+				</div>
+				<div class="mt-auto m-4">
+					<Button
+						variant="secondary"
+						class="w-full"
+						on:click={() => window.open('https://i6u7z7qkhxw.typeform.com/to/X4CeiAVd', '_blank')}
+						>Give feedback</Button
+					>
 				</div>
 			</div>
 		</Resizable.Pane>
