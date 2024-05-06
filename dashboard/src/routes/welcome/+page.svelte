@@ -9,8 +9,8 @@
 >
 	<div class="flex flex-col w-2/3 items-center gap-6">
 		<h1 class="text-2xl text-white text-start w-full">Let's push some pix</h1>
-		<div class="flex flex-row w-full gap-2.5 h-auto bg-black p-2.5 h-auto" style="padding: 0px; gap: 10px; background-color: transparent;">
-			<div class="w-1/2 h-1/2 rounded-none px-4" style="height: 100%; background-color: #000000;">
+		<div class="flex flex-row w-full gap-2.5 h-auto bg-transparent p-0 h-auto">
+			<div class="w-1/2 h-full bg-black rounded-none px-4">
 				<div class="text-light">
 					<h1 class="text-white">Onlook</h1>
 					<h2 class="text-tertiary">Where Creativity meets Code</h2>
@@ -24,7 +24,7 @@
 				</div>
 			</div>
 
-			<div class="w-1/2 rounded-none px-4 bg-black h-auto p-2" style="height: 100%; background-color: #000000;">
+			<div class="w-1/2 rounded-none px-4 bg-black h-full p-2">
 				<div class="text-white">
 					<h1 class="">Onlook</h1>
 					<h2 class="text-tertiary">Where Creativity meets Code</h2>
@@ -51,7 +51,7 @@
 				<p class="text-sm font-light">
 					<span class="text-tertiary">By clicking on Sign-In, you agree to Onlook's</span>
 					<!-- TODO: Add terms of service -->
-					<a href={DashboardRoutes.PRIVACY} target="_blank" style="color: #ffffff;">Terms of Service </a>
+					<a href={DashboardRoutes.PRIVACY} target="_blank" class="text-white">Terms of Service </a>
 					<span class="text-tertiary">and</span>
 					<a href={DashboardRoutes.PRIVACY} target="_blank" class="text-white">Privacy Policy</a>.
 				</p>
