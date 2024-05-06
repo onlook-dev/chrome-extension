@@ -12,6 +12,7 @@
 	import SideBarLine from '~icons/ri/side-bar-line';
 	import NewTeamModal from './NewTeamModal.svelte';
 	import PlanModal from './PlanModal.svelte';
+	import * as Resizable from '$lib/components/ui/resizable';
 
 	import type { Team, Payment, User } from '$shared/models';
 
@@ -67,65 +68,57 @@
 <svelte:head>
 	<title>Onlook - Dashboard</title>
 </svelte:head>
-<div class="drawer lg:drawer-open">
-	<input id={dashboardDrawerId} type="checkbox" class="drawer-toggle" />
-	<!-- Drawer content -->
-	<div class="drawer-content px-4 py-6 overflow-auto h-screen bg-black text-white">
-		<!-- Page content here -->
-		<div class="flex flex-row gap-2 mb-4 items-center">
-			<label for={dashboardDrawerId} class="btn btn-square btn-ghost drawer-button lg:hidden"
-				><SideBarLine class="text-white" /></label
-			>
+
+<div class="dark w-screen h-screen bg-black">
+	<Resizable.PaneGroup direction="horizontal">
+		<Resizable.Pane class="min-w-56" minSize={8} defaultSize={8}>
+			<div class="w-full h-full p-0 bg-surface text-primary text-sm">
+				<!-- Sidebar content -->
+				<AvatarDropdown {user} />
+				<!-- Project folder navigation -->
+				<div class="space-y-2">
+					{#if user?.teamIds}
+						{#each user?.teamIds as teamId}
+							<div
+								class="p-2 flex h-10 items-center {activeTeamId === teamId
+									? 'bg-black'
+									: 'hover:bg-stone-900'}"
+							>
+								<button
+									class="btn btn-ghost grid grid-cols-3 items-center w-full font-normal"
+									on:click={() => {
+										activeTeamId = teamId;
+										goto(`${DashboardRoutes.DASHBOARD}?${DashboardSearchParams.TEAM}=` + teamId, {
+											replaceState: true
+										});
+									}}
+								>
+									<p class="{activeTeamId === teamId ? 'active ' : ''} col-span-2 text-left">
+										{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}
+									</p>
+									{#if activeTeamId === teamId}
+										<div class="col-start-3 justify-self-end">
+											<PlanModal {teamId} />
+										</div>
+									{/if}
+								</button>
+							</div>
+						{/each}
+					{/if}
+					<div class="px-6 py-2">
+						<NewTeamModal />
+					</div>
+				</div>
+			</div>
+		</Resizable.Pane>
+		<Resizable.Handle class="hover:bg-surface-brand bg-black" />
+		<Resizable.Pane class="p-6 space-y-4" minSize={50}>
 			<div class="flex flex-row w-full items-center">
-				<h1 class="text-2xl text-white">
+				<h1 class="text-xl text-primary">
 					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 				</h1>
 			</div>
-		</div>
-
-		<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
-	</div>
-
-	<!-- Drawer Sidebar -->
-	<div class="drawer-side p-0 shadow">
-		<label for={dashboardDrawerId} aria-label="close sidebar" class="drawer-overlay"></label>
-		<ul class="w-64 p-0 min-h-full bg-stone-900 text-white space-y-2">
-			<!-- Sidebar content -->
-			<li class="p-2">
-				<AvatarDropdown {user} />
-			</li>
-
-			<!-- Project folder navigation -->
-			<ul class="menu p-0 space-y-2">
-				<!-- TODO: Make responsive with teamsMapStore-->
-				{#if user?.teamIds}
-					{#each user?.teamIds as teamId}
-						<li class={activeTeamId === teamId ? 'bg-black' : 'hover:bg-stone-900 '}>
-							<button
-								class="btn btn-ghost grid grid-cols-3 items-center w-full font-normal"
-								on:click={() => {
-									activeTeamId = teamId;
-									goto(`${DashboardRoutes.DASHBOARD}?${DashboardSearchParams.TEAM}=` + teamId, {
-										replaceState: true
-									});
-								}}
-							>
-								<p class="{activeTeamId === teamId ? 'active ' : ''} col-span-2 text-left">
-									{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}
-								</p>
-								{#if activeTeamId === teamId}
-									<div class="col-start-3 justify-self-end">
-										<PlanModal {teamId} />
-									</div>
-								{/if}
-							</button>
-						</li>
-					{/each}
-				{/if}
-				<li>
-					<NewTeamModal />
-				</li>
-			</ul>
-		</ul>
-	</div>
+			<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
+		</Resizable.Pane>
+	</Resizable.PaneGroup>
 </div>

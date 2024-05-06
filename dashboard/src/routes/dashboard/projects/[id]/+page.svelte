@@ -2,12 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount, onDestroy } from 'svelte';
-	import {
-		DashboardRoutes,
-		DashboardSearchParams,
-		MAX_TITLE_LENGTH,
-		FirestoreCollections
-	} from '$shared/constants';
+	import { DashboardRoutes, MAX_TITLE_LENGTH, FirestoreCollections } from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 	import { truncateString } from '$shared/helpers';
 	import { auth } from '$lib/firebase';
@@ -106,7 +101,7 @@
 	<title>Onlook - {project?.name || 'Project'}</title>
 </svelte:head>
 
-<div class="flex h-screen w-screen flex-col bg-black text-white">
+<div class="flex h-screen w-screen flex-col bg-black text-tertiary">
 	{#if project && user}
 		<!-- Header -->
 		<div class="flex flex-row items-center h-14 px-4">
@@ -150,7 +145,7 @@
 	{:else}
 		<div class="flex flex-row items-center justify-center h-full">
 			<Shadow class="animate-spin mr-2" />
-			<p class="text-gray-500">Loading Project...</p>
+			<p class="text-stone-500">Loading Project...</p>
 		</div>
 	{/if}
 </div>
