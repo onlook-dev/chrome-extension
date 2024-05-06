@@ -2,21 +2,31 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { DashboardRoutes } from '$shared/constants';
+	import { DashboardRoutes, FirestoreCollections } from '$shared/constants';
 	import { githubConfig } from '$lib/utils/env';
 	import { GithubLogo } from 'svelte-radix';
+	import { projectsMapStore } from '$lib/utils/store';
+	import { get } from 'svelte/store';
+	import { FirebaseService } from '$lib/storage';
+	import { timeSince } from '$shared/helpers';
 
 	import GitHub from '~icons/mdi/github';
 	import ConfigureTab from './ConfigureTab.svelte';
 	import PublishTab from './PublishTab.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Avatar from '$lib/components/ui/avatar';
+	import * as Collapsible from '$lib/components/ui/collapsible';
 
-	import type { Project, User } from '$shared/models';
+	import type { Project, Team, User } from '$shared/models';
 
 	export let project: Project;
 	export let user: User;
+	export let projectService: FirebaseService<Project>;
+
+	let matchingProjects: Project[] = [];
 
 	enum Tab {
 		PUBLISH = 'Publish',
@@ -35,6 +45,28 @@
 
 		if (!project.githubSettings) {
 			selectedTab = Tab.CONFIGURE;
+		}
+
+		if (!project.installationId) {
+			// Check other projects for installation
+			const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
+			const team: Team = await teamService.get(project.teamId);
+			team.projectIds.forEach(async (projId) => {
+				if (projId === project.id) {
+					return;
+				}
+				try {
+					const proj = await projectService.get(projId);
+					if (
+						new URL(proj.hostUrl).hostname === new URL(project.hostUrl).hostname &&
+						proj.installationId
+					) {
+						matchingProjects = [...matchingProjects, proj];
+					}
+				} catch (error) {
+					console.error('Error fetching project:', error);
+				}
+			});
 		}
 	});
 
@@ -59,6 +91,20 @@
 		if (modal) {
 			modal.close();
 		}
+	}
+
+	function connectToGithub() {
+		window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
+	}
+
+	function connectExistingProject(connectProj: Project) {
+		project.installationId = connectProj.installationId;
+		project.githubSettings = connectProj.githubSettings;
+
+		// Save installation ID
+		projectService.post(project);
+		project = { ...project };
+		return;
 	}
 </script>
 
@@ -86,13 +132,47 @@
 						</Tabs.Content>
 					</Tabs.Root>
 				{:else}
-					<div class="flex flex-col items-center justify-center h-[20rem] mt-4">
-						<button
-							class="btn"
-							on:click={() => {
-								window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
-							}}><GitHub class="h-5 w-5" />Connect project to Github</button
+					<div class="flex flex-col items-center justify-center mt-4">
+						<Button on:click={connectToGithub}
+							><GitHub class="h-5 w-5 mr-2" />Connect project to Github</Button
 						>
+						<div class="flex flex-col w-full text-sm mt-4">
+							{#if matchingProjects.length}
+								<Separator />
+								<Collapsible.Root class="border rounded w-full p-2 text-sm">
+									<Collapsible.Trigger class="hover:opacity-90 w-full text-start">
+										<p class="p-4 text-center">Apply github settings from existing project</p>
+									</Collapsible.Trigger>
+									<Collapsible.Content class="mt-4 mb-2">
+										<div class="overflow-auto">
+											{#each matchingProjects as proj}
+												<div class="flex flex-row items-center p-4 text hover:bg-surface">
+													<Avatar.Root class="w-8 h-8 mr-2">
+														<Avatar.Image src={proj.hostData?.favicon ?? ''} alt="favicon" />
+														<Avatar.Fallback></Avatar.Fallback>
+													</Avatar.Root>
+													<div class="flex flex-col space-y-1">
+														<p>
+															{proj.name}
+														</p>
+														<p class="text-tertiary text-xs">
+															Edited {timeSince(new Date(proj.updatedAt ?? proj.createdAt))} ago
+														</p>
+													</div>
+
+													<Button
+														class="ml-auto"
+														variant="outline"
+														on:click={() => connectExistingProject(proj)}
+														>Apply
+													</Button>
+												</div>
+											{/each}
+										</div>
+									</Collapsible.Content>
+								</Collapsible.Root>
+							{/if}
+						</div>
 					</div>
 				{/if}
 			</Card.Content>
