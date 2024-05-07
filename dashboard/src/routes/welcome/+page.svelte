@@ -9,14 +9,14 @@
 >
 	<div class="flex flex-col w-2/3 items-center gap-6">
 		<h1 class="text-2xl text-white text-start w-full">Let's push some pixels</h1>
-		<div class="flex flex-row w-full gap-2.5 h-auto bg-transparent p-0 h-auto">
+		<div class="flex flex-row w-full gap-2.5 bg-transparent p-0 h-auto">
 			<div class="w-1/2 h-full bg-black rounded-none px-4 border p-5">
 				<div class="text-light">
-					<h1 class="text-[#949494]">Step 1</h1>
+					<h1 class="text-tertiary">Step 1</h1>
 					<h2 class="text-tertiary text-white">Where Creativity meets Code</h2>
 				</div>
 				<div class="space-y-4">
-					<div class="w-full h-[150px] bg-[#3b3b3b] mt-5 mb-5"></div>
+					<div class="w-full h-[150px] bg-tertiary mt-5 mb-5"></div>
 				</div>
 				<div class="flex flex-col text-white">
 					<p class="text-gray-400 text-sm">Click extensions in the upper right corner</p>
@@ -26,36 +26,41 @@
 
 			<div class="w-1/2 rounded-none px-4 bg-black h-full p-5 border">
 				<div class="text-white">
-					<h1 class="text-[#949494]">Step 2</h1>
+					<h1 class="text-tertiary">Step 2</h1>
 					<h2 class="text-tertiary text-white">Where Creativity meets Code</h2>
 				</div>
 				<div class="space-y-4">
-					<div class="w-full h-[150px] bg-[#3b3b3b] mt-5 mb-5"></div>
+					<div class="w-full h-[150px] bg-tertiary mt-5 mb-5"></div>
 				</div>
 				<div class="flex flex-col text-white">
 					<p class="text-gray-400 text-sm">Go to any page you want to edit</p>
-					<p class="text-white text-sm text-[#a3a3a3]">Click the extension and start editing</p>
+					<p class=" text-sm text-tertiary">Click the extension and start editing</p>
 				</div>
 			</div>
 		</div>
 
-		<div class="w-full h-[fit-content] rounded-none px-4 bg-black p-5 border">
-			<div class="text-white">
-				<h1 class="text-xl text-white">See Onlook in action</h1>
-				<h2 class="text-xl text-tertiary text-[#a3a3a3]">Watch us walk through a Demo project and make a pull request in less than 1 minute</h2>
-			</div>
-			<div class="space-y-4">
-				<div class="w-full h-[150px] bg-[#3b3b3b] my-5 mt-5"></div>
-			</div>
-			<div>
-				<p class="text-sm font-light">
-					<span class="text-tertiary">By clicking on Sign-In, you agree to Onlook's</span>
-					<!-- TODO: Add terms of service -->
-					<a href={DashboardRoutes.PRIVACY} target="_blank" class="text-white">Terms of Service </a>
-					<span class="text-tertiary">and</span>
-					<a href={DashboardRoutes.PRIVACY} target="_blank" class="text-white">Privacy Policy</a>.
+		<div class="flex flex-row w-full h-[fit-content] rounded-none px-4 bg-black p-5 border">
+			<div class="w-full h-[150px] bg-tertiary my-5 mt-5"></div>
+			<div class="text-white flex flex-col">
+				<p class="text-white">See Onlook in action</p>
+				<p class="text-sm text-tertiary">
+					Watch us walk through a Demo project and make a pull request in less than 1 minute
 				</p>
+				<a class="text-sm text-red-600" href="https://onlook.dev" target="_blank">Read our guide</a>
+				<a class="text-sm text-red-600" href="https://onlook.dev" target="_blank"
+					>Set up Onlook in your own repo</a
+				>
 			</div>
 		</div>
+	</div>
+
+	<div class="flex flex-row text-primary">
+		<div class="flex flex-col">
+			<div>Hello</div>
+			<div>Hello</div>
+		</div>
+
+		<div class="w-10 bg-red-900"><div>Hello</div></div>
+		<div class="w-10 bg-red-900"><div>Hello</div></div>
 	</div>
 </div>
