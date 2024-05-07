@@ -72,10 +72,6 @@
       <Card.Content>
         <Tabs.Root bind:value={selectedTab} class="w-full h-full">
           <Tabs.List class="handle bg-transparent p-0 gap-4 w-full select-none">
-            <!-- <Tabs.Trigger
-              class="bg-transparent p-0 text-xs"
-              value={TabValue.CSS}>Element Appearance</Tabs.Trigger
-            > -->
             <Button
               class="h-6 rounded-sm text-xs transition"
               variant="primary"

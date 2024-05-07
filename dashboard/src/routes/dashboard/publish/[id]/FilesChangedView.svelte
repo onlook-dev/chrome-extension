@@ -1,4 +1,9 @@
 <script lang="ts">
+	import {
+		ProjectPublisher,
+		type ProjectPublisherEvent,
+		ProjectPublisherEventType
+	} from '$lib/publish';
 	import type { FileContentData } from '$shared/models/translation';
 	import { createPatch } from 'diff';
 	import { html } from 'diff2html';
@@ -6,36 +11,35 @@
 	import { ColorSchemeType } from 'diff2html/lib/types';
 	import { onMount } from 'svelte';
 
-	export let changesMap = new Map<string, FileContentData>();
+	export let projectPublisher: ProjectPublisher;
+
 	let diffHtmls: string[] = [];
 	let diffRef: HTMLDivElement;
+	let beforeMap = new Map<string, FileContentData>();
+	let afterMap = new Map<string, FileContentData>();
 
-	const oldMap = new Map([
-		[
-			'dashboard/src/routes/dashboard/agent/+page.svelte',
-			{
-				path: 'dashboard/src/routes/dashboard/agent/+page.svelte',
-				content: '<div>Hello world</div>',
-				sha: '8cf82b20efa0b0957708aaab9ee8f42f3cd28670'
+	$: if (projectPublisher) {
+		projectPublisher.on(projectPublisher.EMIT_EVENT_NAME, (event: ProjectPublisherEvent) => {
+			switch (event.type) {
+				case ProjectPublisherEventType.TRANSLATING:
+					beforeMap = projectPublisher.beforeMap;
+					afterMap = projectPublisher.filesMap;
+					break;
 			}
-		]
-	]);
-
-	const newMap = new Map([
-		[
-			'dashboard/src/routes/dashboard/agent/+page.svelte',
-			{
-				path: 'dashboard/src/routes/dashboard/agent/+page.svelte',
-				content: '<div>Hello friend</div>',
-				sha: '8cf82b20efa0b0957708aaab9ee8f42f3cd28670'
-			}
-		]
-	]);
+		});
+	}
 
 	onMount(() => {
-		oldMap.forEach((value, key) => {
+		if (projectPublisher) {
+			beforeMap = projectPublisher.beforeMap;
+			afterMap = projectPublisher.filesMap;
+		}
+	});
+
+	$: {
+		beforeMap.forEach((value, key) => {
 			const oldFile = value.content ?? '';
-			const newFile = newMap.get(key)?.content ?? '';
+			const newFile = afterMap.get(key)?.content ?? '';
 			const diffString = createPatch(key, oldFile, newFile, '', '', { context: 0 });
 			const diffHtml = html(diffString, {
 				drawFileList: true,
@@ -55,10 +59,10 @@
 				element.style.backgroundColor = 'black';
 			});
 		}, 100);
-	});
+	}
 </script>
 
-<div class="w-full h-full flex flex-col items-center justify-center">
+<div class="w-full h-full flex flex-col items-center justify-center overflow-auto">
 	{#each diffHtmls as diff}
 		<div class="w-full">
 			{@html diff}

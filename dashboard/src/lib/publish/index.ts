@@ -82,7 +82,7 @@ export class ProjectPublisher extends EventEmitter {
 
         // Save original file
         if (!this.beforeMap.get(processed.pathInfo.path)) {
-          this.beforeMap.set(processed.pathInfo.path, fileContent);
+          this.beforeMap.set(processed.pathInfo.path, { ...fileContent });
         }
 
         const newFileContent = await this.updateFileWithActivity(processed, fileContent);

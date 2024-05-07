@@ -24,11 +24,11 @@
 	import HistoriesView from './HistoriesView.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import FilesChangedView from './FilesChangedView.svelte';
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 
 	import type { Project, GithubHistory, User } from '$shared/models';
-	import FilesChangedView from './FilesChangedView.svelte';
 
 	export let project: Project;
 	export let user: User;
@@ -92,8 +92,7 @@
 		projectPublisher = new ProjectPublisher(project, user);
 		handleProjectPublisherEvents(projectPublisher);
 
-		// await projectPublisher.translate();
-		// console.log(projectPublisher.filesMap);
+		await projectPublisher.translate();
 	});
 
 	async function handlePublishClick() {
@@ -194,73 +193,84 @@
 </script>
 
 <div class="flex flex-col items-center justify-center h-full mt-4 space-y-4">
-	<FilesChangedView />
+	<Tabs.Root value="code" class="w-full ">
+		<Tabs.List class="">
+			<Tabs.Trigger value="main">Review</Tabs.Trigger>
+			<Tabs.Trigger value="code"
+				>Files changed ({Object.keys(project.activities).length})</Tabs.Trigger
+			>
+		</Tabs.List>
+		<Tabs.Content value="main" class="text-primary">
+			<label class="form-control w-full p-2 space-y-4">
+				<Label for="form-title">Title</Label>
 
-	<label class="form-control w-full p-2 space-y-4">
-		<Label for="form-title">Title</Label>
+				<Input
+					id="form-title"
+					disabled={!hasActivities || isLoading}
+					bind:value={title}
+					type="text"
+					placeholder={titlePlaceholder}
+					class="w-full text-sm"
+					maxlength={MAX_TITLE_LENGTH}
+				/>
 
-		<Input
-			id="form-title"
-			disabled={!hasActivities || isLoading}
-			bind:value={title}
-			type="text"
-			placeholder={titlePlaceholder}
-			class="w-full text-sm"
-			maxlength={MAX_TITLE_LENGTH}
-		/>
+				<Label for="form-description">Description</Label>
 
-		<Label for="form-description">Description</Label>
-
-		<Textarea
-			id="form-tidescriptiontle"
-			disabled={!hasActivities || isLoading}
-			bind:value={description}
-			class="h-24"
-			placeholder={descriptionPlaceholder}
-			maxlength={MAX_DESCRIPTION_LENGTH}
-		></Textarea>
-		<div class="mt-6 flex items-center justify-end">
-			{#if !publishError}
-				{#if isTranslating}
-					<div class="flex flex-col mr-8 flex-grow space-y-2 text-sm">
-						<progress
-							class="progress progress-success w-2/3"
-							value={translationProgress}
-							max={translationTotal}
-						></progress>
-						<p>{translationProgress}/{translationTotal} changes translated</p>
-					</div>
-				{/if}
-				<Button
-					variant="primary"
-					disabled={!hasActivities || isLoading || isTranslating}
-					on:click={handlePublishClick}
-				>
-					{#if isLoading}
-						<div class="loading mr-2"></div>
-						Publishing
-					{:else}
-						<GitHub class="w-5 h-5 mr-2" /> Publish
+				<Textarea
+					id="form-tidescriptiontle"
+					disabled={!hasActivities || isLoading}
+					bind:value={description}
+					class="h-24"
+					placeholder={descriptionPlaceholder}
+					maxlength={MAX_DESCRIPTION_LENGTH}
+				></Textarea>
+				<div class="mt-6 flex items-center justify-end">
+					{#if !publishError}
+						{#if isTranslating}
+							<div class="flex flex-col mr-8 flex-grow space-y-2 text-sm">
+								<progress
+									class="progress progress-success w-2/3"
+									value={translationProgress}
+									max={translationTotal}
+								></progress>
+								<p>{translationProgress}/{translationTotal} changes translated</p>
+							</div>
+						{/if}
+						<Button
+							variant="primary"
+							disabled={!hasActivities || isLoading || isTranslating}
+							on:click={handlePublishClick}
+						>
+							{#if isLoading}
+								<div class="loading mr-2"></div>
+								Publishing
+							{:else}
+								<GitHub class="w-5 h-5 mr-2" /> Publish
+							{/if}
+						</Button>
 					{/if}
-				</Button>
-			{/if}
-		</div>
-		{#if publishErrorMessage}
-			<p class="text-xs text-error mt-4">{publishErrorMessage}</p>
-		{/if}
-	</label>
+				</div>
+				{#if publishErrorMessage}
+					<p class="text-xs text-error mt-4">{publishErrorMessage}</p>
+				{/if}
+			</label>
 
-	<HistoriesView {githubHistories} {restoreActivities} />
+			<HistoriesView {githubHistories} {restoreActivities} />
 
-	<Collapsible.Root class="border rounded w-full p-2 text-sm">
-		<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
-			>Optional Configurations</Collapsible.Trigger
-		>
-		<Collapsible.Content class="mt-4">
-			<div class="flex flex-row">
-				<Label for="force-tailwind">Force TailwindCSS</Label>
-				<Switch id="force-tailwind" class="toggle ml-auto" bind:checked={forceTailwind} />
-			</div>
-		</Collapsible.Content>
-	</Collapsible.Root>
+			<Collapsible.Root class="border rounded w-full p-2 text-sm">
+				<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
+					>Optional Configurations</Collapsible.Trigger
+				>
+				<Collapsible.Content class="mt-4">
+					<div class="flex flex-row">
+						<Label for="force-tailwind">Force TailwindCSS</Label>
+						<Switch id="force-tailwind" class="toggle ml-auto" bind:checked={forceTailwind} />
+					</div>
+				</Collapsible.Content>
+			</Collapsible.Root>
+		</Tabs.Content>
+		<Tabs.Content value="code">
+			<FilesChangedView {projectPublisher} />
+		</Tabs.Content>
+	</Tabs.Root>
 </div>
