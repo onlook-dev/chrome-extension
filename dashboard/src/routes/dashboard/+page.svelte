@@ -14,7 +14,6 @@
 
 	import AvatarDropdown from './AvatarDropdown.svelte';
 	import ProjectsView from './ProjectsView.svelte';
-	import SideBarLine from '~icons/ri/side-bar-line';
 	import NewTeamModal from './NewTeamModal.svelte';
 	import PlanModal from './PlanModal.svelte';
 	import * as Resizable from '$lib/components/ui/resizable';
