@@ -3,7 +3,12 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { auth } from '$lib/firebase';
-	import { DashboardRoutes, DashboardSearchParams, FirestoreCollections } from '$shared/constants';
+	import {
+		DashboardRoutes,
+		DashboardSearchParams,
+		FEEDBACK_LINK,
+		FirestoreCollections
+	} from '$shared/constants';
 	import { paymentsMapStore, teamsMapStore, userStore } from '$lib/utils/store';
 	import { FirebaseService } from '$lib/storage';
 
@@ -114,8 +119,7 @@
 					<Button
 						variant="secondary"
 						class="w-full"
-						on:click={() => window.open('https://i6u7z7qkhxw.typeform.com/to/X4CeiAVd', '_blank')}
-						>Give feedback</Button
+						on:click={() => window.open(FEEDBACK_LINK, '_blank')}>Give feedback</Button
 					>
 				</div>
 			</div>

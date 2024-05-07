@@ -2,7 +2,14 @@
     import { draggable } from "@neodrag/svelte";
     import { savePanelVisible } from "$lib/states/editor";
     import { ToolManager, ToolName } from "$lib/tools";
-    import { Dashboard, Pencil2, Shadow, Share2 } from "radix-icons-svelte";
+    import {
+        ChatBubble,
+        Check,
+        Dashboard,
+        Pencil2,
+        Shadow,
+        Share2,
+    } from "radix-icons-svelte";
     import { onMount } from "svelte";
     import { slide } from "svelte/transition";
 
@@ -14,6 +21,7 @@
 
     import type { PublishTool } from "$lib/tools/publish";
     import type { Project } from "$shared/models";
+    import { FEEDBACK_LINK } from "$shared/constants";
 
     export let toolManager: ToolManager;
 
@@ -23,6 +31,8 @@
     let projects: Project[] = [];
     let selectableProjects = [];
     let saving = false;
+    let copied = false;
+
     $: if (currentProject) {
         selectableProjects = [
             currentProject,
@@ -102,11 +112,36 @@
         style="transition: height 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
     >
         <Card.Header class="space-y-6">
-            <div class="flex flex-row items-center">
+            <div class="flex flex-row items-center text-tertiary">
                 <Logo class="w-24" />
-                <Share2
-                    class="w-5 h-5 text-tertiary ml-auto hover:text-stone-400 cursor-pointer"
-                />
+                <Button
+                    variant="ghost"
+                    class="ml-auto h-7 w-7 p-0"
+                    on:click={() => window.open(FEEDBACK_LINK, "_blank")}
+                >
+                    <ChatBubble />
+                </Button>
+                <Button
+                    class="h-7 w-7 p-0 ml-2 disabled:text-tertiary"
+                    variant="ghost"
+                    on:click={() => {
+                        navigator.clipboard.writeText(
+                            `https://app.onlook.dev/dashboard/projects/${currentProject.id}`,
+                        );
+                        publishTool.publish(false);
+                        copied = true;
+                        setTimeout(() => {
+                            copied = false;
+                        }, 5000);
+                    }}
+                    disabled={copied}
+                >
+                    {#if copied}
+                        Copied
+                    {:else}
+                        <Share2 />
+                    {/if}
+                </Button>
             </div>
             {#if !accordianExpanded}
                 <div

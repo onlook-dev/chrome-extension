@@ -48,11 +48,11 @@ export function setupListeners() {
 		}
 	})
 
-	messageService.subscribe(MessageType.PUBLISH_PROJECT, async (payload, correlationId) => {
+	messageService.subscribe(MessageType.PUBLISH_PROJECT, async (open, correlationId) => {
 		const currentTab = await projectTabManager.getCurrentTab()
 		const project = await projectTabManager.getTabProject(currentTab)
 		const publishService = new PublishProjectService(project, screenshotService, altScreenshotService, projectChangeService)
-		await publishService.publish()
+		await publishService.publish(open)
 
 		if (correlationId)
 			// Confirm save received

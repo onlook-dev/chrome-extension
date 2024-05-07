@@ -62,15 +62,11 @@ export class ProjectPublisher extends EventEmitter {
   }
 
   async publish(title: string, description: string): Promise<string> {
-    /*
-      Emit state for each step
-      1. For each activity:
-        1. Get file from map
-        2. Create translation
-        3. Write file to map
-      2. Publish all files
-    */
+    await this.translate();
+    return await this.createPullRequest(title, description);
+  }
 
+  async translate(): Promise<void> {
     try {
       this.emitEvent({
         type: ProjectPublisherEventType.TRANSLATING,
@@ -96,7 +92,9 @@ export class ProjectPublisher extends EventEmitter {
     } catch (e) {
       throw `Publish failed while processing activities. ${e}`;
     }
+  }
 
+  async createPullRequest(title: string, description: string): Promise<string> {
     try {
       this.emitEvent({
         type: ProjectPublisherEventType.PUBLISHING,

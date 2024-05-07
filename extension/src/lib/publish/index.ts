@@ -17,12 +17,13 @@ export class PublishProjectService {
         private projectChangeService: ProjectChangeService
     ) { }
 
-    public async publish() {
+    public async publish(open = true) {
         if (this.project.status !== ProjectStatus.PREPARED)
             await this.prepare();
 
         await sendPublishProjectRequest(this.project);
-        sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
+        if (open)
+            sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
     }
 
     public async prepare() {
