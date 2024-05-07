@@ -23,7 +23,6 @@
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
-	const dashboardDrawerId = 'dashboard-drawer';
 	let user: User | null;
 	let activeTeamId: string = '';
 	let unsubs: any[] = [];

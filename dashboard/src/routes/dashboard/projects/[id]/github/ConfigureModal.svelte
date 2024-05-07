@@ -17,6 +17,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 
 	import type { Project, Team, User } from '$shared/models';
+	import PublishModal from './PublishModal.svelte';
 
 	export let project: Project;
 	export let user: User;
@@ -79,13 +80,19 @@
 			></Dialog.Trigger
 		>
 	{:else if project?.githubSettings && project?.installationId}
-		<Button
-			variant="primary"
-			class="h-8"
-			on:click={() => {
-				goto(`${DashboardRoutes.DASHBOARD}/publish/${project?.id}`);
-			}}><GithubLogo class="mr-2 w-4 h-4" /> Create Code Change</Button
-		>
+		<Dialog.Root>
+			<Dialog.Trigger>
+				<Button variant="primary" class="h-8"
+					><GithubLogo class="mr-2 w-4 h-4" /> Create Code Change</Button
+				>
+			</Dialog.Trigger>
+			<Dialog.Content class="dark">
+				<Dialog.Header>
+					<Dialog.Title>Publish to GitHub</Dialog.Title>
+				</Dialog.Header>
+				<PublishModal {project} {user} />
+			</Dialog.Content>
+		</Dialog.Root>
 	{/if}
 	<Dialog.Content class="dark">
 		<Dialog.Header>

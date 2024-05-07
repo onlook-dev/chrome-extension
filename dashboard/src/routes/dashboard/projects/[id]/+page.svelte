@@ -19,7 +19,7 @@
 	import * as Resizable from '$lib/components/ui/resizable';
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
 	import ImageDetailView from './ImageDetailView.svelte';
-	import GithubModal from './github/GithubModal.svelte';
+	import GithubModal from './github/ConfigureModal.svelte';
 	import ActivityDetail from './ActivityDetail.svelte';
 	import { buttonVariants } from '$lib/components/ui/button';
 
@@ -103,7 +103,7 @@
 	<title>Onlook - {project?.name || 'Project'}</title>
 </svelte:head>
 
-<div class="flex h-screen w-screen flex-col bg-black text-tertiary">
+<div class="flex h-screen w-screen flex-col bg-black text-primary">
 	{#if project && user}
 		<!-- Header -->
 		<div class="flex flex-row items-center h-14 px-4">
