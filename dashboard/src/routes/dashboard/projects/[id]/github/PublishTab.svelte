@@ -56,20 +56,22 @@
 	let translationTotal = 0;
 	let forceTailwind = false;
 
-	$: if (project?.installationId) {
-		githubConfigured = true;
-	}
-
 	$: if (projectPublisher) {
 		projectPublisher.toggleForceTailwind(forceTailwind);
 	}
 
-	onMount(() => {
-		// Check each activities for a path
+	$: if (project) {
+		// Check if github is configured
+		if (project?.installationId) {
+			githubConfigured = true;
+		}
+
+		// Check for activities
 		if (Object.keys(project.activities).length > 0) {
 			hasActivities = true;
 		}
 
+		// Check file paths
 		Object.values(project.activities).forEach((activity) => {
 			if (activity.path) {
 				hasFilePaths = true;
@@ -77,6 +79,7 @@
 			}
 		});
 
+		// Get github history
 		if (project?.githubHistoryIds?.length > 0) {
 			Promise.all(project.githubHistoryIds.map((id) => githubHistoryService.get(id)))
 				.then((histories) => {
@@ -86,18 +89,23 @@
 					console.error('Error loading github history:', error);
 				});
 		}
-	});
+	} else {
+		githubConfigured = false;
+		hasActivities = false;
+		hasFilePaths = false;
+	}
 
 	async function handlePublishClick() {
 		title = title || titlePlaceholder;
-		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
+		const newDesc =
+			description + `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		publishErrorMessage = '';
 		publishError = false;
 		try {
 			projectPublisher = new ProjectPublisher(project, user);
 			handleProjectPublisherEvents(projectPublisher);
-			let pullRequestUrl = await projectPublisher.publish(title, description);
+			let pullRequestUrl = await projectPublisher.publish(title, newDesc);
 			if (!pullRequestUrl) throw new Error('No pull request url returned from GitHub');
 			handlePublishedSucceeded(pullRequestUrl);
 		} catch (error) {
