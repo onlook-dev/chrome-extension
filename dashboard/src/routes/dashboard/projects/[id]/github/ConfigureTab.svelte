@@ -96,7 +96,7 @@
 	}
 </script>
 
-<div class="space-y-3">
+<div class="space-y-3 text-primary">
 	{#if selectedRepo}
 		<div class="border rounded-lg flex flex-col justify-between p-4 space-y-4 mt-6">
 			<div class="flex flex-row align-middle">

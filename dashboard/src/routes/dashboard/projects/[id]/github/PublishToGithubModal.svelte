@@ -19,6 +19,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import * as Collapsible from '$lib/components/ui/collapsible';
+	import * as Dialog from '$lib/components/ui/dialog';
 
 	import type { Project, Team, User } from '$shared/models';
 
@@ -70,29 +71,6 @@
 		}
 	});
 
-	function showModal() {
-		const modal = document.getElementById(modalId) as HTMLDialogElement;
-		if (modal) {
-			modal.showModal();
-			modal.addEventListener(
-				'click',
-				(event) => {
-					if (event.target === modal) {
-						closeModal();
-					}
-				},
-				{ once: true }
-			);
-		}
-	}
-
-	function closeModal() {
-		const modal = document.getElementById(modalId) as HTMLDialogElement;
-		if (modal) {
-			modal.close();
-		}
-	}
-
 	function connectToGithub() {
 		window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
 	}
@@ -108,78 +86,76 @@
 	}
 </script>
 
-<div>
-	<Button on:click={showModal} variant="primary" class="h-8"
-		><GithubLogo class="mr-2 w-4 h-4" /> Publish to GitHub</Button
+<Dialog.Root>
+	<Dialog.Trigger
+		><Button variant="primary" class="h-8"
+			><GithubLogo class="mr-2 w-4 h-4" /> Connect to Codebase</Button
+		></Dialog.Trigger
 	>
-	<dialog id={modalId} class="modal">
-		<Card.Root class="text-primary modal-box w-full h-[80%] flex flex-col">
-			<Card.Header><h1 class="text-lg font-light">Publish to Github</h1></Card.Header>
-			<Card.Content>
-				{#if project?.installationId}
-					<Tabs.Root value={selectedTab} class="w-full">
-						<Tabs.List class="grid w-full grid-cols-2">
-							<Tabs.Trigger value={Tab.PUBLISH} disabled={!project?.githubSettings}
-								>Publish</Tabs.Trigger
-							>
-							<Tabs.Trigger value={Tab.CONFIGURE}>Configure</Tabs.Trigger>
-						</Tabs.List>
-						<Tabs.Content value={Tab.CONFIGURE}>
-							<ConfigureTab {project} />
-						</Tabs.Content>
-						<Tabs.Content value={Tab.PUBLISH}>
-							<PublishTab {project} {user} />
-						</Tabs.Content>
-					</Tabs.Root>
-				{:else}
-					<div class="flex flex-col items-center justify-center mt-4">
-						<Button on:click={connectToGithub}
-							><GitHub class="h-5 w-5 mr-2" />Connect project to Github</Button
+	<Dialog.Content class="dark">
+		<Dialog.Header>
+			<Dialog.Title>Connect to GitHub</Dialog.Title>
+		</Dialog.Header>
+		<div>
+			{#if project?.installationId}
+				<Tabs.Root value={selectedTab} class="w-full">
+					<Tabs.List class="grid w-full grid-cols-2">
+						<Tabs.Trigger value={Tab.PUBLISH} disabled={!project?.githubSettings}
+							>Publish</Tabs.Trigger
 						>
-						<div class="flex flex-col w-full text-sm mt-4">
-							{#if matchingProjects.length}
-								<Separator />
-								<Collapsible.Root class="border rounded w-full p-2 text-sm">
-									<Collapsible.Trigger class="hover:opacity-90 w-full text-start">
-										<p class="p-4 text-center">Apply github settings from existing project</p>
-									</Collapsible.Trigger>
-									<Collapsible.Content class="mt-4 mb-2">
-										<div class="overflow-auto">
-											{#each matchingProjects as proj}
-												<div class="flex flex-row items-center p-4 text hover:bg-surface">
-													<Avatar.Root class="w-8 h-8 mr-2">
-														<Avatar.Image src={proj.hostData?.favicon ?? ''} alt="favicon" />
-														<Avatar.Fallback></Avatar.Fallback>
-													</Avatar.Root>
-													<div class="flex flex-col space-y-1">
-														<p>
-															{proj.name}
-														</p>
-														<p class="text-tertiary text-xs">
-															Edited {timeSince(new Date(proj.updatedAt ?? proj.createdAt))} ago
-														</p>
-													</div>
-
-													<Button
-														class="ml-auto"
-														variant="outline"
-														on:click={() => connectExistingProject(proj)}
-														>Apply
-													</Button>
+						<Tabs.Trigger value={Tab.CONFIGURE}>Configure</Tabs.Trigger>
+					</Tabs.List>
+					<Tabs.Content value={Tab.CONFIGURE}>
+						<ConfigureTab {project} />
+					</Tabs.Content>
+					<Tabs.Content value={Tab.PUBLISH}>
+						<PublishTab {project} {user} />
+					</Tabs.Content>
+				</Tabs.Root>
+			{:else}
+				<div class="flex flex-col items-center justify-center mt-4">
+					<Button on:click={connectToGithub}
+						><GitHub class="h-5 w-5 mr-2" />Connect project to Github</Button
+					>
+					<div class="flex flex-col w-full text-sm text-primary mt-4">
+						{#if matchingProjects.length}
+							<Separator />
+							<Collapsible.Root class="border rounded w-full p-2 text-sm">
+								<Collapsible.Trigger class="hover:opacity-90 w-full text-start">
+									<p class="p-4 text-center">Apply github settings from existing project</p>
+								</Collapsible.Trigger>
+								<Collapsible.Content class="mt-4 mb-2">
+									<div class="overflow-auto">
+										{#each matchingProjects as proj}
+											<div class="flex flex-row items-center p-4 text hover:bg-surface">
+												<Avatar.Root class="w-8 h-8 mr-2">
+													<Avatar.Image src={proj.hostData?.favicon ?? ''} alt="favicon" />
+													<Avatar.Fallback></Avatar.Fallback>
+												</Avatar.Root>
+												<div class="flex flex-col space-y-1">
+													<p>
+														{proj.name}
+													</p>
+													<p class="text-tertiary text-xs">
+														Edited {timeSince(new Date(proj.updatedAt ?? proj.createdAt))} ago
+													</p>
 												</div>
-											{/each}
-										</div>
-									</Collapsible.Content>
-								</Collapsible.Root>
-							{/if}
-						</div>
-					</div>
-				{/if}
-			</Card.Content>
-		</Card.Root>
 
-		<form method="dialog" class="modal-backdrop">
-			<button>close</button>
-		</form>
-	</dialog>
-</div>
+												<Button
+													class="ml-auto"
+													variant="outline"
+													on:click={() => connectExistingProject(proj)}
+													>Apply
+												</Button>
+											</div>
+										{/each}
+									</div>
+								</Collapsible.Content>
+							</Collapsible.Root>
+						{/if}
+					</div>
+				</div>
+			{/if}
+		</div>
+	</Dialog.Content>
+</Dialog.Root>

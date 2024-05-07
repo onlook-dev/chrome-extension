@@ -4,7 +4,6 @@
     import { ToolManager, ToolName } from "$lib/tools";
     import {
         ChatBubble,
-        Check,
         Dashboard,
         Pencil2,
         Shadow,
@@ -12,6 +11,7 @@
     } from "radix-icons-svelte";
     import { onMount } from "svelte";
     import { slide } from "svelte/transition";
+    import { FEEDBACK_LINK } from "$shared/constants";
 
     import Logo from "./Logo.svelte";
     import Button from "../ui/button/button.svelte";
@@ -21,7 +21,6 @@
 
     import type { PublishTool } from "$lib/tools/publish";
     import type { Project } from "$shared/models";
-    import { FEEDBACK_LINK } from "$shared/constants";
 
     export let toolManager: ToolManager;
 

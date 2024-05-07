@@ -188,7 +188,7 @@
 
 <div class="flex flex-col items-center justify-center h-full mt-4 space-y-4">
 	{#if githubConfigured && hasActivities && hasFilePaths}
-		<label class="form-control w-full p-2 space-y-4">
+		<label class="text-primary form-control w-full p-2 space-y-4">
 			<Label for="form-title">Title</Label>
 
 			<Input
@@ -244,11 +244,11 @@
 
 		<HistoriesView {githubHistories} {restoreActivities} />
 
-		<Collapsible.Root class="border rounded w-full p-2 text-sm">
-			<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
+		<Collapsible.Root class="border text-primary rounded w-full p-2 text-sm">
+			<Collapsible.Trigger class=" hover:opacity-90 w-full text-start"
 				>Optional Configurations</Collapsible.Trigger
 			>
-			<Collapsible.Content class="mt-4">
+			<Collapsible.Content class="mt-4 ">
 				<div class="flex flex-row">
 					<Label for="force-tailwind">Force TailwindCSS</Label>
 					<Switch id="force-tailwind" class="toggle ml-auto" bind:checked={forceTailwind} />

@@ -52,7 +52,7 @@
     "@octokit/plugin-retry": "^7.0.3",
     "@octokit/plugin-throttling": "^9.0.3",
     "@skeletonlabs/skeleton": "^2.7.1",
-    "bits-ui": "^0.21.3",
+    "bits-ui": "^0.21.7",
     "clsx": "^2.1.0",
     "events": "^3.3.0",
     "firebase": "^10.7.1",
