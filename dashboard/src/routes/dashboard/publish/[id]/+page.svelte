@@ -84,7 +84,7 @@
 	<Separator />
 	{#if project && user}
 		<div class="p-8">
-			<h1 class="text-primary text-lg font-light">Publish to Github</h1>
+			<h1 class="text-primary text-lg font-light">Review code change</h1>
 			<Publish {project} {user} />
 		</div>
 	{:else}

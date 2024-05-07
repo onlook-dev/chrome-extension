@@ -28,6 +28,7 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 
 	import type { Project, GithubHistory, User } from '$shared/models';
+	import FilesChangedView from './FilesChangedView.svelte';
 
 	export let project: Project;
 	export let user: User;
@@ -65,7 +66,7 @@
 		projectPublisher.toggleForceTailwind(forceTailwind);
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		// Check each activities for a path
 		if (Object.keys(project.activities).length > 0) {
 			hasActivities = true;
@@ -87,18 +88,23 @@
 					console.error('Error loading github history:', error);
 				});
 		}
+
+		projectPublisher = new ProjectPublisher(project, user);
+		handleProjectPublisherEvents(projectPublisher);
+
+		// await projectPublisher.translate();
+		// console.log(projectPublisher.filesMap);
 	});
 
 	async function handlePublishClick() {
 		title = title || titlePlaceholder;
-		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
+		const updatedDescription =
+			description + `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		publishErrorMessage = '';
 		publishError = false;
 		try {
-			projectPublisher = new ProjectPublisher(project, user);
-			handleProjectPublisherEvents(projectPublisher);
-			let pullRequestUrl = await projectPublisher.publish(title, description);
+			let pullRequestUrl = await projectPublisher.publish(title, updatedDescription);
 			if (!pullRequestUrl) throw new Error('No pull request url returned from GitHub');
 			handlePublishedSucceeded(pullRequestUrl);
 		} catch (error) {
@@ -188,80 +194,73 @@
 </script>
 
 <div class="flex flex-col items-center justify-center h-full mt-4 space-y-4">
-	<Tabs.Root value="main" class="w-full">
-		<Tabs.List class="">
-			<Tabs.Trigger value="main">General</Tabs.Trigger>
-			<Tabs.Trigger value="code">File changed</Tabs.Trigger>
-		</Tabs.List>
-		<Tabs.Content value="main">
-			<label class="form-control w-full p-2 space-y-4">
-				<Label for="form-title">Title</Label>
+	<FilesChangedView />
 
-				<Input
-					id="form-title"
-					disabled={!hasActivities || isLoading}
-					bind:value={title}
-					type="text"
-					placeholder={titlePlaceholder}
-					class="w-full text-sm"
-					maxlength={MAX_TITLE_LENGTH}
-				/>
+	<label class="form-control w-full p-2 space-y-4">
+		<Label for="form-title">Title</Label>
 
-				<Label for="form-description">Description</Label>
+		<Input
+			id="form-title"
+			disabled={!hasActivities || isLoading}
+			bind:value={title}
+			type="text"
+			placeholder={titlePlaceholder}
+			class="w-full text-sm"
+			maxlength={MAX_TITLE_LENGTH}
+		/>
 
-				<Textarea
-					id="form-tidescriptiontle"
-					disabled={!hasActivities || isLoading}
-					bind:value={description}
-					class="h-24"
-					placeholder={descriptionPlaceholder}
-					maxlength={MAX_DESCRIPTION_LENGTH}
-				></Textarea>
-				<div class="mt-6 flex items-center justify-end">
-					{#if !publishError}
-						{#if isTranslating}
-							<div class="flex flex-col mr-8 flex-grow space-y-2 text-sm">
-								<progress
-									class="progress progress-success w-2/3"
-									value={translationProgress}
-									max={translationTotal}
-								></progress>
-								<p>{translationProgress}/{translationTotal} changes translated</p>
-							</div>
-						{/if}
-						<Button
-							variant="primary"
-							disabled={!hasActivities || isLoading || isTranslating}
-							on:click={handlePublishClick}
-						>
-							{#if isLoading}
-								<div class="loading mr-2"></div>
-								Publishing
-							{:else}
-								<GitHub class="w-5 h-5 mr-2" /> Publish
-							{/if}
-						</Button>
-					{/if}
-				</div>
-				{#if publishErrorMessage}
-					<p class="text-xs text-error mt-4">{publishErrorMessage}</p>
-				{/if}
-			</label>
+		<Label for="form-description">Description</Label>
 
-			<HistoriesView {githubHistories} {restoreActivities} />
-
-			<Collapsible.Root class="border rounded w-full p-2 text-sm">
-				<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
-					>Optional Configurations</Collapsible.Trigger
-				>
-				<Collapsible.Content class="mt-4">
-					<div class="flex flex-row">
-						<Label for="force-tailwind">Force TailwindCSS</Label>
-						<Switch id="force-tailwind" class="toggle ml-auto" bind:checked={forceTailwind} />
+		<Textarea
+			id="form-tidescriptiontle"
+			disabled={!hasActivities || isLoading}
+			bind:value={description}
+			class="h-24"
+			placeholder={descriptionPlaceholder}
+			maxlength={MAX_DESCRIPTION_LENGTH}
+		></Textarea>
+		<div class="mt-6 flex items-center justify-end">
+			{#if !publishError}
+				{#if isTranslating}
+					<div class="flex flex-col mr-8 flex-grow space-y-2 text-sm">
+						<progress
+							class="progress progress-success w-2/3"
+							value={translationProgress}
+							max={translationTotal}
+						></progress>
+						<p>{translationProgress}/{translationTotal} changes translated</p>
 					</div>
-				</Collapsible.Content>
-			</Collapsible.Root>
-		</Tabs.Content>
-		<Tabs.Content value="code"></Tabs.Content>
-	</Tabs.Root>
+				{/if}
+				<Button
+					variant="primary"
+					disabled={!hasActivities || isLoading || isTranslating}
+					on:click={handlePublishClick}
+				>
+					{#if isLoading}
+						<div class="loading mr-2"></div>
+						Publishing
+					{:else}
+						<GitHub class="w-5 h-5 mr-2" /> Publish
+					{/if}
+				</Button>
+			{/if}
+		</div>
+		{#if publishErrorMessage}
+			<p class="text-xs text-error mt-4">{publishErrorMessage}</p>
+		{/if}
+	</label>
+
+	<HistoriesView {githubHistories} {restoreActivities} />
+
+	<Collapsible.Root class="border rounded w-full p-2 text-sm">
+		<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
+			>Optional Configurations</Collapsible.Trigger
+		>
+		<Collapsible.Content class="mt-4">
+			<div class="flex flex-row">
+				<Label for="force-tailwind">Force TailwindCSS</Label>
+				<Switch id="force-tailwind" class="toggle ml-auto" bind:checked={forceTailwind} />
+			</div>
+		</Collapsible.Content>
+	</Collapsible.Root>
 </div>

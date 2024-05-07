@@ -23,10 +23,11 @@ export interface ProjectPublisherEvent {
 }
 
 export class ProjectPublisher extends EventEmitter {
+  beforeMap = new Map<string, FileContentData>();
+  filesMap = new Map<string, FileContentData>();
   private githubService: GithubService;
   private githubSettings: GithubSettings;
   private translationService: TranslationService;
-  private filesMap = new Map<string, FileContentData>();
   private processedActivities: ProcessedActivity[];
   private forceTailwind = false;
 
@@ -78,6 +79,12 @@ export class ProjectPublisher extends EventEmitter {
 
       for (const [index, processed] of this.processedActivities.entries()) {
         const fileContent = await this.getFileFromActivity(processed);
+
+        // Save original file
+        if (!this.beforeMap.get(processed.pathInfo.path)) {
+          this.beforeMap.set(processed.pathInfo.path, fileContent);
+        }
+
         const newFileContent = await this.updateFileWithActivity(processed, fileContent);
         this.filesMap.set(processed.pathInfo.path, newFileContent);
 
