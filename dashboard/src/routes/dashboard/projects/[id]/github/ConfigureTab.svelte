@@ -16,6 +16,7 @@
 	import type { Project, GithubRepo, GithubSettings } from '$shared/models';
 
 	export let project: Project;
+	export let dialogOpen: boolean;
 
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	let repositories: GithubRepo[] = [];
@@ -74,6 +75,13 @@
 		project.githubSettings = undefined;
 		selectedRepo = undefined;
 		updateProject(project);
+	}
+
+	async function removeGithubInstallationId() {
+		project.installationId = undefined;
+		project.githubSettings = undefined;
+		updateProject(project);
+		dialogOpen = false;
 	}
 
 	async function updateProject(project: Project) {
@@ -164,7 +172,10 @@
 				<Button
 					variant={shouldSaveConfig ? 'default' : 'outline'}
 					disabled={!shouldSaveConfig}
-					on:click={() => updateProject(project)}>Save</Button
+					on:click={() => {
+						updateProject(project);
+						dialogOpen = false;
+					}}>Save</Button
 				>
 				<Button variant="destructive" on:click={() => disconnectRepoFromProject()} class=""
 					>Disconnect</Button
@@ -202,22 +213,29 @@
 			{/each}
 		</div>
 	{/if}
+
 	<Button
 		variant="link"
-		on:click={() => {
-			window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
-		}}>Update Github Permissions</Button
+		href="https://onlook.dev/blog/installing-onlook"
+		class="underline hover:opacity-80"
+		target="_blank">How do I set up my repository?</Button
 	>
 
 	<Collapsible.Root class="border rounded w-full p-2 text-sm">
-		<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
-			>How to setup my repository?</Collapsible.Trigger
+		<Collapsible.Trigger class="hover:opacity-90 w-full text-start "
+			>Danger zone</Collapsible.Trigger
 		>
-		<Collapsible.Content class="mt-4 mb-2">
-			<a
-				href="https://onlook.dev/blog/installing-onlook"
-				class="underline hover:opacity-80"
-				target="_blank">Read the docs to learn more</a
+		<Collapsible.Content class="mt-4 mb-2 flex w-full">
+			<Button
+				class="ml-auto"
+				variant="outline"
+				on:click={() => {
+					window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
+				}}>Update Github Permissions</Button
+			>
+
+			<Button class="ml-4" variant="secondary" on:click={removeGithubInstallationId}
+				>Remove Github Account</Button
 			>
 		</Collapsible.Content>
 	</Collapsible.Root>

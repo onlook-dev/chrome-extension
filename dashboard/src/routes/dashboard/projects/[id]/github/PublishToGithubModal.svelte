@@ -5,18 +5,13 @@
 	import { DashboardRoutes, FirestoreCollections } from '$shared/constants';
 	import { githubConfig } from '$lib/utils/env';
 	import { GithubLogo } from 'svelte-radix';
-	import { projectsMapStore } from '$lib/utils/store';
-	import { get } from 'svelte/store';
 	import { FirebaseService } from '$lib/storage';
 	import { timeSince } from '$shared/helpers';
 
 	import GitHub from '~icons/mdi/github';
 	import ConfigureTab from './ConfigureTab.svelte';
-	import PublishTab from './PublishTab.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import * as Dialog from '$lib/components/ui/dialog';
@@ -28,24 +23,13 @@
 	export let projectService: FirebaseService<Project>;
 
 	let matchingProjects: Project[] = [];
-
-	enum Tab {
-		PUBLISH = 'Publish',
-		CONFIGURE = 'Configure'
-	}
-
-	const modalId = 'publish-modal';
-	let selectedTab = Tab.PUBLISH;
+	let dialogOpen = false;
 
 	onMount(async () => {
 		const projectId = $page.params.id;
 
 		if (!projectId) {
 			goto(DashboardRoutes.DASHBOARD);
-		}
-
-		if (!project.githubSettings) {
-			selectedTab = Tab.CONFIGURE;
 		}
 
 		if (!project.installationId) {
@@ -82,11 +66,12 @@
 		// Save installation ID
 		projectService.post(project);
 		project = { ...project };
-		return;
+
+		dialogOpen = false;
 	}
 </script>
 
-<Dialog.Root>
+<Dialog.Root bind:open={dialogOpen}>
 	<Dialog.Trigger
 		><Button variant="primary" class="h-8"
 			><GithubLogo class="mr-2 w-4 h-4" /> Connect to Codebase</Button
@@ -98,20 +83,7 @@
 		</Dialog.Header>
 		<div>
 			{#if project?.installationId}
-				<Tabs.Root value={selectedTab} class="w-full">
-					<Tabs.List class="grid w-full grid-cols-2">
-						<Tabs.Trigger value={Tab.PUBLISH} disabled={!project?.githubSettings}
-							>Publish</Tabs.Trigger
-						>
-						<Tabs.Trigger value={Tab.CONFIGURE}>Configure</Tabs.Trigger>
-					</Tabs.List>
-					<Tabs.Content value={Tab.CONFIGURE}>
-						<ConfigureTab {project} />
-					</Tabs.Content>
-					<Tabs.Content value={Tab.PUBLISH}>
-						<PublishTab {project} {user} />
-					</Tabs.Content>
-				</Tabs.Root>
+				<ConfigureTab {project} bind:dialogOpen />
 			{:else}
 				<div class="flex flex-col items-center justify-center mt-4">
 					<Button on:click={connectToGithub}
