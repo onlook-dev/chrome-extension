@@ -21,7 +21,6 @@
 	import ImageDetailView from './ImageDetailView.svelte';
 	import GithubModal from './github/ConfigureModal.svelte';
 	import ActivityDetail from './ActivityDetail.svelte';
-	import { buttonVariants } from '$lib/components/ui/button';
 
 	let project: Project | undefined;
 	let messageService: MessageService;

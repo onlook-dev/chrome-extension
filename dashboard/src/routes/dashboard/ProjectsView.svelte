@@ -10,6 +10,7 @@
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 
 	import type { Team, Project } from '$shared/models';
+	import { sortProjects } from '$shared/helpers';
 
 	export let team: Team | undefined;
 	let unsubs: any[] = [];
@@ -29,6 +30,10 @@
 		}
 	});
 
+	$: projects = sortProjects(
+		team?.projectIds.map((id) => $projectsMapStore.get(id)).filter((p) => p) as Project[]
+	);
+
 	onDestroy(() => {
 		unsubs.forEach((unsub: any) => unsub());
 	});
@@ -47,7 +52,7 @@
 	class="text-primary grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
 >
 	{#if team?.projectIds.length}
-		{#each team?.projectIds.map((id) => $projectsMapStore.get(id)) as project}
+		{#each projects as project}
 			{#if project && Object.keys(project).length}
 				<button
 					on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
