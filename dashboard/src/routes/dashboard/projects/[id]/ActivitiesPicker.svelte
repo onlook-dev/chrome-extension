@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { EyeNone, Gear, Shadow, Trash, TriangleDown } from 'svelte-radix';
+	import { EyeNone, Gear, GithubLogo, Shadow, Trash, TriangleDown } from 'svelte-radix';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { shortenSelector, sortActivities } from '$shared/helpers';
 	import { FirebaseService } from '$lib/storage';
@@ -17,6 +17,7 @@
 	export let projectService: FirebaseService<Project>;
 	export let project: Project;
 	export let activeActivityId: string;
+	export let githubModalOpen: boolean;
 
 	let teamsService: FirebaseService<Team> = new FirebaseService(FirestoreCollections.TEAMS);
 	let resizeObserver: ResizeObserver;
@@ -109,8 +110,12 @@
 							<Gear class="w-4 h-4" />
 						</Button>
 					</DropdownMenu.Trigger>
-					<DropdownMenu.Content class="w-56 text-red-600">
-						<DropdownMenu.Item on:click={deleteProject}>
+					<DropdownMenu.Content class="w-56 ">
+						<DropdownMenu.Item on:click={() => (githubModalOpen = true)}>
+							<GithubLogo class="mr-2 h-4 w-4" />
+							<span>Update GitHub settings</span>
+						</DropdownMenu.Item>
+						<DropdownMenu.Item class="text-red-600" on:click={deleteProject}>
 							<Trash class="mr-2 h-4 w-4" />
 							<span>Delete Project</span>
 						</DropdownMenu.Item>

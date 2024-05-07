@@ -16,7 +16,7 @@
 	import type { Project, GithubRepo, GithubSettings } from '$shared/models';
 
 	export let project: Project;
-	export let dialogOpen: boolean;
+	export let githubModalOpen: boolean;
 
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	let repositories: GithubRepo[] = [];
@@ -24,7 +24,7 @@
 	let filteredRepositories: GithubRepo[] = [];
 	let filterTerm = '';
 	let selectedRepo: GithubRepo | undefined;
-	let shouldSaveConfig = false;
+	let shouldSaveConfig = true;
 
 	onMount(async () => {
 		if (project?.githubSettings) {
@@ -81,7 +81,7 @@
 		project.installationId = undefined;
 		project.githubSettings = undefined;
 		updateProject(project);
-		dialogOpen = false;
+		githubModalOpen = false;
 	}
 
 	async function updateProject(project: Project) {
@@ -174,7 +174,7 @@
 					disabled={!shouldSaveConfig}
 					on:click={() => {
 						updateProject(project);
-						dialogOpen = false;
+						githubModalOpen = false;
 					}}>Save</Button
 				>
 				<Button variant="destructive" on:click={() => disconnectRepoFromProject()} class=""

@@ -21,9 +21,9 @@
 	export let project: Project;
 	export let user: User;
 	export let projectService: FirebaseService<Project>;
+	export let githubModalOpen = false;
 
 	let matchingProjects: Project[] = [];
-	let dialogOpen = false;
 
 	onMount(async () => {
 		const projectId = $page.params.id;
@@ -67,23 +67,33 @@
 		projectService.post(project);
 		project = { ...project };
 
-		dialogOpen = false;
+		githubModalOpen = false;
 	}
 </script>
 
-<Dialog.Root bind:open={dialogOpen}>
-	<Dialog.Trigger
-		><Button variant="primary" class="h-8"
-			><GithubLogo class="mr-2 w-4 h-4" /> Connect to Codebase</Button
-		></Dialog.Trigger
-	>
+<Dialog.Root bind:open={githubModalOpen}>
+	{#if !project.githubSettings || !project.installationId}
+		<Dialog.Trigger
+			><Button variant="primary" class="h-8"
+				><GithubLogo class="mr-2 w-4 h-4" /> Connect to Codebase</Button
+			></Dialog.Trigger
+		>
+	{:else if project?.githubSettings && project?.installationId}
+		<Button
+			variant="primary"
+			class="h-8"
+			on:click={() => {
+				goto(`${DashboardRoutes.DASHBOARD}/publish/${project?.id}`);
+			}}><GithubLogo class="mr-2 w-4 h-4" /> Create Code Change</Button
+		>
+	{/if}
 	<Dialog.Content class="dark">
 		<Dialog.Header>
 			<Dialog.Title>Connect to GitHub</Dialog.Title>
 		</Dialog.Header>
 		<div>
 			{#if project?.installationId}
-				<ConfigureTab {project} bind:dialogOpen />
+				<ConfigureTab {project} bind:githubModalOpen />
 			{:else}
 				<div class="flex flex-col items-center justify-center mt-4">
 					<Button on:click={connectToGithub}
