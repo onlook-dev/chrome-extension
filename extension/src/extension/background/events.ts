@@ -103,9 +103,14 @@ export class BackgroundEventHandlers {
         this.entitiesService.listen()
 
         // Refresh tabs on update
-        chrome.runtime.onInstalled.addListener(() => {
+        chrome.runtime.onInstalled.addListener((details) => {
             this.setDefaultMaps()
             this.setStartupState()
+
+            if (details.reason == "install") {
+                //call a function to handle a first install
+                this.openOrCreateNewTab(`${baseUrl}${DashboardRoutes.WELCOME}`)
+            }
         })
 
         chrome.runtime.onStartup.addListener(this.setStartupState)
