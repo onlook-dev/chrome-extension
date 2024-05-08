@@ -20,7 +20,6 @@
 
 	import type { Team, Payment, User } from '$shared/models';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { Plus } from 'svelte-radix';
 	import CreateProjectModal from './CreateProjectModal.svelte';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
@@ -131,7 +130,7 @@
 					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 				</h1>
 				<div class="ml-auto">
-					<CreateProjectModal />
+					<!-- <CreateProjectModal /> -->
 				</div>
 			</div>
 			<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
