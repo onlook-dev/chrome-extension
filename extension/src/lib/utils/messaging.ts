@@ -64,7 +64,7 @@ export const [sendEditEvent, editEventStream] = getExtendedMessages<EditEvent>(
 	MessageReceiver.BACKGROUND
 )
 
-export const [sendOpenUrlRequest, openUrlRequestStream] = getExtendedMessages<string>(
+export const [sendOpenUrlRequest, openUrlRequestStream] = getExtendedMessages<{ url: string, inject?: boolean }>(
 	'OPEN_URL_REQUEST',
 	MessageReceiver.BACKGROUND
 )

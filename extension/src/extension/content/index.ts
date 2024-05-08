@@ -3,7 +3,8 @@ import { authUserBucket, projectsMapBucket } from '$lib/utils/localstorage'
 import {
 	applyProjectChangesStream,
 	sendEditEvent,
-	sendEditProjectRequest
+	sendEditProjectRequest,
+	sendOpenUrlRequest
 } from '$lib/utils/messaging'
 import { ScreenshotService } from './screenshot'
 import { PublishProjectService } from '$lib/publish'
@@ -23,6 +24,10 @@ export function setupListeners() {
 	// Listen for messages from console. Should always check for console only.
 	messageService.subscribe(MessageType.DASHBOARD_SIGN_IN, (user) => {
 		authUserBucket.set({ authUser: user })
+	})
+
+	messageService.subscribe(MessageType.OPEN_URL, payload => {
+		sendOpenUrlRequest({ url: payload.url, inject: payload.inject })
 	})
 
 	messageService.subscribe(MessageType.DASHBOARD_SIGN_OUT, () => {

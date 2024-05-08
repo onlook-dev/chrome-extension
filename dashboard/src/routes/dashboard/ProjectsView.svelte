@@ -5,12 +5,10 @@
 	import { projectsMapStore } from '$lib/utils/store';
 	import { FirebaseService } from '$lib/storage';
 
-	import ArrowUp from '~icons/mingcute/arrow-up-fill';
 	import PinImage from '$lib/assets/tip-pin.png';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 
 	import type { Team, Project } from '$shared/models';
-	import { sortProjects } from '$shared/helpers';
 
 	export let team: Team | undefined;
 	let unsubs: any[] = [];
@@ -30,9 +28,9 @@
 		}
 	});
 
-	$: projects = sortProjects(
+	$: projects = (
 		team?.projectIds.map((id) => $projectsMapStore.get(id)).filter((p) => p) as Project[]
-	);
+	).toSorted((a, b) => ((a.updatedAt ?? a.createdAt) < (b.updatedAt ?? b.createdAt) ? 1 : -1));
 
 	onDestroy(() => {
 		unsubs.forEach((unsub: any) => unsub());
@@ -93,13 +91,6 @@
 		{/each}
 	{:else}
 		<div class="col-span-full mt-10">
-			<div class="absolute top-0 right-0 m-2">
-				<!-- Arrow container for absolute positioning -->
-				<div class="flex flex-col space-y-8">
-					<ArrowUp class="h-6 w-6 absolute top-0 right-[7.5rem] m-2" />
-					<span class="font-bold"> Click on extension icon </span>
-				</div>
-			</div>
 			<p class="text-center">No projects yet<br /> Use extension to create project</p>
 			<p class="mt-10 text-center"><b>Tip:</b> Pin the extension for easy access</p>
 			<div class="flex justify-center">

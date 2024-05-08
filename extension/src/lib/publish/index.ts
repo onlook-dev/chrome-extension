@@ -23,7 +23,7 @@ export class PublishProjectService {
 
         await sendPublishProjectRequest(this.project);
         if (open)
-            sendOpenUrlRequest(`${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}`)
+            sendOpenUrlRequest({ url: `${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}` })
     }
 
     public async prepare() {

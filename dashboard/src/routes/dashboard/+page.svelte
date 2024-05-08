@@ -20,6 +20,8 @@
 
 	import type { Team, Payment, User } from '$shared/models';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { Plus } from 'svelte-radix';
+	import CreateProjectModal from './CreateProjectModal.svelte';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
@@ -123,11 +125,14 @@
 			</div>
 		</Resizable.Pane>
 		<Resizable.Handle class="hover:bg-surface-brand bg-black" />
-		<Resizable.Pane class="p-6 space-y-4" minSize={50}>
+		<Resizable.Pane class="p-6 space-y-6" minSize={50}>
 			<div class="flex flex-row w-full items-center">
 				<h1 class="text-xl text-primary">
 					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 				</h1>
+				<div class="ml-auto">
+					<CreateProjectModal />
+				</div>
 			</div>
 			<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
 		</Resizable.Pane>

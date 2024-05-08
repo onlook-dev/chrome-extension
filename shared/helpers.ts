@@ -97,13 +97,6 @@ export function shortenSelector(selector: string): string {
   return parts[parts.length - 1];
 }
 
-export function sortProjects(projects: Project[], reverse = false) {
-  let reverseInt = reverse ? -1 : 1;
-  return projects.toSorted((a, b) => {
-    return (a.updatedAt ?? a.createdAt) < (b.updatedAt ?? b.createdAt) ? reverseInt : -reverseInt;
-  });
-}
-
 export function sortActivities(activities: Record<string, Activity>, reverse = false) {
   let reverseInt = reverse ? -1 : 1;
   return Object.values(activities).sort((a, b) => {

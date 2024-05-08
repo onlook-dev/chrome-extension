@@ -57,19 +57,27 @@ export class BackgroundEventHandlers {
         usersMapBucket.set({})
     }
 
-    openOrCreateNewTab(url: string): Promise<chrome.tabs.Tab | undefined> {
+    openOrCreateNewTab(url: string, inject: boolean = false): Promise<chrome.tabs.Tab | undefined> {
         // Normalize the URL by adding a slash if it doesn't end with one and doesn't have a query or fragment
         const hasQueryOrFragment = url.includes('?') || url.includes('#');
         const safeUrl = url + (url.endsWith('/') || hasQueryOrFragment ? '*' : '/*');
 
         // Create promise to run after callback
         return new Promise((resolve) => {
+            const callback = async (tab: chrome.tabs.Tab | undefined) => {
+                if (tab) {
+                    if (inject) {
+                        await this.projectTabManager.toggleTab(tab, true)
+                    }
+                }
+                resolve(tab)
+            }
             // Check if tab is already open
             chrome.tabs.query({ url: safeUrl }, tabs => {
                 if (tabs.length) {
-                    chrome.tabs.update(tabs[0].id as number, { active: true }, resolve)
+                    chrome.tabs.update(tabs[0].id as number, { active: true }, callback)
                 } else {
-                    chrome.tabs.create({ url }, resolve)
+                    chrome.tabs.create({ url }, callback)
                 }
             })
         })
@@ -182,8 +190,8 @@ export class BackgroundEventHandlers {
         })
 
         // Open url 
-        openUrlRequestStream.subscribe(([url, sender]) => {
-            this.openOrCreateNewTab(url)
+        openUrlRequestStream.subscribe(([{ url, inject }, sender]) => {
+            this.openOrCreateNewTab(url, inject)
         })
 
         // Style change from (editor -> content script -> background)
