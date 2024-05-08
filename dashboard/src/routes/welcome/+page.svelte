@@ -61,8 +61,6 @@
 		<div class="flex flex-row w-full h-[fit-content] rounded-none bg-black p-6 border gap-[40px]">
 			<iframe
 				class="w-3/5 h-[150px]"
-				width="560"
-				height="315"
 				src="https://www.youtube.com/embed/pUzCOpIE1zQ?si=cnwzWINbIT88ZiAU"
 				title="Onlook Demo Video"
 				frameborder="0"
