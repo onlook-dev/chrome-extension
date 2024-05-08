@@ -94,7 +94,7 @@
 
 <button
 	on:click={showModal}
-	class="bg-green-100 text-green-700 hover:outline text-xs font-semibold py-1 px-2 rounded opacity-80 {plan ===
+	class="bg-green-500/25 text-green-400 hover:bg-green-500/30 text-xs py-1 px-2 opacity-80 {plan ===
 	Tier.FREE
 		? 'bg-blue-100 text-blue-700'
 		: 'bg-red-100 text-red-700'}"

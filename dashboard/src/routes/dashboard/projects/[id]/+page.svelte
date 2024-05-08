@@ -2,18 +2,13 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount, onDestroy } from 'svelte';
-	import {
-		DashboardRoutes,
-		DashboardSearchParams,
-		MAX_TITLE_LENGTH,
-		FirestoreCollections
-	} from '$shared/constants';
+	import { DashboardRoutes, MAX_TITLE_LENGTH, FirestoreCollections } from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 	import { truncateString } from '$shared/helpers';
 	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
-	import { Pencil2, Shadow } from 'svelte-radix';
+	import { GithubLogo, Pencil2, Shadow } from 'svelte-radix';
 	import { MessageService, MessageType } from '$shared/message';
 
 	import type { User, Activity, Project } from '$shared/models';
@@ -24,7 +19,7 @@
 	import * as Resizable from '$lib/components/ui/resizable';
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
 	import ImageDetailView from './ImageDetailView.svelte';
-	import PublishToGithubModal from './github/PublishToGithubModal.svelte';
+	import GithubModal from './github/ConfigureModal.svelte';
 	import ActivityDetail from './ActivityDetail.svelte';
 
 	let project: Project | undefined;
@@ -36,6 +31,7 @@
 	let unsubs: any[] = [];
 	let activeActivityId: string = '';
 	let activeActivity: Activity | undefined;
+	let githubModalOpen: boolean = false;
 
 	$: if (project) {
 		activeActivity = Object.values(project.activities).find(
@@ -106,7 +102,7 @@
 	<title>Onlook - {project?.name || 'Project'}</title>
 </svelte:head>
 
-<div class="flex h-screen w-screen flex-col bg-black text-white">
+<div class="flex h-screen w-screen flex-col bg-black text-primary">
 	{#if project && user}
 		<!-- Header -->
 		<div class="flex flex-row items-center h-14 px-4">
@@ -125,14 +121,14 @@
 				<Button variant="secondary" class="h-8" on:click={requestEditProject}
 					><Pencil2 class="mr-2 w-4 h-4" /> Edit</Button
 				>
-				<PublishToGithubModal {project} {user} />
+				<GithubModal bind:githubModalOpen {projectService} {project} {user} />
 			</div>
 		</div>
 		<!-- Main content -->
 		<Separator />
 		<Resizable.PaneGroup class="w-full" direction="horizontal">
 			<Resizable.Pane minSize={20} defaultSize={60}>
-				<ActivitiesPicker {projectService} {project} bind:activeActivityId />
+				<ActivitiesPicker bind:githubModalOpen {projectService} {project} bind:activeActivityId />
 			</Resizable.Pane>
 			<Resizable.Handle class="hover:bg-surface-brand" />
 			<Resizable.Pane minSize={20} defaultSize={40}>
@@ -150,7 +146,7 @@
 	{:else}
 		<div class="flex flex-row items-center justify-center h-full">
 			<Shadow class="animate-spin mr-2" />
-			<p class="text-gray-500">Loading Project...</p>
+			<p class="text-stone-500">Loading Project...</p>
 		</div>
 	{/if}
 </div>

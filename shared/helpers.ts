@@ -1,3 +1,4 @@
+import { Project } from "./models";
 import type { Activity, ChangeValues } from "./models/activity";
 import type { GithubSettings } from "./models/github";
 
@@ -96,10 +97,11 @@ export function shortenSelector(selector: string): string {
   return parts[parts.length - 1];
 }
 
-export function sortActivities(activities: Record<string, Activity>) {
+export function sortActivities(activities: Record<string, Activity>, reverse = false) {
+  let reverseInt = reverse ? -1 : 1;
   return Object.values(activities).sort((a, b) => {
-    return (a.updatedAt ?? a.createdAt) < (b.updatedAt ?? b.createdAt) ? 1 : -1;
-  });
+    return (a.updatedAt ?? a.createdAt) < (b.updatedAt ?? b.createdAt) ? reverseInt : -reverseInt;
+  })
 }
 
 export function getGitHubPath(githubSettings: GithubSettings, path: string) {

@@ -5,8 +5,8 @@
 	import { projectsMapStore } from '$lib/utils/store';
 	import { FirebaseService } from '$lib/storage';
 
-	import ArrowUp from '~icons/mingcute/arrow-up-fill';
 	import PinImage from '$lib/assets/tip-pin.png';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
 
 	import type { Team, Project } from '$shared/models';
 
@@ -28,6 +28,10 @@
 		}
 	});
 
+	$: projects = (
+		team?.projectIds.map((id) => $projectsMapStore.get(id)).filter((p) => p) as Project[]
+	).toSorted((a, b) => ((a.updatedAt ?? a.createdAt) < (b.updatedAt ?? b.createdAt) ? 1 : -1));
+
 	onDestroy(() => {
 		unsubs.forEach((unsub: any) => unsub());
 	});
@@ -43,10 +47,10 @@
 </script>
 
 <div
-	class="text-white grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
+	class="text-primary grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
 >
 	{#if team?.projectIds.length}
-		{#each team?.projectIds.map((id) => $projectsMapStore.get(id)) as project}
+		{#each projects as project}
 			{#if project && Object.keys(project).length}
 				<button
 					on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
@@ -64,22 +68,19 @@
 						{/if}
 					</figure>
 					<div class="flex items-center space-x-2">
-						<div class="avatar">
-							<div class="w-8 mask mask-circle">
-								{#if project.hostData?.favicon && faviconErrorIds.indexOf(project.id) === -1}
-									<img
-										src={project.hostData.favicon}
-										alt="Favicon of {project.hostUrl}"
-										on:error={() => {
-											if (!project) return;
-											faviconErrorIds = [...faviconErrorIds, project.id];
-										}}
-									/>
-								{:else}
-									<div class="bg-gray-700 rounded-full w-full h-full" />
-								{/if}
-							</div>
-						</div>
+						<Avatar.Root class="w-8 h-8">
+							{#if project.hostData?.favicon && faviconErrorIds.indexOf(project.id) === -1}
+								<Avatar.Image
+									src={project.hostData.favicon}
+									on:error={() => {
+										if (!project) return;
+										faviconErrorIds = [...faviconErrorIds, project.id];
+									}}
+								/>
+							{/if}
+							<Avatar.Fallback></Avatar.Fallback>
+						</Avatar.Root>
+
 						<div class="text-left overflow-x-hidden">
 							<p class="text-sm truncate">{project?.name}</p>
 							<p class="text-xs opacity-70 truncate">{shortenUrl(project?.hostUrl)}</p>
@@ -90,13 +91,6 @@
 		{/each}
 	{:else}
 		<div class="col-span-full mt-10">
-			<div class="absolute top-0 right-0 m-2">
-				<!-- Arrow container for absolute positioning -->
-				<div class="flex flex-col space-y-8">
-					<ArrowUp class="h-6 w-6 absolute top-0 right-[7.5rem] m-2" />
-					<span class="font-bold"> Click on extension icon </span>
-				</div>
-			</div>
 			<p class="text-center">No projects yet<br /> Use extension to create project</p>
 			<p class="mt-10 text-center"><b>Tip:</b> Pin the extension for easy access</p>
 			<div class="flex justify-center">

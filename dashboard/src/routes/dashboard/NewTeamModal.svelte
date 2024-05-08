@@ -64,7 +64,7 @@
 	}
 </script>
 
-<button on:click={showModal}> + Create new team </button>
+<button class="hover:text-white/80" on:click={showModal}> + Create new team </button>
 
 <dialog id={modalId} class="modal fixed inset-0 flex items-center justify-center">
 	<div class="modal-box space-y-2 bg-stone-900 text-white">
@@ -89,7 +89,9 @@
 				<form method="dialog">
 					<!-- if there is a button in form, it will close the modal -->
 					<button class="btn btn-ghost" on:click={closeModal}>Cancel</button>
-					<button class="btn btn-primary" on:click|preventDefault={createTeam}>Create</button>
+					<button class="btn btn-primary rounded-sm" on:click|preventDefault={createTeam}
+						>Create</button
+					>
 				</form>
 			</div>
 		</div>
