@@ -1,6 +1,7 @@
 <script>
 	import BackgroundImage from '$lib/assets/signin-bg.png';
 	import Pin from '$lib/assets/welcome-pin.gif';
+	import Edit from '$lib/assets/welcome-edit.png';
 	import { ExternalLink, Calendar, EnvelopeOpen, DrawingPin, Pencil2, Link1 } from 'svelte-radix';
 </script>
 
@@ -46,7 +47,7 @@
 					<h1 class="text-tertiary">Step 2</h1>
 					<h2 class="text-tertiary text-white">Start editing any page</h2>
 				</div>
-				<img class="object-cover w-full bg-[#363636] my-4" src={Pin} alt="Pin extension tip" />
+				<img class="object-cover w-full bg-[#363636] my-4" src={Edit} alt="Edit page tip" />
 				<div class="flex flex-col text-white gap-2">
 					<p class="text-gray-400 text-sm flex flex-row items-center">
 						<Link1 class="text-primary w-4 h-4 mr-2" /> Go to any page you want to edit
