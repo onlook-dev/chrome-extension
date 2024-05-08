@@ -40,6 +40,7 @@
 					type="submit"
 					on:click={() => {
 						MessageService.getInstance().publish(MessageType.OPEN_URL, { url, inject: true });
+						url = '';
 						modalOpen = false;
 					}}>Create and Edit</Button
 				>
