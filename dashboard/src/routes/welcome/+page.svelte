@@ -1,5 +1,6 @@
 <script>
 	import BackgroundImage from '$lib/assets/signin-bg.png';
+	import Pin from '$lib/assets/welcome-pin.gif';
 	import { ExternalLink, Calendar, EnvelopeOpen, DrawingPin, Pencil2, Link1 } from 'svelte-radix';
 </script>
 
@@ -7,7 +8,7 @@
 	class="flex flex-col items-center justify-center w-screen h-screen bg-cover bg-center"
 	style="background-image: url({BackgroundImage});"
 >
-	<div class="flex flex-col w-1/2 items-center gap-6 h-[80%] min-w-[800px]">
+	<div class="flex flex-col w-1/2 items-center gap-6 min-w-[800px]">
 		<h1 class="text-2xl text-white text-start w-full">Let's push some pixels</h1>
 		<div class="flex flex-row w-full justify-center h-full gap-5 bg-transparent p-0">
 			<div class="w-full h-full bg-black rounded-none p-6 border">
@@ -15,9 +16,7 @@
 					<h1 class="text-tertiary">Step 1</h1>
 					<h2 class="text-tertiary text-white">Pin Onlook in your browser</h2>
 				</div>
-				<div class="space-y-4">
-					<div class="w-full h-[150px] bg-[#363636] mt-5 mb-5"></div>
-				</div>
+				<img class="object-cover w-full bg-[#363636] my-4" src={Pin} alt="Pin extension tip" />
 				<div class="flex flex-col text-white gap-2">
 					<p class="text-gray-400 text-sm flex flex-row items-center">
 						<svg
@@ -47,9 +46,7 @@
 					<h1 class="text-tertiary">Step 2</h1>
 					<h2 class="text-tertiary text-white">Start editing any page</h2>
 				</div>
-				<div class="space-y-4">
-					<div class="w-full h-[150px] bg-[#363636] mt-5 mb-5"></div>
-				</div>
+				<img class="object-cover w-full bg-[#363636] my-4" src={Pin} alt="Pin extension tip" />
 				<div class="flex flex-col text-white gap-2">
 					<p class="text-gray-400 text-sm flex flex-row items-center">
 						<Link1 class="text-primary w-4 h-4 mr-2" /> Go to any page you want to edit
@@ -93,14 +90,14 @@
 		</div>
 	</div>
 
-	<div class="flex flex-row text-primary mt-10 gap-6">
+	<div class="flex flex-row text-primary mt-6 gap-6">
 		<div class="flex flex-col gap-0">
 			<div class="text-[#ff0000] text-[14px]">Still need help?</div>
 			<div class="text-[#ff0000] text-[14px]">Let's get you set up</div>
 		</div>
 
 		<a
-			class="flex flex-row items-center rounded-xs bg-red-500/20 p-2 text-red-500 w-fit hover:bg-red-500/30"
+			class="flex flex-row items-center rounded-xs bg-red-500/20 py-2 px-3 text-red-500 w-fit hover:bg-red-500/30"
 			href="https://calendar.app.google/hjCAg7HpczY39Zd4A"
 			target="_blank"
 		>
@@ -108,7 +105,7 @@
 			<div class="text-sm">Chat with a founder</div>
 		</a>
 		<a
-			class="flex items-center justify-center rounded-xs bg-red-500/20 p-2 text-[14px] text-red-500 w-fit hover:bg-red-500/30"
+			class="flex items-center justify-center rounded-xs bg-red-500/20 py-2 px-3 text-[14px] text-red-500 w-fit hover:bg-red-500/30"
 			href="mailto:founders@onlook.dev"
 			target="_blank"
 		>
