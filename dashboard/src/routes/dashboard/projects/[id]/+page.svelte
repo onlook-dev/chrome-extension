@@ -8,7 +8,7 @@
 	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
-	import { GithubLogo, Pencil2, Shadow } from 'svelte-radix';
+	import { Pencil2, Shadow } from 'svelte-radix';
 	import { MessageService, MessageType } from '$shared/message';
 
 	import type { User, Activity, Project } from '$shared/models';
@@ -19,7 +19,7 @@
 	import * as Resizable from '$lib/components/ui/resizable';
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
 	import ImageDetailView from './ImageDetailView.svelte';
-	import GithubModal from './github/ConfigureModal.svelte';
+	import GithubModal from './github/GithubModal.svelte';
 	import ActivityDetail from './ActivityDetail.svelte';
 
 	let project: Project | undefined;
@@ -121,7 +121,7 @@
 				<Button variant="secondary" class="h-8" on:click={requestEditProject}
 					><Pencil2 class="mr-2 w-4 h-4" /> Edit</Button
 				>
-				<GithubModal bind:githubModalOpen {projectService} {project} {user} />
+				<GithubModal bind:githubModalOpen {requestEditProject} {projectService} {project} {user} />
 			</div>
 		</div>
 		<!-- Main content -->

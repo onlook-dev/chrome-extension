@@ -130,7 +130,7 @@
 					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 				</h1>
 				<div class="ml-auto">
-					<!-- <CreateProjectModal /> -->
+					<CreateProjectModal />
 				</div>
 			</div>
 			<ProjectsView team={$teamsMapStore.get(activeTeamId)} />

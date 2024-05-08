@@ -8,6 +8,7 @@
 	import { FirebaseService } from '$lib/storage';
 	import { timeSince } from '$shared/helpers';
 
+	import PublishModal from './PublishModal.svelte';
 	import GitHub from '~icons/mdi/github';
 	import ConfigureTab from './ConfigureTab.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -17,13 +18,13 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 
 	import type { Project, Team, User } from '$shared/models';
-	import PublishModal from './PublishModal.svelte';
 
 	export let project: Project;
 	export let user: User;
 	export let projectService: FirebaseService<Project>;
-	export let githubModalOpen = false;
-
+	export let githubModalOpen = false; // TODO: This might be better as a store
+	export let requestEditProject: () => void;
+	let publishModalOpen = false;
 	let matchingProjects: Project[] = [];
 
 	onMount(async () => {
@@ -67,7 +68,6 @@
 		// Save installation ID
 		projectService.post(project);
 		project = { ...project };
-
 		githubModalOpen = false;
 	}
 </script>
@@ -80,7 +80,7 @@
 			></Dialog.Trigger
 		>
 	{:else if project?.githubSettings && project?.installationId}
-		<Dialog.Root>
+		<Dialog.Root bind:open={publishModalOpen}>
 			<Dialog.Trigger>
 				<Button variant="primary" class="h-8"
 					><GithubLogo class="mr-2 w-4 h-4" /> Create Code Change</Button
@@ -90,7 +90,7 @@
 				<Dialog.Header>
 					<Dialog.Title>Publish to GitHub</Dialog.Title>
 				</Dialog.Header>
-				<PublishModal {project} {user} />
+				<PublishModal bind:publishModalOpen {requestEditProject} {project} {user} />
 			</Dialog.Content>
 		</Dialog.Root>
 	{/if}

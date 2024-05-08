@@ -5,7 +5,7 @@
 	import { projectsMapStore } from '$lib/utils/store';
 	import { FirebaseService } from '$lib/storage';
 
-	import PinImage from '$lib/assets/tip-pin.png';
+	import Pin from '$lib/assets/welcome-pin.gif';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 
 	import type { Team, Project } from '$shared/models';
@@ -91,10 +91,9 @@
 		{/each}
 	{:else}
 		<div class="col-span-full mt-10">
-			<p class="text-center">No projects yet<br /> Use extension to create project</p>
 			<p class="mt-10 text-center"><b>Tip:</b> Pin the extension for easy access</p>
 			<div class="flex justify-center">
-				<img class="mt-4 h-auto max-w-lg rounded-lg" src={PinImage} alt="Pin extension tip" />
+				<img class="mt-6 h-auto max-w-md rounded-lg" src={Pin} alt="Pin extension tip" />
 			</div>
 		</div>
 	{/if}
