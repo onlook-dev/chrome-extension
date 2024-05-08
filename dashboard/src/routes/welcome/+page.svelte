@@ -62,7 +62,17 @@
 		</div>
 
 		<div class="flex flex-row w-full h-[fit-content] rounded-none bg-black p-6 border gap-[40px]">
-			<div class="w-3/5 h-[150px] bg-[#363636] my-2"></div>
+			<iframe
+				class="w-3/5 h-[150px]"
+				width="560"
+				height="315"
+				src="https://www.youtube.com/embed/pUzCOpIE1zQ?si=cnwzWINbIT88ZiAU"
+				title="Onlook Demo Video"
+				frameborder="0"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				referrerpolicy="strict-origin-when-cross-origin"
+				allowfullscreen
+			></iframe>
 			<div class="text-white flex flex-col items-start m-0 p-5 gap-2">
 				<p class="text-white">See Onlook in action</p>
 				<p class="text-sm text-tertiary">
