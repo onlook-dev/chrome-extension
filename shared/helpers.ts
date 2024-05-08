@@ -1,6 +1,4 @@
-import { Project } from "./models";
-import type { Activity, ChangeValues } from "./models/activity";
-import type { GithubSettings } from "./models/github";
+import type { GithubSettings, Activity, ChangeValues } from "./models";
 
 export function jsToCssProperty(key: string) {
   if (!key) return "";
