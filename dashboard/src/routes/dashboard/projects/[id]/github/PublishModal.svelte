@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import {
 		DashboardRoutes,
 		FirestoreCollections,
@@ -19,6 +18,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import { Pencil2 } from 'svelte-radix';
 
 	import type { Project, GithubHistory, User } from '$shared/models';
 
@@ -30,6 +30,8 @@
 
 	export let project: Project;
 	export let user: User;
+	export let publishModalOpen: boolean;
+	export let requestEditProject: () => void;
 
 	let projectPublisher: ProjectPublisher;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -194,7 +196,7 @@
 	}
 </script>
 
-<div class="flex flex-col items-center justify-center h-full mt-4 space-y-4">
+<div class="flex flex-col items-center justify-center h-full mt-4 space-y-4 text-primary">
 	{#if githubConfigured && hasActivities && hasFilePaths}
 		<label class="text-primary form-control w-full p-2 space-y-4">
 			<Label for="form-title">Title</Label>
@@ -273,9 +275,16 @@
 			class="underline hover:opacity-80">Read the docs to learn more</a
 		>
 	{:else}
-		<div class="mt-8">
-			<p class="text-center">Nothing to publish</p>
-			<p class="text-center">Use the extension to make some edits!</p>
+		<div class="mb-4 flex flex-col items-center space-y-2">
+			<p class="text-sm">Nothing to publish. Click button to start!</p>
+			<Button
+				variant="secondary"
+				class="h-8"
+				on:click={() => {
+					requestEditProject();
+					publishModalOpen = false;
+				}}><Pencil2 class="mr-2 w-4 h-4" /> Start Editing</Button
+			>
 		</div>
 	{/if}
 </div>
