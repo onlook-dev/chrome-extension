@@ -4,7 +4,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { MessageService, MessageType } from '$shared/message';
 	import { Plus } from 'svelte-radix';
-	let modalOpen = true;
+	let modalOpen = false;
 	let url = '';
 </script>
 
