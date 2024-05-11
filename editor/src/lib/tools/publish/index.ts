@@ -53,8 +53,8 @@ export class PublishTool implements Tool {
         });
     }
 
-    public publish = () => {
-        return this.publishWithTimeout(MessageType.PUBLISH_PROJECT, {}, 3, 2, 1000, 3000);
+    public publish = (open = true) => {
+        return this.publishWithTimeout(MessageType.PUBLISH_PROJECT, open, 3, 2, 1000, 3000);
     };
 
     public merge = (project: Project) => {

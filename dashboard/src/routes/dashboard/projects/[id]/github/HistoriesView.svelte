@@ -9,7 +9,7 @@
 </script>
 
 {#if githubHistories.length > 0}
-	<Collapsible.Root class="border rounded w-full p-2 text-sm">
+	<Collapsible.Root class="border text-primary rounded w-full p-2 text-sm">
 		<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
 			>GitHub History ({githubHistories.length} pull requests)
 		</Collapsible.Trigger>

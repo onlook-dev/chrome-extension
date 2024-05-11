@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import {
 		DashboardRoutes,
 		FirestoreCollections,
@@ -19,6 +18,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import { Pencil2 } from 'svelte-radix';
 
 	import type { Project, GithubHistory, User } from '$shared/models';
 
@@ -30,6 +30,8 @@
 
 	export let project: Project;
 	export let user: User;
+	export let publishModalOpen: boolean;
+	export let requestEditProject: () => void;
 
 	let projectPublisher: ProjectPublisher;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
@@ -56,20 +58,22 @@
 	let translationTotal = 0;
 	let forceTailwind = false;
 
-	$: if (project?.installationId) {
-		githubConfigured = true;
-	}
-
 	$: if (projectPublisher) {
 		projectPublisher.toggleForceTailwind(forceTailwind);
 	}
 
-	onMount(() => {
-		// Check each activities for a path
+	$: if (project) {
+		// Check if github is configured
+		if (project?.installationId) {
+			githubConfigured = true;
+		}
+
+		// Check for activities
 		if (Object.keys(project.activities).length > 0) {
 			hasActivities = true;
 		}
 
+		// Check file paths
 		Object.values(project.activities).forEach((activity) => {
 			if (activity.path) {
 				hasFilePaths = true;
@@ -77,6 +81,7 @@
 			}
 		});
 
+		// Get github history
 		if (project?.githubHistoryIds?.length > 0) {
 			Promise.all(project.githubHistoryIds.map((id) => githubHistoryService.get(id)))
 				.then((histories) => {
@@ -86,18 +91,23 @@
 					console.error('Error loading github history:', error);
 				});
 		}
-	});
+	} else {
+		githubConfigured = false;
+		hasActivities = false;
+		hasFilePaths = false;
+	}
 
 	async function handlePublishClick() {
 		title = title || titlePlaceholder;
-		description += `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
+		const newDesc =
+			description + `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
 		publishErrorMessage = '';
 		publishError = false;
 		try {
 			projectPublisher = new ProjectPublisher(project, user);
 			handleProjectPublisherEvents(projectPublisher);
-			let pullRequestUrl = await projectPublisher.publish(title, description);
+			let pullRequestUrl = await projectPublisher.publish(title, newDesc);
 			if (!pullRequestUrl) throw new Error('No pull request url returned from GitHub');
 			handlePublishedSucceeded(pullRequestUrl);
 		} catch (error) {
@@ -186,9 +196,9 @@
 	}
 </script>
 
-<div class="flex flex-col items-center justify-center h-full mt-4 space-y-4">
+<div class="flex flex-col items-center justify-center h-full mt-4 space-y-4 text-primary">
 	{#if githubConfigured && hasActivities && hasFilePaths}
-		<label class="form-control w-full p-2 space-y-4">
+		<label class="text-primary form-control w-full p-2 space-y-4">
 			<Label for="form-title">Title</Label>
 
 			<Input
@@ -244,11 +254,11 @@
 
 		<HistoriesView {githubHistories} {restoreActivities} />
 
-		<Collapsible.Root class="border rounded w-full p-2 text-sm">
-			<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
+		<Collapsible.Root class="border text-primary rounded w-full p-2 text-sm">
+			<Collapsible.Trigger class=" hover:opacity-90 w-full text-start"
 				>Optional Configurations</Collapsible.Trigger
 			>
-			<Collapsible.Content class="mt-4">
+			<Collapsible.Content class="mt-4 ">
 				<div class="flex flex-row">
 					<Label for="force-tailwind">Force TailwindCSS</Label>
 					<Switch id="force-tailwind" class="toggle ml-auto" bind:checked={forceTailwind} />
@@ -265,9 +275,16 @@
 			class="underline hover:opacity-80">Read the docs to learn more</a
 		>
 	{:else}
-		<div class="mt-8">
-			<p class="text-center">Nothing to publish</p>
-			<p class="text-center">Use the extension to make some edits!</p>
+		<div class="mb-4 flex flex-col items-center space-y-2">
+			<p class="text-sm">Nothing to publish. Click button to start!</p>
+			<Button
+				variant="secondary"
+				class="h-8"
+				on:click={() => {
+					requestEditProject();
+					publishModalOpen = false;
+				}}><Pencil2 class="mr-2 w-4 h-4" /> Start Editing</Button
+			>
 		</div>
 	{/if}
 </div>

@@ -16,6 +16,7 @@
 	import type { Project, GithubRepo, GithubSettings } from '$shared/models';
 
 	export let project: Project;
+	export let githubModalOpen: boolean;
 
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	let repositories: GithubRepo[] = [];
@@ -23,7 +24,7 @@
 	let filteredRepositories: GithubRepo[] = [];
 	let filterTerm = '';
 	let selectedRepo: GithubRepo | undefined;
-	let shouldSaveConfig = false;
+	let shouldSaveConfig = true;
 
 	onMount(async () => {
 		if (project?.githubSettings) {
@@ -76,6 +77,13 @@
 		updateProject(project);
 	}
 
+	async function removeGithubInstallationId() {
+		project.installationId = undefined;
+		project.githubSettings = undefined;
+		updateProject(project);
+		githubModalOpen = false;
+	}
+
 	async function updateProject(project: Project) {
 		// Prevent footgun of having a leading or trailing slash
 		if (project?.githubSettings?.rootPath) {
@@ -96,7 +104,7 @@
 	}
 </script>
 
-<div class="space-y-3">
+<div class="space-y-3 text-primary">
 	{#if selectedRepo}
 		<div class="border rounded-lg flex flex-col justify-between p-4 space-y-4 mt-6">
 			<div class="flex flex-row align-middle">
@@ -164,7 +172,10 @@
 				<Button
 					variant={shouldSaveConfig ? 'default' : 'outline'}
 					disabled={!shouldSaveConfig}
-					on:click={() => updateProject(project)}>Save</Button
+					on:click={() => {
+						updateProject(project);
+						githubModalOpen = false;
+					}}>Save</Button
 				>
 				<Button variant="destructive" on:click={() => disconnectRepoFromProject()} class=""
 					>Disconnect</Button
@@ -202,22 +213,29 @@
 			{/each}
 		</div>
 	{/if}
+
 	<Button
 		variant="link"
-		on:click={() => {
-			window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
-		}}>Update Github Permissions</Button
+		href="https://onlook.dev/blog/installing-onlook"
+		class="underline hover:opacity-80"
+		target="_blank">How do I set up my repository?</Button
 	>
 
 	<Collapsible.Root class="border rounded w-full p-2 text-sm">
-		<Collapsible.Trigger class="hover:opacity-90 w-full text-start"
-			>How to setup my repository?</Collapsible.Trigger
+		<Collapsible.Trigger class="hover:opacity-90 w-full text-start "
+			>Danger zone</Collapsible.Trigger
 		>
-		<Collapsible.Content class="mt-4 mb-2">
-			<a
-				href="https://onlook.dev/blog/installing-onlook"
-				class="underline hover:opacity-80"
-				target="_blank">Read the docs to learn more</a
+		<Collapsible.Content class="mt-4 mb-2 flex w-full">
+			<Button
+				class="ml-auto"
+				variant="outline"
+				on:click={() => {
+					window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
+				}}>Update Github Permissions</Button
+			>
+
+			<Button class="ml-4" variant="secondary" on:click={removeGithubInstallationId}
+				>Remove Github Account</Button
 			>
 		</Collapsible.Content>
 	</Collapsible.Root>

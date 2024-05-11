@@ -15,6 +15,7 @@ export const MAX_DESCRIPTION_LENGTH = 250;
 
 // Links
 export const SUPPORT_LINK = "mailto:support@onlook.dev";
+export const FEEDBACK_LINK = "https://i6u7z7qkhxw.typeform.com/to/X4CeiAVd";
 
 // Editor
 export const ONLOOK_TOOLBAR = "onlook-toolbar";

@@ -3,6 +3,9 @@ export enum MessageType {
     DASHBOARD_SIGN_IN = "DASHBOARD_SIGN_IN",
     DASHBOARD_SIGN_OUT = "DASHBOARD_SIGN_OUT",
 
+    // Project
+    OPEN_URL = "OPEN_URL",
+
     // Edit
     EDIT_EVENT = "EDIT_EVENT",
     EDIT_PROJECT = "EDIT_PROJECT",
