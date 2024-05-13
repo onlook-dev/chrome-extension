@@ -75,7 +75,7 @@
 					Watch us walk through a Demo project and make a pull request in less than 1 minute
 				</p>
 				<a
-					class="text-sm text-[#ea364e] hover:underline flex flex-row items-center"
+					class="text-sm text-brand hover:underline flex flex-row items-center"
 					href="https://onlook.dev/blog/create-your-first-pull-request"
 					target="_blank">Read our guide to getting started <ExternalLink class="w-4 h-4 ml-2" /></a
 				>
@@ -91,17 +91,15 @@
 
 	<div class="flex flex-row text-primary mt-6 gap-4">
 	
-		<div class="flex flex-col gap-0">
-			<div class="text-[#ff0000]">Still need help?</div>
+		<div class="flex flex-col gap-0 text-brand">
+			<div class="text-brand text-[14px]">Still need help?</div>
 			<div class="text-[#ff0000] text-[14px]">Let's get you set up</div>
 		</div>
-
-		<a
-			class="flex flex-row items-center rounded-md bg-red-500/20 py-2 px-4 text-red-500 w-fit hover:bg-red-500/30"
+<a
+		class="flex flex-row items-center rounded-[2px] bg-red-500/20 py-2 px-4 text-red-500 w-fit hover:bg-red-500/30"
 			href="https://calendar.app.google/hjCAg7HpczY39Zd4A"
 			target="_blank"
 		>
-		
 			<Calendar class="w-4 h-4 mr-2" />
 			<div class="text-sm text-[#ea364e]">Chat with a founder</div>
 		</a>
@@ -110,8 +108,9 @@
 			href="mailto:founders@onlook.dev"
 			target="_blank"
 		>
-			<EnvelopeOpen class="w-4 h-4 mr-2" />
-			<div class="text-sm text-[#ea364e]">Send us an email</div>
+		
+			<EnvelopeOpen class="w-4 h-4 mr-2 text-[#ea364e]" />
+			<div class="text-sm">Send us an email</div>
 		</a>
 	</div>
 </div>
