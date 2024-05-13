@@ -19,7 +19,7 @@
 				</div>
 				<img class="object-cover w-full bg-[#363636] my-4" src={Pin} alt="Pin extension tip" />
 				<div class="flex flex-col text-white gap-2">
-					<p class="text-gray-400 text-sm flex flex-row items-center text-tertiary">
+					<p class="text-tertiary text-sm flex flex-row items-center">
 						<svg
 							class="mr-2"
 							width="15"
@@ -36,7 +36,7 @@
 						</svg>
 						Click extensions in the upper right corner
 					</p>
-					<p class="text-gray-400 text-sm flex flex-row items-center text-tertiary">
+					<p class="text-tertiary text-sm flex flex-row items-center">
 						<DrawingPin class="text-primary w-4 h-4 mr-2" />Pin Onlook
 					</p>
 				</div>
@@ -49,7 +49,7 @@
 				</div>
 				<img class="object-cover w-full bg-[#363636] my-4" src={Edit} alt="Edit page tip" />
 				<div class="flex flex-col text-white gap-2">
-					<p class="text-gray-400 text-sm flex flex-row items-center text-tertiary">
+					<p class="text-tertiary text-sm flex flex-row items-center">
 						<Link1 class="text-primary w-4 h-4 mr-2" /> Go to any page you want to edit
 					</p>
 					<p class="text-tertiary text-sm flex flex-row items-center">
@@ -59,7 +59,7 @@
 			</div>
 		</div>
 
-		<div class="flex flex-row w-full h-[100%] rounded-none bg-black p-6 border gap-[20px]">
+		<div class="flex flex-row w-full h-full rounded-none bg-black p-6 border gap-5">
 			<iframe
 				class="w-full h-full"
 				src="https://www.youtube.com/embed/pUzCOpIE1zQ?si=cnwzWINbIT88ZiAU"
@@ -69,46 +69,49 @@
 				referrerpolicy="strict-origin-when-cross-origin"
 				allowfullscreen
 			></iframe>
-			<div class="text-white flex flex-col items-start m-0 p-5 gap-2" style="width: 100%;">
+			<div class="text-white flex flex-col items-start m-0 p-5 gap-2 w-full">
 				<p class="text-white">See Onlook in action</p>
 				<p class="text-sm text-tertiary">
 					Watch us walk through a Demo project and make a pull request in less than 1 minute
 				</p>
 				<a
-					class="text-sm text-red-600 hover:underline flex flex-row items-center"
+					class="text-sm text-[#ea364e] hover:underline flex flex-row items-center"
 					href="https://onlook.dev/blog/create-your-first-pull-request"
-					target="_blank"
-					style="color: #ea364e;">Read our guide to getting started <ExternalLink class="w-4 h-4 ml-2" /></a
+					target="_blank">Read our guide to getting started <ExternalLink class="w-4 h-4 ml-2" /></a
 				>
 				<a
-					class="text-sm text-red-600 hover:underline flex flex-row items-center"
+					class="text-sm text-[#ea364e] hover:underline flex flex-row items-center"
 					href="https://onlook.dev/blog/installing-onlook"
 					target="_blank"
-					style="color: #ea364e;"
 					>Set up Onlook in your own Github Repo <ExternalLink class="w-4 h-4 ml-2" />
 				</a>
 			</div>
 		</div>
 	</div>
 
-	<div class="flex flex-row text-primary mt-6 gap-6">
-		<div class="flex flex-col gap-0" style="color: #ff0000;">
-			<div class="text-[#ff0000] text-[14px]" style="color: #ea364e;">Still need help?</div>
+	<div class="flex flex-row text-primary mt-6 gap-4">
+	
+		<div class="flex flex-col gap-0">
+			<div class="text-[#ff0000]">Still need help?</div>
 			<div class="text-[#ff0000] text-[14px]">Let's get you set up</div>
 		</div>
 
 		<a
-			class="flex flex-row items-center rounded-xs bg-red-500/20 py-2 px-3 text-red-500 w-fit hover:bg-red-500/30"
+			class="flex flex-row items-center rounded-md bg-red-500/20 py-2 px-4 text-red-500 w-fit hover:bg-red-500/30"
 			href="https://calendar.app.google/hjCAg7HpczY39Zd4A"
 			target="_blank"
-		style="padding-left: 16px; border-radius: 2px; padding-right: 16px;"
 		>
+		
 			<Calendar class="w-4 h-4 mr-2" />
-			<div class="text-sm" style="color: #ea364e; padding-left: 16px; border-radius: 2px; padding-right: 16px;">Chat with a founder</div>
+			<div class="text-sm text-[#ea364e]">Chat with a founder</div>
+		</a>
+		<a
+			class="flex items-center justify-center rounded-md bg-red-500/20 py-2 px-4 text-[14px] text-red-500 w-fit hover:bg-red-500/30"
+			href="mailto:founders@onlook.dev"
 			target="_blank"
 		>
 			<EnvelopeOpen class="w-4 h-4 mr-2" />
-			<div class="text-sm" style="color: #ea364e;">Send us an email</div>
+			<div class="text-sm text-[#ea364e]">Send us an email</div>
 		</a>
 	</div>
 </div>
