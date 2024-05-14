@@ -85,19 +85,20 @@
 	<div class="flex flex-row text-primary mt-6 gap-6">
 		<div class="flex flex-col gap-0">
 			<div class="text-brand text-[14px]">Still need help?</div>
-			<div class="text-brand text-[14px]">Let's get you set up</div>
+			<div class="text-[#ff0000] text-[14px]">Let's get you set up</div>
 		</div>
 
 		<a
 			class="flex flex-row items-center rounded-xs bg-red-500/20 py-2 px-3 text-red-500 w-fit hover:bg-red-500/30"
 			href="https://calendar.app.google/hjCAg7HpczY39Zd4A"
-			<a target="_blank" class="px-4">
-		<Calendar class="w-4 h-4 mr-2" />
-			<div class="text-sm">Chat with a founder</div>
-			</a>
-		<a
-			class="flex items-center justify-center rounded-xs bg-red-500/20 py-2 px-3 text-[14px] text-red-500 w-fit hover:bg-red-500/30"
-			href="mailto:founders@onlook.dev"
 			target="_blank"
-		> <EnvelopeOpen class="w-4 h-4 mr-2" /> <div class="text-sm px-4">Send us an email</div> </a> </div>
+		> class="text-brand"
+			<Calendar class="w-4 h-4 mr-2" />
+			<div class="text-sm">Chat with a founder</div>
+		</a>
+		<a class="flex items-center justify-center rounded-xs bg-red-500/20 py-2 px-3 text-[14px] text-red-500 w-fit hover:bg-red-500/30 px-4 pr-4 pl-4" href="mailto:founders@onlook.dev" target="_blank">
+			<EnvelopeOpen class="w-4 h-4 mr-2" />
+			<div class="text-sm">Send us an email</div>
+		</a>
+	</div>
 </div>
