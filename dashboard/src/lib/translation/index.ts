@@ -22,7 +22,7 @@ export class TranslationService {
   private getModel() {
     return new ChatOpenAI({
       openAIApiKey: openAiConfig.apiKey,
-      modelName: "gpt-4-turbo-preview",
+      modelName: "gpt-4o",
       temperature: 0,
       cache: true,
     }).bind({
