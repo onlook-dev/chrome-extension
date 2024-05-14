@@ -108,26 +108,54 @@
 			}}
 			bind:value
 			placeholder="Interact with div"
-			class="w-full rounded"
+			class="w-full rounded text-black"
 		/>
 		<Button on:click={submitInput} class="bg-black text-white">Submit</Button>
 	</form>
 
 	<div class="mt-10 w-96 h-96 border shadow bg-stone-100 items-center justify-center flex">
-		<div id="test" class="w-10 h-10 bg-stone-500"></div>
+		<div
+			id="test"
+			class="w-10 h-10 bg-stone-500 border"
+			on:click={(e) => {
+				const testEl = e.currentTarget;
+				if (!testEl) return;
+				// Inset copy in parent
+				const copy = testEl.cloneNode(true);
+				testEl.parentElement?.appendChild(copy);
+			}}
+		></div>
 	</div>
 
 	<div
 		class="mt-10 w-96 h-full flex flex-col overflow-auto space-y-2 p-2.5 rounded border border-gray-300"
 	>
+		<!-- <p class="bg-green-500 mr-auto w-[50%] h-fit text-ellipsis text-white p-2 rounded">
+			Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+			been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+			galley of type and scrambled it to make a type specimen book. It has survived not only five
+			centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It
+			was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
+			passages, and more recently with desktop publishing software like Aldus PageMaker including
+			versions of Lorem Ipsum.
+		</p>
+		<p class="bg-blue-500 ml-auto w-[50%] h-fit text-ellipsis text-white p-2 rounded">
+			Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+			been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+			galley of type and scrambled it to make a type specimen book. It has survived not only five
+			centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It
+			was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
+			passages, and more recently with desktop publishing software like Aldus PageMaker including
+			versions of Lorem Ipsum.
+		</p> -->
 		{#each logs as log}
-			{#if log.author === Author.User}
-				<div class="bg-blue-500 text-white p-2 rounded ml-auto">{log.message}</div>
-			{:else}
-				<div class="bg-green-500 text-white p-2 rounded mr-auto w-[50%] h-[fit-content]">
-					{log.message}
-				</div>
-			{/if}
+			<p
+				class="{log.author === Author.User
+					? 'bg-blue-500 ml-auto'
+					: 'bg-green-500 mr-auto'} w-[50%] h-fit text-ellipsis text-white p-2 rounded"
+			>
+				{log.message}
+			</p>
 		{/each}
 	</div>
 </div>
