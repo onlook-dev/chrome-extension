@@ -58,6 +58,9 @@ function injectGlobalStyles() {
             .${ONLOOK_EDITABLE} {
                 outline: 2px solid #00ff94;
             }
+			${ONLOOK_TOOLBAR}::backdrop {
+				background-color: rgba(0, 0, 0, 0) !important;
+			}
         `;
 	document.head.appendChild(style);
 }
