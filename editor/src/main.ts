@@ -21,7 +21,7 @@ class OnlookToolbar extends HTMLElement {
 		this.setAttribute(DATA_ONLOOK_IGNORE, 'true');
 
 		// Attaches a shadow DOM
-		const shadowRoot = this.attachShadow({ mode: 'open' });
+		const shadowRoot = this.attachShadow({ mode: 'closed' });
 
 		// Add twind styles
 		const sheet = cssom(new CSSStyleSheet());
