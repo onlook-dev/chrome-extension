@@ -1,0 +1,32 @@
+{
+  "name": "@onlook/svelte",
+  "version": "1.1.1",
+  "main": "bundle.js",
+  "type": "module",
+  "dependencies": {
+    "magic-string": "^0.30.5",
+    "svelte": "^4.2.8"
+  },
+  "description": "Svelte preprocessor for onlook.dev",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "svelte",
+    "preprocessor",
+    "onlook"
+  ],
+  "author": "onlook.dev",
+  "license": "ISC",
+  "homepage": "https://onlook.dev",
+  "devDependencies": {
+    "@rollup/plugin-json": "^6.1.0",
+    "rollup": "^4.9.6",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  }
+}

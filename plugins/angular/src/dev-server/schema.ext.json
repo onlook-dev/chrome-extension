@@ -1,0 +1,5 @@
+{
+  "$id": "CustomWebpackDevServerSchema",
+  "title": "Custom onlook dev server schema for Angular build facade",
+  "description": "Dev server target options"
+}

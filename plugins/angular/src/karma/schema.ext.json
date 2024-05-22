@@ -1,0 +1,5 @@
+{
+  "$id": "BuildCustomWebpackKarmaSchema",
+  "title": "Custom onlook karma schema for Build Facade",
+  "description": "Karma target options"
+}
