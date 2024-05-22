@@ -5,6 +5,8 @@
   import { draggable } from "@neodrag/svelte";
   import { editorPanelVisible, layersPanelCollapsed } from "$lib/states/editor";
   import { DragHandleDots2, Minus, Size } from "radix-icons-svelte";
+  import { elementsPanelVisible } from "$lib/states/editor";
+  import { Plus } from "radix-icons-svelte";
 
   import LayersTab from "./LayersTab.svelte";
   import ChangesTab from "./ChangesTab.svelte";
@@ -115,13 +117,27 @@
           </Tabs.List>
           <Separator class="mt-1" />
           <div
-            class="h-[calc({cardHeight}-4rem)] overscroll-contain overflow-auto"
+            class="h-[calc({cardHeight}-7rem)] overscroll-contain overflow-auto"
           >
             <Tabs.Content value={TabValue.LAYERS}
               ><LayersTab {editTool} />
             </Tabs.Content>
             <Tabs.Content value={TabValue.CHANGES}
               ><ChangesTab {editTool} /></Tabs.Content
+            >
+          </div>
+
+          <Separator class="mt-1" />
+
+          <div class="mt-3 items-center text-xs">
+            <button
+              class="rounded h-8 text-red w-full bg-red/20 hover:bg-red/25 transition flex items-center justify-center space-x-2"
+              on:click={() => {
+                elementsPanelVisible.set(!$elementsPanelVisible);
+              }}
+            >
+              <Plus class="h-3 w-3" />
+              <span>Add element</span></button
             >
           </div>
         </Tabs.Root>
