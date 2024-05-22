@@ -1,0 +1,5 @@
+{
+  "$id": "BuildCustomWebpackExtractI18nSchema",
+  "title": "Custom onlook extract-i18n schema for Build Facade",
+  "description": "Extract i18n target options"
+}

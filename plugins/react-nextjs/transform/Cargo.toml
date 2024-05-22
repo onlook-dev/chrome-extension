@@ -1,0 +1,20 @@
+[package]
+authors         = ["Kiet Ho"]
+description     = "AST Transforms for import modularizer"
+edition         = "2021"
+license         = "Apache-2.0"
+name            = "onlook_react"
+repository      = "https://github.com/swc-project/plugins.git"
+version         = "1.0.0"
+
+[dependencies]
+serde               = { version = "1", features = ["derive"] }
+swc_common          = "0.33.25"
+swc_ecma_ast        = "0.113.0"
+swc_ecma_visit      = "0.99.0"
+swc_plugin_macro    = "0.9.16"
+
+[dev-dependencies]
+swc_ecma_transforms         = "0.230.0"
+swc_ecma_transforms_testing = "0.141.0"
+testing                     = "0.35.23"

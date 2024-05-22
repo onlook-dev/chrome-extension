@@ -1,0 +1,5 @@
+{
+  "$id": "BuildCustomWebpackBrowserSchema",
+  "title": "Custom onlook browser schema for Build Facade",
+  "description": "Browser target options"
+}
