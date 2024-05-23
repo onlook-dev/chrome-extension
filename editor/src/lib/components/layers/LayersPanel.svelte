@@ -2,9 +2,11 @@
   import { onMount } from "svelte";
   import { historyStore } from "$lib/tools/edit/history";
   import { slide } from "svelte/transition";
-  import { draggable } from "@neodrag/svelte";
+  import { draggable } from "$lib/utils";
   import { editorPanelVisible, layersPanelCollapsed } from "$lib/states/editor";
   import { DragHandleDots2, Minus, Size } from "radix-icons-svelte";
+  import { elementsPanelVisible } from "$lib/states/editor";
+  import { Plus } from "radix-icons-svelte";
 
   import LayersTab from "./LayersTab.svelte";
   import ChangesTab from "./ChangesTab.svelte";
@@ -54,14 +56,7 @@
 </script>
 
 <div
-  use:draggable={{
-    bounds: {
-      top: 0,
-      left: 0,
-    },
-    handle: ".handle",
-    disabled: isInputFocused,
-  }}
+  use:draggable
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
   class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
@@ -70,7 +65,7 @@
     bind:this={cardRef}
     class="{panelCollapsed
       ? 'h-[3rem]'
-      : 'resize h-[60vh]'} min-h-[3rem] w-[{cardWidth}] min-w-[{cardWidth}] overflow-hidden bg-transparent"
+      : 'resize h-[61vh]'} min-h-[3rem] w-[{cardWidth}] min-w-[{cardWidth}] overflow-hidden bg-transparent pt-[3px]"
     style={panelCollapsed
       ? "transition: height 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
       : ""}
@@ -78,7 +73,10 @@
     <Card.Root class="h-full backdrop-blur bg-background/90 pt-2">
       <Card.Content>
         <Tabs.Root bind:value={selectedTab} class="w-full h-full">
-          <Tabs.List class="handle bg-transparent p-0 gap-4 w-full select-none	">
+          <Tabs.List
+            data-drag-handle
+            class="bg-transparent p-0 gap-4 w-full select-none	"
+          >
             <Tabs.Trigger
               class="bg-transparent p-0 text-xs"
               value={TabValue.LAYERS}>Layers</Tabs.Trigger
@@ -115,13 +113,27 @@
           </Tabs.List>
           <Separator class="mt-1" />
           <div
-            class="h-[calc({cardHeight}-4rem)] overscroll-contain overflow-auto"
+            class="h-[calc({cardHeight}-7rem)] overscroll-contain overflow-auto"
           >
             <Tabs.Content value={TabValue.LAYERS}
               ><LayersTab {editTool} />
             </Tabs.Content>
             <Tabs.Content value={TabValue.CHANGES}
               ><ChangesTab {editTool} /></Tabs.Content
+            >
+          </div>
+
+          <Separator class="mt-1" />
+
+          <div class="mt-3 items-center text-xs">
+            <button
+              class="rounded h-8 text-red w-full bg-red/20 hover:bg-red/25 transition flex items-center justify-center space-x-2"
+              on:click={() => {
+                elementsPanelVisible.set(!$elementsPanelVisible);
+              }}
+            >
+              <Plus class="h-3 w-3" />
+              <span>Add element</span></button
             >
           </div>
         </Tabs.Root>

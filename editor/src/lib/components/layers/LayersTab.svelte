@@ -4,8 +4,6 @@
   import TreeRoot from "./dom/TreeRoot.svelte";
   import Separator from "../ui/separator/separator.svelte";
 
-  // import { Plus } from "radix-icons-svelte";
-
   export let editTool: EditTool;
 
   let hovered: HTMLElement;
@@ -61,27 +59,15 @@
   }
 </script>
 
-{#if tree}
-  <TreeRoot
-    node={tree}
-    {hovered}
-    {selected}
-    {select}
-    {mouseEnter}
-    {mouseLeave}
-  />
-{/if}
-<!-- <Separator /> -->
-
-<!-- TODO: If enable this, change height above to h-[calc(60vh-8rem)] -->
-<!-- <div class="mt-4 items-center text-xs">
-  <button
-    class="rounded h-8 text-red w-full bg-red/20 hover:bg-red/25 transition flex items-center justify-center space-x-2"
-    on:click={() => {
-      elementsPanelVisible.set(!$elementsPanelVisible);
-    }}
-  >
-    <Plus class="h-3 w-3" />
-    <span>Add element</span></button
-  >
-</div> -->
+<div>
+  {#if tree}
+    <TreeRoot
+      node={tree}
+      {hovered}
+      {selected}
+      {select}
+      {mouseEnter}
+      {mouseLeave}
+    />
+  {/if}
+</div>

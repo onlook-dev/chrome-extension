@@ -14,6 +14,9 @@ export class EditTool implements Tool {
 	oldText: string | undefined;
 	copiedElement: HTMLElement | undefined;
 
+	lastKnownScrollPosition = 0;
+	ticking = false;
+
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
 		this.overlayManager = new OverlayManager();
@@ -73,9 +76,31 @@ export class EditTool implements Tool {
 	}
 
 	onScreenResize(e: Event): void {
-		this.overlayManager.updateHoverRect(this.selectorEngine.hovered);
-		this.updateClickedRects(this.selectorEngine.selected);
-		this.updateParentRect();
+		// Interval to update after elements resize
+		if (!this.ticking) {
+			this.updateElementOverlay();
+			this.ticking = true;
+		}
+	}
+
+	onScroll(e: Event): void {
+		if (window.scrollY === this.lastKnownScrollPosition) return;
+		this.lastKnownScrollPosition = window.scrollY;
+
+		if (!this.ticking) {
+			this.updateElementOverlay();
+			this.ticking = true;
+		}
+	}
+
+	updateElementOverlay() {
+		window.requestAnimationFrame(() => {
+			this.overlayManager.updateHoverRect(this.selectorEngine.hovered);
+			this.updateClickedRects(this.selectorEngine.selected);
+			this.updateParentRect();
+
+			this.ticking = false;
+		});
 	}
 
 	onElementResize(els: Element[]): void {
