@@ -6,6 +6,7 @@ import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getUniqueSelector } from '../utilities';
 import { handleEditEvent } from './handleEvents';
 import type { Tool } from '../index';
+import Sortable from 'sortablejs';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
@@ -17,6 +18,9 @@ export class EditTool implements Tool {
 	lastKnownScrollPosition = 0;
 	ticking = false;
 
+	selectedSnapshot: HTMLElement[] = [];
+	dragContainers: WeakMap<HTMLElement, any> = new WeakMap();
+
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
 		this.overlayManager = new OverlayManager();
@@ -27,6 +31,52 @@ export class EditTool implements Tool {
 		});
 		window.addEventListener('resize', this.onScreenResize.bind(this));
 		window.addEventListener('scroll', this.onScreenResize.bind(this));
+
+		// Make selected elements draggable within parents
+		this.selectorEngine.selectedStore.subscribe((value) => {
+			const added = value.filter((i) => this.selectedSnapshot.includes(i) === false);
+			const removed = this.selectedSnapshot.filter((i) => value.includes(i) === false);
+
+			// Remove container drag and drop
+			removed.forEach((i) => {
+				this.removeDraggable(i);
+				const parent = i.parentElement;
+				if (!parent) return;
+				this.removeDraggable(parent);
+			});
+
+			// Make container drag and drop
+			added.forEach((i) => {
+				// Make sure i is not body or html
+				if (i === document.body || i === document.documentElement) return;
+				this.makeDraggable(i);
+
+				// Make parent draggable container
+				const parent = i.parentElement;
+				if (!parent) return;
+				this.makeDraggable(parent);
+			});
+
+			this.selectedSnapshot = value;
+		});
+	}
+
+	makeDraggable(el: HTMLElement) {
+		if (this.dragContainers.has(el)) return;
+		var container = Sortable.create(el, {
+			animation: 150,
+			onEnd: (e) => {
+				// Refresh overlay
+				this.updateClickedRects(this.selectorEngine.selected);
+			}
+		});
+		this.dragContainers.set(el, container);
+	}
+
+	removeDraggable(el: HTMLElement) {
+		const container = this.dragContainers.get(el);
+		container && container.destroy();
+		this.dragContainers.delete(el);
 	}
 
 	onInit() {
