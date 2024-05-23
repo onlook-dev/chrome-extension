@@ -2,7 +2,11 @@
   import DOMTreeNode from "./TreeNode.svelte";
 
   export let node: HTMLElement | undefined;
-  export let select: (e: Event, node: HTMLElement) => void;
+  export let select: (
+    e: Event,
+    node: HTMLElement,
+    nodeRef: HTMLDivElement
+  ) => void;
   export let mouseEnter: (e: Event, node: HTMLElement) => void;
   export let mouseLeave: (e: Event) => void;
 

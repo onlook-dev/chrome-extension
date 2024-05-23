@@ -12,9 +12,9 @@ export class DragManager {
         private updateClickedRects: (elements: HTMLElement[]) => void
     ) {
         // Make selected elements draggable within parents
-        this.selectorEngine.selectedStore.subscribe((value) => {
-            const added = value.filter((el) => this.selectedSnapshot.includes(el) === false);
-            const removed = this.selectedSnapshot.filter((el) => value.includes(el) === false);
+        this.selectorEngine.selectedStore.subscribe((els) => {
+            const added = els.filter((el) => this.selectedSnapshot.includes(el) === false);
+            const removed = this.selectedSnapshot.filter((el) => els.includes(el) === false);
 
             // Remove container drag and drop
             removed.forEach((el) => {
@@ -33,10 +33,10 @@ export class DragManager {
                 this.makeDraggable(parent);
             });
 
-            this.selectedSnapshot = value;
+            this.selectedSnapshot = els;
         });
     }
-    // Consider moving this to helper
+
     makeDraggable(el: HTMLElement) {
         if (this.dragContainers.has(el)) return;
         var container = Sortable.create(el, {

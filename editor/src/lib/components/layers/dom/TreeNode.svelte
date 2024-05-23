@@ -19,7 +19,11 @@
   export let depth = 0;
   export let internalHover = false;
 
-  export let select: (e: Event, node: HTMLElement) => void;
+  export let select: (
+    e: Event,
+    node: HTMLElement,
+    nodeRef: HTMLDivElement
+  ) => void;
   export let mouseEnter: (e: Event, node: HTMLElement) => void;
 
   let nodeRef: HTMLDivElement;
@@ -129,7 +133,7 @@
       <!-- Show text -->
       <div
         on:click={(e) => {
-          select(e, node);
+          select(e, node, nodeRef);
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
@@ -140,7 +144,7 @@
     {:else if isEmpty}
       <div
         on:click={(e) => {
-          select(e, node);
+          select(e, node, nodeRef);
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
@@ -154,7 +158,7 @@
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
         on:click={(e) => {
-          select(e, node);
+          select(e, node, nodeRef);
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
@@ -171,7 +175,7 @@
       <details
         bind:open={isOpen}
         on:click|self={(e) => {
-          select(e, node);
+          select(e, node, nodeRef);
           selfSelected = true;
         }}
         on:mouseover|self={(e) => mouseEnter(e, node)}
@@ -194,7 +198,7 @@
           <p
             class="flex-grow"
             on:click|preventDefault={(e) => {
-              select(e, node);
+              select(e, node, nodeRef);
               selfSelected = true;
             }}
           >
