@@ -1,73 +1,64 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { layersSelected, layersHovered } from "$lib/states/editor";
   import type { EditTool } from "$lib/tools/edit";
   import TreeRoot from "./dom/TreeRoot.svelte";
-  import Separator from "../ui/separator/separator.svelte";
 
   export let editTool: EditTool;
 
-  let hovered: HTMLElement;
-  let selected: HTMLElement[] = [];
   let htmlDoc: Document;
-  let tree: HTMLElement;
+  let rootNode: HTMLElement;
 
   onMount(() => {
     htmlDoc = document;
-    tree = htmlDoc.body;
+    rootNode = htmlDoc.body;
     editTool.selectorEngine.selectedStore.subscribe(handleNewSelections);
     editTool.selectorEngine.hoveredStore.subscribe(handleNewHover);
   });
 
   function select(e: Event | any, node: HTMLElement) {
     if (e.shiftKey) {
-      if (selected.includes(node)) {
-        selected = selected.filter((el) => el !== node);
+      if ($layersSelected.includes(node)) {
+        $layersSelected = $layersSelected.filter((el) => el !== node);
       } else {
-        selected = [...selected, node];
+        $layersSelected = [...$layersSelected, node];
       }
     } else {
-      selected = [node];
+      $layersSelected = [node];
     }
-    editTool.simulateClick(selected);
+    editTool.simulateClick($layersSelected);
   }
 
   function mouseEnter(e: Event, node: HTMLElement) {
-    if (hovered == node) return;
-    hovered = node;
-    editTool.simulateHover(hovered);
+    if ($layersHovered == node) return;
+    $layersHovered = node;
+    editTool.simulateHover($layersHovered);
   }
 
   function mouseLeave(e: Event) {
-    hovered = undefined;
+    $layersHovered = undefined;
     editTool.simulateOut();
   }
 
   function handleNewHover(el: HTMLElement) {
     if (!el) {
-      hovered = undefined;
+      $layersHovered = undefined;
       return;
     }
-    hovered = el;
+    $layersHovered = el;
   }
 
   function handleNewSelections(els: HTMLElement[]) {
     if (!els || els.length == 0) {
-      selected = [];
+      $layersSelected = [];
       return;
     }
-    selected = els;
+    $layersSelected = els;
   }
 </script>
 
 <div>
-  {#if tree}
-    <TreeRoot
-      node={tree}
-      {hovered}
-      {selected}
-      {select}
-      {mouseEnter}
-      {mouseLeave}
-    />
+  {#if rootNode}
+    <TreeRoot node={rootNode} {select} {mouseEnter} {mouseLeave} />
   {/if}
 </div>

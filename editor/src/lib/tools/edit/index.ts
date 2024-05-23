@@ -6,7 +6,7 @@ import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getUniqueSelector } from '../utilities';
 import { handleEditEvent } from './handleEvents';
 import type { Tool } from '../index';
-import Sortable from 'sortablejs';
+import { DragManager } from './drag';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
@@ -14,16 +14,15 @@ export class EditTool implements Tool {
 	elResizeObserver: ResizeObserver;
 	oldText: string | undefined;
 	copiedElement: HTMLElement | undefined;
-
+	dragManager: DragManager;
 	lastKnownScrollPosition = 0;
 	ticking = false;
-
-	selectedSnapshot: HTMLElement[] = [];
-	dragContainers: WeakMap<HTMLElement, any> = new WeakMap();
 
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
 		this.overlayManager = new OverlayManager();
+		this.dragManager = new DragManager(this.selectorEngine, this.overlayManager, this.updateClickedRects.bind(this));
+
 		// Initialize resize observer for click element resize
 		this.elResizeObserver = new ResizeObserver(entries => {
 			const observedElements = entries.map(entry => entry.target);
@@ -31,55 +30,6 @@ export class EditTool implements Tool {
 		});
 		window.addEventListener('resize', this.onScreenResize.bind(this));
 		window.addEventListener('scroll', this.onScreenResize.bind(this));
-
-		// Make selected elements draggable within parents
-		this.selectorEngine.selectedStore.subscribe((value) => {
-			const added = value.filter((i) => this.selectedSnapshot.includes(i) === false);
-			const removed = this.selectedSnapshot.filter((i) => value.includes(i) === false);
-
-			// Remove container drag and drop
-			removed.forEach((i) => {
-				if (!i) return;
-				const parent = i.parentElement;
-				if (!parent) return;
-				this.removeDraggable(parent);
-			});
-
-			// Make container drag and drop
-			added.forEach((i) => {
-				if (!i || i === document.body || i === document.documentElement) return;
-				// Make parent draggable container
-				const parent = i.parentElement;
-				if (!parent) return;
-				this.makeDraggable(parent);
-			});
-
-			this.selectedSnapshot = value;
-		});
-	}
-
-	makeDraggable(el: HTMLElement) {
-		if (this.dragContainers.has(el)) return;
-		var container = Sortable.create(el, {
-			animation: 150,
-			easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
-			onStart: (e) => {
-				this.overlayManager.hideHoverRect();
-				this.overlayManager.removeClickedRects();
-			},
-			onEnd: (e) => {
-				// Refresh overlay
-				this.updateClickedRects(this.selectorEngine.selected);
-				this.overlayManager.showHoverRect();
-			}
-		});
-		this.dragContainers.set(el, container);
-	}
-
-	removeDraggable(el: HTMLElement) {
-		const container = this.dragContainers.get(el);
-		container && container.destroy();
-		this.dragContainers.delete(el);
 	}
 
 	onInit() {

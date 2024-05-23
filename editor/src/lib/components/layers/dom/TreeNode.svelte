@@ -8,12 +8,14 @@
   import { DATA_ONLOOK_IGNORE, IGNORE_TAGS } from "$lib/constants";
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
-  import { layersPanelCollapsed } from "$lib/states/editor";
+  import {
+    layersPanelCollapsed,
+    layersSelected,
+    layersHovered,
+  } from "$lib/states/editor";
   import NodeIcon from "./NodeIcon.svelte";
 
   export let node: HTMLElement | undefined;
-  export let selected: HTMLElement[];
-  export let hovered: HTMLElement | undefined;
   export let depth = 0;
   export let internalHover = false;
 
@@ -44,13 +46,13 @@
   $: if (isOpen) {
     loaded = true;
   }
-  $: if (selected.length) {
-    selected.forEach((el) => {
+  $: if ($layersSelected.length) {
+    $layersSelected.forEach((el) => {
       if (node.contains(el) && node !== el) isOpen = true;
     });
   }
-  $: isSelected = selected.includes(node);
-  $: isHovered = node == hovered;
+  $: isSelected = $layersSelected.includes(node);
+  $: isHovered = node == $layersHovered;
   $: selectedClass = `transition ${
     isSelected ? "bg-red rounded text-white font-semibold" : ""
   }`;
@@ -206,8 +208,6 @@
                 <svelte:self
                   node={child}
                   depth={depth + 1}
-                  {selected}
-                  {hovered}
                   {select}
                   {mouseEnter}
                   {internalHover}
