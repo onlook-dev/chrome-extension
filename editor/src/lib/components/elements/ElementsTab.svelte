@@ -25,7 +25,7 @@
   $: defaultElements = elementManager.getFilteredDefaultElements(filterValue);
 </script>
 
-<div class="flex flex-col text-xs space-y-2 pt-2">
+<div class="flex flex-col text-xs space-y-2 pt-1">
   <div class="flex flex-row py-2">
     <p>Insert Element</p>
     <button

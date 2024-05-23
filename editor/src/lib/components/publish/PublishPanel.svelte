@@ -95,7 +95,6 @@
     : '100px'})] left-[calc(50vw-170px)] {$savePanelVisible
     ? 'visible'
     : 'invisible'}"
-  style="transition: top 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
 >
   <Card.Root
     class="w-[400px] h-[{accordianExpanded

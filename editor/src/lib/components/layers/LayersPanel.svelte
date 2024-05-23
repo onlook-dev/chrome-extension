@@ -65,7 +65,7 @@
     bind:this={cardRef}
     class="{panelCollapsed
       ? 'h-[3rem]'
-      : 'resize h-[60vh]'} min-h-[3rem] w-[{cardWidth}] min-w-[{cardWidth}] overflow-hidden bg-transparent"
+      : 'resize h-[61vh]'} min-h-[3rem] w-[{cardWidth}] min-w-[{cardWidth}] overflow-hidden bg-transparent pt-[3px]"
     style={panelCollapsed
       ? "transition: height 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);"
       : ""}
