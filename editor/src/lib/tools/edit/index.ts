@@ -40,7 +40,6 @@ export class EditTool implements Tool {
 			// Remove container drag and drop
 			removed.forEach((i) => {
 				if (!i) return;
-				// this.removeDraggable(i);
 				const parent = i.parentElement;
 				if (!parent) return;
 				this.removeDraggable(parent);
@@ -48,11 +47,7 @@ export class EditTool implements Tool {
 
 			// Make container drag and drop
 			added.forEach((i) => {
-				if (!i) return;
-				// Make sure i is not body or html
-				if (i === document.body || i === document.documentElement) return;
-				// this.makeDraggable(i);
-
+				if (!i || i === document.body || i === document.documentElement) return;
 				// Make parent draggable container
 				const parent = i.parentElement;
 				if (!parent) return;
