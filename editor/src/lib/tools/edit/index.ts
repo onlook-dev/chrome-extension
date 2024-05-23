@@ -65,9 +65,15 @@ export class EditTool implements Tool {
 		if (this.dragContainers.has(el)) return;
 		var container = Sortable.create(el, {
 			animation: 150,
+			easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
+			onStart: (e) => {
+				this.overlayManager.hideHoverRect();
+				this.overlayManager.removeClickedRects();
+			},
 			onEnd: (e) => {
 				// Refresh overlay
 				this.updateClickedRects(this.selectorEngine.selected);
+				this.overlayManager.showHoverRect();
 			}
 		});
 		this.dragContainers.set(el, container);
