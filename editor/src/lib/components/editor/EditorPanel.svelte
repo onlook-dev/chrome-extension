@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { draggable } from "@neodrag/svelte";
   import { Separator } from "$lib/components/ui/separator";
   import { editorPanelVisible } from "$lib/states/editor";
   import { DragHandleDots2, Minus, Size } from "radix-icons-svelte";
+  import { draggable } from "$lib/utils";
 
   import * as Card from "$lib/components/ui/card";
   import * as Tabs from "$lib/components/ui/tabs";
@@ -45,19 +45,12 @@
 </script>
 
 <div
-  use:draggable={{
-    bounds: {
-      top: 0,
-      left: 0,
-    },
-    disabled: isInputFocused,
-    handle: ".handle",
-  }}
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
   class="fixed top-10 right-2 overscroll-contain {$editorPanelVisible
     ? 'visible'
     : 'invisible'}"
+  use:draggable
 >
   <div
     bind:this={cardRef}
@@ -71,7 +64,10 @@
     <Card.Root class="backdrop-blur h-full bg-background/90 pt-2">
       <Card.Content>
         <Tabs.Root bind:value={selectedTab} class="w-full h-full">
-          <Tabs.List class="handle bg-transparent p-0 gap-4 w-full select-none">
+          <Tabs.List
+            data-drag-handle
+            class="bg-transparent p-0 gap-4 w-full select-none"
+          >
             <Button
               class="h-6 rounded-sm text-xs transition"
               variant="primary"

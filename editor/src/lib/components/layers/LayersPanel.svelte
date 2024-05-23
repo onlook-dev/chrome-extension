@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { historyStore } from "$lib/tools/edit/history";
   import { slide } from "svelte/transition";
-  import { draggable } from "@neodrag/svelte";
+  import { draggable } from "$lib/utils";
   import { editorPanelVisible, layersPanelCollapsed } from "$lib/states/editor";
   import { DragHandleDots2, Minus, Size } from "radix-icons-svelte";
   import { elementsPanelVisible } from "$lib/states/editor";
@@ -56,14 +56,7 @@
 </script>
 
 <div
-  use:draggable={{
-    bounds: {
-      top: 0,
-      left: 0,
-    },
-    handle: ".handle",
-    disabled: isInputFocused,
-  }}
+  use:draggable
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
   class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
@@ -80,7 +73,10 @@
     <Card.Root class="h-full backdrop-blur bg-background/90 pt-2">
       <Card.Content>
         <Tabs.Root bind:value={selectedTab} class="w-full h-full">
-          <Tabs.List class="handle bg-transparent p-0 gap-4 w-full select-none	">
+          <Tabs.List
+            data-drag-handle
+            class="bg-transparent p-0 gap-4 w-full select-none	"
+          >
             <Tabs.Trigger
               class="bg-transparent p-0 text-xs"
               value={TabValue.LAYERS}>Layers</Tabs.Trigger

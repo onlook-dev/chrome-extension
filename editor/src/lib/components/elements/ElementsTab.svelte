@@ -29,7 +29,7 @@
   <div class="flex flex-row py-2">
     <p>Insert Element</p>
     <button
-      class="ml-auto text-red hover:text-red/90 transition duration-200 ease-in-out"
+      class="ml-auto text-red hover:text-red/90 transition"
       on:click={() => {
         elementsPanelVisible.set(false);
       }}>Cancel</button
@@ -60,7 +60,7 @@
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div
-            class="flex flex-row p-1 rounded items-center space-x-2 cursor-pointer transition duration-200 ease-in-out {hovered ==
+            class="flex flex-row p-1 rounded items-center space-x-2 cursor-pointer transition {hovered ==
             element.type
               ? 'bg-red/20'
               : ''}"
@@ -73,7 +73,7 @@
             }}
           >
             <div
-              class="w-8 h-8 rounded flex items-center justify-center transition duration-200 ease-in-out {hovered ==
+              class="w-8 h-8 rounded flex items-center justify-center transition {hovered ==
               element.type
                 ? 'bg-red/20 text-red'
                 : 'bg-stone-800'}"
@@ -97,18 +97,12 @@
               {/if}
             </div>
             <div class="flex flex-col flex-grow">
-              <p
-                class="transition duration-200 ease-in-out {hovered ==
-                element.type
-                  ? 'text-red'
-                  : ''}"
-              >
+              <p class="transition {hovered == element.type ? 'text-red' : ''}">
                 {element.title}
               </p>
               {#if element.subtitle}
                 <p
-                  class="opacity-60 transition duration-200 ease-in-out {hovered ==
-                  element.type
+                  class="opacity-60 transition {hovered == element.type
                     ? 'text-red'
                     : ''}"
                 >
@@ -117,7 +111,7 @@
               {/if}
             </div>
             {#if hovered == element.type}
-              <div transition:fade={{ duration: 200 }}>
+              <div>
                 <Plus class="w-4 h-4 text-red" />
               </div>
             {/if}

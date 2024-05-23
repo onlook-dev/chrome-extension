@@ -60,3 +60,61 @@ export const flyAndScale = (
     easing: cubicOut,
   };
 };
+
+export function draggable(node: HTMLElement) {
+  let offsetX = 0, offsetY = 0;
+  let initialMouseX = 0, initialMouseY = 0;
+  let initialElemX = 0, initialElemY = 0;
+  
+  function onMouseMove(event: MouseEvent) {
+    const deltaX = event.clientX - initialMouseX;
+    const deltaY = event.clientY - initialMouseY;
+
+    let newTop = initialElemY + deltaY;
+    let newLeft = initialElemX + deltaX;
+
+    // Constrain within the viewport
+    const minX = 0;
+    const minY = 0;
+    const maxX = window.innerWidth - node.offsetWidth;
+    const maxY = window.innerHeight - node.offsetHeight;
+
+    if (newTop < minY) newTop = minY;
+    if (newTop > maxY) newTop = maxY;
+    if (newLeft < minX) newLeft = minX;
+    if (newLeft > maxX) newLeft = maxX;
+
+    node.style.top = newTop + "px";
+    node.style.left = newLeft + "px";
+  }
+
+  function onMouseUp() {
+    document.removeEventListener("mouseup", onMouseUp);
+    document.removeEventListener("mousemove", onMouseMove);
+  }
+
+  function onMouseDown(event: MouseEvent) {
+    // Ensure the target is within the handle
+    if (!(event.target as HTMLElement).closest('[data-drag-handle]')) {
+      return;
+    }
+
+    event.preventDefault();
+    
+    initialMouseX = event.clientX;
+    initialMouseY = event.clientY;
+    initialElemX = node.offsetLeft;
+    initialElemY = node.offsetTop;
+    
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  }
+
+  node.addEventListener("mousedown", onMouseDown);
+
+  return {
+    destroy() {
+      node.removeEventListener("mousedown", onMouseDown);
+    }
+  };
+}
