@@ -73,6 +73,7 @@ export function redoEvent(event: EditEvent) {
 }
 
 export function createReverseEvent(event: EditEvent): EditEvent {
+  console.log(event);
   switch (event.editType) {
     case EditType.INSERT:
       return {

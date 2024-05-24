@@ -1,7 +1,13 @@
-import Sortable from 'sortablejs';
+import { writable, type Writable } from 'svelte/store';
+import { handleEditEvent } from "$lib/tools/edit/handleEvents";
+import { EditType } from "$shared/models";
+import { getUniqueSelector } from "$lib/tools/utilities";
+
 import type { OverlayManager } from '../selection/overlay';
 import type { SelectorEngine } from '../selection/selector';
-import { writable, type Writable } from 'svelte/store';
+import type { MoveVal } from "$shared/models/editor";
+
+import Sortable from 'sortablejs';
 
 export class DragManager {
     selectedSnapshot: HTMLElement[] = [];
@@ -53,6 +59,9 @@ export class DragManager {
         // Move el to newIndex
         order.splice(newIndex, 0, order.splice(oldIndex, 1)[0]);
         container.sort(order, true);
+
+        // Send edit event
+        this.handleMoveEvent(el, oldIndex, newIndex);
     }
 
     makeDraggable(el: HTMLElement) {
@@ -66,8 +75,8 @@ export class DragManager {
             },
             onChange: (e) => {
                 // Send event to layers
-                // editTool.simulateMove(layersWeakMap.get(e.item), e.newIndex);
                 this.eventsStore.set({ el: e.item, newIndex: e.newIndex });
+                this.handleMoveEvent(e.item, e.oldIndex, e.newIndex);
             },
             onEnd: (e) => {
                 // Refresh overlay
@@ -82,5 +91,20 @@ export class DragManager {
         const container = this.dragContainers.get(el);
         container && container.destroy();
         this.dragContainers.delete(el);
+    }
+
+    handleMoveEvent(el, oldIndex, newIndex) {
+        handleEditEvent({
+            el,
+            editType: EditType.MOVE,
+            newValue: {
+                parentSelector: getUniqueSelector(el.parentNode as HTMLElement),
+                index: newIndex,
+            } as MoveVal,
+            oldValue: {
+                parentSelector: getUniqueSelector(el.parentNode as HTMLElement),
+                index: oldIndex,
+            } as MoveVal,
+        });
     }
 }

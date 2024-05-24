@@ -1,6 +1,6 @@
 import { addToHistory } from "./history";
 import { getUniqueSelector } from "../utilities";
-import { EditType, type EditEvent, type InsertRemoveVal } from "$shared/models";
+import { EditType, type EditEvent } from "$shared/models";
 import { MessageService, MessageType } from "$shared/message";
 
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
@@ -38,8 +38,8 @@ function debounce(func, wait) {
 interface HandleEditEventParams {
   el: HTMLElement,
   editType: EditType,
-  newValue: Record<string, string> | InsertRemoveVal,
-  oldValue: Record<string, string> | InsertRemoveVal
+  newValue: EditEvent["newVal"],
+  oldValue: EditEvent["oldVal"],
 }
 
 function undebounceHandleEditEvent(param: HandleEditEventParams) {

@@ -1,5 +1,5 @@
 import { ONLOOK_EDITABLE } from '$lib/constants';
-import { editorPanelVisible, elementsPanelVisible, } from '$lib/states/editor';
+import { editorPanelVisible, elementsPanelVisible, layersWeakMap, } from '$lib/states/editor';
 import { EditType, type InsertRemoveVal } from '$shared/models';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
@@ -157,7 +157,7 @@ export class EditTool implements Tool {
 	}
 
 	simulateMove = (el: HTMLElement, newIndex: number) => {
-		this.dragManager.move(el, newIndex);
+		this.dragManager.move(layersWeakMap.get(el), newIndex);
 	}
 
 	scrollElementIntoView(el: HTMLElement) {

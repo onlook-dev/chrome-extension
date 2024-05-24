@@ -9,7 +9,6 @@
 
   import TreeRoot from "./dom/TreeRoot.svelte";
   import Sortable from "sortablejs";
-
   export let editTool: EditTool;
 
   let htmlDoc: Document;
@@ -128,7 +127,8 @@
       easing: "cubic-bezier(0.215, 0.61, 0.355, 1)",
       onChange: (e) => {
         // Send event to editor
-        editTool.simulateMove(layersWeakMap.get(e.item), e.newIndex);
+        const node = e.item;
+        editTool.simulateMove(node, e.newIndex);
       },
     });
     dragContainers.set(el, container);
