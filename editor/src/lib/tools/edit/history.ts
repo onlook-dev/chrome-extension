@@ -3,6 +3,10 @@ import { get, writable } from 'svelte/store';
 import { MessageService, MessageType } from '$shared/message';
 import { ApplyChangesService } from './applyChange';
 
+import type { MoveVal } from '$shared/models/editor';
+
+import Sortable from 'sortablejs';
+
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
 const messageService = MessageService.getInstance();
@@ -151,6 +155,23 @@ function applyRemoveEvent(event: EditEvent, parent: HTMLElement) {
   if (el) el.remove();
 }
 
+function applyMoveEvent(event: EditEvent) {
+  const oldVal = event.oldVal as MoveVal;
+  const newVal = event.newVal as MoveVal;
+  const parent = document.querySelector(oldVal.parentSelector);
+
+  var container = Sortable.create(parent, {
+    animation: 150,
+    easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+  });
+
+  // Move el to newIndex
+  const order = container.toArray();
+  order.splice(oldVal.index, 0, order.splice(newVal.index, 1)[0]);
+  container.sort(order, true);
+  container.destroy();
+}
+
 export function applyEvent(event: EditEvent, emit: boolean = true) {
   const element: HTMLElement | undefined = document.querySelector(event.selector);
   switch (event.editType) {
@@ -168,6 +189,9 @@ export function applyEvent(event: EditEvent, emit: boolean = true) {
       break;
     case EditType.REMOVE:
       applyRemoveEvent(event, element);
+      break;
+    case EditType.MOVE:
+      applyMoveEvent(event, element);
       break;
   }
   if (emit)
