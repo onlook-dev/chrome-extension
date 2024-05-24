@@ -8,10 +8,10 @@ import type { SelectorEngine } from '../selection/selector';
 import type { MoveVal } from "$shared/models/editor";
 
 import Sortable from 'sortablejs';
+import { dragContainers } from '$lib/states/editor';
 
 export class DragManager {
     selectedSnapshot: HTMLElement[] = [];
-    dragContainers: WeakMap<HTMLElement, any> = new WeakMap();
     eventsStore: Writable<{ el: HTMLElement, newIndex: number } | null> = writable(null);
 
     constructor(
@@ -48,7 +48,7 @@ export class DragManager {
     move(el: HTMLElement, newIndex: number): void {
         const parent = el.parentElement;
         if (!parent) return;
-        const container = this.dragContainers.get(parent);
+        const container = dragContainers.get(parent);
         if (!container) return;
 
         const order = container.toArray();
@@ -56,8 +56,11 @@ export class DragManager {
 
         if (oldIndex === -1) return; // Element not found in the array
 
-        // Move el to newIndex
-        order.splice(newIndex, 0, order.splice(oldIndex, 1)[0]);
+        // Remove the element from the old position
+        const [movedElement] = order.splice(oldIndex, 1);
+
+        // Insert the element to the new position
+        order.splice(newIndex, 0, movedElement);
         container.sort(order, true);
 
         // Send edit event
@@ -65,8 +68,8 @@ export class DragManager {
     }
 
     makeDraggable(el: HTMLElement) {
-        if (this.dragContainers.has(el)) return;
-        var container = Sortable.create(el, {
+        if (dragContainers.has(el)) return;
+        const container = Sortable.create(el, {
             animation: 150,
             easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)',
             onStart: (e) => {
@@ -76,21 +79,21 @@ export class DragManager {
             onChange: (e) => {
                 // Send event to layers
                 this.eventsStore.set({ el: e.item, newIndex: e.newIndex });
-                this.handleMoveEvent(e.item, e.oldIndex, e.newIndex);
             },
             onEnd: (e) => {
                 // Refresh overlay
                 this.updateClickedRects(this.selectorEngine.selected);
                 this.overlayManager.showHoverRect();
+                this.handleMoveEvent(e.item, e.oldIndex, e.newIndex);
             }
         });
-        this.dragContainers.set(el, container);
+        dragContainers.set(el, container);
     }
 
     removeDraggable(el: HTMLElement) {
-        const container = this.dragContainers.get(el);
+        const container = dragContainers.get(el);
         container && container.destroy();
-        this.dragContainers.delete(el);
+        dragContainers.delete(el);
     }
 
     handleMoveEvent(el, oldIndex, newIndex) {

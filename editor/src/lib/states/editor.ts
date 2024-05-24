@@ -13,3 +13,4 @@ export let savingProject: Writable<boolean> = writable(false);
 export let layersHovered: Writable<HTMLElement | undefined> = writable(undefined);
 export let layersSelected: Writable<HTMLElement[]> = writable([]);
 export let layersWeakMap: WeakMap<HTMLElement, HTMLElement> = new WeakMap();
+export let dragContainers: WeakMap<HTMLElement, any> = new WeakMap();

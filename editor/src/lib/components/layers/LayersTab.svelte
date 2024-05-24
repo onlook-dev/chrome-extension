@@ -38,8 +38,11 @@
 
       if (oldIndex === -1) return; // Element not found in the array
 
-      // Move el to newIndex
-      order.splice(newIndex, 0, order.splice(oldIndex, 1)[0]);
+      // Remove the element from the old position
+      const [movedElement] = order.splice(oldIndex, 1);
+
+      // Insert the element to the new position
+      order.splice(newIndex, 0, movedElement);
       container.sort(order, true);
     });
 

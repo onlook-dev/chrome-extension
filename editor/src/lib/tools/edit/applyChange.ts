@@ -1,4 +1,4 @@
-import { EditType, type EditEvent } from "$shared/models";
+import { EditType } from "$shared/models";
 import { getUniqueSelector } from "../utilities";
 import { handleEditEvent } from "./handleEvents";
 import { tw } from 'twind'
