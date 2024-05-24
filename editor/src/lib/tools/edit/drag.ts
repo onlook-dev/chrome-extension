@@ -1,10 +1,12 @@
 import Sortable from 'sortablejs';
 import type { OverlayManager } from '../selection/overlay';
 import type { SelectorEngine } from '../selection/selector';
+import { writable, type Writable } from 'svelte/store';
 
 export class DragManager {
     selectedSnapshot: HTMLElement[] = [];
     dragContainers: WeakMap<HTMLElement, any> = new WeakMap();
+    eventsStore: Writable<{ el: HTMLElement, newIndex: number } | null> = writable(null);
 
     constructor(
         private selectorEngine: SelectorEngine,
@@ -37,13 +39,18 @@ export class DragManager {
         });
     }
 
-    move(el: HTMLElement, oldIndex: number, newIndex: number) {
+    move(el: HTMLElement, newIndex: number): void {
         const parent = el.parentElement;
         if (!parent) return;
         const container = this.dragContainers.get(parent);
         if (!container) return;
-        var order = container.toArray();
-        // Move child from oldIndex to newIndex 
+
+        const order = container.toArray();
+        const oldIndex = Array.prototype.indexOf.call(parent.children, el);
+
+        if (oldIndex === -1) return; // Element not found in the array
+
+        // Move el to newIndex
         order.splice(newIndex, 0, order.splice(oldIndex, 1)[0]);
         container.sort(order, true);
     }
@@ -56,6 +63,11 @@ export class DragManager {
             onStart: (e) => {
                 this.overlayManager.hideHoverRect();
                 this.overlayManager.removeClickedRects();
+            },
+            onChange: (e) => {
+                // Send event to layers
+                // editTool.simulateMove(layersWeakMap.get(e.item), e.newIndex);
+                this.eventsStore.set({ el: e.item, newIndex: e.newIndex });
             },
             onEnd: (e) => {
                 // Refresh overlay

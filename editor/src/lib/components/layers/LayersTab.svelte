@@ -23,6 +23,27 @@
     editTool.selectorEngine.selectedStore.subscribe(handleNewSelections);
     editTool.selectorEngine.hoveredStore.subscribe(handleNewHover);
 
+    editTool.dragManager.eventsStore.subscribe((e) => {
+      if (!e) return;
+      const { el, newIndex } = e;
+      if (!el) return;
+      const nodeRef = layersWeakMap.get(el);
+      if (!nodeRef) return;
+      const parent = nodeRef.parentElement;
+      if (!parent) return;
+      const container = dragContainers.get(parent);
+      if (!container) return;
+
+      const order = container.toArray();
+      const oldIndex = Array.prototype.indexOf.call(parent.children, nodeRef);
+
+      if (oldIndex === -1) return; // Element not found in the array
+
+      // Move el to newIndex
+      order.splice(newIndex, 0, order.splice(oldIndex, 1)[0]);
+      container.sort(order, true);
+    });
+
     layersSelected.subscribe((els) => {
       if (!els) return;
       const added = els.filter((el) => selectedSnapshot.includes(el) === false);
@@ -101,18 +122,13 @@
   }
 
   function makeDraggable(el: HTMLElement) {
-    console.log("Make draggable", el);
     if (dragContainers.has(el)) return;
     var container = Sortable.create(el, {
       animation: 150,
       easing: "cubic-bezier(0.215, 0.61, 0.355, 1)",
       onChange: (e) => {
         // Send event to editor
-        editTool.simulateMove(
-          layersWeakMap.get(e.item),
-          e.oldIndex,
-          e.newIndex
-        );
+        editTool.simulateMove(layersWeakMap.get(e.item), e.newIndex);
       },
     });
     dragContainers.set(el, container);

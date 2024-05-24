@@ -5,8 +5,8 @@ import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getUniqueSelector } from '../utilities';
 import { handleEditEvent } from './handleEvents';
-import type { Tool } from '../index';
 import { DragManager } from './drag';
+import type { Tool } from '../index';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
@@ -156,8 +156,8 @@ export class EditTool implements Tool {
 		this.overlayManager.removeHoverRect();
 	}
 
-	simulateMove = (el: HTMLElement, oldIndex: number, newIndex: number) => {
-		this.dragManager.move(el, oldIndex, newIndex);
+	simulateMove = (el: HTMLElement, newIndex: number) => {
+		this.dragManager.move(el, newIndex);
 	}
 
 	scrollElementIntoView(el: HTMLElement) {
