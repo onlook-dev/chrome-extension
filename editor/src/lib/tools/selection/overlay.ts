@@ -1,4 +1,4 @@
-import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ID } from "$lib/constants";
+import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ELEMENT, ONLOOK_RECT_ID } from "$lib/constants";
 import { ONLOOK_TOOLBAR } from "$shared/constants";
 import { nanoid } from 'nanoid';
 
@@ -359,4 +359,4 @@ class RectPopover extends HTMLElement {
     }
 }
 
-customElements.define('rect-popover', RectPopover);
+customElements.define(ONLOOK_RECT_ELEMENT, RectPopover);

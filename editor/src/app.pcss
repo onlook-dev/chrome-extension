@@ -138,6 +138,7 @@ onlook-toolbar {
   src: url(https://fonts.gstatic.com/s/inter/v12/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2) format('woff2');
 }
 
-::backdrop {
-  background-color: rgba(0, 0, 0, 0) !important;
+onlook-toolbar::backdrop,
+rect-popover::backdrop {
+  background: none;
 }
