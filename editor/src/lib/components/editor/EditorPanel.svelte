@@ -12,7 +12,6 @@
 
   import type { EditTool } from "$lib/tools/edit";
   import { ToolName, type ToolManager } from "$lib/tools";
-  import { historyStore } from "$lib/tools/edit/history";
 
   enum TabValue {
     CSS = "css",
@@ -45,12 +44,12 @@
 </script>
 
 <div
+  use:draggable
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
-  class="fixed top-10 right-2 overscroll-contain {$editorPanelVisible
+  class="absolute top-10 left-[calc(100vw-{cardWidth}-0.5rem)] {$editorPanelVisible
     ? 'visible'
     : 'invisible'}"
-  use:draggable
 >
   <div
     bind:this={cardRef}
