@@ -1,4 +1,4 @@
-import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ID } from "$lib/constants";
+import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ELEMENT, ONLOOK_RECT_ID } from "$lib/constants";
 import { ONLOOK_TOOLBAR } from "$shared/constants";
 import { nanoid } from 'nanoid';
 
@@ -304,6 +304,14 @@ export class OverlayManager {
 
     }
 
+    hideHoverRect = () => {
+        this.hoverRect.element.style.display = 'none'
+    }
+
+    showHoverRect = () => {
+        this.hoverRect.element.style.display = 'block'
+    }
+
     removeHoverRect = () => {
         this.hoverRect.render({ width: 0, height: 0, top: 0, left: 0 })
     }
@@ -351,4 +359,4 @@ class RectPopover extends HTMLElement {
     }
 }
 
-customElements.define('rect-popover', RectPopover);
+customElements.define(ONLOOK_RECT_ELEMENT, RectPopover);

@@ -6,10 +6,8 @@ export class SelectorEngine {
   selectedStore: Writable<HTMLElement[]> = writable([]);
   hoveredStore: Writable<HTMLElement | undefined> = writable(undefined);
   editingStore: Writable<HTMLElement | undefined> = writable(undefined);
-
   observer: MutationObserver;
-
-  constructor() { }
+  constructor() {}
 
   get selected() {
     return get(this.selectedStore);
@@ -81,16 +79,10 @@ export class SelectorEngine {
     this.editingStore.set(target);
   }
 
-  selectSingle(item) {
-    const targets = [item]
-    const dataOnlookId = getDataOnlookId(item);
-    dataOnlookId && targets.push(...getByDataOnlookId(dataOnlookId));
-    this.selectedStore.update((s) => [...targets])
-  }
-
   select(item, clear = false) {
     const targets = [item]
     const dataOnlookId = getDataOnlookId(item);
+    // Select similar detected components
     dataOnlookId && targets.push(...getByDataOnlookId(dataOnlookId));
 
     if (clear) {

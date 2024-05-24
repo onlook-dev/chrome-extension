@@ -3,6 +3,11 @@ import { get, writable } from 'svelte/store';
 import { MessageService, MessageType } from '$shared/message';
 import { ApplyChangesService } from './applyChange';
 
+import type { MoveVal } from '$shared/models/editor';
+
+import Sortable from 'sortablejs';
+import { dragContainers } from '$lib/states/editor';
+
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
 const messageService = MessageService.getInstance();
@@ -24,7 +29,6 @@ export function addToHistory(event: EditEvent) {
   // Keeping oldest old val and newest new val
   historyStore.update((history) => {
     if (history.length === 0) return [event];
-
     // Deduplicate last event
     const lastEvent = history[history.length - 1];
     if (
@@ -150,6 +154,35 @@ function applyRemoveEvent(event: EditEvent, parent: HTMLElement) {
   if (el) el.remove();
 }
 
+function applyMoveEvent(event: EditEvent, element: HTMLElement) {
+  const oldVal = event.oldVal as MoveVal;
+  const newVal = event.newVal as MoveVal;
+  const parent = document.querySelector(oldVal.parentSelector) as HTMLElement;
+
+  let container = dragContainers.get(parent) ?? Sortable.create(parent, {
+    animation: 150,
+    easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+  });
+
+  // Move el to newIndex
+  const order = container.toArray();
+  const oldIndex = Array.prototype.indexOf.call(parent.children, element);
+
+  if (oldIndex === -1) return; // Element not found in the array
+
+  // Remove the element from the old position
+  const [movedElement] = order.splice(oldIndex, 1);
+
+  // Insert the element to the new position
+  order.splice(newVal.index, 0, movedElement);
+  container.sort(order, true);
+
+  // Clean up if container created
+  if (!dragContainers.has(parent)) {
+    container.destroy();
+  }
+}
+
 export function applyEvent(event: EditEvent, emit: boolean = true) {
   const element: HTMLElement | undefined = document.querySelector(event.selector);
   switch (event.editType) {
@@ -167,6 +200,9 @@ export function applyEvent(event: EditEvent, emit: boolean = true) {
       break;
     case EditType.REMOVE:
       applyRemoveEvent(event, element);
+      break;
+    case EditType.MOVE:
+      applyMoveEvent(event, element);
       break;
   }
   if (emit)

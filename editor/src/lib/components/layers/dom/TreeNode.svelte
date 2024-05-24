@@ -8,16 +8,23 @@
   import { DATA_ONLOOK_IGNORE, IGNORE_TAGS } from "$lib/constants";
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
-  import { layersPanelCollapsed } from "$lib/states/editor";
+  import {
+    layersPanelCollapsed,
+    layersSelected,
+    layersHovered,
+    layersWeakMap,
+  } from "$lib/states/editor";
   import NodeIcon from "./NodeIcon.svelte";
 
   export let node: HTMLElement | undefined;
-  export let selected: HTMLElement[];
-  export let hovered: HTMLElement | undefined;
   export let depth = 0;
   export let internalHover = false;
 
-  export let select: (e: Event, node: HTMLElement) => void;
+  export let select: (
+    e: Event,
+    node: HTMLElement,
+    nodeRef: HTMLDivElement
+  ) => void;
   export let mouseEnter: (e: Event, node: HTMLElement) => void;
 
   let nodeRef: HTMLDivElement;
@@ -44,13 +51,13 @@
   $: if (isOpen) {
     loaded = true;
   }
-  $: if (selected.length) {
-    selected.forEach((el) => {
+  $: if ($layersSelected.length) {
+    $layersSelected.forEach((el) => {
       if (node.contains(el) && node !== el) isOpen = true;
     });
   }
-  $: isSelected = selected.includes(node);
-  $: isHovered = node == hovered;
+  $: isSelected = $layersSelected.includes(node);
+  $: isHovered = node == $layersHovered;
   $: selectedClass = `transition ${
     isSelected ? "bg-red rounded text-white font-semibold" : ""
   }`;
@@ -73,6 +80,10 @@
   const paddingY = "py-1";
 
   onMount(() => {
+    if (!node || !nodeRef) return;
+    layersWeakMap.set(node, nodeRef);
+    layersWeakMap.set(nodeRef, node);
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -127,7 +138,7 @@
       <!-- Show text -->
       <div
         on:click={(e) => {
-          select(e, node);
+          select(e, node, nodeRef);
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
@@ -138,7 +149,7 @@
     {:else if isEmpty}
       <div
         on:click={(e) => {
-          select(e, node);
+          select(e, node, nodeRef);
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
@@ -152,7 +163,7 @@
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div
         on:click={(e) => {
-          select(e, node);
+          select(e, node, nodeRef);
           selfSelected = true;
         }}
         on:mouseover={(e) => mouseEnter(e, node)}
@@ -169,7 +180,7 @@
       <details
         bind:open={isOpen}
         on:click|self={(e) => {
-          select(e, node);
+          select(e, node, nodeRef);
           selfSelected = true;
         }}
         on:mouseover|self={(e) => mouseEnter(e, node)}
@@ -192,7 +203,7 @@
           <p
             class="flex-grow"
             on:click|preventDefault={(e) => {
-              select(e, node);
+              select(e, node, nodeRef);
               selfSelected = true;
             }}
           >
@@ -206,8 +217,6 @@
                 <svelte:self
                   node={child}
                   depth={depth + 1}
-                  {selected}
-                  {hovered}
                   {select}
                   {mouseEnter}
                   {internalHover}

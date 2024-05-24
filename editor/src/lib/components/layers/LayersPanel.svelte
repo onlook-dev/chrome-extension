@@ -59,7 +59,7 @@
   use:draggable
   on:focusin={() => (isInputFocused = true)}
   on:focusout={() => (isInputFocused = false)}
-  class="fixed top-10 left-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
+  class="absolute top-10 left-2 {$editorPanelVisible ? 'visible' : 'invisible'}"
 >
   <div
     bind:this={cardRef}

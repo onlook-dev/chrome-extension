@@ -67,6 +67,7 @@
     "radix-icons-svelte": "^1.2.1",
     "sass": "^1.70.0",
     "sirv-cli": "^2.0.0",
+    "sortablejs": "^1.15.2",
     "svelte-motion": "^0.12.1",
     "tailwind-merge": "^2.2.1",
     "tailwind-variants": "^0.2.0",

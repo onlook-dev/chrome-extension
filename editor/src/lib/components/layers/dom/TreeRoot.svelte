@@ -2,10 +2,11 @@
   import DOMTreeNode from "./TreeNode.svelte";
 
   export let node: HTMLElement | undefined;
-  export let selected: HTMLElement[];
-  export let hovered: HTMLElement | undefined;
-
-  export let select: (e: Event, node: HTMLElement) => void;
+  export let select: (
+    e: Event,
+    node: HTMLElement,
+    nodeRef: HTMLDivElement
+  ) => void;
   export let mouseEnter: (e: Event, node: HTMLElement) => void;
   export let mouseLeave: (e: Event) => void;
 
@@ -22,13 +23,6 @@
     }}
     on:mouseenter={() => (internalHover = true)}
   >
-    <DOMTreeNode
-      bind:node
-      {selected}
-      {hovered}
-      {select}
-      {mouseEnter}
-      {internalHover}
-    />
+    <DOMTreeNode bind:node {select} {mouseEnter} {internalHover} />
   </div>
 {/if}

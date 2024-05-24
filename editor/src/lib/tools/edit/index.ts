@@ -1,10 +1,11 @@
 import { ONLOOK_EDITABLE } from '$lib/constants';
-import { editorPanelVisible, elementsPanelVisible, } from '$lib/states/editor';
+import { editorPanelVisible, elementsPanelVisible, layersWeakMap, } from '$lib/states/editor';
 import { EditType, type InsertRemoveVal } from '$shared/models';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getUniqueSelector } from '../utilities';
 import { handleEditEvent } from './handleEvents';
+import { DragManager } from './drag';
 import type { Tool } from '../index';
 
 export class EditTool implements Tool {
@@ -13,13 +14,15 @@ export class EditTool implements Tool {
 	elResizeObserver: ResizeObserver;
 	oldText: string | undefined;
 	copiedElement: HTMLElement | undefined;
-
+	dragManager: DragManager;
 	lastKnownScrollPosition = 0;
 	ticking = false;
 
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
 		this.overlayManager = new OverlayManager();
+		this.dragManager = new DragManager(this.selectorEngine, this.overlayManager, this.updateClickedRects.bind(this));
+
 		// Initialize resize observer for click element resize
 		this.elResizeObserver = new ResizeObserver(entries => {
 			const observedElements = entries.map(entry => entry.target);
@@ -151,6 +154,10 @@ export class EditTool implements Tool {
 		if (!el) return
 		this.selectorEngine.hoveredStore.set(undefined);
 		this.overlayManager.removeHoverRect();
+	}
+
+	simulateMove = (el: HTMLElement, newIndex: number) => {
+		this.dragManager.move(layersWeakMap.get(el), newIndex);
 	}
 
 	scrollElementIntoView(el: HTMLElement) {
