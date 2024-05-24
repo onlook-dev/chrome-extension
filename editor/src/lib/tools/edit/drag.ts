@@ -37,6 +37,17 @@ export class DragManager {
         });
     }
 
+    move(el: HTMLElement, oldIndex: number, newIndex: number) {
+        const parent = el.parentElement;
+        if (!parent) return;
+        const container = this.dragContainers.get(parent);
+        if (!container) return;
+        var order = container.toArray();
+        // Move child from oldIndex to newIndex 
+        order.splice(newIndex, 0, order.splice(oldIndex, 1)[0]);
+        container.sort(order, true);
+    }
+
     makeDraggable(el: HTMLElement) {
         if (this.dragContainers.has(el)) return;
         var container = Sortable.create(el, {

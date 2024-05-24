@@ -12,6 +12,7 @@
     layersPanelCollapsed,
     layersSelected,
     layersHovered,
+    layersWeakMap,
   } from "$lib/states/editor";
   import NodeIcon from "./NodeIcon.svelte";
 
@@ -79,6 +80,10 @@
   const paddingY = "py-1";
 
   onMount(() => {
+    if (!node || !nodeRef) return;
+    layersWeakMap.set(node, nodeRef);
+    layersWeakMap.set(nodeRef, node);
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {

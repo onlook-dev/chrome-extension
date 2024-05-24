@@ -1,7 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { writable, type Writable } from "svelte/store";
-  import { layersSelected, layersHovered } from "$lib/states/editor";
+  import {
+    layersSelected,
+    layersHovered,
+    layersWeakMap,
+  } from "$lib/states/editor";
   import type { EditTool } from "$lib/tools/edit";
 
   import TreeRoot from "./dom/TreeRoot.svelte";
@@ -11,7 +14,6 @@
 
   let htmlDoc: Document;
   let rootNode: HTMLElement;
-  let treeNodesSelected: Writable<HTMLElement[]> = writable([]);
   let selectedSnapshot: HTMLElement[] = [];
   let dragContainers: WeakMap<HTMLElement, any> = new WeakMap();
 
@@ -21,7 +23,7 @@
     editTool.selectorEngine.selectedStore.subscribe(handleNewSelections);
     editTool.selectorEngine.hoveredStore.subscribe(handleNewHover);
 
-    treeNodesSelected.subscribe((els) => {
+    layersSelected.subscribe((els) => {
       if (!els) return;
       const added = els.filter((el) => selectedSnapshot.includes(el) === false);
       const removed = selectedSnapshot.filter(
@@ -30,18 +32,24 @@
 
       // Remove container drag and drop
       removed.forEach((el) => {
-        if (!el) return;
-        const parent = el.parentElement;
+        if (!el || el === document.documentElement || el === document.body)
+          return;
+        const nodeRef = layersWeakMap.get(el);
+        if (!nodeRef) return;
+        const parent = nodeRef.parentElement;
         if (!parent) return;
         removeDraggable(parent);
       });
 
       // Make container drag and drop
       added.forEach((el) => {
-        if (!el || el === document.body || el === document.documentElement)
+        if (!el || el === document.documentElement || el === document.body)
           return;
+        const nodeRef = layersWeakMap.get(el);
+        if (!nodeRef) return;
+
         // Make parent draggable container
-        const parent = el.parentElement;
+        const parent = nodeRef.parentElement;
         if (!parent) return;
         makeDraggable(parent);
       });
@@ -56,14 +64,11 @@
     if (e.shiftKey) {
       if ($layersSelected.includes(node)) {
         $layersSelected = $layersSelected.filter((el) => el !== node);
-        $treeNodesSelected = $treeNodesSelected.filter((el) => el !== treeNode);
       } else {
         $layersSelected = [...$layersSelected, node];
-        $treeNodesSelected = [...$treeNodesSelected, treeNode];
       }
     } else {
       $layersSelected = [node];
-      $treeNodesSelected = [treeNode];
     }
     editTool.simulateClick($layersSelected);
   }
@@ -96,16 +101,18 @@
   }
 
   function makeDraggable(el: HTMLElement) {
+    console.log("Make draggable", el);
     if (dragContainers.has(el)) return;
     var container = Sortable.create(el, {
       animation: 150,
       easing: "cubic-bezier(0.215, 0.61, 0.355, 1)",
-      onStart: (e) => {},
-      onUpdate: (e) => {
+      onChange: (e) => {
         // Send event to editor
-      },
-      onEnd: (e) => {
-        // Send event to editor
+        editTool.simulateMove(
+          layersWeakMap.get(e.item),
+          e.oldIndex,
+          e.newIndex
+        );
       },
     });
     dragContainers.set(el, container);

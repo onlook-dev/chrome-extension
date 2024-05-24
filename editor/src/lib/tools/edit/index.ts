@@ -156,6 +156,10 @@ export class EditTool implements Tool {
 		this.overlayManager.removeHoverRect();
 	}
 
+	simulateMove = (el: HTMLElement, oldIndex: number, newIndex: number) => {
+		this.dragManager.move(el, oldIndex, newIndex);
+	}
+
 	scrollElementIntoView(el: HTMLElement) {
 		if (!el) return;
 		const rect = el.getBoundingClientRect();
