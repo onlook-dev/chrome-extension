@@ -1,11 +1,9 @@
-const { default: generate } = require('@babel/generator');
-const { parse } = require('@babel/parser');
-const traverse = require('@babel/traverse').default;
 const t = require('@babel/types');
-const { generateDataAttributeValue } = require("../shared/helpers.js");
+const { generateDataAttributeValue, getCurrentCommit } = require("../shared/helpers.js");
 const { DATA_ONLOOK_ID } = require("../shared/constants.js");
 
 module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = false }) {
+  const gitCommit = getCurrentCommit()
   return {
     visitor: {
       JSXElement(path, state) {
@@ -34,7 +32,7 @@ module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = f
         // Create the custom attribute
         const onlookAttribute = t.jSXAttribute(
           t.jSXIdentifier(DATA_ONLOOK_ID),
-          t.stringLiteral(attributeValue)
+          t.stringLiteral(attributeValue + gitCommit)
         );
 
         // Append the attribute to the element
