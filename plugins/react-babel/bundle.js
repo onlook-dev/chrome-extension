@@ -15224,9 +15224,28 @@ const { generateDataAttributeValue, getCurrentCommit } = helpers;
 const { DATA_ONLOOK_ID } = constants;
 
 var reactBabel = function babelPluginOnlook({ root = process.cwd(), absolute = false }) {
-  console.log("HI");
   const gitCommit = getCurrentCommit();
-  console.log("Git commit: ", gitCommit);
+  let snapshotAdded = false;
+  function addDivToBody(path) {
+    if (snapshotAdded) return
+    if (path.node.openingElement.name.name === 'body' || path.node.openingElement.name.name === 'div') {
+      // Create the new div element
+      const newDiv = lib.jSXElement(
+        lib.jSXOpeningElement(lib.jSXIdentifier("div"), [
+          lib.jSXAttribute(lib.jSXIdentifier("id"), lib.stringLiteral("onlook-meta")),
+          lib.jSXAttribute(lib.jSXIdentifier("data-onlook-snapshot"), lib.stringLiteral(gitCommit)),
+        ]),
+        lib.jSXClosingElement(lib.jSXIdentifier("div")),
+        [],
+        false
+      );
+
+      // Append the new div element as a child
+      path.node.children.push(newDiv);
+      snapshotAdded = true;
+    }
+  }
+
   return {
     visitor: {
       JSXElement(path, state) {
@@ -15235,6 +15254,13 @@ var reactBabel = function babelPluginOnlook({ root = process.cwd(), absolute = f
 
         // Ignore node_modules
         if (filename.startsWith(nodeModulesPath)) {
+          return;
+        }
+
+        addDivToBody(path);
+
+        // Ensure `loc` exists before accessing its properties
+        if (!path.node.openingElement.loc || !path.node.openingElement.loc.start || !path.node.openingElement.loc.end) {
           return;
         }
 
@@ -15255,12 +15281,12 @@ var reactBabel = function babelPluginOnlook({ root = process.cwd(), absolute = f
         // Create the custom attribute
         const onlookAttribute = lib.jSXAttribute(
           lib.jSXIdentifier(DATA_ONLOOK_ID),
-          lib.stringLiteral(attributeValue + gitCommit)
+          lib.stringLiteral(attributeValue)
         );
 
         // Append the attribute to the element
         path.node.openingElement.attributes.push(onlookAttribute);
-      },
+      }
     },
   };
 };
