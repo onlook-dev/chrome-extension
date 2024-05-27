@@ -9,18 +9,18 @@ module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = f
     if (snapshotAdded) return
     if (path.node.openingElement.name.name === 'body' || path.node.openingElement.name.name === 'div') {
       // Create the new div element
-      const newDiv = t.jSXElement(
-        t.jSXOpeningElement(t.jSXIdentifier("div"), [
-          t.jSXAttribute(t.jSXIdentifier("id"), t.stringLiteral("onlook-meta")),
+      const onlookMeta = t.jSXElement(
+        t.jSXOpeningElement(t.jSXIdentifier("input"), [
+          t.jSXAttribute(t.jSXIdentifier("type"), t.stringLiteral("hidden")),
           t.jSXAttribute(t.jSXIdentifier("data-onlook-snapshot"), t.stringLiteral(gitCommit)),
         ]),
-        t.jSXClosingElement(t.jSXIdentifier("div")),
+        null, // self-closing tag
         [],
-        false
+        true
       );
 
       // Append the new div element as a child
-      path.node.children.push(newDiv);
+      path.node.children.push(onlookMeta);
       snapshotAdded = true
     }
   }

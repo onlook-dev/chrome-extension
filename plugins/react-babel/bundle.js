@@ -15230,18 +15230,18 @@ var reactBabel = function babelPluginOnlook({ root = process.cwd(), absolute = f
     if (snapshotAdded) return
     if (path.node.openingElement.name.name === 'body' || path.node.openingElement.name.name === 'div') {
       // Create the new div element
-      const newDiv = lib.jSXElement(
-        lib.jSXOpeningElement(lib.jSXIdentifier("div"), [
-          lib.jSXAttribute(lib.jSXIdentifier("id"), lib.stringLiteral("onlook-meta")),
+      const onlookMeta = lib.jSXElement(
+        lib.jSXOpeningElement(lib.jSXIdentifier("input"), [
+          lib.jSXAttribute(lib.jSXIdentifier("type"), lib.stringLiteral("hidden")),
           lib.jSXAttribute(lib.jSXIdentifier("data-onlook-snapshot"), lib.stringLiteral(gitCommit)),
         ]),
-        lib.jSXClosingElement(lib.jSXIdentifier("div")),
+        null, // self-closing tag
         [],
-        false
+        true
       );
 
       // Append the new div element as a child
-      path.node.children.push(newDiv);
+      path.node.children.push(onlookMeta);
       snapshotAdded = true;
     }
   }
