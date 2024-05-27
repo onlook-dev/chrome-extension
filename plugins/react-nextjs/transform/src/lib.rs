@@ -33,6 +33,13 @@ impl Config {
             _ => false,
         }
     }
+
+    pub fn commit_hash(&self) -> Option<&str> {
+        match self {
+            Config::WithOptions(opts) => opts.commit_hash.as_deref(),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -41,6 +48,8 @@ pub struct Options {
     pub project_root: String,
     #[serde(default)]
     pub absolute: bool,
+    #[serde(rename = "commit")]
+    pub commit_hash: Option<String>,
 }
 
 pub fn preprocess(config: Config, source_map: Arc<dyn SourceMapper>) -> impl Fold {
@@ -113,9 +122,12 @@ impl Fold for AddProperties {
         if !SNAPSHOT_ADDED.load(Ordering::Relaxed) {
             if let JSXElementName::Ident(ident) = &el.opening.name {
                 if ident.sym == *"body" {
-                    let hidden_input = create_hidden_input(el.span);
-                    el.children
-                        .push(JSXElementChild::JSXElement(Box::new(hidden_input)));
+                    if let Some(git_commit) = self.config.commit_hash() {
+                        let hidden_input = create_hidden_input(el.span, git_commit.to_string());
+                        el.children
+                            .push(JSXElementChild::JSXElement(Box::new(hidden_input)));
+                    }
+
                     SNAPSHOT_ADDED.store(true, Ordering::Relaxed);
                 }
             }

@@ -2,11 +2,6 @@ use std::path::PathBuf;
 use swc_common::{SourceMapper, Span};
 use swc_ecma_ast::*;
 
-pub fn get_current_commit() -> Option<String> {
-    // Mock function to get the current commit. Replace with actual implementation.
-    Some("mock_commit_hash".into())
-}
-
 pub fn generate_data_attribute_value(
     project_root: &PathBuf,
     path: &str,
@@ -54,9 +49,7 @@ pub fn get_closing_end(
     end_line
 }
 
-pub fn create_hidden_input(span: Span) -> JSXElement {
-    let git_commit = get_current_commit().unwrap_or_else(|| "unknown".into());
-
+pub fn create_hidden_input(span: Span, git_commit: String) -> JSXElement {
     JSXElement {
         span,
         opening: JSXOpeningElement {
