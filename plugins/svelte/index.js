@@ -4,14 +4,17 @@ import fs from "fs";
 
 import { parse, walk } from "svelte/compiler";
 import { DATA_ONLOOK_ID } from "../shared/constants.js";
-import { generateDataAttributeValue } from "../shared/helpers.js";
+import { generateDataAttributeValue, getCurrentCommit } from "../shared/helpers.js";
 
-export const onlookPreprocess = ({ root = path.resolve('.'), absolute = false }) => {
+export const onlookPreprocess = ({ root = path.resolve('.'), absolute = false, commit_hash = getCurrentCommit() }) => {
   return {
     markup: ({ content, filename }) => {
+      let snapshotAdded = false;
       const nodeModulesPath = path.resolve(root, "node_modules");
+      const sveltekitPath = path.resolve(root, ".svelte-kit");
+
       // Ignore node_modules
-      if (filename.startsWith(nodeModulesPath)) {
+      if (filename.startsWith(nodeModulesPath) || filename.startsWith(sveltekitPath)) {
         return { code: content };
       }
 
@@ -49,7 +52,6 @@ export const onlookPreprocess = ({ root = path.resolve('.'), absolute = false })
             const lineEnd =
               content.slice(0, endOfOpeningTag).split("\n").length + offset;
 
-
             // Find the position to insert the attribute
             const startTagEnd = node.start + node.name.length + 1;
             const attributeValue = generateDataAttributeValue(
@@ -62,10 +64,15 @@ export const onlookPreprocess = ({ root = path.resolve('.'), absolute = false })
             );
             const attributeName = `${DATA_ONLOOK_ID}='${attributeValue}'`;
             s.appendLeft(startTagEnd, ` ${attributeName}`);
+
+            if (!snapshotAdded && node.name === "div" && commit_hash) {
+              const hiddenInput = `<input type="hidden" data-onlook-snapshot="${commit_hash}" />`;
+              s.append(`\n${hiddenInput}`);
+              snapshotAdded = true;
+            }
           }
         },
       });
-
       return {
         code: s.toString(),
         map: s.generateMap({ hires: true }),

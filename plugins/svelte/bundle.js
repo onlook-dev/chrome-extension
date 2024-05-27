@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { parse, walk } from 'svelte/compiler';
+import { execSync } from 'child_process';
 
 const comma = ','.charCodeAt(0);
 const semicolon = ';'.charCodeAt(0);
@@ -1299,12 +1300,25 @@ function generateDataAttributeValue(filePath, lineStart, lineEnd, lineClosing, r
   return `${relativeFilePath}:${lineStart}:${lineEnd}:${lineClosing}`;
 }
 
-const onlookPreprocess = ({ root = path.resolve('.'), absolute = false }) => {
+function getCurrentCommit() {
+  try {
+    const stdout = execSync('git rev-parse HEAD');
+    return stdout.toString().trim();
+  } catch (err) {
+    // Not a git repository or some other error occurred
+    return null;
+  }
+}
+
+const onlookPreprocess = ({ root = path.resolve('.'), absolute = false, commit_hash = getCurrentCommit() }) => {
   return {
     markup: ({ content, filename }) => {
+      let snapshotAdded = false;
       const nodeModulesPath = path.resolve(root, "node_modules");
+      const sveltekitPath = path.resolve(root, ".svelte-kit");
+
       // Ignore node_modules
-      if (filename.startsWith(nodeModulesPath)) {
+      if (filename.startsWith(nodeModulesPath) || filename.startsWith(sveltekitPath)) {
         return { code: content };
       }
 
@@ -1342,7 +1356,6 @@ const onlookPreprocess = ({ root = path.resolve('.'), absolute = false }) => {
             const lineEnd =
               content.slice(0, endOfOpeningTag).split("\n").length + offset;
 
-
             // Find the position to insert the attribute
             const startTagEnd = node.start + node.name.length + 1;
             const attributeValue = generateDataAttributeValue(
@@ -1355,10 +1368,15 @@ const onlookPreprocess = ({ root = path.resolve('.'), absolute = false }) => {
             );
             const attributeName = `${DATA_ONLOOK_ID}='${attributeValue}'`;
             s.appendLeft(startTagEnd, ` ${attributeName}`);
+
+            if (!snapshotAdded && node.name === "div" && commit_hash) {
+              const hiddenInput = `<input type="hidden" data-onlook-snapshot="${commit_hash}" />`;
+              s.append(`\n${hiddenInput}`);
+              snapshotAdded = true;
+            }
           }
         },
       });
-
       return {
         code: s.toString(),
         map: s.generateMap({ hires: true }),

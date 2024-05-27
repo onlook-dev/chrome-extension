@@ -4,7 +4,8 @@ const { DATA_ONLOOK_ID } = require("../shared/constants.js");
 
 module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = false }) {
   let snapshotAdded = false
-  function addDivToBody(path) {
+
+  function addSnapshotElement(path) {
     if (snapshotAdded) return
     if (path.node.openingElement.name.name === 'body' || path.node.openingElement.name.name === 'div') {
       const gitCommit = getCurrentCommit()
@@ -37,7 +38,7 @@ module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = f
           return;
         }
 
-        addDivToBody(path);
+        addSnapshotElement(path);
 
         // Ensure `loc` exists before accessing its properties
         if (!path.node.openingElement.loc || !path.node.openingElement.loc.start || !path.node.openingElement.loc.end) {
