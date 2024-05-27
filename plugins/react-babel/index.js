@@ -3,24 +3,25 @@ const { generateDataAttributeValue, getCurrentCommit } = require("../shared/help
 const { DATA_ONLOOK_ID } = require("../shared/constants.js");
 
 module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = false }) {
-  const gitCommit = getCurrentCommit()
   let snapshotAdded = false
   function addDivToBody(path) {
     if (snapshotAdded) return
     if (path.node.openingElement.name.name === 'body' || path.node.openingElement.name.name === 'div') {
-      // Create the new div element
-      const onlookMeta = t.jSXElement(
-        t.jSXOpeningElement(t.jSXIdentifier("input"), [
-          t.jSXAttribute(t.jSXIdentifier("type"), t.stringLiteral("hidden")),
-          t.jSXAttribute(t.jSXIdentifier("data-onlook-snapshot"), t.stringLiteral(gitCommit)),
-        ]),
-        null, // self-closing tag
-        [],
-        true
-      );
-
-      // Append the new div element as a child
-      path.node.children.push(onlookMeta);
+      const gitCommit = getCurrentCommit()
+      if (gitCommit) {
+        // Create the new metadata element
+        const onlookMeta = t.jSXElement(
+          t.jSXOpeningElement(t.jSXIdentifier("input"), [
+            t.jSXAttribute(t.jSXIdentifier("type"), t.stringLiteral("hidden")),
+            t.jSXAttribute(t.jSXIdentifier("data-onlook-snapshot"), t.stringLiteral(gitCommit)),
+          ]),
+          null, // self-closing tag
+          [],
+          true
+        );
+        // Append the new div element as a child
+        path.node.children.push(onlookMeta);
+      }
       snapshotAdded = true
     }
   }

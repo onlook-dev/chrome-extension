@@ -15224,24 +15224,25 @@ const { generateDataAttributeValue, getCurrentCommit } = helpers;
 const { DATA_ONLOOK_ID } = constants;
 
 var reactBabel = function babelPluginOnlook({ root = process.cwd(), absolute = false }) {
-  const gitCommit = getCurrentCommit();
   let snapshotAdded = false;
   function addDivToBody(path) {
     if (snapshotAdded) return
     if (path.node.openingElement.name.name === 'body' || path.node.openingElement.name.name === 'div') {
-      // Create the new div element
-      const onlookMeta = lib.jSXElement(
-        lib.jSXOpeningElement(lib.jSXIdentifier("input"), [
-          lib.jSXAttribute(lib.jSXIdentifier("type"), lib.stringLiteral("hidden")),
-          lib.jSXAttribute(lib.jSXIdentifier("data-onlook-snapshot"), lib.stringLiteral(gitCommit)),
-        ]),
-        null, // self-closing tag
-        [],
-        true
-      );
-
-      // Append the new div element as a child
-      path.node.children.push(onlookMeta);
+      const gitCommit = getCurrentCommit();
+      if (gitCommit) {
+        // Create the new metadata element
+        const onlookMeta = lib.jSXElement(
+          lib.jSXOpeningElement(lib.jSXIdentifier("input"), [
+            lib.jSXAttribute(lib.jSXIdentifier("type"), lib.stringLiteral("hidden")),
+            lib.jSXAttribute(lib.jSXIdentifier("data-onlook-snapshot"), lib.stringLiteral(gitCommit)),
+          ]),
+          null, // self-closing tag
+          [],
+          true
+        );
+        // Append the new div element as a child
+        path.node.children.push(onlookMeta);
+      }
       snapshotAdded = true;
     }
   }
