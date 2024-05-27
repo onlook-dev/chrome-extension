@@ -1,11 +1,32 @@
-const { default: generate } = require('@babel/generator');
-const { parse } = require('@babel/parser');
-const traverse = require('@babel/traverse').default;
 const t = require('@babel/types');
-const { generateDataAttributeValue } = require("../shared/helpers.js");
+const { generateDataAttributeValue, getCurrentCommit } = require("../shared/helpers.js");
 const { DATA_ONLOOK_ID } = require("../shared/constants.js");
 
 module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = false }) {
+  let snapshotAdded = false
+
+  function addSnapshotElement(path) {
+    if (snapshotAdded) return
+    if (path.node.openingElement.name.name === 'body' || path.node.openingElement.name.name === 'div') {
+      const gitCommit = getCurrentCommit()
+      if (gitCommit) {
+        // Create the new metadata element
+        const onlookMeta = t.jSXElement(
+          t.jSXOpeningElement(t.jSXIdentifier("input"), [
+            t.jSXAttribute(t.jSXIdentifier("type"), t.stringLiteral("hidden")),
+            t.jSXAttribute(t.jSXIdentifier("data-onlook-snapshot"), t.stringLiteral(gitCommit)),
+          ]),
+          null, // self-closing tag
+          [],
+          true
+        );
+        // Append the new div element as a child
+        path.node.children.push(onlookMeta);
+      }
+      snapshotAdded = true
+    }
+  }
+
   return {
     visitor: {
       JSXElement(path, state) {
@@ -14,6 +35,13 @@ module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = f
 
         // Ignore node_modules
         if (filename.startsWith(nodeModulesPath)) {
+          return;
+        }
+
+        addSnapshotElement(path);
+
+        // Ensure `loc` exists before accessing its properties
+        if (!path.node.openingElement.loc || !path.node.openingElement.loc.start || !path.node.openingElement.loc.end) {
           return;
         }
 
@@ -39,7 +67,7 @@ module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = f
 
         // Append the attribute to the element
         path.node.openingElement.attributes.push(onlookAttribute);
-      },
+      }
     },
   };
 };

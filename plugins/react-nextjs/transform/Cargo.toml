@@ -3,7 +3,7 @@ authors         = ["Kiet Ho"]
 description     = "AST Transforms for import modularizer"
 edition         = "2021"
 license         = "Apache-2.0"
-name            = "onlook_react"
+name            = "onlook"
 repository      = "https://github.com/swc-project/plugins.git"
 version         = "1.0.0"
 

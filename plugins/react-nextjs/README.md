@@ -5,23 +5,23 @@
 1. Install preprocessor library
 
 ```bash
-npm i --save-dev @onlook/nextjs
+npm i --save-dev @onlook/nextjs @onlook/helpers
 ```
 
 2. Update `next.config.mjs` or `next.config.js`
 
 ```js
-// Import path
 import path from "path";
+import { getCurrentCommit } from "@onlook/helpers";
 
 const nextConfig = {
-  // Add preprocessor
+  reactStrictMode: true,
   experimental: {
-    swcPlugins: [["@onlook/nextjs", { root: path.resolve(".") }]],
+    swcPlugins: [["@onlook/nextjs", { root: path.resolve("."), commit: getCurrentCommit() }]],
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
 ```
 
 For more, see: https://nextjs.org/docs/pages/api-reference/next-config-js

@@ -1,4 +1,4 @@
-use onlook_react::Options;
+use onlook::Options;
 use std::path::PathBuf;
 use swc_common::FileName;
 use swc_common::{chain, Mark};
@@ -25,13 +25,13 @@ fn fixture(input: PathBuf) {
             let file_name = FileName::Real(input.clone()).to_string();
             chain!(
                 resolver(unresolved_mark, top_level_mark, false),
-                onlook_react::onlook_react(
+                onlook::onlook(
                     if input.to_string_lossy().contains("custom") {
-                        onlook_react::Config::WithOptions(Options {
+                        onlook::Config::WithOptions(Options {
                             properties: vec!["^data-custom$".into()],
                         })
                     } else {
-                        onlook_react::Config::All(true)
+                        onlook::Config::All(true)
                     },
                     file_name,
                     source_map
