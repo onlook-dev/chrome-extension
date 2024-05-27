@@ -1,9 +1,16 @@
+mod helpers;
+use helpers::{
+    create_hidden_input, generate_data_attribute_value, get_closing_end, get_opening_start_and_end,
+};
 use serde::Deserialize;
 use std::path::PathBuf;
 use std::sync::Arc;
 use swc_common::SourceMapper;
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_fold_type, Fold, FoldWith};
+
+use std::sync::atomic::{AtomicBool, Ordering};
+static SNAPSHOT_ADDED: AtomicBool = AtomicBool::new(false);
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(untagged)]
@@ -36,8 +43,8 @@ pub struct Options {
     pub absolute: bool,
 }
 
-pub fn onlook_react(config: Config, source_map: Arc<dyn SourceMapper>) -> impl Fold {
-    AddProperties { config, source_map }
+pub fn preprocess(config: Config, source_map: Arc<dyn SourceMapper>) -> impl Fold {
+    AddProperties::new(config, source_map)
 }
 
 struct AddProperties {
@@ -45,7 +52,11 @@ struct AddProperties {
     source_map: Arc<dyn SourceMapper>,
 }
 
-impl AddProperties {}
+impl AddProperties {
+    fn new(config: Config, source_map: Arc<dyn SourceMapper>) -> Self {
+        Self { config, source_map }
+    }
+}
 
 impl Fold for AddProperties {
     noop_fold_type!();
@@ -82,7 +93,7 @@ impl Fold for AddProperties {
             self.config.absolute(),
         );
 
-        let class_name_attr: JSXAttrOrSpread = JSXAttrOrSpread::JSXAttr(JSXAttr {
+        let data_attribute = JSXAttrOrSpread::JSXAttr(JSXAttr {
             span: el.span,
             name: JSXAttrName::Ident(Ident {
                 sym: "data-onlook-id".into(),
@@ -96,54 +107,20 @@ impl Fold for AddProperties {
             }))),
         });
 
-        el.opening.attrs.push(class_name_attr);
+        el.opening.attrs.push(data_attribute);
+
+        // Add hidden input with commit info if not added already
+        if !SNAPSHOT_ADDED.load(Ordering::Relaxed) {
+            if let JSXElementName::Ident(ident) = &el.opening.name {
+                if ident.sym == *"body" {
+                    let hidden_input = create_hidden_input(el.span);
+                    el.children
+                        .push(JSXElementChild::JSXElement(Box::new(hidden_input)));
+                    SNAPSHOT_ADDED.store(true, Ordering::Relaxed);
+                }
+            }
+        }
+
         el
     }
-}
-
-fn get_opening_start_and_end(
-    source_mapper: &dyn SourceMapper,
-    el: JSXOpeningElement,
-    offset: usize,
-) -> (usize, usize) {
-    let span_lines = source_mapper.span_to_lines(el.span).unwrap().lines;
-    let start_line: usize = span_lines[0].line_index + offset;
-    let end_line: usize = span_lines.last().unwrap().line_index + offset;
-    (start_line, end_line)
-}
-
-fn get_closing_end(
-    source_mapper: &dyn SourceMapper,
-    el: JSXClosingElement,
-    offset: usize,
-) -> usize {
-    let span_lines = source_mapper.span_to_lines(el.span).unwrap().lines;
-    let end_line: usize = span_lines.last().unwrap().line_index + offset;
-    end_line
-}
-
-fn generate_data_attribute_value(
-    project_root: &PathBuf,
-    path: &str,
-    opening_start: usize,
-    opening_end: usize,
-    closing_end: usize,
-    absolute: bool,
-) -> String {
-    if absolute {
-        return format!("{}:{}:{}:{}", path, opening_start, opening_end, closing_end);
-    }
-
-    // Get relative path
-    let abs_path_buf: PathBuf = PathBuf::from(path);
-    let relative_path: String = abs_path_buf
-        .strip_prefix(&project_root)
-        .unwrap_or_else(|_| &abs_path_buf)
-        .to_string_lossy()
-        .to_string();
-
-    format!(
-        "{}:{}:{}:{}",
-        relative_path, opening_start, opening_end, closing_end
-    )
 }
