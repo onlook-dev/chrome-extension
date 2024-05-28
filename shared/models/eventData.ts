@@ -9,5 +9,4 @@ export enum EventMetadataType {
   BROWSER = "browser",
   OS = "os",
   TIME_STAMP = "time-stamp",
-  SOURCE_MAP_ID = "data-onlook-id",
 }

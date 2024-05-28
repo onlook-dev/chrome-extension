@@ -66,6 +66,7 @@ export class EditEventService {
         status: ActivityStatus.EDITED,
         selector: editEvent.selector,
         path: editEvent.path,
+        snapshot: editEvent.snapshot,
         styleChanges: {},
         textChange: {},
         insertChange: {},

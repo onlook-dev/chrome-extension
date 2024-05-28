@@ -1,4 +1,4 @@
-import { DATA_ONLOOK_ID, ONLOOK_TOOLBAR } from '$shared/constants'
+import { DATA_ONLOOK_ID, DATA_ONLOOK_SNAPSHOT, ONLOOK_TOOLBAR } from '$shared/constants'
 import { finder } from '$lib/tools/selection/uniqueSelector'
 
 export const deepElementFromPoint = (x, y): HTMLElement => {
@@ -82,6 +82,15 @@ export const getUniqueSelector = (el: HTMLElement): string => {
     console.error("Error creating selector ", e);
   }
   return selector
+}
+
+export const getSnapshot = (el: HTMLElement): string | undefined => {
+  let snapshotEl = el.closest(`[${DATA_ONLOOK_SNAPSHOT}]`) as HTMLElement
+  // Search entire document 
+  if (!snapshotEl) {
+    snapshotEl = document.querySelector(`[${DATA_ONLOOK_SNAPSHOT}]`) as HTMLElement
+  }
+  return snapshotEl?.dataset.onlookSnapshot
 }
 
 export const rehoistPopovers = () => {
