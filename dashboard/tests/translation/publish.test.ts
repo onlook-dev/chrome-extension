@@ -30,7 +30,7 @@ describe('ProjectPublisher', () => {
       trackMixpanelEvent: () => { }
     }));
 
-    mock.module("$shared/models/projectSettings", () => ({
+    mock.module("$shared/models", () => ({
       StyleFramework: {}
     }));
 

@@ -13,7 +13,8 @@
     "docker": "cd hosted && npm run build",
     "check": "cd dashboard && npm run check && cd ../editor && npm run check && cd ../extension && npm run check",
     "check:watch": "concurrently --kill-others \"cd dashboard && npm run check:watch\" \"cd extension && npm run check:watch\" \"cd editor && npm run check:watch\"",
-    "test": "cd dashboard && bun test && cd ../editor && bun test && cd ../extension && bun test"
+    "test": "cd dashboard && bun test && cd ../editor && bun test && cd ../extension && bun test",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
   },
   "homepage": "https://github.com/onlook-dev/monorepo#readme",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "husky": "^9.0.11"
   }
 }
