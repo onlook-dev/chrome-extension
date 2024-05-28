@@ -95,7 +95,7 @@ describe('ProjectPublisher', () => {
 
   test('should get correct change if nothing updated', async () => {
     const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
-    const fileContent = await publisher.updateFileWithActivity(mockProcessedActivity, mockFileContent);
+    const fileContent = await publisher.updateFileWithActivities([mockProcessedActivity], mockFileContent);
     expect(fileContent).toEqual(mockFileContent)
   });
 
@@ -117,7 +117,7 @@ describe('ProjectPublisher', () => {
       }
     }));
     const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
-    const fileContent = await publisher.updateFileWithActivity(mockProcessedActivity, mockFileContent);
+    const fileContent = await publisher.updateFileWithActivities([mockProcessedActivity], mockFileContent);
     expect(fileContent.content).toEqual(expectedTextInput)
   });
 
@@ -134,7 +134,7 @@ describe('ProjectPublisher', () => {
       }
     }));
     const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
-    const fileContent = await publisher.updateFileWithActivity(mockProcessedActivity, mockFileContent);
+    const fileContent = await publisher.updateFileWithActivities([mockProcessedActivity], mockFileContent);
     expect(fileContent.content).toEqual(expectedTextInput)
   });
 
@@ -157,7 +157,100 @@ describe('ProjectPublisher', () => {
     }));
 
     const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
-    const fileContent = await publisher.updateFileWithActivity(mockProcessedActivity, mockFileContent);
+    const fileContent = await publisher.updateFileWithActivities([mockProcessedActivity], mockFileContent);
     expect(fileContent.content).toEqual(expectedFileContent);
   });
+
+
+  test('should handle multiple activities consecutively on the same file with multiple DOM elements', async () => {
+
+
+    const originalFileContent = {
+      path: 'mockPath',
+      sha: 'mockSha',
+      content: `<div 
+    class='bg-red'
+>
+    Old Div Text
+</div>
+<span 
+    class='text-red'
+>
+    Old Span Text
+</span>`,
+    }
+
+    const mockActivity1 = {
+      id: 'mockActivityId1',
+      styleChanges: {
+        color: { key: 'color', newVal: 'yellow', oldVal: 'red' },
+      },
+      textChanges: {
+        text: { newVal: 'Updated Div Text', oldVal: 'Old Div Text' },
+      },
+    }
+
+    const mockProcessedActivity1 = {
+      activity: mockActivity1,
+      pathInfo: { path: 'mockPath', startLine: 1, startTagEndLine: 3, endLine: 5 },
+    } as any
+
+    const mockActivity2 = {
+      id: 'mockActivityId2',
+      styleChanges: {
+        color: { key: 'color', newVal: 'green', oldVal: 'red' },
+      },
+      textChanges: {
+        text: { newVal: 'Updated Span Text', oldVal: 'Old Span Text' },
+      },
+    }
+
+    const mockProcessedActivity2 = {
+      activity: mockActivity2,
+      pathInfo: { path: 'mockPath', startLine: 6, startTagEndLine: 8, endLine: 10 },
+    } as any
+
+
+    const updatedStyleCode1 = `<div class='bg-yellow'>`
+    const updatedTextCode1 = `<div 
+    class='bg-red'
+>
+    Updated Div Text
+</div>`
+    const updatedStyleCode2 = `<span 
+    class='text-green'
+>`
+    const updatedTextCode2 = `<span 
+    class='text-red'
+>
+    Updated Span Text
+</span>`
+    const expectedFileContent = `<div class='bg-yellow'>
+    Updated Div Text
+</div>
+<span 
+    class='text-green'
+>
+    Updated Span Text
+</span>`
+
+    mock.module("$lib/translation", () => ({
+      TranslationService: class {
+        async getStyleTranslation(content: any) {
+          if (content.code === "<div \n    class='bg-red'\n>") return updatedStyleCode1;
+          return updatedStyleCode2;
+        }
+        async getTextTranslation(content: any) {
+          if (content.oldText === "Old Div Text") return updatedTextCode1;
+          return updatedTextCode2;
+        }
+      }
+    }));
+
+    const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
+
+    let fileContent = await publisher.updateFileWithActivities([mockProcessedActivity1, mockProcessedActivity2], originalFileContent);
+    expect(fileContent.content).toEqual(expectedFileContent);
+  });
+
 });

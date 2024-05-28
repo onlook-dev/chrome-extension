@@ -80,21 +80,35 @@ export class ProjectPublisher extends EventEmitter {
         }
       })
 
-      for (const [index, processed] of this.processedActivities.entries()) {
-        const fileContent = await this.getFileFromActivity(processed);
+      let processedCount = 0;
+      const activitiesByFile = new Map<string, ProcessedActivity[]>();
 
-        // Save original file
-        if (!this.beforeMap.get(processed.pathInfo.path)) {
-          this.beforeMap.set(processed.pathInfo.path, { ...fileContent });
+      // Group all processed activities together
+      for (const processed of this.processedActivities) {
+        let processedActivities = activitiesByFile.get(processed.pathInfo.path);
+        if (!processedActivities) {
+          processedActivities = [];
+        }
+        processedActivities.push(processed);
+        activitiesByFile.set(processed.pathInfo.path, processedActivities);
+      }
+
+      for (const [path, activities] of activitiesByFile.entries()) {
+        const fileContent = await this.getFileFromActivity(activities[0]);
+
+        if (!this.beforeMap.get(path)) {
+          this.beforeMap.set(path, { ...fileContent });
         }
 
-        const newFileContent = await this.updateFileWithActivity(processed, fileContent);
-        this.filesMap.set(processed.pathInfo.path, newFileContent);
+        const newFileContent = await this.updateFileWithActivities(activities, fileContent);
+
+        this.filesMap.set(path, newFileContent);
+        processedCount += activities.length;
 
         this.emitEvent({
           type: ProjectPublisherEventType.TRANSLATING,
           progress: {
-            processed: index + 1,
+            processed: processedCount,
             total: this.processedActivities.length
           }
         })
@@ -144,7 +158,7 @@ export class ProjectPublisher extends EventEmitter {
     );
   }
 
-  async updateFileWithActivity(processed: ProcessedActivity, fileContent: FileContentData) {
+  async updateFileWithActivities(processedActivities: ProcessedActivity[], fileContent: FileContentData) {
     /*
       1. Get translation input
       2. For each change types (style, text, component)
@@ -156,16 +170,18 @@ export class ProjectPublisher extends EventEmitter {
     const dmp = new DiffMatchPatch();
     let patches: (new () => DiffMatchPatch.patch_obj)[] = [];
 
-    // Process style changes
-    if (processed.activity.styleChanges) {
-      const stylePatches = await this.processStyleChanges(processed, fileContent.content);
-      patches = patches.concat(stylePatches);
-    }
+    for (const processed of processedActivities) {
+      // Process style changes
+      if (processed.activity.styleChanges) {
+        const stylePatches = await this.processStyleChanges(processed, fileContent.content);
+        patches = patches.concat(stylePatches);
+      }
 
-    // Process text changes
-    if (processed.activity.textChanges) {
-      const textPatches = await this.processTextChanges(processed, fileContent.content);
-      patches = patches.concat(textPatches);
+      // Process text changes
+      if (processed.activity.textChanges) {
+        const textPatches = await this.processTextChanges(processed, fileContent.content);
+        patches = patches.concat(textPatches);
+      }
     }
 
     // Apply patches to content
