@@ -30,7 +30,7 @@ describe('ProjectPublisher', () => {
       trackMixpanelEvent: () => { }
     }));
 
-    mock.module("$shared/models/projectSettings", () => ({
+    mock.module("$shared/models", () => ({
       StyleFramework: {}
     }));
 
@@ -177,6 +177,7 @@ class='bg-red'
         }
       }
     }));
+    console.log(ProjectPublisher)
     const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
     const fileContent = await publisher.updateFileWithActivity(mockProcessedActivity, mockFileContent);
     expect(fileContent.content).toBe(expectedTextInput)
