@@ -1,13 +1,15 @@
 import { GithubService } from "$lib/github";
 import { TranslationService } from "$lib/translation";
 import { GithubSettings, Project } from "$shared/models";
-import { getProcessedActivities, updateContentChunk } from "./helpers";
+import { getProcessedActivities } from "./helpers";
 import { getStyleTranslationInput, getTextTranslationInput } from "./inputs";
 import { trackMixpanelEvent } from "$lib/mixpanel/client";
-
-import type { User, FileContentData, PathInfo, ProcessedActivity } from "$shared/models";
 import { StyleFramework } from "$shared/models";
+
+import type { User, FileContentData, ProcessedActivity } from "$shared/models";
+
 import EventEmitter from 'events';
+import DiffMatchPatch from 'diff-match-patch';
 
 export enum ProjectPublisherEventType {
   TRANSLATING = 'TRANSLATING',
@@ -30,6 +32,7 @@ export class ProjectPublisher extends EventEmitter {
   private translationService: TranslationService;
   private processedActivities: ProcessedActivity[];
   private forceTailwind = false;
+  private diffMatchPatch = new DiffMatchPatch();
 
   EMIT_EVENT_NAME = 'update';
 
@@ -150,75 +153,49 @@ export class ProjectPublisher extends EventEmitter {
       3. Return content
     */
 
-    // Offsets for lines added or removed when reading and writing to files
-    let offset = 0;
-    let updatedContent = fileContent.content;
+    const dmp = new DiffMatchPatch();
+    let patches: (new () => DiffMatchPatch.patch_obj)[] = [];
 
     // Process style changes
     if (processed.activity.styleChanges) {
-      const { newContent, newOffset } = await this.processStyleChanges(processed, updatedContent, offset);
-      updatedContent = newContent;
-      offset += newOffset;
+      const stylePatches = await this.processStyleChanges(processed, fileContent.content);
+      patches = patches.concat(stylePatches);
     }
 
     // Process text changes
     if (processed.activity.textChanges) {
-      const { newContent, newOffset } = await this.processTextChanges(processed, updatedContent, offset);
-      updatedContent = newContent;
-      offset += newOffset;
+      const textPatches = await this.processTextChanges(processed, fileContent.content);
+      patches = patches.concat(textPatches);
     }
 
-    fileContent.content = updatedContent;
-    return fileContent;
+    // Apply patches to content
+    const result = dmp.patch_apply(patches, fileContent.content);
+    return {
+      ...fileContent,
+      content: result[0]
+    }
   }
 
-  async processStyleChanges(processed: ProcessedActivity, content: string, offset: number = 0) {
-    const newPathInfo = {
-      ...processed.pathInfo,
-      startTagEndLine: processed.pathInfo.startTagEndLine + offset,
-      endLine: processed.pathInfo.endLine + offset,
-    } as PathInfo;
-
-    const input = getStyleTranslationInput(content, newPathInfo, processed.activity);
+  async processStyleChanges(processed: ProcessedActivity, content: string) {
+    const input = getStyleTranslationInput(content, processed.pathInfo, processed.activity);
     const newCode = await this.translationService.getStyleTranslation({
       code: input.code,
       css: input.css,
       framework: input.framework,
       tailwind: input.tailwind,
     }, this.forceTailwind ? StyleFramework.TailwindCSS : this.project.projectSettings?.styleFramework);
-    const newContent = updateContentChunk(
-      content,
-      newCode,
-      newPathInfo,
-      false
-    );
-    const newOffset = offset + newCode.split('\n').length - input.code.split('\n').length;
-    return { newContent, newOffset };
+    return this.diffMatchPatch.patch_make(input.code, newCode);
   }
 
-  async processTextChanges(processed: ProcessedActivity, content: string, offset: number = 0) {
-    const newPathInfo = {
-      ...processed.pathInfo,
-      startTagEndLine: processed.pathInfo.startTagEndLine + offset,
-      endLine: processed.pathInfo.endLine + offset,
-    } as PathInfo;
-
-    const input = getTextTranslationInput(content, newPathInfo, processed.activity);
+  async processTextChanges(processed: ProcessedActivity, content: string) {
+    const input = getTextTranslationInput(content, processed.pathInfo, processed.activity);
     const newCode = await this.translationService.getTextTranslation({
       oldText: input.oldText,
       newText: input.newText,
       code: input.code,
       framework: input.framework,
     });
-
-    const newContent = updateContentChunk(
-      content,
-      newCode,
-      newPathInfo,
-      true
-    );
-    const newOffset = offset + newCode.split('\n').length - input.code.split('\n').length;
-    return { newContent, newOffset };
+    return this.diffMatchPatch.patch_make(input.code, newCode);
   }
 
   async getFileFromActivity(processed: ProcessedActivity): Promise<FileContentData> {
