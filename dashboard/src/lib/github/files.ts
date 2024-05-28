@@ -6,12 +6,15 @@ export async function fetchFileFromPath(
   owner: string,
   repo: string,
   branch: string,
-  path: string): Promise<FileContentData | undefined> {
+  path: string,
+  commit?: string
+): Promise<FileContentData | undefined> {
   try {
+    const ref = commit || branch;
     const contentResponse = await octokit.rest.repos.getContent({
       owner,
       repo,
-      ref: branch,
+      ref, // Use git commit over branch if it exists
       path,
     });
 
@@ -31,5 +34,4 @@ export async function fetchFileFromPath(
     console.error(`Failed to fetch file from path ${path}. ${e}`);
     throw `Failed to fetch code from path. Ensure correct repository is set up and up to date.`;
   }
-
 }

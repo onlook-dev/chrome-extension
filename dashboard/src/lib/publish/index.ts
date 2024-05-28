@@ -231,7 +231,7 @@ export class ProjectPublisher extends EventEmitter {
     let fileContent = this.filesMap.get(processed.pathInfo.path);
     if (fileContent) return fileContent;
 
-    fileContent = await this.githubService.fetchFileFromPath(processed.pathInfo.path);
+    fileContent = await this.githubService.fetchFileFromPath(processed.pathInfo.path, processed.activity.snapshot);
     if (!fileContent) throw new Error(`File content not found for path: ${processed.pathInfo.path}`);
 
     this.filesMap.set(processed.pathInfo.path, fileContent);
