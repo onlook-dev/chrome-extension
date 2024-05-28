@@ -137,4 +137,27 @@ describe('ProjectPublisher', () => {
     const fileContent = await publisher.updateFileWithActivity(mockProcessedActivity, mockFileContent);
     expect(fileContent.content).toEqual(expectedTextInput)
   });
+
+  test('should handle multiple changes in the same file', async () => {
+    const updatedStyleCode = `<p>`
+    const expectedFileContent = `<p>
+    newText
+</p>`
+
+    mock.module("$lib/translation", () => ({
+      TranslationService: class {
+        async getStyleTranslation(content: any) { return updatedStyleCode }
+        async getTextTranslation(content: any) {
+          return `<p 
+    class='bg-red'
+>
+    newText
+</p>` }
+      }
+    }));
+
+    const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
+    const fileContent = await publisher.updateFileWithActivity(mockProcessedActivity, mockFileContent);
+    expect(fileContent.content).toEqual(expectedFileContent);
+  });
 });
