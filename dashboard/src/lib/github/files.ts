@@ -10,11 +10,11 @@ export async function fetchFileFromPath(
   commit?: string
 ): Promise<FileContentData | undefined> {
   try {
-    const ref = commit || branch;
+    const ref = commit || branch; // Use git commit over branch if it exists
     const contentResponse = await octokit.rest.repos.getContent({
       owner,
       repo,
-      ref, // Use git commit over branch if it exists
+      ref,
       path,
     });
 
