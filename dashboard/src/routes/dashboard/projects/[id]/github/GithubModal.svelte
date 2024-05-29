@@ -143,6 +143,13 @@
 							</Collapsible.Root>
 						{/if}
 					</div>
+					<p class="text-sm text-primary my-4">
+						Need help? <a
+							class="underline text-red-500 ml-1"
+							href="https://meetings.hubspot.com/daniel-onlook/onboarding-to-onlook-with-daniel"
+							target="_blank">Talk to a founder</a
+						>
+					</p>
 				</div>
 			{/if}
 		</div>
