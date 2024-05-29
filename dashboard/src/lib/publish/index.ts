@@ -1,13 +1,15 @@
 import { GithubService } from "$lib/github";
 import { TranslationService } from "$lib/translation";
 import { GithubSettings, Project } from "$shared/models";
-import { getProcessedActivities, updateContentChunk } from "./helpers";
+import { getProcessedActivities } from "./helpers";
 import { getStyleTranslationInput, getTextTranslationInput } from "./inputs";
 import { trackMixpanelEvent } from "$lib/mixpanel/client";
-
-import type { User, FileContentData, PathInfo, ProcessedActivity } from "$shared/models";
 import { StyleFramework } from "$shared/models";
+
+import type { User, FileContentData, ProcessedActivity } from "$shared/models";
+
 import EventEmitter from 'events';
+import DiffMatchPatch from 'diff-match-patch';
 
 export enum ProjectPublisherEventType {
   TRANSLATING = 'TRANSLATING',
@@ -30,7 +32,8 @@ export class ProjectPublisher extends EventEmitter {
   private translationService: TranslationService;
   private processedActivities: ProcessedActivity[];
   private forceTailwind = false;
-
+  private diffMatchPatch = new DiffMatchPatch();
+  private processedCount = 0;
   EMIT_EVENT_NAME = 'update';
 
   constructor(private project: Project, private user: User) {
@@ -69,6 +72,7 @@ export class ProjectPublisher extends EventEmitter {
 
   async translate(): Promise<void> {
     try {
+      this.processedCount = 0;
       this.emitEvent({
         type: ProjectPublisherEventType.TRANSLATING,
         progress: {
@@ -77,24 +81,28 @@ export class ProjectPublisher extends EventEmitter {
         }
       })
 
-      for (const [index, processed] of this.processedActivities.entries()) {
-        const fileContent = await this.getFileFromActivity(processed);
+      const activitiesByFile = new Map<string, ProcessedActivity[]>();
 
-        // Save original file
-        if (!this.beforeMap.get(processed.pathInfo.path)) {
-          this.beforeMap.set(processed.pathInfo.path, { ...fileContent });
+      // Group all processed activities together
+      for (const processed of this.processedActivities) {
+        let processedActivities = activitiesByFile.get(processed.pathInfo.path);
+        if (!processedActivities) {
+          processedActivities = [];
+        }
+        // Push ranked by start line
+        processedActivities.push(processed);
+        activitiesByFile.set(processed.pathInfo.path, processedActivities);
+      }
+
+      for (const [path, activities] of activitiesByFile.entries()) {
+        const fileContent = await this.getFileFromActivity(activities[0]);
+
+        if (!this.beforeMap.get(path)) {
+          this.beforeMap.set(path, { ...fileContent });
         }
 
-        const newFileContent = await this.updateFileWithActivity(processed, fileContent);
-        this.filesMap.set(processed.pathInfo.path, newFileContent);
-
-        this.emitEvent({
-          type: ProjectPublisherEventType.TRANSLATING,
-          progress: {
-            processed: index + 1,
-            total: this.processedActivities.length
-          }
-        })
+        const newFileContent = await this.updateFileWithActivities(activities, fileContent);
+        this.filesMap.set(path, newFileContent);
       }
     } catch (e) {
       throw `Publish failed while processing activities. ${e}`;
@@ -141,7 +149,7 @@ export class ProjectPublisher extends EventEmitter {
     );
   }
 
-  async updateFileWithActivity(processed: ProcessedActivity, fileContent: FileContentData) {
+  async updateFileWithActivities(processedActivities: ProcessedActivity[], fileContent: FileContentData) {
     /*
       1. Get translation input
       2. For each change types (style, text, component)
@@ -150,75 +158,57 @@ export class ProjectPublisher extends EventEmitter {
       3. Return content
     */
 
-    // Offsets for lines added or removed when reading and writing to files
-    let offset = 0;
-    let updatedContent = fileContent.content;
+    let patches: (new () => DiffMatchPatch.patch_obj)[] = [];
 
-    // Process style changes
-    if (processed.activity.styleChanges) {
-      const { newContent, newOffset } = await this.processStyleChanges(processed, updatedContent, offset);
-      updatedContent = newContent;
-      offset += newOffset;
+    for (const processed of processedActivities) {
+      // Process style changes
+      if (processed.activity.styleChanges) {
+        const stylePatches = await this.processStyleChanges(processed, fileContent.content);
+        patches = patches.concat(stylePatches);
+      }
+
+      // Process text changes
+      if (processed.activity.textChanges) {
+        const textPatches = await this.processTextChanges(processed, fileContent.content);
+        patches = patches.concat(textPatches);
+      }
+
+      this.emitEvent({
+        type: ProjectPublisherEventType.TRANSLATING,
+        progress: {
+          processed: ++this.processedCount,
+          total: this.processedActivities.length
+        }
+      })
     }
 
-    // Process text changes
-    if (processed.activity.textChanges) {
-      const { newContent, newOffset } = await this.processTextChanges(processed, updatedContent, offset);
-      updatedContent = newContent;
-      offset += newOffset;
+    const result = this.diffMatchPatch.patch_apply(patches, fileContent.content);
+    return {
+      ...fileContent,
+      content: result[0]
     }
-
-    fileContent.content = updatedContent;
-    return fileContent;
   }
 
-  async processStyleChanges(processed: ProcessedActivity, content: string, offset: number = 0) {
-    const newPathInfo = {
-      ...processed.pathInfo,
-      startTagEndLine: processed.pathInfo.startTagEndLine + offset,
-      endLine: processed.pathInfo.endLine + offset,
-    } as PathInfo;
-
-    const input = getStyleTranslationInput(content, newPathInfo, processed.activity);
+  async processStyleChanges(processed: ProcessedActivity, content: string) {
+    const input = getStyleTranslationInput(content, processed.pathInfo, processed.activity);
     const newCode = await this.translationService.getStyleTranslation({
       code: input.code,
       css: input.css,
       framework: input.framework,
       tailwind: input.tailwind,
     }, this.forceTailwind ? StyleFramework.TailwindCSS : this.project.projectSettings?.styleFramework);
-    const newContent = updateContentChunk(
-      content,
-      newCode,
-      newPathInfo,
-      false
-    );
-    const newOffset = offset + newCode.split('\n').length - input.code.split('\n').length;
-    return { newContent, newOffset };
+    return this.diffMatchPatch.patch_make(content, content.replace(input.code.trim(), newCode));
   }
 
-  async processTextChanges(processed: ProcessedActivity, content: string, offset: number = 0) {
-    const newPathInfo = {
-      ...processed.pathInfo,
-      startTagEndLine: processed.pathInfo.startTagEndLine + offset,
-      endLine: processed.pathInfo.endLine + offset,
-    } as PathInfo;
-
-    const input = getTextTranslationInput(content, newPathInfo, processed.activity);
+  async processTextChanges(processed: ProcessedActivity, content: string) {
+    const input = getTextTranslationInput(content, processed.pathInfo, processed.activity);
     const newCode = await this.translationService.getTextTranslation({
       oldText: input.oldText,
       newText: input.newText,
       code: input.code,
       framework: input.framework,
     });
-
-    const newContent = updateContentChunk(
-      content,
-      newCode,
-      newPathInfo,
-      true
-    );
-    const newOffset = offset + newCode.split('\n').length - input.code.split('\n').length;
-    return { newContent, newOffset };
+    return this.diffMatchPatch.patch_make(content, content.replace(input.code.trim(), newCode));
   }
 
   async getFileFromActivity(processed: ProcessedActivity): Promise<FileContentData> {
@@ -231,7 +221,7 @@ export class ProjectPublisher extends EventEmitter {
     let fileContent = this.filesMap.get(processed.pathInfo.path);
     if (fileContent) return fileContent;
 
-    fileContent = await this.githubService.fetchFileFromPath(processed.pathInfo.path);
+    fileContent = await this.githubService.fetchFileFromPath(processed.pathInfo.path, processed.activity.snapshot);
     if (!fileContent) throw new Error(`File content not found for path: ${processed.pathInfo.path}`);
 
     this.filesMap.set(processed.pathInfo.path, fileContent);

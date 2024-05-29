@@ -5,6 +5,7 @@ export type EditEvent = {
   newVal: Record<string, string> | Component | TextVal | MoveVal;
   oldVal: Record<string, string> | Component | TextVal | MoveVal;
   path?: string | undefined;
+  snapshot?: string | undefined;
   componentId?: string | undefined;
 }
 

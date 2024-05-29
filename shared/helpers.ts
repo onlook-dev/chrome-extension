@@ -102,9 +102,13 @@ export function sortActivities(activities: Record<string, Activity>, reverse = f
   })
 }
 
-export function getGitHubPath(githubSettings: GithubSettings, path: string) {
-  // Root path might be undefined
+export function getGitHubPath(githubSettings: GithubSettings, path: string, commit?: string) {
+  const ref = commit || githubSettings.baseBranch;
+  const pathParts = path.split(':');
+  const filePath = pathParts[0];
+  const startLine = pathParts[1];
+  const endLine = pathParts[3];
   return `https://github.com/${githubSettings.owner}/${githubSettings.repositoryName
-    }/blob/${githubSettings.baseBranch}/${githubSettings.rootPath ? `${githubSettings.rootPath}/` : ''
-    }${path.split(':')[0]}#L${path.split(':')[1]}`
+    }/blob/${ref}/${githubSettings.rootPath ? `${githubSettings.rootPath}/` : ''
+    }${filePath}#L${startLine}-L${endLine}`;
 }

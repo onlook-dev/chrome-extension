@@ -5,14 +5,14 @@
 	import { shortenSelector, sortActivities } from '$shared/helpers';
 	import { FirebaseService } from '$lib/storage';
 	import { projectsMapStore, teamsMapStore } from '$lib/utils/store';
+	import { goto } from '$app/navigation';
+	import { DashboardRoutes, FirestoreCollections } from '$shared/constants';
 
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
 	import type { Project, Team } from '$shared/models';
-	import { goto } from '$app/navigation';
-	import { DashboardRoutes, FirestoreCollections } from '$shared/constants';
 
 	export let projectService: FirebaseService<Project>;
 	export let project: Project;

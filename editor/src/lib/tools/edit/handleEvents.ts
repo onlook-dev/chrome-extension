@@ -1,7 +1,8 @@
 import { addToHistory } from "./history";
-import { getUniqueSelector } from "../utilities";
+import { getSnapshot, getUniqueSelector } from "../utilities";
 import { EditType, type EditEvent } from "$shared/models";
 import { MessageService, MessageType } from "$shared/message";
+import { DATA_ONLOOK_SNAPSHOT } from "$shared/constants";
 
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
 const messageService = MessageService.getInstance();
@@ -53,6 +54,7 @@ function undebounceHandleEditEvent(param: HandleEditEventParams) {
     newVal: param.newValue,
     oldVal: param.oldValue,
     path: param.el.dataset.onlookId,
+    snapshot: getSnapshot(param.el),
     componentId: param.el.dataset.onlookComponentId
   };
   addToHistory(event);

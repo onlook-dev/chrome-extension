@@ -7,6 +7,7 @@ export interface Activity {
   userId: string;
   selector: string;
   path?: string; // '<encodedPath>' -> path/to/file:startLine:starTagEndLine:endLine
+  snapshot?: string;
   projectId: string;
   eventData: EventMetadata[];
   visible: boolean;

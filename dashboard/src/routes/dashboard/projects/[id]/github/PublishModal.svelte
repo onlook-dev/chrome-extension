@@ -98,7 +98,14 @@
 	}
 
 	async function handlePublishClick() {
-		title = title || titlePlaceholder;
+		if (!title || title.trim() === '') {
+			publishErrorMessage = 'Title is required';
+			return;
+		}
+		if (!description || description.trim() === '') {
+			publishErrorMessage = 'Description is required';
+			return;
+		}
 		const newDesc =
 			description + `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
@@ -210,7 +217,6 @@
 				class="w-full text-sm"
 				maxlength={MAX_TITLE_LENGTH}
 			/>
-
 			<Label for="form-description">Description</Label>
 
 			<Textarea

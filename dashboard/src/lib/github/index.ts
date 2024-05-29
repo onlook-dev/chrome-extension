@@ -4,6 +4,7 @@ import { FileContentData } from "$shared/models";
 import { createCommit } from "./commits";
 import { CustomOctokit, getOctokitByInstallationId } from "./octokit";
 import { createOrGetPullRequest } from "./pullRequests";
+
 export class GithubService {
   octokit: CustomOctokit;
 
@@ -16,12 +17,13 @@ export class GithubService {
     this.octokit = getOctokitByInstallationId(this.installationId);
   }
 
-  fetchFileFromPath(path: string) {
+  fetchFileFromPath(path: string, commit?: string) {
     return fetchFileFromPath(
       this.octokit, this.owner,
       this.repo,
       this.baseBranch,
-      path
+      path,
+      commit
     );
   }
 
