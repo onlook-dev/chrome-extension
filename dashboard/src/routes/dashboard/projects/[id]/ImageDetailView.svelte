@@ -38,7 +38,7 @@
 							Edited {timeSince(new Date(activeActivity.updatedAt ?? activeActivity.createdAt))} ago
 						</span>
 					{:else}
-						<span>{project.name}</span>
+						<span>{project.name.replace('Onlook', 'Text')}</span>
 					{/if}
 				</p>
 			</div>

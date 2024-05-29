@@ -61,7 +61,7 @@
 </script>
 
 {#if beforeImage || afterImage}
-	<ImageComparison class="w-full h-full">
+	<ImageComparison class="w-full h-full" style="border-color: #851414;">
 		<canvas class={canvasClass} use:panzoom={options} slot="left" />
 		<canvas class={canvasClass} bind:this={canvas} slot="right" id="right" />
 	</ImageComparison>
