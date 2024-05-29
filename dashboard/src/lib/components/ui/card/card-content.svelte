@@ -8,6 +8,6 @@
 	export { className as class };
 </script>
 
-<div class={cn("p-6 pt-0", className)} {...$restProps} style="background-color: #942929;">
+<div class={cn("p-6 pt-0 bg-[#942929]", className)} {...$restProps}>
 	<slot />
 </div>

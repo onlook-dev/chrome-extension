@@ -105,7 +105,7 @@
 <div class="flex h-screen w-screen flex-col bg-black text-primary">
 	{#if project && user}
 		<!-- Header -->
-		<div class="flex flex-row items-center h-14 px-4" style="border-color: #ff0000; padding: 60px; border-width: 10px; padding-left: 16px;">
+		<div class="flex flex-row items-center h-14 px-[16px] p-[60px] border-[10px] border-[#ff0000]">
 			<Breadcrumb.Root class="mr-auto ">
 				<Breadcrumb.List>
 					<Breadcrumb.Item>

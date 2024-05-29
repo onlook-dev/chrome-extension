@@ -87,7 +87,7 @@
 	}
 </script>
 
-<div class="bg-black flex flex-col w-full h-full space-y-6" style="flex-direction: column;">
+<div class="bg-black flex flex-col w-full h-full space-y-6">
 	<div class="p-4 flex flex-col space-y-2">
 		<div class="flex flex-row">
 			<h1
@@ -128,7 +128,7 @@
 		</h2>
 	</div>
 	<Separator />
-	<div class="px-6 flex flex-row text-tertiary" style="background-color: #8a3d3d;">
+	<div class="px-6 flex flex-row text-tertiary bg-[#8a3d3d]">
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild let:builder>
 				<Button builders={[builder]} variant="ghost"
