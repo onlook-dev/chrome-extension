@@ -52,7 +52,7 @@
     "@octokit/plugin-retry": "^7.0.3",
     "@octokit/plugin-throttling": "^9.0.3",
     "@skeletonlabs/skeleton": "^2.7.1",
-    "bits-ui": "^0.21.7",
+    "bits-ui": "^0.21.10",
     "clsx": "^2.1.0",
     "diff-match-patch": "^1.0.5",
     "events": "^3.3.0",

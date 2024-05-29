@@ -19,6 +19,7 @@
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Pencil2 } from 'svelte-radix';
+	import { Progress } from '$lib/components/ui/progress/index.js';
 
 	import type { Project, GithubHistory, User } from '$shared/models';
 
@@ -205,11 +206,9 @@
 
 <div class="flex flex-col items-center justify-center h-full mt-4 space-y-4 text-primary">
 	{#if githubConfigured && hasActivities && hasFilePaths}
-		<label class="text-primary form-control w-full p-2 space-y-4">
-			<Label for="form-title">Title</Label>
-
+		<div class="text-primary w-full p-2 space-y-4">
+			<Label>Title</Label>
 			<Input
-				id="form-title"
 				disabled={!hasActivities || isLoading}
 				bind:value={title}
 				type="text"
@@ -217,10 +216,9 @@
 				class="w-full text-sm"
 				maxlength={MAX_TITLE_LENGTH}
 			/>
-			<Label for="form-description">Description</Label>
+			<Label>Description</Label>
 
 			<Textarea
-				id="form-tidescriptiontle"
 				disabled={!hasActivities || isLoading}
 				bind:value={description}
 				class="h-24"
@@ -231,11 +229,8 @@
 				{#if !publishError}
 					{#if isTranslating}
 						<div class="flex flex-col mr-8 flex-grow space-y-2 text-sm">
-							<progress
-								class="progress progress-success w-2/3"
-								value={translationProgress}
-								max={translationTotal}
-							></progress>
+							<Progress class=" w-2/3" value={translationProgress} max={translationTotal}
+							></Progress>
 							<p>{translationProgress}/{translationTotal} changes translated</p>
 						</div>
 					{/if}
@@ -254,9 +249,9 @@
 				{/if}
 			</div>
 			{#if publishErrorMessage}
-				<p class="text-xs text-error mt-4">{publishErrorMessage}</p>
+				<p class="text-xs text-red-600 mt-4">{publishErrorMessage}</p>
 			{/if}
-		</label>
+		</div>
 
 		<HistoriesView {githubHistories} {restoreActivities} />
 
