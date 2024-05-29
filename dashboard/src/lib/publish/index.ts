@@ -33,7 +33,7 @@ export class ProjectPublisher extends EventEmitter {
   private processedActivities: ProcessedActivity[];
   private forceTailwind = false;
   private diffMatchPatch = new DiffMatchPatch();
-
+  private processedCount = 0;
   EMIT_EVENT_NAME = 'update';
 
   constructor(private project: Project, private user: User) {
@@ -72,6 +72,7 @@ export class ProjectPublisher extends EventEmitter {
 
   async translate(): Promise<void> {
     try {
+      this.processedCount = 0;
       this.emitEvent({
         type: ProjectPublisherEventType.TRANSLATING,
         progress: {
@@ -80,7 +81,6 @@ export class ProjectPublisher extends EventEmitter {
         }
       })
 
-      let processedCount = 0;
       const activitiesByFile = new Map<string, ProcessedActivity[]>();
 
       // Group all processed activities together
@@ -103,15 +103,6 @@ export class ProjectPublisher extends EventEmitter {
 
         const newFileContent = await this.updateFileWithActivities(activities, fileContent);
         this.filesMap.set(path, newFileContent);
-        processedCount += activities.length;
-
-        this.emitEvent({
-          type: ProjectPublisherEventType.TRANSLATING,
-          progress: {
-            processed: processedCount,
-            total: this.processedActivities.length
-          }
-        })
       }
     } catch (e) {
       throw `Publish failed while processing activities. ${e}`;
@@ -181,6 +172,14 @@ export class ProjectPublisher extends EventEmitter {
         const textPatches = await this.processTextChanges(processed, fileContent.content);
         patches = patches.concat(textPatches);
       }
+
+      this.emitEvent({
+        type: ProjectPublisherEventType.TRANSLATING,
+        progress: {
+          processed: ++this.processedCount,
+          total: this.processedActivities.length
+        }
+      })
     }
 
     const result = this.diffMatchPatch.patch_apply(patches, fileContent.content);
