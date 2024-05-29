@@ -28,7 +28,6 @@
     "@zerodevx/svelte-toast": "^0.9.5",
     "autoprefixer": "^10.4.16",
     "bun-types": "^1.0.33",
-    "daisyui": "latest",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-svelte": "^2.35.1",

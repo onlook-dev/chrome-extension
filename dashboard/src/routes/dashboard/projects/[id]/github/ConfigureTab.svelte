@@ -12,6 +12,7 @@
 	import Info from '~icons/akar-icons/info';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Collapsible from '$lib/components/ui/collapsible';
+	import * as Tooltip from '$lib/components/ui/tooltip';
 
 	import type { Project, GithubRepo, GithubSettings } from '$shared/models';
 
@@ -118,14 +119,16 @@
 			<div class="flex flex-row items-center">
 				<div class="w-56 flex flex-row items-center">
 					<Label for="base-branch">Base branch</Label>
-					<div
-						class="tooltip tooltip-bottom tooltip-info before:w-[10rem] before:content-[attr(data-tip)]"
-						data-tip="Branch your changes will be pushed to. Default is your base branch"
-					>
-						<button class="label mx-2">
-							<Info class="h-4 w-4 text-gray-500" />
-						</button>
-					</div>
+					<Tooltip.Root openDelay={200}>
+						<Tooltip.Trigger>
+							<button class="label mx-2">
+								<Info class="h-4 w-4 text-gray-500" />
+							</button>
+						</Tooltip.Trigger>
+						<Tooltip.Content>
+							<p>Branch your changes will be pushed to. Default is your base branch</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
 				</div>
 
 				<Input
@@ -145,14 +148,16 @@
 			<div class="flex flex-row items-center">
 				<div class="w-56 flex flex-row items-center">
 					<Label for="root-dir">Root directory</Label>
-					<div
-						class="tooltip tooltip-bottom tooltip-info before:w-[10rem] before:content-[attr(data-tip)]"
-						data-tip="Folder that contains your src file. If it's at root you can leave this empty"
-					>
-						<button class="label ml-2">
-							<Info class="h-4 w-4 text-gray-500" />
-						</button>
-					</div>
+					<Tooltip.Root openDelay={200}>
+						<Tooltip.Trigger>
+							<button class="label mx-2">
+								<Info class="h-4 w-4 text-gray-500" />
+							</button>
+						</Tooltip.Trigger>
+						<Tooltip.Content>
+							<p>Folder that contains your src file. If it's at root you can leave this empty</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
 				</div>
 
 				<Input

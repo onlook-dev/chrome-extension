@@ -19,7 +19,7 @@
 
 ### Components
 
-- [ShadCN](https://daisyui.com/components/)
+- [ShadCN](https://www.shadcn-svelte.com/docs/components/)
 - [Radix Icon](https://www.radix-ui.com/icons)
 
 ## Development
