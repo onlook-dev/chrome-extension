@@ -9,5 +9,5 @@ Set up a `.env` file in order to add Firebase configurations. See `.env.example`
 
 ## Front-end libs
 
-- [ShadCN](https://daisyui.com/components/)
+- [ShadCN](https://www.shadcn-svelte.com/docs/components/)
 - [Radix Icon](https://www.radix-ui.com/icons)
