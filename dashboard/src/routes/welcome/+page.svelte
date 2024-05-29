@@ -9,7 +9,7 @@
 	class="flex flex-col items-center justify-center w-screen h-screen bg-cover bg-center"
 	style="background-image: url({BackgroundImage});"
 >
-	<div class="flex flex-col w-1/2 items-center gap-6 min-w-[800px]">
+	<div class="flex flex-col w-1/2 items-center gap-6 min-w-[800px] gap-[20px]">
 		<h1 class="text-2xl text-white text-start w-full">Let's push some pixels</h1>
 		<div class="flex flex-row w-full justify-center h-full gap-5 bg-transparent p-0">
 			<div class="w-full h-full bg-black rounded-none p-6 border">
@@ -74,32 +74,21 @@
 				<p class="text-sm text-tertiary">
 					Watch us walk through a Demo project and make a pull request in less than 1 minute
 				</p>
-				<a
-					class="text-sm text-red-600 hover:underline flex flex-row items-center"
-					href="https://onlook.dev/blog/create-your-first-pull-request"
-					target="_blank">Read our guide to getting started <ExternalLink class="w-4 h-4 ml-2" /></a
+				<a class="text-sm text-red-600 hover:underline flex flex-row items-center text-[#ef4444]" href="https://onlook.dev/blog/create-your-first-pull-request" target="_blank">Read our guide to getting started <ExternalLink class="w-4 h-4 ml-2" /></a
 				>
-				<a
-					class="text-sm text-red-600 hover:underline flex flex-row items-center"
-					href="https://onlook.dev/blog/installing-onlook"
-					target="_blank"
-					>Set up Onlook in your own Github Repo <ExternalLink class="w-4 h-4 ml-2" />
+				<a class="text-sm text-brand text-[#ef4444] hover:underline flex flex-row items-center" href="https://onlook.dev/blog/installing-onlook" target="_blank">Set up Onlook in your own Github Repo <ExternalLink class="w-4 h-4 ml-2" />
 				</a>
 			</div>
 		</div>
 	</div>
 
-	<div class="flex flex-row text-primary mt-6 gap-6">
+	<div class="flex flex-row text-primary mt-6 gap-[18px]">
 		<div class="flex flex-col gap-0">
-			<div class="text-[#ff0000] text-[14px]">Still need help?</div>
-			<div class="text-[#ff0000] text-[14px]">Let's get you set up</div>
+			<div class="text-tertiary text-[14px]">Still need help?</div>
+			<div class="text-tertiary text-[14px]">Let's get you set up</div>
 		</div>
 
-		<a
-			class="flex flex-row items-center rounded-xs bg-red-500/20 py-2 px-3 text-red-500 w-fit hover:bg-red-500/30"
-			href="https://calendar.app.google/hjCAg7HpczY39Zd4A"
-			target="_blank"
-		>
+		<a class="flex flex-row items-center rounded-xs bg-red-500/20 py-2 px-3 text-red-500 w-fit hover:bg-red-500/30 ml-[18px]" href="https://calendar.app.google/hjCAg7HpczY39Zd4A" target="_blank">
 			<Calendar class="w-4 h-4 mr-2" />
 			<div class="text-sm">Chat with a founder</div>
 		</a>
