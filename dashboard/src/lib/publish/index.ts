@@ -89,6 +89,7 @@ export class ProjectPublisher extends EventEmitter {
         if (!processedActivities) {
           processedActivities = [];
         }
+        // Push ranked by start line
         processedActivities.push(processed);
         activitiesByFile.set(processed.pathInfo.path, processedActivities);
       }
@@ -101,7 +102,6 @@ export class ProjectPublisher extends EventEmitter {
         }
 
         const newFileContent = await this.updateFileWithActivities(activities, fileContent);
-
         this.filesMap.set(path, newFileContent);
         processedCount += activities.length;
 
@@ -167,7 +167,6 @@ export class ProjectPublisher extends EventEmitter {
       3. Return content
     */
 
-    const dmp = new DiffMatchPatch();
     let patches: (new () => DiffMatchPatch.patch_obj)[] = [];
 
     for (const processed of processedActivities) {
@@ -184,8 +183,7 @@ export class ProjectPublisher extends EventEmitter {
       }
     }
 
-    // Apply patches to content
-    const result = dmp.patch_apply(patches, fileContent.content);
+    const result = this.diffMatchPatch.patch_apply(patches, fileContent.content);
     return {
       ...fileContent,
       content: result[0]
@@ -200,7 +198,7 @@ export class ProjectPublisher extends EventEmitter {
       framework: input.framework,
       tailwind: input.tailwind,
     }, this.forceTailwind ? StyleFramework.TailwindCSS : this.project.projectSettings?.styleFramework);
-    return this.diffMatchPatch.patch_make(input.code, newCode);
+    return this.diffMatchPatch.patch_make(content, content.replace(input.code.trim(), newCode));
   }
 
   async processTextChanges(processed: ProcessedActivity, content: string) {
@@ -211,7 +209,7 @@ export class ProjectPublisher extends EventEmitter {
       code: input.code,
       framework: input.framework,
     });
-    return this.diffMatchPatch.patch_make(input.code, newCode);
+    return this.diffMatchPatch.patch_make(content, content.replace(input.code.trim(), newCode));
   }
 
   async getFileFromActivity(processed: ProcessedActivity): Promise<FileContentData> {
