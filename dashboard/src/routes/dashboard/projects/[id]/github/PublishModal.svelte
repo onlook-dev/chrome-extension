@@ -183,20 +183,6 @@
 		});
 	}
 
-	function restoreActivities(history: GithubHistory) {
-		if (!history.activityHistory || Object.keys(history.activityHistory).length === 0) {
-			return;
-		}
-
-		project.activities = history.activityHistory;
-		projectService.post(project);
-		projectsMapStore.update((projectsMap) => {
-			projectsMap.set(project.id, project);
-			return projectsMap;
-		});
-		hasActivities = true;
-	}
-
 	$: if (publishError) {
 		setTimeout(() => {
 			publishError = false;
@@ -253,7 +239,7 @@
 			{/if}
 		</div>
 
-		<HistoriesView {githubHistories} {restoreActivities} />
+		<HistoriesView {githubHistories} />
 
 		<Collapsible.Root class="border text-primary rounded w-full p-2 text-sm">
 			<Collapsible.Trigger class=" hover:opacity-90 w-full text-start"

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import PullRequest from '~icons/ph/git-pull-request-bold';
-	import Restore from '~icons/ic/baseline-restore';
+	import { ExternalLink } from 'svelte-radix';
 	import type { GithubHistory } from '$shared/models';
-	import * as Collapsible from '$lib/components/ui/collapsible';
 
+	import * as Collapsible from '$lib/components/ui/collapsible';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import Button from '$lib/components/ui/button/button.svelte';
 	export let githubHistories: GithubHistory[] = [];
-	export let restoreActivities: (history: GithubHistory) => void;
 </script>
 
 {#if githubHistories.length > 0}
@@ -20,38 +20,17 @@
 						{history.title}
 					</p>
 					<div class="ml-auto">
-						<div class="tooltip tooltip-left" data-tip="View pull request">
-							<button
-								class="btn btn-xs btn-square btn-ghost ml-auto"
-								on:click={() => window.open(history.pullRequestUrl, '_blank')}
-								><PullRequest class="w-4 h-4" /></button
-							>
-						</div>
-						<div class="tooltip tooltip-left" data-tip="Restore changes">
-							<button
-								class="btn btn-xs btn-square btn-ghost"
-								on:click={() => {
-									// @ts-ignore
-									document.getElementById('confirm_restore_modal').showModal();
-								}}><Restore class="w-4 h-4" /></button
-							>
-						</div>
-
-						<dialog id="confirm_restore_modal" class="modal">
-							<div class="modal-box">
-								<h3 class="font-bold text-lg">Restore changes?</h3>
-								<p class="py-4">This will overwrite your current activities.</p>
-								<div class="modal-action">
-									<form method="dialog">
-										<!-- if there is a button in form, it will close the modal -->
-										<button class="btn">Cancel</button>
-										<button class="btn btn-error ml-2" on:click={() => restoreActivities(history)}
-											>Restore</button
-										>
-									</form>
-								</div>
-							</div>
-						</dialog>
+						<Tooltip.Root openDelay={200}>
+							<Tooltip.Trigger>
+								<Button
+									variant="ghost"
+									size="sm"
+									on:click={() => window.open(history.pullRequestUrl, '_blank')}
+									><ExternalLink class="w-3.5 h-3.5" /></Button
+								>
+							</Tooltip.Trigger>
+							<Tooltip.Content side="left" class="w-28">View in GitHub</Tooltip.Content>
+						</Tooltip.Root>
 					</div>
 				</div>
 			{/each}
