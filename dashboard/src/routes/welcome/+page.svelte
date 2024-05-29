@@ -74,7 +74,7 @@
 				<p class="text-sm text-tertiary">
 					Watch us walk through a Demo project and make a pull request in less than 1 minute
 				</p>
-				<a class="text-sm text-[#ef4444] hover:underline flex flex-row items-center" href="https://onlook.dev/blog/create-your-first-pull-request" target="_blank">Read our guide to getting started <ExternalLink class="w-4 h-4 ml-2" /></a
+				<a class="text-sm text-red-600 hover:underline flex flex-row items-center text-[#ef4444]" href="https://onlook.dev/blog/create-your-first-pull-request" target="_blank">Read our guide to getting started <ExternalLink class="w-4 h-4 ml-2" /></a
 				>
 				<a class="text-sm text-brand text-[#ef4444] hover:underline flex flex-row items-center" href="https://onlook.dev/blog/installing-onlook" target="_blank">Set up Onlook in your own Github Repo <ExternalLink class="w-4 h-4 ml-2" />
 				</a>
