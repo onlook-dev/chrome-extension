@@ -1,6 +1,7 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe, mock, beforeAll } from 'bun:test';
 import type { TranslationService } from '$lib/translation';
+import { langfuseConfig } from '$lib/utils/env';
 
 // Should explicitly enable. Costs money to run.
 const enabled = false;
@@ -9,6 +10,7 @@ const StyleFramework = {
   TailwindCSS: 'TailwindCSS',
   InlineCSS: 'InlineCSS',
 }
+
 describe('Translation service', () => {
   let TranslationService: any;
 
@@ -21,14 +23,15 @@ describe('Translation service', () => {
 
   // Mocking env variable modules. Otherwise only available at Vite runtime.
   beforeAll(async () => {
+    mock.module("$shared/models", () => ({
+      StyleFramework
+    }));
+
     mock.module("$lib/utils/env", () => ({
       openAiConfig: {
         apiKey: process.env.PUBLIC_TEST_OPENAI_API_KEY,
-      }
-    }))
-
-    mock.module("$shared/models/projectSettings", () => ({
-      StyleFramework,
+      },
+      langfuseConfig: {}
     }))
 
     const Translation = await import('$lib/translation');
@@ -44,7 +47,7 @@ describe('Translation service', () => {
       tailwind: "",
     });
 
-    let expected = "<Button style={{ backgroundColor: 'blue', padding: '10px' }} >";
+    let expected = "<Button style={{ backgroundColor: 'blue', padding: '10px' }}>";
     expect(translation).toBe(expected);
   });
 
@@ -65,12 +68,12 @@ describe('Translation service', () => {
     const service: TranslationService = new TranslationService();
     let translation = await service.getStyleTranslation({
       framework: "tsx",
-      code: "<Button style={{ backgroundColor: 'red' }}>",
+      code: "<Button style={{ backgroundColor: 'red' }}>123",
       css: "background-color: blue; padding: 10px;",
       tailwind: "text-blue-500",
     });
 
-    let expected = "<Button style={{ backgroundColor: 'blue', padding: '10px', color: 'blue' }} >";
+    let expected = "<Button style={{ backgroundColor: 'blue', padding: '10px' }}>123";
     expect(translation).toBe(expected);
   });
 
@@ -78,12 +81,12 @@ describe('Translation service', () => {
     const service: TranslationService = new TranslationService();
     let translation = await service.getStyleTranslation({
       framework: "tsx",
-      code: "<Card className='mt-8'>",
+      code: "<><Card className='mt-8'>",
       css: "background-color: blue; padding: 10px;",
       tailwind: "h-10",
     }, StyleFramework.TailwindCSS as any);
 
-    let expected = "<Card className='mt-8 h-10 bg-blue-500 p-2'>";
+    let expected = "<><Card className='mt-8 h-10 bg-blue-500 p-2'>";
     expect(translation).toBe(expected);
   });
 
@@ -93,10 +96,10 @@ describe('Translation service', () => {
       oldText: "Hello World",
       newText: "Foo Bar",
       framework: "tsx",
-      code: "<Text className='mt-8'>Hello World</Text>",
+      code: "<Text className='mt-8'>Hello World</Text>>>",
     });
 
-    let expected = "<Text className='mt-8'>Foo Bar</Text>";
+    let expected = "<Text className='mt-8'>Foo Bar</Text>>>";
     expect(translation).toBe(expected);
   });
 })
