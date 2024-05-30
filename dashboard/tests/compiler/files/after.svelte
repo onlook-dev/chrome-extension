@@ -36,7 +36,7 @@
 						</svg>
 						Click extensions in the upper right corner
 					</p>
-					<p class="text-gray-400 text-sm flex flex-row items-center">
+					<p class="text-gray-400 text-sm flex flex-row items-center hello">
 						<DrawingPin class="text-primary w-4 h-4 mr-2" />Pin Onlook
 					</p>
 				</div>
@@ -75,7 +75,7 @@
 					Watch us walk through a Demo project and make a pull request in less than 1 minute
 				</p>
 				<a
-					class="text-sm hover:underline flex flex-row items-center text-[#ef4444]"
+					class="text-sm text-red-600 hover:underline flex flex-row items-center text-[#ef4444]"
 					href="https://onlook.dev/blog/create-your-first-pull-request"
 					target="_blank">Read our guide to getting started <ExternalLink class="w-4 h-4 ml-2" /></a
 				>
