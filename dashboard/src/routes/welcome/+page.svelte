@@ -52,7 +52,7 @@
 					<p class="text-gray-400 text-sm flex flex-row items-center">
 						<Link1 class="text-primary w-4 h-4 mr-2" /> Go to any page you want to edit
 					</p>
-					<p class="text-tertiary text-sm flex flex-row items-center text-[#9ca3af]">
+					<p class="text-[#9ca3af] text-sm flex flex-row items-center">
 						<Pencil2 class="text-primary w-4 h-4 mr-2" />Click the extension and start editing
 					</p>
 				</div>
