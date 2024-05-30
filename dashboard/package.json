@@ -58,6 +58,7 @@
     "events": "^3.3.0",
     "firebase": "^10.7.1",
     "highlight.js": "^11.9.0",
+    "langfuse-langchain": "^3.11.2",
     "mixpanel": "^0.18.0",
     "nanoid": "^5.0.4",
     "paneforge": "^0.0.4",

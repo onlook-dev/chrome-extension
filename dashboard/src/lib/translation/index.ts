@@ -3,20 +3,23 @@ import { translationTool } from "./tools";
 import { JsonOutputKeyToolsParser } from "@langchain/core/output_parsers/openai_tools";
 import { Runnable } from "@langchain/core/runnables";
 import { InlineCssPromptService, TailwindPromptService, TextPromptService } from "./prompt";
-import { openAiConfig } from "$lib/utils/env";
+import { langfuseConfig, openAiConfig } from "$lib/utils/env";
 import { StyleFramework } from "$shared/models";
+import { CallbackHandler } from "langfuse-langchain";
 
 export class TranslationService {
   private openAi: Runnable;
   private inlineCssPromptService: InlineCssPromptService;
   private tailwindPromptService: TailwindPromptService;
   private textPromptService: TextPromptService;
+  private langfuseHandler: CallbackHandler;
 
   constructor() {
     this.openAi = this.getModel();
     this.inlineCssPromptService = new InlineCssPromptService();
     this.tailwindPromptService = new TailwindPromptService();
     this.textPromptService = new TextPromptService();
+    this.langfuseHandler = new CallbackHandler(langfuseConfig);
   }
 
   private getModel() {
@@ -46,13 +49,13 @@ export class TranslationService {
       default:
         prompt = await this.inlineCssPromptService.getPrompt(variables);
     }
-    const response = (await this.openAi.invoke(prompt)) as { code: string }
+    const response = (await this.openAi.invoke(prompt, { callbacks: [this.langfuseHandler] })) as { code: string }
     return response.code;
   }
 
   async getTextTranslation(variables: typeof this.textPromptService.inputVariables): Promise<string> {
     const prompt = await this.textPromptService.getPrompt(variables);
-    const response = (await this.openAi.invoke(prompt)) as { code: string }
+    const response = (await this.openAi.invoke(prompt, { callbacks: [this.langfuseHandler] })) as { code: string }
     return response.code;
   }
 }

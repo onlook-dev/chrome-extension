@@ -36,7 +36,14 @@ import {
 	PUBLIC_PROD_OPENAI_API_KEY,
 	PUBLIC_PROD_OPENAI_ORG,
 	PUBLIC_TEST_MIXPANEL_TOKEN,
-	PUBLIC_PROD_MIXPANEL_TOKEN
+	PUBLIC_PROD_MIXPANEL_TOKEN,
+	PUBLIC_TEST_LANGFUSE_SECRET_KEY,
+	PUBLIC_TEST_LANGFUSE_PUBLIC_KEY,
+	PUBLIC_TEST_LANGFUSE_BASE_URL,
+	PUBLIC_PROD_LANGFUSE_SECRET_KEY,
+	PUBLIC_PROD_LANGFUSE_PUBLIC_KEY,
+	PUBLIC_PROD_LANGFUSE_BASE_URL
+
 } from '$env/static/public';
 
 import { Tier } from '$shared/models';
@@ -120,3 +127,9 @@ export const priceIdMapping = {
 export const tierMapping = Object.fromEntries(
 	Object.entries(priceIdMapping).map(([key, value]) => [value, key])
 );
+
+export const langfuseConfig = {
+	secretKey: isDevelopment ? PUBLIC_TEST_LANGFUSE_SECRET_KEY : PUBLIC_PROD_LANGFUSE_SECRET_KEY,
+	publicKey: isDevelopment ? PUBLIC_TEST_LANGFUSE_PUBLIC_KEY : PUBLIC_PROD_LANGFUSE_PUBLIC_KEY,
+	baseUrl: isDevelopment ? PUBLIC_TEST_LANGFUSE_BASE_URL : PUBLIC_PROD_LANGFUSE_BASE_URL
+}
