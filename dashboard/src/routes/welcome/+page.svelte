@@ -19,7 +19,7 @@
 				</div>
 				<img class="object-cover w-full bg-[#363636] my-4" src={Pin} alt="Pin extension tip" />
 				<div class="flex flex-col text-white gap-2">
-					<p class="text-gray-400 text-sm flex flex-row items-center">
+					<p class="text-[#929292] text-sm flex flex-row items-center">
 						<svg
 							class="mr-2"
 							width="15"
@@ -59,22 +59,14 @@
 			</div>
 		</div>
 
-		<div class="flex flex-row w-full h-[fit-content] rounded-none bg-black p-6 border gap-[40px]">
-			<iframe
-				class="w-3/5 h-[150px]"
-				src="https://www.youtube.com/embed/pUzCOpIE1zQ?si=cnwzWINbIT88ZiAU"
-				title="Onlook Demo Video"
-				frameborder="0"
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-				referrerpolicy="strict-origin-when-cross-origin"
-				allowfullscreen
-			></iframe>
-			<div class="text-white flex flex-col items-start m-0 p-5 gap-2">
+		<div class="flex flex-row w-full h-[fit-content] rounded-none bg-black p-6 border gap-[40px] items-center">
+			<iframe class="w-[100%] h-[150px]" src="https://www.youtube.com/embed/pUzCOpIE1zQ?si=cnwzWINbIT88ZiAU" title="Onlook Demo Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+			<div class="text-white flex flex-col items-start m-0 p-5 gap-2 w-[100%]">
 				<p class="text-white">See Onlook in action</p>
 				<p class="text-sm text-tertiary">
 					Watch us walk through a Demo project and make a pull request in less than 1 minute
 				</p>
-				<a class="text-sm text-red-600 hover:underline flex flex-row items-center text-[#ef4444]" href="https://onlook.dev/blog/create-your-first-pull-request" target="_blank">Read our guide to getting started <ExternalLink class="w-4 h-4 ml-2" /></a
+				<a class="text-sm text-[#ea364e] hover:underline flex flex-row items-center text-[#ef4444]" href="https://onlook.dev/blog/create-your-first-pull-request" target="_blank">Read our guide to getting started <ExternalLink class="w-4 h-4 ml-2" /></a
 				>
 				<a class="text-sm text-brand text-[#ef4444] hover:underline flex flex-row items-center" href="https://onlook.dev/blog/installing-onlook" target="_blank">Set up Onlook in your own Github Repo <ExternalLink class="w-4 h-4 ml-2" />
 				</a>
@@ -88,17 +80,13 @@
 			<div class="text-tertiary text-[14px]">Let's get you set up</div>
 		</div>
 
-		<a class="flex flex-row items-center rounded-xs bg-red-500/20 py-2 px-3 text-red-500 w-fit hover:bg-red-500/30 ml-[18px]" href="https://calendar.app.google/hjCAg7HpczY39Zd4A" target="_blank">
+		<a class="flex flex-row items-center rounded-[2px] bg-red-500/20 py-2 px-3 text-red-500 w-fit hover:bg-red-500/30 ml-[18px]" href="https://calendar.app.google/hjCAg7HpczY39Zd4A" target="_blank">
 			<Calendar class="w-4 h-4 mr-2" />
-			<div class="text-sm">Chat with a founder</div>
+			<div class="text-sm text-[#ea364e]">Chat with a founder</div>
 		</a>
-		<a
-			class="flex items-center justify-center rounded-xs bg-red-500/20 py-2 px-3 text-[14px] text-red-500 w-fit hover:bg-red-500/30"
-			href="mailto:founders@onlook.dev"
-			target="_blank"
-		>
+		<a class="flex items-center justify-center rounded-[2px] bg-red-500/20 py-2 px-3 text-[14px] text-red-500 w-fit hover:bg-red-500/30" href="mailto:founders@onlook.dev" target="_blank">
 			<EnvelopeOpen class="w-4 h-4 mr-2" />
-			<div class="text-sm">Send us an email</div>
+			<div class="text-sm text-[#ea364e]">Send us an email</div>
 		</a>
 	</div>
 </div>
