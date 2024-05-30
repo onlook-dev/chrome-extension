@@ -30,7 +30,7 @@ export function getTextTranslationInput(content: string, pathInfo: PathInfo, act
 
 export const getCodeChunkFromContent = (content: string, pathInfo: PathInfo, full: boolean) => {
   let endLine = full ? pathInfo.endLine : pathInfo.startTagEndLine;
-  return content.split('\n').slice(pathInfo.startLine - 1, endLine).join('\n');
+  return content.split('\n').slice(pathInfo.startLine - 1, endLine).join('\n').trim();
 }
 
 export const getCssStringFromStyleChanges = (styleChanges: Record<string, ChangeValues>) => {

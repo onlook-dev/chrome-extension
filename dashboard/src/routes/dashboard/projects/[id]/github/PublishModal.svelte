@@ -103,10 +103,6 @@
 			publishErrorMessage = 'Title is required';
 			return;
 		}
-		if (!description || description.trim() === '') {
-			publishErrorMessage = 'Description is required';
-			return;
-		}
 		const newDesc =
 			description + `\n\n[View in onlook.dev](${baseUrl}${DashboardRoutes.PROJECTS}/${project.id})`;
 		isLoading = true;
