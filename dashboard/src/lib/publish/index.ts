@@ -197,7 +197,7 @@ export class ProjectPublisher extends EventEmitter {
       framework: input.framework,
       tailwind: input.tailwind,
     }, this.forceTailwind ? StyleFramework.TailwindCSS : this.project.projectSettings?.styleFramework);
-    return this.diffMatchPatch.patch_make(content, content.replace(input.code.trim(), newCode));
+    return this.diffMatchPatch.patch_make(content, content.replace(input.code, newCode));
   }
 
   async processTextChanges(processed: ProcessedActivity, content: string) {
@@ -208,7 +208,7 @@ export class ProjectPublisher extends EventEmitter {
       code: input.code,
       framework: input.framework,
     });
-    return this.diffMatchPatch.patch_make(content, content.replace(input.code.trim(), newCode));
+    return this.diffMatchPatch.patch_make(content, content.replace(input.code, newCode));
   }
 
   async getFileFromActivity(processed: ProcessedActivity): Promise<FileContentData> {
