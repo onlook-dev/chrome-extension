@@ -54,7 +54,7 @@ export class ProjectPublisher extends EventEmitter {
       this.githubSettings.repositoryName,
       this.githubSettings.baseBranch
     );
-    this.translationService = new TranslationService();
+    this.translationService = new TranslationService(this.project.id);
   }
 
   private emitEvent(event: ProjectPublisherEvent) {

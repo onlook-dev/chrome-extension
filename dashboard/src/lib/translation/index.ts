@@ -12,14 +12,14 @@ export class TranslationService {
   private inlineCssPromptService: InlineCssPromptService;
   private tailwindPromptService: TailwindPromptService;
   private textPromptService: TextPromptService;
-  private langfuseHandler: CallbackHandler;
+  private traceHandler: CallbackHandler;
 
-  constructor() {
+  constructor(private projectId: string = "default") {
     this.openAi = this.getModel();
     this.inlineCssPromptService = new InlineCssPromptService();
     this.tailwindPromptService = new TailwindPromptService();
     this.textPromptService = new TextPromptService();
-    this.langfuseHandler = new CallbackHandler(langfuseConfig);
+    this.traceHandler = new CallbackHandler({ ...langfuseConfig, sessionId: this.projectId });
   }
 
   private getModel() {
@@ -49,13 +49,13 @@ export class TranslationService {
       default:
         prompt = await this.inlineCssPromptService.getPrompt(variables);
     }
-    const response = (await this.openAi.invoke(prompt, { callbacks: [this.langfuseHandler] })) as { code: string }
+    const response = (await this.openAi.invoke(prompt, { callbacks: [this.traceHandler], runName: "Style run" })) as { code: string }
     return response.code;
   }
 
   async getTextTranslation(variables: typeof this.textPromptService.inputVariables): Promise<string> {
     const prompt = await this.textPromptService.getPrompt(variables);
-    const response = (await this.openAi.invoke(prompt, { callbacks: [this.langfuseHandler] })) as { code: string }
+    const response = (await this.openAi.invoke(prompt, { callbacks: [this.traceHandler], runName: "Text run" })) as { code: string }
     return response.code;
   }
 }
