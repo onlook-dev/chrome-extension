@@ -50,12 +50,12 @@ export class TranslationService {
         prompt = await this.inlineCssPromptService.getPrompt(variables);
     }
     const response = (await this.openAi.invoke(prompt, { callbacks: [this.traceHandler], runName: "Style run" })) as { code: string }
-    return response.code;
+    return response.code.trim();
   }
 
   async getTextTranslation(variables: typeof this.textPromptService.inputVariables): Promise<string> {
     const prompt = await this.textPromptService.getPrompt(variables);
     const response = (await this.openAi.invoke(prompt, { callbacks: [this.traceHandler], runName: "Text run" })) as { code: string }
-    return response.code;
+    return response.code.trim();
   }
 }
