@@ -42,7 +42,7 @@ const styleExamplePrompt = "CSS: {css}\nTailwind: {tailwind}\nCode: {code}\nFram
 
 export class InlineCssPromptService extends PromptService<typeof styleInputs> {
   constructor() {
-    const prompt = "Given HTML code, the framework it's used in, CSS style changes and optional Tailwind style change. Update the HTML code to implement the style changes. Aim to make minimal changes to the original code structure. Only make style changes, update existing styles when possible. DO NOT CLOSE TAGS UNCESSARILY. Generalize from the examples given.\nCSS: {css}\nTailwind: {tailwind}\nCode: {code}\nFramework: {framework}\nOutput Code:";
+    const prompt = "You are an HTML and CSS expert. Given a code block, the framework it's used in, CSS style changes and optional Tailwind style change. Update the code to implement the style changes in inline styles. Only make inline style changes, update existing rules when applicable. DO NOT CHANGE ANYTHING OUTSIDE OF THE INLINE STYLES. Generalize from the examples given.\nCSS: {css}\nTailwind: {tailwind}\nCode: {code}\nFramework: {framework}\nOutput Code:";
     const examples: Example[] = [
       {
         css: "color: #000000;",
@@ -54,30 +54,30 @@ export class InlineCssPromptService extends PromptService<typeof styleInputs> {
       {
         css: "background-color: blue; border: 1px solid black;",
         tailwind: "",
-        code: "<Card>",
+        code: "<Card><>",
         framework: "tsx",
-        output: `<Card style={{{{ backgroundColor: blue, border: '1px solid black' }}}}>`
+        output: `<Card style={{{{ backgroundColor: blue, border: '1px solid black' }}}}><>`
       },
       {
         css: "padding: 10px;",
         tailwind: "h-4",
-        code: `<div id="foo" style="padding: 2px;">`,
+        code: `</a><div id="foo" style="padding: 2px;">`,
         framework: "svelte",
-        output: `<div id="foo" style="padding: 10px; 	height: 1rem;">`
+        output: `</a><div id="foo" style="padding: 10px; 	height: 1rem;">`
       },
       {
         css: "font-size: 17px; color: #000000;",
         tailwind: "",
-        code: '<span style="font-size: 16px;">',
+        code: '123 123<span style="font-size: 16px;">',
         framework: "html",
-        output: '<span style="font-size: 17px; color: #000000;">'
+        output: '123 123<span style="font-size: 17px; color: #000000;">'
       },
       {
         css: "width: 67%;",
-        code: `<div style={{{{ height: "10px"}}}}>`,
+        code: `<div style={{{{ height: "10px"}}}}>other content</div>`,
         tailwind: "",
         framework: "jsx",
-        output: '<div style={{{{ height: "10px", width: "67%" }}}}>'
+        output: '<div style={{{{ height: "10px", width: "67%" }}}}>other content</div>'
       },
     ];
 
@@ -91,21 +91,21 @@ export class InlineCssPromptService extends PromptService<typeof styleInputs> {
 export class TailwindPromptService extends PromptService<typeof styleInputs> {
   constructor() {
 
-    const prompt = "Given HTML code, the framework it's used in, CSS style changes and optional Tailwind style change. Update the HTML code to implement the style changes using TailwindCSS. Use tailwindCSS arbitrary values when no Tailwind equivalent like in example. Aim to make minimal changes to the original code structure. Only make style changes, update existing styles when possible. DO NOT CLOSE TAGS UNCESSARILY. Generalize from the examples given.\nCSS: {css}\nTailwind: {tailwind}\nCode: {code}\nFramework: {framework}\nOutput Code:";
+    const prompt = "You are an HTML, CSS and TailwindCSS expert. Given a code block, the framework it's used in, CSS style changes and optional Tailwind style change. Update the code to implement the style changes using TailwindCSS. Use arbitrary values when no Tailwind equivalent are available. Only make style changes, update existing tailwind classes when applicable. DO NOT CHANGE ANYTHING OUTSIDE OF THE TAILWIND CLASSES. Generalize from the examples given.\nCSS: {css}\nTailwind: {tailwind}\nCode: {code}\nFramework: {framework}\nOutput Code:";
     const examples: Example[] = [
       {
         css: "background-color: #000000;",
         tailwind: "w-1/2",
-        code: '<h1 class="bg-gray-200 text-red">',
+        code: '<h1 class="bg-gray-200 text-red"><p>',
         framework: "vue",
-        output: '<h1 class="bg-black text-red w-1/2">'
+        output: '<h1 class="bg-black text-red w-1/2"><p>'
       },
       {
         css: "margin: 20px; border: 1px solid black;",
         tailwind: "font-light",
-        code: "<Card className='mt-8 font-bold'>",
+        code: "123 123<Card className='mt-8 font-bold'>",
         framework: "tsx",
-        output: "<Card className='mt-8 font-light m-5 border border-black'/>"
+        output: "123 123<Card className='mt-8 font-light m-5 border border-black'/>"
       },
       {
         css: "background-color: blue; padding: 10px;",
@@ -117,16 +117,16 @@ export class TailwindPromptService extends PromptService<typeof styleInputs> {
       {
         css: "font-size: 17px;",
         tailwind: "p-4",
-        code: '<span class="text-gray-600">',
+        code: '<span class="text-gray-600"></a>',
         framework: "html",
-        output: '<span class="text-gray-600 text-[17px] p-4">'
+        output: '<span class="text-gray-600 text-[17px] p-4"></a>'
       },
       {
         css: "width: 67%;",
         tailwind: "",
-        code: '<div className="mt-4">',
+        code: '<><div className="mt-4"><>',
         framework: "jsx",
-        output: '<div className="mt-4 w-[67%]">'
+        output: '<><div className="mt-4 w-[67%]"><>'
       },
     ];
 
