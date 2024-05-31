@@ -160,44 +160,60 @@ export class ProjectPublisher extends EventEmitter {
     */
 
     let patches: (new () => DiffMatchPatch.patch_obj)[] = [];
+    let result = fileContent.content;
 
-    for (const processed of processedActivities) {
-      if (processed.pathInfo.extension === 'svelte') {
-        const compiler = new SvelteCompiler();
-        patches = patches.concat(await compiler.writeAttribute(processed, fileContent));
-      } else {
-        patches = patches.concat(await this.processWithAI(processed, fileContent));
-      }
-      this.emitEvent({
-        type: ProjectPublisherEventType.TRANSLATING,
-        progress: {
-          processed: ++this.processedCount,
-          total: this.processedActivities.length
+    if (fileContent.path.endsWith('.svelte')) {
+      const FramworkAttributeMap = {
+        [StyleFramework.TailwindCSS]: 'class',
+        [StyleFramework.InlineCSS]: 'style'
+      };
+      const compiler = new SvelteCompiler();
+      const changes = processedActivities.map(activity => {
+        const framework = this.forceTailwind ? StyleFramework.TailwindCSS : this.project.projectSettings?.styleFramework ?? StyleFramework.InlineCSS;
+        let content = ''
+        if (framework === StyleFramework.TailwindCSS) {
+          content = 'test tailwind'
+        } else {
+          content = 'test inline'
         }
-      })
-    }
+        return {
+          startLine: activity.pathInfo.startLine,
+          endLine: activity.pathInfo.endLine,
+          attribute: FramworkAttributeMap[framework],
+          content: content
+        }
+      });
+      result = await compiler.writeAttribute(fileContent.content, changes);
+    } else {
+      for (const processed of processedActivities) {
+        // Process style changes
+        if (processed.activity.styleChanges) {
+          const stylePatches = await this.processStyleChanges(processed, fileContent.content);
+          patches = patches.concat(stylePatches);
+        }
 
-    const result = this.diffMatchPatch.patch_apply(patches, fileContent.content);
+        // Process text changes
+        if (processed.activity.textChanges) {
+          const textPatches = await this.processTextChanges(processed, fileContent.content);
+          patches = patches.concat(textPatches);
+        }
+
+        this.emitEvent({
+          type: ProjectPublisherEventType.TRANSLATING,
+          progress: {
+            processed: ++this.processedCount,
+            total: this.processedActivities.length
+          }
+        })
+      }
+
+      const patchRes = this.diffMatchPatch.patch_apply(patches, fileContent.content);
+      result = patchRes[0];
+    }
     return {
       ...fileContent,
-      content: result[0]
+      content: result
     }
-  }
-
-  async processWithAI(processed: ProcessedActivity, fileContent: FileContentData) {
-    let patches: (new () => DiffMatchPatch.patch_obj)[] = [];
-    // Process style changes
-    if (processed.activity.styleChanges) {
-      const stylePatches = await this.processStyleChanges(processed, fileContent.content);
-      patches = patches.concat(stylePatches);
-    }
-
-    // Process text changes
-    if (processed.activity.textChanges) {
-      const textPatches = await this.processTextChanges(processed, fileContent.content);
-      patches = patches.concat(textPatches);
-    }
-    return patches;
   }
 
   async processStyleChanges(processed: ProcessedActivity, content: string) {

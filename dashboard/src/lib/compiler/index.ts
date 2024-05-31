@@ -1,10 +1,5 @@
 import { parse, walk } from 'svelte/compiler';
 
-export enum WriteType {
-    CLASS = 'class',
-    STYLE = 'style',
-}
-
 type Edit = {
     pos: number;
     remove?: number;
@@ -12,11 +7,15 @@ type Edit = {
 };
 
 type ChangeObj = {
-    startLine: number, endLine: number, type: WriteType, content: string
+    startLine: number,
+    endLine: number,
+    attribute: string,
+    content: string
 }
 
 export class SvelteCompiler {
     constructor() { }
+
     async writeAttribute(text: string, changes: ChangeObj[]): Promise<string> {
         const ast = parse(text);
         let line = 1;
@@ -38,7 +37,7 @@ export class SvelteCompiler {
                 changes.forEach(change => {
                     if (node.type === 'Element' && nodeStartLine >= change.startLine && nodeEndLine <= change.endLine) {
                         const attributes = node.attributes;
-                        const targetAttr = attributes.find((attr: any) => attr.type === 'Attribute' && attr.name === change.type);
+                        const targetAttr = attributes.find((attr: any) => attr.type === 'Attribute' && attr.name === change.attribute);
 
                         if (targetAttr) {
                             const firstValuePart = targetAttr.value[0];
@@ -56,7 +55,7 @@ export class SvelteCompiler {
                             const spaceAfter = isEndOfTag ? '' : ' ';
                             edits.push({
                                 pos: insertPos,
-                                content: `${spaceBefore}${change.type}="${change.content}"${spaceAfter}`
+                                content: `${spaceBefore}${change.attribute}="${change.content}"${spaceAfter}`
                             });
                         }
                     }
