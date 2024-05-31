@@ -11,10 +11,13 @@ type Edit = {
     content: string;
 };
 
-export class CompilerService {
-    constructor() { }
+type ChangeObj = {
+    startLine: number, endLine: number, type: WriteType, content: string
+}
 
-    async writeAttribute(text: string, startLine: number, endLine: number, type: WriteType, content: string): Promise<string> {
+export class SvelteCompiler {
+    constructor() { }
+    async writeAttribute(text: string, changes: ChangeObj[]): Promise<string> {
         const ast = parse(text);
         let line = 1;
         let lineStarts = [0];
@@ -32,39 +35,35 @@ export class CompilerService {
                 const nodeStartLine = lineStarts.findIndex(pos => pos > node.start) - 1;
                 const nodeEndLine = lineStarts.findIndex(pos => pos > node.end) - 1;
 
-                if (node.type === 'Element' && nodeStartLine === startLine && nodeEndLine === endLine) {
-                    const attributes = node.attributes;
-                    const targetAttr = attributes.find((attr: any) => attr.type === 'Attribute' && attr.name === type);
+                changes.forEach(change => {
+                    if (node.type === 'Element' && nodeStartLine >= change.startLine && nodeEndLine <= change.endLine) {
+                        const attributes = node.attributes;
+                        const targetAttr = attributes.find((attr: any) => attr.type === 'Attribute' && attr.name === change.type);
 
-                    // If attribute exists, replace it. Otherwise insert it
-                    if (targetAttr) {
-                        // Replace the entire value of the found attribute
-                        const firstValuePart = targetAttr.value[0];
-                        const lastValuePart = targetAttr.value[targetAttr.value.length - 1];
-                        edits.push({
-                            pos: firstValuePart.start,
-                            remove: lastValuePart.end - firstValuePart.start,
-                            content: `${content}`
-                        });
-                    } else {
-                        // Determine the position to insert the attribute
-                        const insertPos = node.start + node.name.length + 1;
-                        const needsSpaceBefore = text[insertPos] !== ' ';
-                        const spaceBefore = needsSpaceBefore ? ' ' : '';
-                        // Check if the next character is the end of the tag '>'
-                        const isEndOfTag = text[insertPos] === '>';
-                        const spaceAfter = isEndOfTag ? '' : ' ';
-
-                        edits.push({
-                            pos: insertPos,
-                            content: `${spaceBefore}${type}="${content}"${spaceAfter}`
-                        });
+                        if (targetAttr) {
+                            const firstValuePart = targetAttr.value[0];
+                            const lastValuePart = targetAttr.value[targetAttr.value.length - 1];
+                            edits.push({
+                                pos: firstValuePart.start,
+                                remove: lastValuePart.end - firstValuePart.start,
+                                content: change.content
+                            });
+                        } else {
+                            const insertPos = node.start + node.name.length + 1;
+                            const needsSpaceBefore = text[insertPos] !== ' ';
+                            const spaceBefore = needsSpaceBefore ? ' ' : '';
+                            const isEndOfTag = text[insertPos] === '>';
+                            const spaceAfter = isEndOfTag ? '' : ' ';
+                            edits.push({
+                                pos: insertPos,
+                                content: `${spaceBefore}${change.type}="${change.content}"${spaceAfter}`
+                            });
+                        }
                     }
-                }
+                });
             }
         });
 
-        // Apply edits in reverse order to not mess up the indices
         edits.sort((a, b) => b.pos - a.pos);
         for (const edit of edits) {
             text = text.slice(0, edit.pos) + edit.content + text.slice(edit.pos + (edit.remove || 0));

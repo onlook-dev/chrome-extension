@@ -10,6 +10,7 @@ import type { User, FileContentData, ProcessedActivity } from "$shared/models";
 
 import EventEmitter from 'events';
 import DiffMatchPatch from 'diff-match-patch';
+import { SvelteCompiler } from "$lib/compiler";
 
 export enum ProjectPublisherEventType {
   TRANSLATING = 'TRANSLATING',
@@ -161,18 +162,12 @@ export class ProjectPublisher extends EventEmitter {
     let patches: (new () => DiffMatchPatch.patch_obj)[] = [];
 
     for (const processed of processedActivities) {
-      // Process style changes
-      if (processed.activity.styleChanges) {
-        const stylePatches = await this.processStyleChanges(processed, fileContent.content);
-        patches = patches.concat(stylePatches);
+      if (processed.pathInfo.extension === 'svelte') {
+        const compiler = new SvelteCompiler();
+        patches = patches.concat(await compiler.writeAttribute(processed, fileContent));
+      } else {
+        patches = patches.concat(await this.processWithAI(processed, fileContent));
       }
-
-      // Process text changes
-      if (processed.activity.textChanges) {
-        const textPatches = await this.processTextChanges(processed, fileContent.content);
-        patches = patches.concat(textPatches);
-      }
-
       this.emitEvent({
         type: ProjectPublisherEventType.TRANSLATING,
         progress: {
@@ -189,6 +184,22 @@ export class ProjectPublisher extends EventEmitter {
     }
   }
 
+  async processWithAI(processed: ProcessedActivity, fileContent: FileContentData) {
+    let patches: (new () => DiffMatchPatch.patch_obj)[] = [];
+    // Process style changes
+    if (processed.activity.styleChanges) {
+      const stylePatches = await this.processStyleChanges(processed, fileContent.content);
+      patches = patches.concat(stylePatches);
+    }
+
+    // Process text changes
+    if (processed.activity.textChanges) {
+      const textPatches = await this.processTextChanges(processed, fileContent.content);
+      patches = patches.concat(textPatches);
+    }
+    return patches;
+  }
+
   async processStyleChanges(processed: ProcessedActivity, content: string) {
     const input = getStyleTranslationInput(content, processed.pathInfo, processed.activity);
     const newCode = await this.translationService.getStyleTranslation({
@@ -202,8 +213,6 @@ export class ProjectPublisher extends EventEmitter {
 
   async processTextChanges(processed: ProcessedActivity, content: string) {
     const input = getTextTranslationInput(content, processed.pathInfo, processed.activity);
-    // If svelte, use svelte compiler
-
     const newCode = await this.translationService.getTextTranslation({
       oldText: input.oldText,
       newText: input.newText,

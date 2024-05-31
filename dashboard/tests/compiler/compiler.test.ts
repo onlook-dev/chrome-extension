@@ -1,26 +1,28 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe, beforeEach, beforeAll } from 'bun:test';
-import { CompilerService, WriteType } from '$lib/compiler';
+import { SvelteCompiler, WriteType } from '$lib/compiler';
 
 describe('Compiler', () => {
-    let compiler: CompilerService;
+    let compiler: SvelteCompiler;
     let originalText: string;
     let expectedText: string;
 
     beforeAll(async () => {
-        compiler = new CompilerService();
+        compiler = new SvelteCompiler();
         originalText = await Bun.file("tests/compiler/files/before.svelte").text();
         expectedText = await Bun.file("tests/compiler/files/after.svelte").text();
     });
 
     test('should add or update attributes', async () => {
-        let res = await compiler.writeAttribute(originalText, 9, 9, WriteType.CLASS, "new");
-        res = await compiler.writeAttribute(res, 10, 10, WriteType.CLASS, "new");
-        res = await compiler.writeAttribute(res, 11, 11, WriteType.CLASS, "old new");
+        const changes = [
+            { startLine: 9, endLine: 9, type: WriteType.CLASS, content: "new" },
+            { startLine: 10, endLine: 10, type: WriteType.CLASS, content: "new" },
+            { startLine: 11, endLine: 11, type: WriteType.CLASS, content: "old new" },
+            { startLine: 12, endLine: 12, type: WriteType.STYLE, content: "color: red;" },
+            { startLine: 13, endLine: 13, type: WriteType.STYLE, content: "color: red;" },
 
-        res = await compiler.writeAttribute(res, 12, 12, WriteType.STYLE, "color: red;");
-        res = await compiler.writeAttribute(res, 13, 13, WriteType.STYLE, "color: red;");
-        console.log(res);
+        ]
+        let res = await compiler.writeAttribute(originalText, changes);
 
         expect(res).toEqual(expectedText);
     });
