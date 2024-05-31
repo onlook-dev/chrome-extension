@@ -10,7 +10,7 @@
 	style="background-image: url({BackgroundImage});"
 >
 	<div class="flex flex-col w-1/2 items-center min-w-[800px] gap-[20px]">
-		<h1 class="text-2xl text-white text-start w-full">Let's push some pixels</h1>
+		<h1style="test inline"  class="text-2xl text-white text-start w-full">Let's push some pixels</h1>
 		<div class="flex flex-row w-full justify-center h-full gap-5 bg-transparent p-0">
 			<div class="w-full h-full bg-black rounded-none p-6 border">
 				<div class="text-light">
