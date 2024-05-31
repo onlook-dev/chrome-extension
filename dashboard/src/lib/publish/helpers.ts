@@ -18,6 +18,7 @@ export function getProcessedActivities(
 
 export function getPathInfo(activityPath: string, rootPath: string): PathInfo {
   const [filePath, startLine, startTagEndLine, endLine] = activityPath.split(':');
+  const extension = filePath.split('.').pop() || '';
   return {
     path: rootPath === '.' || rootPath === '' || rootPath === '/'
       ? `${filePath}`
@@ -25,5 +26,6 @@ export function getPathInfo(activityPath: string, rootPath: string): PathInfo {
     startLine: parseInt(startLine),
     startTagEndLine: parseInt(startTagEndLine),
     endLine: parseInt(endLine),
+    extension
   };
 }

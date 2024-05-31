@@ -1,7 +1,7 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe } from 'bun:test';
 import { getProcessedActivities } from '$lib/publish/helpers';
-import { PathInfo, StyleTranslationInput, TextTranslationInput } from '$shared/models/translation';
+import { PathInfo, StyleTranslationInput, TextTranslationInput, ProcessedActivity } from '$shared/models/translation';
 import { getStyleTranslationInput, getTextTranslationInput } from '$lib/publish/inputs';
 
 describe('ProjectPublisher helpers', () => {
@@ -9,15 +9,15 @@ describe('ProjectPublisher helpers', () => {
     // Setup
     const rootPath = 'root';
     const activities = {
-      act1: { path: 'path/to/activity1.html:1:2:3' },
-      act2: { /* no path */ },
-      act3: { path: 'path/to/activity3.jsx:1:2:3' },
+      act1: { path: 'path/to/activity1.html:1:2:3' } as any,
+      act2: { /* no path */ } as any,
+      act3: { path: 'path/to/activity3.jsx:1:2:3' } as any,
     };
 
-    const expected = [
-      { activity: activities.act1, pathInfo: { path: 'root/path/to/activity1.html', startLine: 1, startTagEndLine: 2, endLine: 3 } },
-      { activity: activities.act3, pathInfo: { path: 'root/path/to/activity3.jsx', startLine: 1, startTagEndLine: 2, endLine: 3 } }
-    ]
+    const expected: ProcessedActivity[] = [
+      { activity: activities.act1, pathInfo: { path: 'root/path/to/activity1.html', startLine: 1, startTagEndLine: 2, endLine: 3, extension: 'html' } },
+      { activity: activities.act3, pathInfo: { path: 'root/path/to/activity3.jsx', startLine: 1, startTagEndLine: 2, endLine: 3, extension: 'jsx' } }
+    ];
 
     // Execute
     const processed = getProcessedActivities(activities as any, rootPath);
@@ -37,6 +37,7 @@ describe('ProjectPublisher helpers', () => {
       startLine: 1,
       startTagEndLine: 1,
       endLine: 3,
+      extension: 'html'
     };
 
     const activity = {
@@ -75,6 +76,7 @@ describe('ProjectPublisher helpers', () => {
       startLine: 1,
       startTagEndLine: 2,
       endLine: 3,
+      extension: 'html'
     };
 
     const activity = {
@@ -110,6 +112,7 @@ describe('ProjectPublisher helpers', () => {
       startLine: 2,
       startTagEndLine: 2,
       endLine: 2,
+      extension: 'html'
     };
 
     const activity = {

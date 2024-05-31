@@ -5,6 +5,12 @@ export enum WriteType {
     STYLE = 'style',
 }
 
+type Edit = {
+    pos: number;
+    remove?: number;
+    content: string;
+};
+
 export class CompilerService {
     constructor() { }
 
@@ -19,16 +25,16 @@ export class CompilerService {
             }
         }
 
-        let edits = [];
+        let edits: Edit[] = [];
 
         walk(ast.html as any, {
-            enter(node, parent, prop, index) {
+            enter(node: any, parent, prop, index) {
                 const nodeStartLine = lineStarts.findIndex(pos => pos > node.start) - 1;
                 const nodeEndLine = lineStarts.findIndex(pos => pos > node.end) - 1;
 
                 if (node.type === 'Element' && nodeStartLine === startLine && nodeEndLine === endLine) {
                     const attributes = node.attributes;
-                    const targetAttr = attributes.find(attr => attr.type === 'Attribute' && attr.name === type);
+                    const targetAttr = attributes.find((attr: any) => attr.type === 'Attribute' && attr.name === type);
 
                     // If attribute exists, replace it. Otherwise insert it
                     if (targetAttr) {

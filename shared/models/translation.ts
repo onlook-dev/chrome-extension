@@ -11,6 +11,11 @@ export interface PathInfo {
   startLine: number;
   startTagEndLine: number;
   endLine: number;
+
+  // startPos: number;
+  // startTagEndPos: number
+  // endPos: number;
+  extension: string;
 }
 
 export type StyleTranslationInput = {

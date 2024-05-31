@@ -202,6 +202,8 @@ export class ProjectPublisher extends EventEmitter {
 
   async processTextChanges(processed: ProcessedActivity, content: string) {
     const input = getTextTranslationInput(content, processed.pathInfo, processed.activity);
+    // If svelte, use svelte compiler
+
     const newCode = await this.translationService.getTextTranslation({
       oldText: input.oldText,
       newText: input.newText,
