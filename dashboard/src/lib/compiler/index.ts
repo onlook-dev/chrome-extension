@@ -20,6 +20,7 @@ export class SvelteCompiler {
         const ast = parse(text);
         let line = 1;
         let lineStarts = [0];
+
         for (let i = 0; i < text.length; i++) {
             if (text[i] === '\n') {
                 line++;
@@ -27,15 +28,30 @@ export class SvelteCompiler {
             }
         }
 
+        // Create a map of changes keyed by element signature (`startLine-endLine`)
+        const changeMap = new Map<string, ChangeObj[]>();
+        changes.forEach(change => {
+            const key = `${change.startLine}-${change.endLine}`;
+            if (!changeMap.has(key)) {
+                changeMap.set(key, []);
+            }
+            changeMap.get(key)!.push(change);
+        });
+
         let edits: Edit[] = [];
 
         walk(ast.html as any, {
-            enter(node: any, parent, prop, index) {
+            enter(node: any) {
+
                 const nodeStartLine = lineStarts.findIndex(pos => pos > node.start) - 1;
                 const nodeEndLine = lineStarts.findIndex(pos => pos > node.end) - 1;
+                const key = `${nodeStartLine}-${nodeEndLine}`;
 
-                changes.forEach(change => {
-                    if (node.type === 'Element' && nodeStartLine >= change.startLine && nodeEndLine <= change.endLine) {
+                // Retrieve changes for the current element
+                if (node.type === 'Element' && changeMap.has(key)) {
+                    console.log("element found")
+                    const elementChanges = changeMap.get(key)!;
+                    elementChanges.forEach(change => {
                         const attributes = node.attributes;
                         const targetAttr = attributes.find((attr: any) => attr.type === 'Attribute' && attr.name === change.attribute);
 
@@ -49,17 +65,15 @@ export class SvelteCompiler {
                             });
                         } else {
                             const insertPos = node.start + node.name.length + 1;
-                            const needsSpaceBefore = text[insertPos] !== ' ';
-                            const spaceBefore = needsSpaceBefore ? ' ' : '';
-                            const isEndOfTag = text[insertPos] === '>';
-                            const spaceAfter = isEndOfTag ? '' : ' ';
+                            const isFirstAttribute = node.attributes.length === 0;
+                            const spaceBefore = isFirstAttribute ? ' ' : ' ';  // Add space only if it's the first attribute
                             edits.push({
                                 pos: insertPos,
-                                content: `${spaceBefore}${change.attribute}="${change.content}"${spaceAfter}`
+                                content: `${spaceBefore}${change.attribute}="${change.content}"`
                             });
                         }
-                    }
-                });
+                    });
+                }
             }
         });
 

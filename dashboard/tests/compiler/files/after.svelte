@@ -12,5 +12,6 @@
 		<div class="old new">Append to this class</div>
 		<div style="color: red;">Add style here</div>
 		<div style="color: red;">Update this style</div>
+		<h1 style="123;" class="123">Let's push some pixels</h1>
 	</div>
 </div>

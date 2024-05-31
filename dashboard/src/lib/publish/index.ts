@@ -177,13 +177,14 @@ export class ProjectPublisher extends EventEmitter {
           content = 'test inline'
         }
         return {
-          startLine: activity.pathInfo.startLine,
-          endLine: activity.pathInfo.endLine,
+          startLine: activity.pathInfo.startLine - 1,
+          endLine: activity.pathInfo.endLine - 1,
           attribute: FramworkAttributeMap[framework],
           content: content
         }
       });
       result = await compiler.writeAttribute(fileContent.content, changes);
+      console.log(result);
     } else {
       for (const processed of processedActivities) {
         // Process style changes
@@ -210,6 +211,7 @@ export class ProjectPublisher extends EventEmitter {
       const patchRes = this.diffMatchPatch.patch_apply(patches, fileContent.content);
       result = patchRes[0];
     }
+    throw new Error('Not implemented');
     return {
       ...fileContent,
       content: result

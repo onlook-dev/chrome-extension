@@ -20,9 +20,9 @@ describe('Compiler', () => {
             { startLine: 11, endLine: 11, attribute: 'class', content: "old new" },
             { startLine: 12, endLine: 12, attribute: 'style', content: "color: red;" },
             { startLine: 13, endLine: 13, attribute: 'style', content: "color: red;" },
+            { startLine: 14, endLine: 14, attribute: 'style', content: "123;" },
         ]
         let res = await compiler.writeAttribute(originalText, changes);
-
         expect(res).toEqual(expectedText);
     });
 });
