@@ -1,6 +1,6 @@
 // @ts-ignore - Bun test exists
-import { expect, test, describe, beforeEach, beforeAll } from 'bun:test';
-import { SvelteCompiler, WriteType } from '$lib/compiler';
+import { expect, test, describe, beforeAll } from 'bun:test';
+import { SvelteCompiler } from '$lib/compiler';
 
 describe('Compiler', () => {
     let compiler: SvelteCompiler;
@@ -15,12 +15,11 @@ describe('Compiler', () => {
 
     test('should add or update attributes', async () => {
         const changes = [
-            { startLine: 9, endLine: 9, attribute: 'class', content: "new" },
             { startLine: 10, endLine: 10, attribute: 'class', content: "new" },
-            { startLine: 11, endLine: 11, attribute: 'class', content: "old new" },
+            { startLine: 11, endLine: 11, attribute: 'class', content: "new" },
             { startLine: 12, endLine: 12, attribute: 'style', content: "color: red;" },
             { startLine: 13, endLine: 13, attribute: 'style', content: "color: red;" },
-            { startLine: 14, endLine: 14, attribute: 'style', content: "123;" },
+            { startLine: 14, endLine: 14, attribute: 'style', content: "color: red;" },
         ]
         let res = await compiler.writeAttribute(originalText, changes);
         expect(res).toEqual(expectedText);

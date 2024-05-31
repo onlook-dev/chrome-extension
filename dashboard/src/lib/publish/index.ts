@@ -211,7 +211,6 @@ export class ProjectPublisher extends EventEmitter {
       const patchRes = this.diffMatchPatch.patch_apply(patches, fileContent.content);
       result = patchRes[0];
     }
-    throw new Error('Not implemented');
     return {
       ...fileContent,
       content: result

@@ -65,6 +65,7 @@
     "paneforge": "^0.0.4",
     "stripe": "^14.12.0",
     "svelte-pan-zoom": "^0.0.11",
+    "svelte-preprocess": "^5.1.4",
     "svelte-radix": "^1.1.0",
     "tailwind-merge": "^2.2.2",
     "tailwind-variants": "^0.2.1",
