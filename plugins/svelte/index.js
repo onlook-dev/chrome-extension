@@ -80,26 +80,48 @@ export function decompress(base64) {
 
 // For testing tags by printing start and end tag based on information
 function testTags(filename, startTag, endTag) {
-  const startTagContent = extractTagContent(filename, startTag);
+  const content = fs.readFileSync(filename, 'utf8');
+
+  const startTagContent = extractTagContent(content, startTag);
   console.log("S:", "'" + startTagContent + "'");
 
   // Check if there is an end tag and extract its content if present
   if (endTag) {
-    const endTagContent = extractTagContent(filename, endTag);
+    const endTagContent = extractTagContent(content, endTag);
     console.log("E:", "'" + endTagContent + "'");
   } else {
     console.log("E:", "null");
   }
 }
 
-function extractTagContent(filePath, tagPosition) {
-  const content = fs.readFileSync(filePath, 'utf8');
+// Note: line and columns are 1-index extraction is 0-index
+export function extractTagContent(content, tagPosition) {
   const lines = content.split('\n');
 
-  // Extract content for the given tag position (either start or end tag)
+  // Extract content for the given tag position from start line column to end line column
   if (tagPosition) {
-    const lineContent = lines[tagPosition.start.line - 1];  // -1 because lines array is zero-indexed
-    return lineContent.substring(tagPosition.start.column - 1, tagPosition.end.column - 1);
+    const { start, end } = tagPosition;
+    if (!start || !end) return null;
+
+    if (start.line === end.line) {
+      // Tag content is within a single line
+      return lines[start.line - 1].substring(start.column - 1, end.column - 1);
+    } else {
+      // Tag content spans multiple lines
+      let extractedContent = [];
+
+      // Add the part of the start line after the start column
+      extractedContent.push(lines[start.line - 1].substring(start.column - 1));
+
+      // Add all lines in between
+      for (let i = start.line; i < end.line - 1; i++) {
+        extractedContent.push(lines[i]);
+      }
+
+      // Add the part of the end line before the end column
+      extractedContent.push(lines[end.line - 1].substring(0, end.column - 1));
+      return extractedContent.join('\n');
+    }
   }
   return null;
 }
@@ -140,6 +162,7 @@ function getTagPositions(content, node, lineOffset) {
     const column = pos - content.lastIndexOf("\n", pos - 1);
     return { line, column };
   }
+
   return {
     startTag: {
       start: getLineAndColumn(node.start),
