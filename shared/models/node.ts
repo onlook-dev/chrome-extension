@@ -12,5 +12,5 @@ export interface DomNode {
     path: string,
     startTag: TagInfo,
     endTag: TagInfo,
-    snapshot: string,
+    commit: string,
 }
