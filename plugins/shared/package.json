@@ -2,12 +2,15 @@
   "name": "@onlook/helpers",
   "module": "index.ts",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "index.js",
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2"
   }
 }

@@ -1,2 +1,2 @@
-import { getCurrentCommit } from './helpers.js'
+import { getCurrentCommit, compress, decompress } from './helpers.js'
 export { getCurrentCommit }

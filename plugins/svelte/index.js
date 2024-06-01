@@ -5,7 +5,7 @@ import fs from "fs";
 import { parse, walk } from "svelte/compiler";
 import { DATA_ONLOOK_ID } from "../shared/constants.js";
 import { getCurrentCommit } from "../shared/helpers.js";
-import { strToU8, strFromU8, compressSync, decompressSync } from 'fflate'
+import { compress, testTags } from "../shared/helpers.js";
 
 export const onlookPreprocess = ({ root = path.resolve('.'), absolute = false, commit_hash = getCurrentCommit() }) => {
   return {
@@ -61,69 +61,6 @@ function getDataOnlookId(node, content, lineOffset, filename, commit, root, abso
     commit
   };
   return compress(domNode);
-}
-
-export function compress(json) {
-  // Compress JSON to base64
-  const buf = strToU8(JSON.stringify(json));
-  const compressed = compressSync(buf);
-  const base64 = Buffer.from(compressed).toString('base64');
-  return base64;
-}
-
-export function decompress(base64) {
-  // Decompress base64 to JSON
-  const decompressed = decompressSync(Buffer.from(base64, 'base64'));
-  const str = strFromU8(decompressed);
-  return JSON.parse(str);
-}
-
-// For testing tags by printing start and end tag based on information
-function testTags(filename, startTag, endTag) {
-  const content = fs.readFileSync(filename, 'utf8');
-
-  const startTagContent = extractTagContent(content, startTag);
-  console.log("S:", "'" + startTagContent + "'");
-
-  // Check if there is an end tag and extract its content if present
-  if (endTag) {
-    const endTagContent = extractTagContent(content, endTag);
-    console.log("E:", "'" + endTagContent + "'");
-  } else {
-    console.log("E:", "null");
-  }
-}
-
-// Note: line and columns are 1-index extraction is 0-index
-export function extractTagContent(content, tagPosition) {
-  const lines = content.split('\n');
-
-  // Extract content for the given tag position from start line column to end line column
-  if (tagPosition) {
-    const { start, end } = tagPosition;
-    if (!start || !end) return null;
-
-    if (start.line === end.line) {
-      // Tag content is within a single line
-      return lines[start.line - 1].substring(start.column - 1, end.column - 1);
-    } else {
-      // Tag content spans multiple lines
-      let extractedContent = [];
-
-      // Add the part of the start line after the start column
-      extractedContent.push(lines[start.line - 1].substring(start.column - 1));
-
-      // Add all lines in between
-      for (let i = start.line; i < end.line - 1; i++) {
-        extractedContent.push(lines[i]);
-      }
-
-      // Add the part of the end line before the end column
-      extractedContent.push(lines[end.line - 1].substring(0, end.column - 1));
-      return extractedContent.join('\n');
-    }
-  }
-  return null;
 }
 
 function getTagPositions(content, node, lineOffset) {
