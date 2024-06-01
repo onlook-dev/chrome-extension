@@ -4,6 +4,9 @@
   "main": "bundle.js",
   "type": "module",
   "dependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "brotli-wasm": "^3.0.0",
+    "fflate": "^0.8.2",
     "magic-string": "^0.30.5",
     "svelte": "^4.2.8"
   },
