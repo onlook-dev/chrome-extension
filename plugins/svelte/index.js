@@ -19,15 +19,15 @@ export const onlookPreprocess = ({ root = path.resolve('.'), absolute = false, c
       }
 
       // TODO: This is a hack, doesn't account for script tag being at the bottom of the file
-      let offset = 0;
+      let lineOffset = 0;
       try {
         // Calculate offset from typescript preprocessing step
         let data = fs.readFileSync(filename);
         let originalLineNum = data.toString().split("\n").length;
         let postLineNum = content.split("\n").length;
-        offset = originalLineNum - postLineNum;
+        lineOffset = originalLineNum - postLineNum;
       } catch (e) {
-        offset = 0;
+        lineOffset = 0;
       }
 
       const ast = parse(content);
@@ -37,8 +37,7 @@ export const onlookPreprocess = ({ root = path.resolve('.'), absolute = false, c
         enter(node) {
           if (node.type === "Element") {
             // Calculate the line number for each element node
-            const attributeValue = getDataOnlookId(node, content, offset, filename, commit_hash, root, absolute);
-
+            const attributeValue = getDataOnlookId(node, content, lineOffset, filename, commit_hash, root, absolute);
             const attributeName = `${DATA_ONLOOK_ID}='${attributeValue}'`;
             const startTagEnd = node.start + node.name.length + 1;
             s.appendLeft(startTagEnd, ` ${attributeName}`);
@@ -53,76 +52,102 @@ export const onlookPreprocess = ({ root = path.resolve('.'), absolute = false, c
   };
 };
 
-// Only find the closing character outside of nested logic
-function findEndOfOpeningTag(tagContent, start, selfClosing) {
-  let index = start;
-  let stack = [];
-  for (let i = 0; i < tagContent.length; i++) {
-    const char = tagContent[i];
-    const topOfStack = stack[stack.length - 1];
-
-    if (char === '"' || char === "'") {
-      if (topOfStack === char) {
-        // End of string literal
-        stack.pop();
-      } else if (!topOfStack || ["(", "{", "["].includes(topOfStack)) {
-        // Start of string literal
-        stack.push(char);
-      }
-    } else if (["(", "{", "["].includes(char) && !topOfStack) {
-      stack.push(char);
-    } else if (
-      (char === ")" && topOfStack === "(") ||
-      (char === "}" && topOfStack === "{") ||
-      (char === "]" && topOfStack === "[")
-    ) {
-      stack.pop();
-    } else if (!stack.length) {
-      if (
-        char === ">" ||
-        (selfClosing && char === "/" && tagContent[i + 1] === ">")
-      ) {
-        index += char === ">" ? i : i + 1;
-        break;
-      }
-    }
-  }
-  return index;
-}
-
-function getDataOnlookId(node, content, offset, filename, commit, root, absolute) {
-  const lineStart =
-    content.slice(0, node.start).split("\n").length + offset;
-
-  const lineClosing = content.slice(0, node.end).split("\n").length + offset;
-
-  // Find the end of the opening tag
-  const tagContent = content.slice(node.start, node.end);
-  let endOfOpeningTag = findEndOfOpeningTag(
-    tagContent,
-    node.start,
-    node.selfClosing
-  );
-  const lineEnd =
-    content.slice(0, endOfOpeningTag).split("\n").length + offset;
-
-  // Find the position to insert the attribute
-  const startTagEnd = node.start + node.name.length + 1;
-
+function getDataOnlookId(node, content, lineOffset, filename, commit, root, absolute) {
+  const { startTag, endTag } = getTagPositions(content, node, lineOffset)
   const domNode = {
     path: absolute ? filename : path.relative(root, filename),
-    startTag: { start: { line: lineStart, column: startTagEnd }, end: { line: lineStart, column: endOfOpeningTag } },
-    endTag: { start: { line: lineClosing, column: node.end }, end: { line: lineClosing, column: node.end } },
+    startTag,
+    endTag,
     commit
   };
+  return compress(domNode);
+}
 
-  // Compress
-  const buf = strToU8(JSON.stringify(domNode));
+export function compress(json) {
+  // Compress JSON to base64
+  const buf = strToU8(JSON.stringify(json));
   const compressed = compressSync(buf);
   const base64 = Buffer.from(compressed).toString('base64');
-
-  // Decompress
-  console.log(strFromU8(decompressSync(Buffer.from(base64, 'base64'))));
-
   return base64;
+}
+
+export function decompress(base64) {
+  // Decompress base64 to JSON
+  const decompressed = decompressSync(Buffer.from(base64, 'base64'));
+  const str = strFromU8(decompressed);
+  return JSON.parse(str);
+}
+
+// For testing tags by printing start and end tag based on information
+function testTags(filename, startTag, endTag) {
+  const startTagContent = extractTagContent(filename, startTag);
+  console.log("S:", "'" + startTagContent + "'");
+
+  // Check if there is an end tag and extract its content if present
+  if (endTag) {
+    const endTagContent = extractTagContent(filename, endTag);
+    console.log("E:", "'" + endTagContent + "'");
+  } else {
+    console.log("E:", "null");
+  }
+}
+
+function extractTagContent(filePath, tagPosition) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  const lines = content.split('\n');
+
+  // Extract content for the given tag position (either start or end tag)
+  if (tagPosition) {
+    const lineContent = lines[tagPosition.start.line - 1];  // -1 because lines array is zero-indexed
+    return lineContent.substring(tagPosition.start.column - 1, tagPosition.end.column - 1);
+  }
+  return null;
+}
+
+function getTagPositions(content, node, lineOffset) {
+  let startTagEnd;
+  let endTagStart = null;
+
+  if (node.children && node.children.length > 0) {
+    // Use the start of the first child as the end of the start tag
+    startTagEnd = node.children[0].start;
+
+    // Use the end of the last child to infer the start of the end tag
+    endTagStart = node.children[node.children.length - 1].end;
+
+    // Find the actual end tag text from this point onwards
+    const endTagText = `</${node.name}>`;
+    endTagStart = content.indexOf(endTagText, endTagStart);
+    if (endTagStart === -1) {
+      endTagStart = node.end;  // Fallback if the end tag isn't found (shouldn't happen)
+    }
+  } else {
+    // If no children, assume the start tag ends just before any content 
+    startTagEnd = content.indexOf('>', node.start) + 1;
+    if (content[startTagEnd - 2] === '/') {
+      // Adjust for self-closing tags
+      startTagEnd = node.end;
+    } else {
+      // Assume end tag starts after any content
+      endTagStart = content.lastIndexOf('<', node.end);
+    }
+  }
+
+  function getLineAndColumn(pos) {
+    if (!pos || !content) return null;
+
+    const line = content.slice(0, pos).split("\n").length + lineOffset;;
+    const column = pos - content.lastIndexOf("\n", pos - 1);
+    return { line, column };
+  }
+  return {
+    startTag: {
+      start: getLineAndColumn(node.start),
+      end: getLineAndColumn(startTagEnd)
+    },
+    endTag: startTagEnd === node.end ? null : {
+      start: getLineAndColumn(endTagStart),
+      end: getLineAndColumn(node.end)
+    }
+  };
 }
