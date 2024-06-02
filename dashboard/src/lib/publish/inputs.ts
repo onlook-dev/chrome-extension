@@ -18,7 +18,7 @@ export function getStyleTranslationInput(content: string, templateNode: Template
 export function getTextTranslationInput(content: string, templateNode: TemplateNode, activity: Activity): TextTranslationInput {
   if (!activity.textChanges) throw new Error('Text changes are required for text translation');
 
-  const { childrenContent } = getTemplateContent(content, templateNode);
+  const { startTagContent, childrenContent, endTagContent } = getTemplateContent(content, templateNode);
   const { oldText, newText } = getTextFromTextChanges(activity.textChanges);
   const framework = getExtensionFromPath(templateNode.path);
 
@@ -26,7 +26,7 @@ export function getTextTranslationInput(content: string, templateNode: TemplateN
     framework,
     oldText,
     newText,
-    code: childrenContent
+    code: `${startTagContent}${childrenContent}${endTagContent}`
   }
 }
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getGitHubPath, jsToCssProperty } from '$shared/helpers';
+	import { jsToCssProperty } from '$shared/helpers';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 	import { GithubLogo, Trash } from 'svelte-radix';
 	import { FirebaseService } from '$lib/storage';
@@ -10,7 +10,8 @@
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 
-	import type { Activity, Project } from '$shared/models';
+	import type { Activity, GithubSettings, Project, TemplateNode } from '$shared/models';
+	import { decompress } from '@onlook/helpers';
 
 	export let activity: Activity;
 	export let project: Project;
@@ -31,6 +32,19 @@
 			return projectsMap;
 		});
 		project = { ...project };
+	}
+
+	function getGitHubPath(githubSettings: GithubSettings, path: string, commit?: string) {
+		const ref = commit || githubSettings.baseBranch;
+		const node: TemplateNode = decompress(path);
+		const filePath = node.path;
+		const startLine = node.startTag.start.line;
+		const endLine = node.endTag ? node.endTag.end.line : node.startTag.end.line;
+		return `https://github.com/${githubSettings.owner}/${
+			githubSettings.repositoryName
+		}/blob/${ref}/${
+			githubSettings.rootPath ? `${githubSettings.rootPath}/` : ''
+		}${filePath}#L${startLine}-L${endLine}`;
 	}
 </script>
 

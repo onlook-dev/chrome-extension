@@ -1,4 +1,4 @@
-import type { GithubSettings, Activity, ChangeValues } from "./models";
+import type { Activity, ChangeValues, TemplateNode } from "./models";
 
 export function jsToCssProperty(key: string) {
   if (!key) return "";
@@ -100,15 +100,4 @@ export function sortActivities(activities: Record<string, Activity>, reverse = f
   return Object.values(activities).sort((a, b) => {
     return (a.updatedAt ?? a.createdAt) < (b.updatedAt ?? b.createdAt) ? reverseInt : -reverseInt;
   })
-}
-
-export function getGitHubPath(githubSettings: GithubSettings, path: string, commit?: string) {
-  const ref = commit || githubSettings.baseBranch;
-  const pathParts = path.split(':');
-  const filePath = pathParts[0];
-  const startLine = pathParts[1];
-  const endLine = pathParts[3];
-  return `https://github.com/${githubSettings.owner}/${githubSettings.repositoryName
-    }/blob/${ref}/${githubSettings.rootPath ? `${githubSettings.rootPath}/` : ''
-    }${filePath}#L${startLine}-L${endLine}`;
 }
