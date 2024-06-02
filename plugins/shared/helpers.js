@@ -1,5 +1,7 @@
 import pathLib from "path";
 import { strToU8, strFromU8, compressSync, decompressSync } from 'fflate'
+import fs from "fs";
+import { execSync } from 'child_process';
 
 export function generateDataAttributeValue(filePath, lineStart, lineEnd, lineClosing, root, absolute = false) {
     // Convert the absolute path to a path relative to the project root
@@ -10,7 +12,6 @@ export function generateDataAttributeValue(filePath, lineStart, lineEnd, lineClo
 export function getCurrentCommit() {
     try {
         if (typeof window === 'undefined') {
-            const { execSync } = require('child_process');
             const stdout = execSync('git rev-parse HEAD');
             return stdout.toString().trim();
         } else {

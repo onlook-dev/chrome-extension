@@ -4,8 +4,7 @@ import fs from "fs";
 
 import { parse, walk } from "svelte/compiler";
 import { DATA_ONLOOK_ID } from "../shared/constants.js";
-import { getCurrentCommit } from "../shared/helpers.js";
-import { compress, testTags } from "../shared/helpers.js";
+import { getCurrentCommit, compress } from "../shared/helpers.js";
 
 export const onlookPreprocess = ({ root = path.resolve('.'), absolute = false, commit_hash = getCurrentCommit() }) => {
   return {

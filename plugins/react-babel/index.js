@@ -1,32 +1,10 @@
 const t = require('@babel/types');
-const { generateDataAttributeValue, getCurrentCommit } = require("../shared/helpers.js");
+const { getCurrentCommit, compress } = require("../shared/helpers.js");
 const { DATA_ONLOOK_ID } = require("../shared/constants.js");
+const pathLib = require('path');
 
 module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = false }) {
-  let snapshotAdded = false
-
-  function addSnapshotElement(path) {
-    if (snapshotAdded) return
-    if (path.node.openingElement.name.name === 'body' || path.node.openingElement.name.name === 'div') {
-      const gitCommit = getCurrentCommit()
-      if (gitCommit) {
-        // Create the new metadata element
-        const onlookMeta = t.jSXElement(
-          t.jSXOpeningElement(t.jSXIdentifier("input"), [
-            t.jSXAttribute(t.jSXIdentifier("type"), t.stringLiteral("hidden")),
-            t.jSXAttribute(t.jSXIdentifier("data-onlook-snapshot"), t.stringLiteral(gitCommit)),
-          ]),
-          null, // self-closing tag
-          [],
-          true
-        );
-        // Append the new div element as a child
-        path.node.children.push(onlookMeta);
-      }
-      snapshotAdded = true
-    }
-  }
-
+  const commit = getCurrentCommit()
   return {
     visitor: {
       JSXElement(path, state) {
@@ -38,26 +16,12 @@ module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = f
           return;
         }
 
-        addSnapshotElement(path);
-
         // Ensure `loc` exists before accessing its properties
         if (!path.node.openingElement.loc || !path.node.openingElement.loc.start || !path.node.openingElement.loc.end) {
           return;
         }
 
-        // Get the line number for the closing tag, or the opening tag if self-closing
-        const closingTagLine = path.node.closingElement
-          ? path.node.closingElement?.loc.end.line
-          : path.node.openingElement.loc.end.line;
-
-        const attributeValue = generateDataAttributeValue(
-          filename,
-          path.node.openingElement.loc.start.line,
-          path.node.openingElement.loc.end.line,
-          closingTagLine,
-          root,
-          absolute
-        );
+        const attributeValue = getDataOnlookId(path, filename, commit, root, absolute);
 
         // Create the custom attribute
         const onlookAttribute = t.jSXAttribute(
@@ -71,3 +35,36 @@ module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = f
     },
   };
 };
+
+
+function getDataOnlookId(path, filename, commit, root, absolute) {
+  const startTag = {
+    start: {
+      line: path.node.openingElement.loc.start.line,
+      column: path.node.openingElement.loc.start.column + 1
+    },
+    end: {
+      line: path.node.openingElement.loc.end.line,
+      column: path.node.openingElement.loc.end.column + 1
+    }
+  }
+  const endTag = path.node.closingElement ? {
+    start: {
+      line: path.node.closingElement.loc.start.line,
+      column: path.node.closingElement.loc.start.column + 1
+    },
+    end: {
+      line: path.node.closingElement.loc.end.line,
+      column: path.node.closingElement.loc.end.column + 1
+    }
+  } : null
+
+  const domNode = {
+    path: absolute ? filename : pathLib.relative(root, filename),
+    startTag,
+    endTag,
+    commit
+  };
+
+  return compress(domNode);
+}

@@ -52,6 +52,7 @@
     "@octokit/plugin-rest-endpoint-methods": "^11.0.1",
     "@octokit/plugin-retry": "^7.0.3",
     "@octokit/plugin-throttling": "^9.0.3",
+    "@onlook/helpers": "^1.2.3",
     "@skeletonlabs/skeleton": "^2.7.1",
     "bits-ui": "^0.21.10",
     "clsx": "^2.1.0",

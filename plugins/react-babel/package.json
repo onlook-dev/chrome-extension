@@ -1,6 +1,6 @@
 {
   "name": "@onlook/babel-plugin-react",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "main": "bundle.js",
   "type": "module",
   "dependencies": {
@@ -8,7 +8,8 @@
     "@babel/preset-env": "^7.23.6",
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.24.1",
-    "@babel/types": "^7.24.0"
+    "@babel/types": "^7.24.0",
+    "child_process": "^1.0.2"
   },
   "description": "React babel preprocessor for onlook.dev",
   "directories": {
