@@ -1,7 +1,7 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe } from 'bun:test';
 import { getProcessedActivities } from '$lib/publish/helpers';
-import { PathInfo, StyleTranslationInput, TextTranslationInput, ProcessedActivity } from '$shared/models/translation';
+import { StyleTranslationInput, TextTranslationInput, ProcessedActivity } from '$shared/models/translation';
 import { getStyleTranslationInput, getTextTranslationInput } from '$lib/publish/inputs';
 
 describe('ProjectPublisher helpers', () => {
@@ -15,8 +15,8 @@ describe('ProjectPublisher helpers', () => {
     };
 
     const expected: ProcessedActivity[] = [
-      { activity: activities.act1, pathInfo: { path: 'root/path/to/activity1.html', startLine: 1, startTagEndLine: 2, endLine: 3, extension: 'html' } },
-      { activity: activities.act3, pathInfo: { path: 'root/path/to/activity3.jsx', startLine: 1, startTagEndLine: 2, endLine: 3, extension: 'jsx' } }
+      { activity: activities.act1, node: { path: 'root/path/to/activity1.html', startLine: 1, startTagEndLine: 2, endLine: 3, extension: 'html' } },
+      { activity: activities.act3, node: { path: 'root/path/to/activity3.jsx', startLine: 1, startTagEndLine: 2, endLine: 3, extension: 'jsx' } }
     ];
 
     // Execute

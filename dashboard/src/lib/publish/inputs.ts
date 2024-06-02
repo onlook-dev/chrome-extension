@@ -1,36 +1,33 @@
-import type { Activity, ChangeValues, PathInfo, StyleTranslationInput, TextTranslationInput } from "$shared/models";
+import type { Activity, ChangeValues, TemplateNode, StyleTranslationInput, TextTranslationInput } from "$shared/models";
+import { getTemplateContent } from "@onlook/helpers";
+import { getExtensionFromPath } from "./helpers";
 
-export function getStyleTranslationInput(content: string, pathInfo: PathInfo, activity: Activity): StyleTranslationInput {
-  const code = getCodeChunkFromContent(content, pathInfo, false);
+export function getStyleTranslationInput(content: string, templateNode: TemplateNode, activity: Activity): StyleTranslationInput {
+  const { startTagContent } = getTemplateContent(content, templateNode);
   const css = getCssStringFromStyleChanges(activity.styleChanges);
-  const framework = getFrameworkFromPath(pathInfo.path);
+  const framework = getExtensionFromPath(templateNode.path);
   const tailwind = activity.attributeChanges ? getTailwindStringFromAttributeChange(activity.attributeChanges) : '';
   return {
     framework,
     css,
-    code,
+    code: startTagContent,
     tailwind
   }
 }
 
-export function getTextTranslationInput(content: string, pathInfo: PathInfo, activity: Activity): TextTranslationInput {
+export function getTextTranslationInput(content: string, templateNode: TemplateNode, activity: Activity): TextTranslationInput {
   if (!activity.textChanges) throw new Error('Text changes are required for text translation');
 
-  const code = getCodeChunkFromContent(content, pathInfo, true);
+  const { childrenContent } = getTemplateContent(content, templateNode);
   const { oldText, newText } = getTextFromTextChanges(activity.textChanges);
-  const framework = getFrameworkFromPath(pathInfo.path);
+  const framework = getExtensionFromPath(templateNode.path);
 
   return {
     framework,
     oldText,
     newText,
-    code
+    code: childrenContent
   }
-}
-
-export const getCodeChunkFromContent = (content: string, pathInfo: PathInfo, full: boolean) => {
-  let endLine = full ? pathInfo.endLine : pathInfo.startTagEndLine;
-  return content.split('\n').slice(pathInfo.startLine - 1, endLine).join('\n').trim();
 }
 
 export const getCssStringFromStyleChanges = (styleChanges: Record<string, ChangeValues>) => {
@@ -49,6 +46,3 @@ export const getTextFromTextChanges = (textChanges: Record<string, ChangeValues>
   return { oldText, newText };
 }
 
-export const getFrameworkFromPath = (path: string) => {
-  return path.split('.').pop() ?? 'html';
-};

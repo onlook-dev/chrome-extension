@@ -8,7 +8,9 @@ export interface TagInfo {
     end: Position
 }
 
-export interface DomNode {
+// Represents the template code chunk
+// Includes all the information to get it from the GitHub repo
+export interface TemplateNode {
     path: string,
     startTag: TagInfo,
     endTag: TagInfo,

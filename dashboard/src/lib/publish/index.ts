@@ -1,5 +1,5 @@
 import { GithubService } from "$lib/github";
-import { TranslationService } from "$lib/translation";
+import { TranslationService } from "$lib/publish/translation";
 import { GithubSettings, Project } from "$shared/models";
 import { getProcessedActivities } from "./helpers";
 import { getStyleTranslationInput, getTextTranslationInput } from "./inputs";
@@ -10,7 +10,6 @@ import type { User, FileContentData, ProcessedActivity } from "$shared/models";
 
 import EventEmitter from 'events';
 import DiffMatchPatch from 'diff-match-patch';
-import { SvelteCompiler } from "$lib/compiler";
 
 export enum ProjectPublisherEventType {
   TRANSLATING = 'TRANSLATING',
@@ -86,13 +85,13 @@ export class ProjectPublisher extends EventEmitter {
 
       // Group all processed activities together
       for (const processed of this.processedActivities) {
-        let processedActivities = activitiesByFile.get(processed.pathInfo.path);
+        let processedActivities = activitiesByFile.get(processed.node.path);
         if (!processedActivities) {
           processedActivities = [];
         }
         // Push ranked by start line
         processedActivities.push(processed);
-        activitiesByFile.set(processed.pathInfo.path, processedActivities);
+        activitiesByFile.set(processed.node.path, processedActivities);
       }
 
       for (const [path, activities] of activitiesByFile.entries()) {
@@ -162,55 +161,32 @@ export class ProjectPublisher extends EventEmitter {
     let patches: (new () => DiffMatchPatch.patch_obj)[] = [];
     let result = fileContent.content;
 
-    if (fileContent.path.endsWith('.svelte')) {
-      const FramworkAttributeMap = {
-        [StyleFramework.TailwindCSS]: 'class',
-        [StyleFramework.InlineCSS]: 'style'
-      };
-      const compiler = new SvelteCompiler();
-      const changes = processedActivities.map(activity => {
-        const framework = this.forceTailwind ? StyleFramework.TailwindCSS : this.project.projectSettings?.styleFramework ?? StyleFramework.InlineCSS;
-        let content = ''
-        if (framework === StyleFramework.TailwindCSS) {
-          content = 'test tailwind'
-        } else {
-          content = 'test inline'
-        }
-        return {
-          startLine: activity.pathInfo.startLine - 1,
-          endLine: activity.pathInfo.endLine - 1,
-          attribute: FramworkAttributeMap[framework],
-          content: content
-        }
-      });
-      result = await compiler.writeAttribute(fileContent.content, changes);
-      console.log(result);
-    } else {
-      for (const processed of processedActivities) {
-        // Process style changes
-        if (processed.activity.styleChanges) {
-          const stylePatches = await this.processStyleChanges(processed, fileContent.content);
-          patches = patches.concat(stylePatches);
-        }
 
-        // Process text changes
-        if (processed.activity.textChanges) {
-          const textPatches = await this.processTextChanges(processed, fileContent.content);
-          patches = patches.concat(textPatches);
-        }
-
-        this.emitEvent({
-          type: ProjectPublisherEventType.TRANSLATING,
-          progress: {
-            processed: ++this.processedCount,
-            total: this.processedActivities.length
-          }
-        })
+    for (const processed of processedActivities) {
+      // Process style changes
+      if (processed.activity.styleChanges) {
+        const stylePatches = await this.processStyleChanges(processed, fileContent.content);
+        patches = patches.concat(stylePatches);
       }
 
-      const patchRes = this.diffMatchPatch.patch_apply(patches, fileContent.content);
-      result = patchRes[0];
+      // Process text changes
+      if (processed.activity.textChanges) {
+        const textPatches = await this.processTextChanges(processed, fileContent.content);
+        patches = patches.concat(textPatches);
+      }
+
+      this.emitEvent({
+        type: ProjectPublisherEventType.TRANSLATING,
+        progress: {
+          processed: ++this.processedCount,
+          total: this.processedActivities.length
+        }
+      })
     }
+
+    const patchRes = this.diffMatchPatch.patch_apply(patches, fileContent.content);
+    result = patchRes[0];
+
     return {
       ...fileContent,
       content: result
@@ -218,7 +194,7 @@ export class ProjectPublisher extends EventEmitter {
   }
 
   async processStyleChanges(processed: ProcessedActivity, content: string) {
-    const input = getStyleTranslationInput(content, processed.pathInfo, processed.activity);
+    const input = getStyleTranslationInput(content, processed.node, processed.activity);
     const newCode = await this.translationService.getStyleTranslation({
       code: input.code,
       css: input.css,
@@ -229,7 +205,7 @@ export class ProjectPublisher extends EventEmitter {
   }
 
   async processTextChanges(processed: ProcessedActivity, content: string) {
-    const input = getTextTranslationInput(content, processed.pathInfo, processed.activity);
+    const input = getTextTranslationInput(content, processed.node, processed.activity);
     const newCode = await this.translationService.getTextTranslation({
       oldText: input.oldText,
       newText: input.newText,
@@ -246,13 +222,13 @@ export class ProjectPublisher extends EventEmitter {
       3. If not, get it from GitHub
     */
 
-    let fileContent = this.filesMap.get(processed.pathInfo.path);
+    let fileContent = this.filesMap.get(processed.node.path);
     if (fileContent) return fileContent;
 
-    fileContent = await this.githubService.fetchFileFromPath(processed.pathInfo.path, processed.activity.snapshot);
-    if (!fileContent) throw new Error(`File content not found for path: ${processed.pathInfo.path}`);
+    fileContent = await this.githubService.fetchFileFromPath(processed.node.path, processed.node.commit);
+    if (!fileContent) throw new Error(`File content not found for path: ${processed.node.path}`);
 
-    this.filesMap.set(processed.pathInfo.path, fileContent);
+    this.filesMap.set(processed.node.path, fileContent);
     return fileContent;
   }
 }

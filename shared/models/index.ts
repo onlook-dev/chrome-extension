@@ -4,9 +4,10 @@ export type { User } from './user';
 export type { Activity, ChangeValues } from './activity';
 export type { EditEvent, TextVal, InsertRemoveVal, } from './editor';
 export type { TreeItem, GithubRepo, GithubSettings, GithubAuth, GithubHistory } from './github';
-export type { ProcessedActivity, PathInfo, FileContentData, StyleTranslationInput, TextTranslationInput } from './translation';
+export type { ProcessedActivity, FileContentData, StyleTranslationInput, TextTranslationInput } from './translation';
 export type { HostData } from './hostData';
 export type { Payment } from './payment';
+export type { TemplateNode, Position, TagInfo } from './node';
 
 // Enums, not types
 export { ProjectStatus } from './project';

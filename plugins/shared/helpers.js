@@ -80,3 +80,24 @@ export function testTags(filename, startTag, endTag) {
     console.log("E:", "null");
   }
 }
+
+export function getTemplateContent(content, templateNode) {
+  const { startTag, endTag } = templateNode;
+  const startTagContent = extractTagContent(content, startTag);
+  let childrenContent = null;
+  let endTagContent = null;
+
+  if (endTag) {
+    endTagContent = extractTagContent(content, endTag);
+    childrenPos = {
+      start: startTag.end,
+      end: endTag.start
+    }
+    childrenContent = extractTagContent(content, childrenPos);
+  }
+  return {
+    startTagContent,
+    childrenContent,
+    endTagContent
+  }
+}
