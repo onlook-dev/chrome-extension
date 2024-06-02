@@ -114,8 +114,8 @@
 	</p>
 	{#if activity.path}
 		<p class="break-all">
-			Path
-			<span class="text-brand">{activity.path}</span>
+			Location
+			<span class="text-brand">{decompress(activity.path).path}</span>
 		</p>
 	{/if}
 

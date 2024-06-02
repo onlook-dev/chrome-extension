@@ -123,7 +123,11 @@ describe('ProjectPublisher', () => {
   test('should get correct change if nothing updated', async () => {
     const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
     mockFileContent = originalMockFileContent;
-    const fileContent = await publisher.updateFileWithActivities([mockProcessedActivity], mockFileContent);
+
+    let unchangedActivity = { ...mockActivity, styleChanges: {}, textChanges: null }
+    let mockProcessed = { ...mockProcessedActivity, activity: unchangedActivity }
+
+    const fileContent = await publisher.updateFileWithActivities([mockProcessed], mockFileContent);
     expect(fileContent).toEqual(mockFileContent)
   });
 

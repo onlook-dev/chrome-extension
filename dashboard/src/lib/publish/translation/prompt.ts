@@ -145,7 +145,7 @@ export class TextPromptService extends PromptService<{ framework: string, newTex
       oldText: "oldText",
       code: "code",
     };
-    const prompt = "You are an HTML, CSS and JS expert. Given a code block, the original old text, and the new text. Update the code to implement the text changes. ONLY EDIT THE TEXT CHANGE. DO NOT ADD OR REMOVE ANYTHING ELSE EVEN IF THEY SEEM WRONG. Generalize from the examples given.\nOld Text: {oldText}\nNew Text: {newText}\nCode: {code}\nFramework: {framework}\nOutput Code:";
+    const prompt = "You are an HTML, CSS and JS expert. Given a code block, the original old text, and the new text. Update the code to implement the text changes. ONLY EDIT THE TEXT CHANGE. DO NOT ADD OR REMOVE ANYTHING ELSE EVEN IF THEY SEEM WRONG. Generalize from the examples given. Make sure to escape quotes when possible.\nOld Text: {oldText}\nNew Text: {newText}\nCode: {code}\nFramework: {framework}\nOutput Code:";
     const examplePrompt = "Old Text: {oldText}\nNew Text: {newText}\nCode: {code}\nFramework: {framework}\n Output Code: {output}";
     const examples: Example[] = [
       {
@@ -165,9 +165,9 @@ export class TextPromptService extends PromptService<{ framework: string, newTex
       {
         newText: "What's going on?",
         oldText: "I said hey",
-        code: '<p><span style={{ fontWeight: 700 }}>I said hey',
+        code: `<p><span style={{ fontWeight: 700 }}>'I said hey'`,
         framework: "tsx",
-        output: "<p><span style={{ fontWeight: 700 }}>What's going on?"
+        output: `<p><span style={{ fontWeight: 700 }}>'What\'s going on?'`
       },
     ];
     super(prompt, inputs, {
