@@ -125,7 +125,7 @@
 		</Resizable.Pane>
 		<Resizable.Handle class="hover:bg-surface-brand bg-black" />
 		<Resizable.Pane class="p-6 space-y-6" minSize={50}>
-			<div class="flex flex-row w-full items-center">
+			<div class="flex flex-row w-full items-center" style="background-color: #ff0000;">
 				<h1 class="text-xl text-primary">
 					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 				</h1>
