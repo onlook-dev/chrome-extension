@@ -12,14 +12,14 @@
 	<div class="flex flex-col w-1/2 items-center min-w-[800px] gap-[20px]">
 		<h1 class="text-2xl text-white text-start w-full">Let's fuck shit up</h1>
 		<div class="flex flex-row w-full justify-center h-full gap-5 bg-transparent p-0">
-			<div class="w-full h-full bg-black rounded-none p-6 border" style="background-color: #ffffff; border-radius: 25px;">
+			<div class="w-full h-full bg-white rounded-[25px] p-6 border">
 				<div class="text-light">
 					<h1 class="text-tertiary">Step 1</h1>
-					<h2 class="text-tertiary text-white" style="color: #707070;">Pin Onlook in your browser</h2>
+					<h2 class="text-tertiary text-[#707070]">Pin Onlook in your browser</h2>
 				</div>
 				<img class="object-cover w-full bg-[#363636] my-4" src={Pin} alt="Pin extension tip" />
 				<div class="flex flex-col text-white gap-2">
-					<p class="text-gray-400 text-sm flex flex-row items-center" style="color: #707070;">
+					<p class="text-[#707070] text-sm flex flex-row items-center">
 						<svg
 							class="mr-2"
 							width="15"
@@ -42,7 +42,7 @@
 				</div>
 			</div>
 
-			<div class="w-full rounded-none bg-black h-full border p-6" style="background-color: #ffffff; border-radius: 25px;">
+			<div class="w-full rounded-[25px] bg-white h-full border p-6">
 				<div class="text-white">
 					<h1 class="text-tertiary">Step 2</h1>
 					<h2 class="text-tertiary text-white">Start editing any page</h2>
@@ -52,14 +52,14 @@
 					<p class="text-gray-400 text-sm flex flex-row items-center">
 						<Link1 class="text-primary w-4 h-4 mr-2" /> Go to any page you want to edit
 					</p>
-					<p class="text-tertiary text-sm flex flex-row items-center" style="color: #707070;">
+					<p class="text-[#707070] text-sm flex flex-row items-center">
 						<Pencil2 class="text-primary w-4 h-4 mr-2" />Click the extension and start editing
 					</p>
 				</div>
 			</div>
 		</div>
 
-		<div class="flex flex-row w-full h-[fit-content] rounded-none bg-black p-6 border gap-[40px]" style="border-radius: 25px; background-color: #ffffff;">
+		<div class="flex flex-row w-full h-[fit-content] rounded-[25px] bg-white p-6 border gap-[40px]">
 			<iframe
 				class="w-3/5 h-[150px]"
 				src="https://www.youtube.com/embed/pUzCOpIE1zQ?si=cnwzWINbIT88ZiAU"
@@ -70,7 +70,7 @@
 				allowfullscreen
 			></iframe>
 			<div class="text-white flex flex-col items-start m-0 p-5 gap-2">
-				<p class="text-white" style="color: #707070">See Onlook in action</p>
+				<p class="text-[#707070]">See Onlook in action</p>
 				<p class="text-sm text-tertiary">
 					Watch us walk through a Demo project and make a pull request in less than 1 minute
 				</p>
