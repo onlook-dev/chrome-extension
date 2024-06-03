@@ -1,4 +1,6 @@
-import type { ProcessedActivity, PathInfo, Activity } from "$shared/models";
+import type { ProcessedActivity, TemplateNode, Activity } from "$shared/models";
+// @ts-ignore
+import { decompress } from '@onlook/helpers';
 
 export function getProcessedActivities(
   activities: Record<string, Activity>,
@@ -7,23 +9,22 @@ export function getProcessedActivities(
   const processed = Object.values(activities)
     .map((activity) => {
       if (!activity.path) return null;
+      const node: TemplateNode = decompress(activity.path)
+      node.path = emptyRoot(rootPath)
+        ? `${node.path}`
+        : `${rootPath}/${node.path}`
+
       return {
         activity,
-        pathInfo: getPathInfo(activity.path, rootPath)
+        node
       } as ProcessedActivity;
     })
     .filter((activity): activity is ProcessedActivity => activity !== null);
   return processed
 };
 
-export function getPathInfo(activityPath: string, rootPath: string): PathInfo {
-  const [filePath, startLine, startTagEndLine, endLine] = activityPath.split(':');
-  return {
-    path: rootPath === '.' || rootPath === '' || rootPath === '/'
-      ? `${filePath}`
-      : `${rootPath}/${filePath}`,
-    startLine: parseInt(startLine),
-    startTagEndLine: parseInt(startTagEndLine),
-    endLine: parseInt(endLine),
-  };
-}
+export const getExtensionFromPath = (path: string) => {
+  return path.split('.').pop() ?? 'html';
+};
+
+const emptyRoot = (root: string) => root === '.' || root === '' || root === '/'

@@ -1,6 +1,6 @@
 {
   "name": "@onlook/svelte",
-  "version": "1.2.0",
+  "version": "2.0.3",
   "main": "bundle.js",
   "type": "module",
   "dependencies": {
@@ -27,6 +27,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "rollup": "^4.9.6",
     "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0"
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "@rollup/plugin-terser": "^0.4.4"
   }
 }

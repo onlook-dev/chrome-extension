@@ -12,7 +12,7 @@ npm i --save-dev @onlook/nextjs @onlook/helpers
 
 ```js
 import path from "path";
-import { getCurrentCommit } from "@onlook/helpers";
+import { getCurrentCommit } from "@onlook/helpers/server";
 
 const nextConfig = {
   reactStrictMode: true,

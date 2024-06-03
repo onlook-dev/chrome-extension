@@ -1,6 +1,8 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe, mock, beforeAll, beforeEach } from 'bun:test';
 import type { ProjectPublisher } from '$lib/publish';
+import { langfuseConfig } from '$lib/utils/env';
+import { TemplateNode } from '$shared/models';
 
 describe('ProjectPublisher', () => {
   let ProjectPublisher: any;
@@ -18,6 +20,7 @@ describe('ProjectPublisher', () => {
       },
       githubConfig: {},
       firebaseConfig: {},
+      langfuseConfig: {},
     }))
 
     mock.module("$lib/translation", () => ({
@@ -44,6 +47,7 @@ describe('ProjectPublisher', () => {
     ProjectPublisher = Publisher.ProjectPublisher;
   });
 
+  const mockPath = "H4sIAASkXGYAA32MSw6DIBRF9/KmNVXBgmUd3cArPqwJHwPYiWHv1TjpwDi4yUlO7llhxvwBBSnqOoYlU6pvM450T1+ymaCClDHmF46g1oN3sJMnUC2vQAe7OA+KlQrID+dSlMOeZxi7yPxLuWd0cG7a3tD2hIOWSJzEQ5oBtRCSN9z0HXs/tzUtUWcIyg9DLs7N5gAAAA=="
   const mockUser = { id: 'mockUserId', email: 'mockUserEmail', name: 'mockUserName' } as any;
   const mockProject = {
     id: 'mockProjectId',
@@ -71,11 +75,34 @@ describe('ProjectPublisher', () => {
 
   const mockProcessedActivity = {
     activity: mockActivity,
-    pathInfo: { path: 'mockPath', startLine: 1, startTagEndLine: 3, endLine: 5 },
+    node: {
+      path: "root/src/routes/+page.svelte",
+      startTag: {
+        start: {
+          line: 1,
+          column: 1,
+        },
+        end: {
+          line: 3,
+          column: 2,
+        },
+      },
+      endTag: {
+        start: {
+          line: 5,
+          column: 1,
+        },
+        end: {
+          line: 5,
+          column: 5,
+        },
+      },
+      commit: "18eadc7ae3e657fdac667303f842b942b01ee4fe",
+    }
   } as any
 
   const originalMockFileContent = {
-    path: 'mockPath',
+    path: mockPath,
     sha: 'mockSha',
     content: `<p 
   class='bg-red'
@@ -95,7 +122,12 @@ describe('ProjectPublisher', () => {
 
   test('should get correct change if nothing updated', async () => {
     const publisher: ProjectPublisher = new ProjectPublisher(mockProject, mockUser);
-    const fileContent = await publisher.updateFileWithActivities([mockProcessedActivity], mockFileContent);
+    mockFileContent = originalMockFileContent;
+
+    let unchangedActivity = { ...mockActivity, styleChanges: {}, textChanges: null }
+    let mockProcessed = { ...mockProcessedActivity, activity: unchangedActivity }
+
+    const fileContent = await publisher.updateFileWithActivities([mockProcessed], mockFileContent);
     expect(fileContent).toEqual(mockFileContent)
   });
 
@@ -190,6 +222,30 @@ describe('ProjectPublisher', () => {
     const mockProcessedActivity1 = {
       activity: mockActivity1,
       pathInfo: { path: 'mockPath', startLine: 1, startTagEndLine: 3, endLine: 5 },
+      node: {
+        path: "root/src/routes/+page.svelte",
+        startTag: {
+          start: {
+            line: 1,
+            column: 2,
+          },
+          end: {
+            line: 3,
+            column: 6,
+          },
+        },
+        endTag: {
+          start: {
+            line: 5,
+            column: 2,
+          },
+          end: {
+            line: 5,
+            column: 7,
+          },
+        },
+        commit: "18eadc7ae3e657fdac667303f842b942b01ee4fe",
+      }
     } as any
 
     const mockActivity2 = {
@@ -205,6 +261,30 @@ describe('ProjectPublisher', () => {
     const mockProcessedActivity2 = {
       activity: mockActivity2,
       pathInfo: { path: 'mockPath', startLine: 6, startTagEndLine: 8, endLine: 10 },
+      node: {
+        path: "root/src/routes/+page.svelte",
+        startTag: {
+          start: {
+            line: 13,
+            column: 2,
+          },
+          end: {
+            line: 13,
+            column: 6,
+          },
+        },
+        endTag: {
+          start: {
+            line: 22,
+            column: 2,
+          },
+          end: {
+            line: 22,
+            column: 7,
+          },
+        },
+        commit: "18eadc7ae3e657fdac667303f842b942b01ee4fe",
+      }
     } as any
 
 
@@ -280,6 +360,30 @@ describe('ProjectPublisher', () => {
     const mockProcessedActivity1 = {
       activity: mockActivity1,
       pathInfo: { path: 'mockPath', startLine: 2, startTagEndLine: 4, endLine: 6 },
+      node: {
+        path: "root/src/routes/+page.svelte",
+        startTag: {
+          start: {
+            line: 2,
+            column: 1,
+          },
+          end: {
+            line: 4,
+            column: 2,
+          },
+        },
+        endTag: {
+          start: {
+            line: 6,
+            column: 1,
+          },
+          end: {
+            line: 6,
+            column: 7,
+          },
+        },
+        commit: "18eadc7ae3e657fdac667303f842b942b01ee4fe",
+      } as TemplateNode
     } as any
 
     const mockActivity2 = {
@@ -295,6 +399,30 @@ describe('ProjectPublisher', () => {
     const mockProcessedActivity2 = {
       activity: mockActivity2,
       pathInfo: { path: 'mockPath', startLine: 7, startTagEndLine: 9, endLine: 11 },
+      node: {
+        path: "root/src/routes/+page.svelte",
+        startTag: {
+          start: {
+            line: 7,
+            column: 1,
+          },
+          end: {
+            line: 9,
+            column: 2,
+          },
+        },
+        endTag: {
+          start: {
+            line: 11,
+            column: 1,
+          },
+          end: {
+            line: 11,
+            column: 8,
+          },
+        },
+        commit: "18eadc7ae3e657fdac667303f842b942b01ee4fe",
+      }
     } as any
 
     const updatedStyleCode1 = `<div class='bg-yellow'>`

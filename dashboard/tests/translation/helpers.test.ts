@@ -1,27 +1,79 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe } from 'bun:test';
 import { getProcessedActivities } from '$lib/publish/helpers';
-import { PathInfo, StyleTranslationInput, TextTranslationInput } from '$shared/models/translation';
+import { StyleTranslationInput, TextTranslationInput, ProcessedActivity } from '$shared/models/translation';
 import { getStyleTranslationInput, getTextTranslationInput } from '$lib/publish/inputs';
+import { TemplateNode } from '$shared/models';
 
 describe('ProjectPublisher helpers', () => {
   test('should get processed activity', () => {
     // Setup
     const rootPath = 'root';
     const activities = {
-      act1: { path: 'path/to/activity1.html:1:2:3' },
-      act2: { /* no path */ },
-      act3: { path: 'path/to/activity3.jsx:1:2:3' },
+      act1: { path: 'H4sIAASkXGYAA32MSw6DIBRF9/KmNVXBgmUd3cArPqwJHwPYiWHv1TjpwDi4yUlO7llhxvwBBSnqOoYlU6pvM450T1+ymaCClDHmF46g1oN3sJMnUC2vQAe7OA+KlQrID+dSlMOeZxi7yPxLuWd0cG7a3tD2hIOWSJzEQ5oBtRCSN9z0HXs/tzUtUWcIyg9DLs7N5gAAAA==' } as any,
+      act2: { /* no path */ } as any,
+      act3: { path: 'H4sIAASkXGYAA32MOw6DMBAF77JtUMCYr8+RC2zsNUHyB9kmDfLdA6JJkVA8aaTRmw0WTC8QEIMsg18TxfK24ET3+CaTCAqICUN64ARiO/kAMzsCwZoCpDerdSB4LoCc+i3rNp/6T2e86nxJVh0d6a2d9zuwgVDJHolT1/Zaoey6nldcD039HPdVjKjRBPkDRvCULOgAAAA=' } as any,
     };
 
-    const expected = [
-      { activity: activities.act1, pathInfo: { path: 'root/path/to/activity1.html', startLine: 1, startTagEndLine: 2, endLine: 3 } },
-      { activity: activities.act3, pathInfo: { path: 'root/path/to/activity3.jsx', startLine: 1, startTagEndLine: 2, endLine: 3 } }
-    ]
+    const expected: ProcessedActivity[] = [
+      {
+        activity: activities.act1,
+        node: {
+          path: "root/src/routes/+page.svelte",
+          startTag: {
+            start: {
+              line: 13,
+              column: 2,
+            },
+            end: {
+              line: 13,
+              column: 6,
+            },
+          },
+          endTag: {
+            start: {
+              line: 22,
+              column: 2,
+            },
+            end: {
+              line: 22,
+              column: 7,
+            },
+          },
+          commit: "18eadc7ae3e657fdac667303f842b942b01ee4fe",
+        }
+      },
+      {
+        activity: activities.act3,
+        node: {
+          path: "root/src/routes/+page.svelte",
+          startTag: {
+            start: {
+              line: 14,
+              column: 3,
+            },
+            end: {
+              line: 14,
+              column: 25,
+            },
+          },
+          endTag: {
+            start: {
+              line: 19,
+              column: 3,
+            },
+            end: {
+              line: 19,
+              column: 10,
+            },
+          },
+          commit: "18eadc7ae3e657fdac667303f842b942b01ee4fe",
+        }
+      }
+    ];
 
     // Execute
     const processed = getProcessedActivities(activities as any, rootPath);
-
     // Assert
     expect(processed).toEqual(expected);
   });
@@ -32,12 +84,30 @@ describe('ProjectPublisher helpers', () => {
       <p>Some text here</p>
     </div>
   `;
-    const pathInfo: PathInfo = {
+    const node: TemplateNode = {
       path: 'root/path/to/activity1.html',
-      startLine: 1,
-      startTagEndLine: 1,
-      endLine: 3,
-    };
+      startTag: {
+        start: {
+          line: 1,
+          column: 1,
+        },
+        end: {
+          line: 1,
+          column: 6,
+        },
+      },
+      endTag: {
+        start: {
+          line: 3,
+          column: 1,
+        },
+        end: {
+          line: 3,
+          column: 7,
+        },
+      },
+      commit: "18eadc7ae3e657fdac667303f842b942b01ee4fe",
+    }
 
     const activity = {
       styleChanges: {
@@ -58,7 +128,7 @@ describe('ProjectPublisher helpers', () => {
     };
 
     // Execute
-    const translationInput = getStyleTranslationInput(content, pathInfo, activity);
+    const translationInput = getStyleTranslationInput(content, node, activity);
 
     // Assert
     expect(translationInput).toEqual(expected);
@@ -67,15 +137,33 @@ describe('ProjectPublisher helpers', () => {
   test('should get text translation input', () => {
     // Setup
     const content = `<div>
-      <p>Some text here</p>
-    </div>
-  `;
-    const pathInfo: PathInfo = {
+  <p>Some text here</p>
+</div>`;
+
+    const node: TemplateNode = {
       path: 'root/path/to/activity1.html',
-      startLine: 1,
-      startTagEndLine: 2,
-      endLine: 3,
-    };
+      startTag: {
+        start: {
+          line: 1,
+          column: 1,
+        },
+        end: {
+          line: 1,
+          column: 6,
+        },
+      },
+      endTag: {
+        start: {
+          line: 3,
+          column: 1,
+        },
+        end: {
+          line: 3,
+          column: 7,
+        },
+      },
+      commit: "18eadc7ae3e657fdac667303f842b942b01ee4fe",
+    }
 
     const activity = {
       textChanges: {
@@ -88,12 +176,12 @@ describe('ProjectPublisher helpers', () => {
       oldText: 'Old text',
       newText: 'New text',
       code: `<div>
-      <p>Some text here</p>
-    </div>`
+  <p>Some text here</p>
+</div>`
     };
 
     // Execute
-    const translationInput = getTextTranslationInput(content, pathInfo, activity);
+    const translationInput = getTextTranslationInput(content, node, activity);
 
     // Assert
     expect(translationInput).toEqual(expected);
@@ -105,12 +193,30 @@ describe('ProjectPublisher helpers', () => {
       <p>Some text here</p>
     </div>
   `;
-    const pathInfo: PathInfo = {
-      path: 'root/path/to/activity1.html',
-      startLine: 2,
-      startTagEndLine: 2,
-      endLine: 2,
-    };
+    const node: TemplateNode = {
+      path: "root/src/routes/+page.svelte",
+      startTag: {
+        start: {
+          line: 2,
+          column: 7,
+        },
+        end: {
+          line: 2,
+          column: 10,
+        },
+      },
+      endTag: {
+        start: {
+          line: 2,
+          column: 14,
+        },
+        end: {
+          line: 2,
+          column: 18,
+        },
+      },
+      commit: "18eadc7ae3e657fdac667303f842b942b01ee4fe",
+    }
 
     const activity = {
       styleChanges: {
@@ -123,7 +229,8 @@ describe('ProjectPublisher helpers', () => {
     // Execute
     // Assert
     expect(async () => {
-      await getTextTranslationInput(content, pathInfo, activity)
+      const res = await getTextTranslationInput(content, node, activity)
+      console.log(`This should not print ${res}`);
     }).toThrow();
   });
 

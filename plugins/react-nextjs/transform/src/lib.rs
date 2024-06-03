@@ -1,16 +1,11 @@
 mod helpers;
-use helpers::{
-    create_hidden_input, generate_data_attribute_value, get_closing_end, get_opening_start_and_end,
-};
+use helpers::get_data_onlook_id;
 use serde::Deserialize;
 use std::path::PathBuf;
 use std::sync::Arc;
 use swc_common::SourceMapper;
 use swc_ecma_ast::*;
 use swc_ecma_visit::{noop_fold_type, Fold, FoldWith};
-
-use std::sync::atomic::{AtomicBool, Ordering};
-static SNAPSHOT_ADDED: AtomicBool = AtomicBool::new(false);
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(untagged)]
@@ -34,9 +29,9 @@ impl Config {
         }
     }
 
-    pub fn commit_hash(&self) -> Option<&str> {
+    pub fn commit_hash(&self) -> Option<String> {
         match self {
-            Config::WithOptions(opts) => opts.commit_hash.as_deref(),
+            Config::WithOptions(opts) => opts.commit_hash.clone(),
             _ => None,
         }
     }
@@ -75,15 +70,6 @@ impl Fold for AddProperties {
         el.children = el.children.fold_children_with(self);
 
         let source_mapper: &dyn SourceMapper = self.source_map.get_code_map();
-        let offset = 1;
-        // Process opening and closing elements
-        let (opening_start, opening_end) =
-            get_opening_start_and_end(source_mapper, el.opening.clone(), offset);
-
-        let closing_end = match el.closing.clone() {
-            Some(closing_element) => get_closing_end(source_mapper, closing_element, offset),
-            None => opening_end,
-        };
 
         let project_root = self
             .config
@@ -91,15 +77,12 @@ impl Fold for AddProperties {
             .map(PathBuf::from)
             .unwrap_or_else(|| PathBuf::from("."));
 
-        let path: String = source_mapper.span_to_filename(el.span).to_string();
-
-        let file_line: String = generate_data_attribute_value(
+        let attribute_value: String = get_data_onlook_id(
+            el.clone(),
+            source_mapper,
             &project_root,
-            &path,
-            opening_start,
-            opening_end,
-            closing_end,
             self.config.absolute(),
+            self.config.commit_hash(),
         );
 
         let data_attribute = JSXAttrOrSpread::JSXAttr(JSXAttr {
@@ -111,27 +94,12 @@ impl Fold for AddProperties {
             }),
             value: Some(JSXAttrValue::Lit(Lit::Str(Str {
                 span: el.span,
-                value: file_line.into(),
+                value: attribute_value.into(),
                 raw: None,
             }))),
         });
 
         el.opening.attrs.push(data_attribute);
-
-        // Add hidden input with commit info if not added already
-        if !SNAPSHOT_ADDED.load(Ordering::Relaxed) {
-            if let JSXElementName::Ident(ident) = &el.opening.name {
-                if ident.sym == *"body" {
-                    if let Some(git_commit) = self.config.commit_hash() {
-                        let hidden_input = create_hidden_input(el.span, git_commit.to_string());
-                        el.children
-                            .push(JSXElementChild::JSXElement(Box::new(hidden_input)));
-                    }
-
-                    SNAPSHOT_ADDED.store(true, Ordering::Relaxed);
-                }
-            }
-        }
 
         el
     }

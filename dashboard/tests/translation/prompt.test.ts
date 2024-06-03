@@ -1,6 +1,6 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe } from 'bun:test';
-import { PromptService } from '$lib/translation/prompt';
+import { PromptService } from '$lib/publish/translation/prompt';
 
 describe('PromptService', () => {
   test('GenericPromptService returns formatted prompt', async () => {

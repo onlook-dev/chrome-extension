@@ -1,6 +1,6 @@
 // @ts-ignore - Bun test exists
 import { expect, test, describe, mock, beforeAll } from 'bun:test';
-import type { TranslationService } from '$lib/translation';
+import type { TranslationService } from '$lib/publish/translation';
 import { langfuseConfig } from '$lib/utils/env';
 
 // Should explicitly enable. Costs money to run.
@@ -34,7 +34,7 @@ describe('Translation service', () => {
       langfuseConfig: {}
     }))
 
-    const Translation = await import('$lib/translation');
+    const Translation = await import('$lib/publish/translation');
     TranslationService = Translation.TranslationService;
   });
 

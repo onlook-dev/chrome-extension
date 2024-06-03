@@ -1,16 +1,9 @@
-import type { Activity } from "./activity";
+import type { Activity, TemplateNode } from ".";
 
 export interface FileContentData {
   path: string;
   content: string;
   sha: string;
-}
-
-export interface PathInfo {
-  path: string;
-  startLine: number;
-  startTagEndLine: number;
-  endLine: number;
 }
 
 export type StyleTranslationInput = {
@@ -29,6 +22,6 @@ export type TextTranslationInput = {
 
 export interface ProcessedActivity {
   activity: Activity;
-  pathInfo: PathInfo;
+  node: TemplateNode;
 }
 
