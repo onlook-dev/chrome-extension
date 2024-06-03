@@ -19,7 +19,7 @@
 				</div>
 				<img class="object-cover w-full bg-[#363636] my-4" src={Pin} alt="Pin extension tip" />
 				<div class="flex flex-col text-white gap-2">
-					<p class="text-gray-400 text-sm flex flex-row items-center" style="color: #707070;" style="color: #707070;">
+					<p class="text-gray-400 text-sm flex flex-row items-center" style="color: #707070;">
 						<svg
 							class="mr-2"
 							width="15"
