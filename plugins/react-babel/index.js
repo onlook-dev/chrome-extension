@@ -36,7 +36,6 @@ module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = f
   };
 };
 
-
 function getDataOnlookId(path, filename, commit, root, absolute) {
   const startTag = {
     start: {
