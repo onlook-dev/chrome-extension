@@ -230,7 +230,7 @@ describe('ProjectPublisher helpers', () => {
     // Assert
     expect(async () => {
       const res = await getTextTranslationInput(content, node, activity)
-      console.log(res);
+      console.log(`This should not print ${res}`);
     }).toThrow();
   });
 
