@@ -78,7 +78,7 @@ impl Fold for AddProperties {
             .unwrap_or_else(|| PathBuf::from("."));
 
         let attribute_value: String = get_data_onlook_id(
-            el,
+            el.clone(),
             source_mapper,
             &project_root,
             self.config.absolute(),

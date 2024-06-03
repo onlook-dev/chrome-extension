@@ -3,6 +3,8 @@ use swc_common::{SourceMapper, Span};
 use swc_ecma_ast::*;
 mod node;
 use node::{Position, TagInfo, TemplateNode};
+mod compress;
+use compress::{compress, decompress};
 
 pub fn get_data_onlook_id(
     el: JSXElement,
@@ -60,7 +62,12 @@ pub fn get_data_onlook_id(
         commit: commit.unwrap().to_string(),
     };
 
-    return path;
+    // Stringify to JSON
+    let json: String = serde_json::to_string(&template_node).unwrap();
+
+    // Compress JSON to base64-encoded string
+    let compressed: String = compress(&serde_json::from_str(&json).unwrap()).unwrap();
+    return compressed;
 }
 
 pub fn get_span_info(span: Span, source_mapper: &dyn SourceMapper) -> (usize, usize, usize, usize) {
@@ -70,60 +77,4 @@ pub fn get_span_info(span: Span, source_mapper: &dyn SourceMapper) -> (usize, us
     let start_column: usize = span_lines[0].start_col.0;
     let end_column: usize = span_lines.last().unwrap().end_col.0;
     (start_line, end_line, start_column, end_column)
-}
-
-pub fn get_opening_start_and_end(
-    source_mapper: &dyn SourceMapper,
-    el: JSXOpeningElement,
-    offset: usize,
-) -> (usize, usize) {
-    let span_lines = source_mapper.span_to_lines(el.span).unwrap().lines;
-
-    let start_line: usize = span_lines[0].line_index + offset;
-    let end_line: usize = span_lines.last().unwrap().line_index + offset;
-    (start_line, end_line)
-}
-
-pub fn get_closing_end(
-    source_mapper: &dyn SourceMapper,
-    el: JSXClosingElement,
-    offset: usize,
-) -> usize {
-    let span_lines = source_mapper.span_to_lines(el.span).unwrap().lines;
-    let end_line: usize = span_lines.last().unwrap().line_index + offset;
-    end_line
-}
-
-pub fn create_hidden_input(span: Span, git_commit: String) -> JSXElement {
-    JSXElement {
-        span,
-        opening: JSXOpeningElement {
-            span,
-            name: JSXElementName::Ident(Ident::new("input".into(), span)),
-            attrs: vec![
-                JSXAttrOrSpread::JSXAttr(JSXAttr {
-                    span,
-                    name: JSXAttrName::Ident(Ident::new("type".into(), span)),
-                    value: Some(JSXAttrValue::Lit(Lit::Str(Str {
-                        span,
-                        value: "hidden".into(),
-                        raw: None,
-                    }))),
-                }),
-                JSXAttrOrSpread::JSXAttr(JSXAttr {
-                    span,
-                    name: JSXAttrName::Ident(Ident::new("data-onlook-snapshot".into(), span)),
-                    value: Some(JSXAttrValue::Lit(Lit::Str(Str {
-                        span,
-                        value: git_commit.into(),
-                        raw: None,
-                    }))),
-                }),
-            ],
-            self_closing: true,
-            type_args: None,
-        },
-        closing: None,
-        children: vec![],
-    }
 }
