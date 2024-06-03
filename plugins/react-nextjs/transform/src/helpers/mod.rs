@@ -1,17 +1,17 @@
 use std::path::PathBuf;
-use swc_common::{SourceMapper, Span};
+use swc_common::{source_map::Pos, SourceMapper, Span};
 use swc_ecma_ast::*;
 mod node;
 use node::{Position, TagInfo, TemplateNode};
 mod compress;
-use compress::{compress, decompress};
+use compress::compress;
 
 pub fn get_data_onlook_id(
     el: JSXElement,
     source_mapper: &dyn SourceMapper,
     project_root: &PathBuf,
     absolute: bool,
-    commit: Option<&str>,
+    commit: Option<String>,
 ) -> String {
     let mut path: String = source_mapper.span_to_filename(el.span).to_string();
     if absolute {
@@ -57,9 +57,9 @@ pub fn get_data_onlook_id(
 
     let template_node = TemplateNode {
         path: path,
-        start_tag: start_tag,
-        end_tag: end_tag,
-        commit: commit.unwrap().to_string(),
+        startTag: start_tag,
+        endTag: end_tag,
+        commit: commit,
     };
 
     // Stringify to JSON
@@ -72,9 +72,9 @@ pub fn get_data_onlook_id(
 
 pub fn get_span_info(span: Span, source_mapper: &dyn SourceMapper) -> (usize, usize, usize, usize) {
     let span_lines = source_mapper.span_to_lines(span).unwrap().lines;
-    let start_line: usize = span_lines[0].line_index;
-    let end_line: usize = span_lines.last().unwrap().line_index;
-    let start_column: usize = span_lines[0].start_col.0;
-    let end_column: usize = span_lines.last().unwrap().end_col.0;
+    let start_line: usize = span_lines[0].line_index + 1;
+    let end_line: usize = span_lines.last().unwrap().line_index + 1;
+    let start_column: usize = span_lines[0].start_col.to_usize() + 1;
+    let end_column: usize = span_lines.last().unwrap().end_col.to_usize() + 1;
     (start_line, end_line, start_column, end_column)
 }

@@ -15,7 +15,7 @@ pub struct TagInfo {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TemplateNode {
     pub(crate) path: String,
-    pub(crate) start_tag: TagInfo,
-    pub(crate) end_tag: Option<TagInfo>,
-    pub(crate) commit: String,
+    pub(crate) startTag: TagInfo,
+    pub(crate) endTag: Option<TagInfo>,
+    pub(crate) commit: Option<String>,
 }

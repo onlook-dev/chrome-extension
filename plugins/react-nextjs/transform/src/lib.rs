@@ -29,9 +29,9 @@ impl Config {
         }
     }
 
-    pub fn commit_hash(&self) -> Option<&str> {
+    pub fn commit_hash(&self) -> Option<String> {
         match self {
-            Config::WithOptions(opts) => opts.commit_hash.as_deref(),
+            Config::WithOptions(opts) => opts.commit_hash.clone(),
             _ => None,
         }
     }
