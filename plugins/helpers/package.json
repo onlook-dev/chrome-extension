@@ -1,0 +1,28 @@
+{
+  "name": "@onlook/helpers",
+  "type": "module",
+  "version": "1.2.9",
+  "exports": {
+    ".": "./dist/client/index.js",
+    "./server": "./dist/server/index.js",
+    "./client": "./dist/client/index.js"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@rollup/plugin-json": "^6.1.0",
+    "rollup": "^4.9.6",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "@rollup/plugin-terser": "^0.4.4"
+  }
+}

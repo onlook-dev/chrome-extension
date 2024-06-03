@@ -16,8 +16,8 @@
   },
   "devDependencies": {
     "@iconify/json": "^2.2.164",
-    "@onlook/helpers": "^1.2.4",
-    "@onlook/svelte": "^2.0.0",
+    "@onlook/helpers": "1.2.8",
+    "@onlook/svelte": "^2.0.2",
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-auto": "^3.0.0",
     "@sveltejs/kit": "^2.0.0",

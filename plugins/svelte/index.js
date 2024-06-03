@@ -3,8 +3,9 @@ import MagicString from "magic-string";
 import fs from "fs";
 
 import { parse, walk } from "svelte/compiler";
-import { DATA_ONLOOK_ID } from "../shared/constants.js";
-import { getCurrentCommit, compress } from "../shared/helpers.js";
+import { compress } from "../helpers/src/client/index.js";
+import { getCurrentCommit } from "../helpers/src/server/index.js";
+import { DATA_ONLOOK_ID } from "../helpers/src/constants.js";
 
 export const onlookPreprocess = ({ root = path.resolve('.'), absolute = false, commit_hash = getCurrentCommit() }) => {
   return {

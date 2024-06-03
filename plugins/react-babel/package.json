@@ -1,6 +1,6 @@
 {
   "name": "@onlook/babel-plugin-react",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "bundle.js",
   "type": "module",
   "dependencies": {

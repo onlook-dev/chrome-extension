@@ -1,7 +1,8 @@
 const t = require('@babel/types');
-const { getCurrentCommit, compress } = require("../shared/helpers.js");
-const { DATA_ONLOOK_ID } = require("../shared/constants.js");
 const pathLib = require('path');
+const { compress } = require("../helpers/src/client/index.js");
+const { getCurrentCommit } = require("../helpers/src/server/index.js");
+const { DATA_ONLOOK_ID } = require("../helpers/src/constants.js");
 
 module.exports = function babelPluginOnlook({ root = process.cwd(), absolute = false }) {
   const commit = getCurrentCommit()

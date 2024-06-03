@@ -1,4 +1,4 @@
-import pathLib from 'path';
+import path from 'path';
 import fs from 'fs';
 import { execSync } from 'child_process';
 
@@ -16138,27 +16138,6 @@ function strFromU8(dat, latin1) {
     }
 }
 
-function generateDataAttributeValue(filePath, lineStart, lineEnd, lineClosing, root, absolute = false) {
-    // Convert the absolute path to a path relative to the project root
-    const relativeFilePath = absolute ? filePath : pathLib.relative(root || process.cwd(), filePath);
-    return `${relativeFilePath}:${lineStart}:${lineEnd}:${lineClosing}`;
-}
-
-function getCurrentCommit$1() {
-    try {
-        if (typeof window === 'undefined') {
-            const stdout = execSync('git rev-parse HEAD');
-            return stdout.toString().trim();
-        } else {
-            throw 'child_process is not available in the browser.';
-        }
-    } catch (err) {
-        console.error(err);
-        // Not a git repository or some other error occurred
-        return null;
-    }
-}
-
 function compress$1(json) {
     // Compress JSON to base64
     const buf = strToU8(JSON.stringify(json));
@@ -16257,15 +16236,33 @@ function getTemplateContent(content, templateNode) {
     }
 }
 
-var helpers = /*#__PURE__*/Object.freeze({
+var client = /*#__PURE__*/Object.freeze({
 	__proto__: null,
 	compress: compress$1,
 	decompress: decompress,
 	extractTagContent: extractTagContent,
-	generateDataAttributeValue: generateDataAttributeValue,
-	getCurrentCommit: getCurrentCommit$1,
 	getTemplateContent: getTemplateContent,
 	testTags: testTags
+});
+
+function getCurrentCommit$1() {
+    try {
+        if (typeof window === 'undefined') {
+            const stdout = execSync('git rev-parse HEAD');
+            return stdout.toString().trim();
+        } else {
+            throw 'child_process is not available in the browser.';
+        }
+    } catch (err) {
+        console.error(err);
+        // Not a git repository or some other error occurred
+        return null;
+    }
+}
+
+var server = /*#__PURE__*/Object.freeze({
+	__proto__: null,
+	getCurrentCommit: getCurrentCommit$1
 });
 
 const DATA_ONLOOK_ID$1 = "data-onlook-id";
@@ -16275,9 +16272,9 @@ var constants = /*#__PURE__*/Object.freeze({
 	DATA_ONLOOK_ID: DATA_ONLOOK_ID$1
 });
 
-const { getCurrentCommit, compress } = helpers;
+const { compress } = client;
+const { getCurrentCommit } = server;
 const { DATA_ONLOOK_ID } = constants;
-
 
 var reactBabel = function babelPluginOnlook({ root = process.cwd(), absolute = false }) {
   const commit = getCurrentCommit();
@@ -16312,31 +16309,30 @@ var reactBabel = function babelPluginOnlook({ root = process.cwd(), absolute = f
   };
 };
 
-
-function getDataOnlookId(path, filename, commit, root, absolute) {
+function getDataOnlookId(path$1, filename, commit, root, absolute) {
   const startTag = {
     start: {
-      line: path.node.openingElement.loc.start.line,
-      column: path.node.openingElement.loc.start.column + 1
+      line: path$1.node.openingElement.loc.start.line,
+      column: path$1.node.openingElement.loc.start.column + 1
     },
     end: {
-      line: path.node.openingElement.loc.end.line,
-      column: path.node.openingElement.loc.end.column + 1
+      line: path$1.node.openingElement.loc.end.line,
+      column: path$1.node.openingElement.loc.end.column + 1
     }
   };
-  const endTag = path.node.closingElement ? {
+  const endTag = path$1.node.closingElement ? {
     start: {
-      line: path.node.closingElement.loc.start.line,
-      column: path.node.closingElement.loc.start.column + 1
+      line: path$1.node.closingElement.loc.start.line,
+      column: path$1.node.closingElement.loc.start.column + 1
     },
     end: {
-      line: path.node.closingElement.loc.end.line,
-      column: path.node.closingElement.loc.end.column + 1
+      line: path$1.node.closingElement.loc.end.line,
+      column: path$1.node.closingElement.loc.end.column + 1
     }
   } : null;
 
   const domNode = {
-    path: absolute ? filename : pathLib.relative(root, filename),
+    path: absolute ? filename : path.relative(root, filename),
     startTag,
     endTag,
     commit
