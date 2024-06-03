@@ -14,7 +14,8 @@ pub fn get_data_onlook_id(
     commit: Option<String>,
 ) -> String {
     let mut path: String = source_mapper.span_to_filename(el.span).to_string();
-    if absolute {
+    if !absolute {
+        // Use relative path
         let abs_path_buf: PathBuf = PathBuf::from(path);
         path = abs_path_buf
             .strip_prefix(&project_root)
