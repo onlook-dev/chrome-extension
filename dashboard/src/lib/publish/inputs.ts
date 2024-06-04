@@ -1,4 +1,5 @@
 import type { Activity, ChangeValues, TemplateNode, StyleTranslationInput, TextTranslationInput } from "$shared/models";
+// @ts-ignore
 import { getTemplateContent } from "@onlook/helpers";
 import { getExtensionFromPath } from "./helpers";
 

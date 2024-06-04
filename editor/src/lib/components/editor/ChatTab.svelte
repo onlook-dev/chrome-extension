@@ -18,10 +18,7 @@
     let messages: any[] = [];
 
     function handleChatResponse(response: { summary: string; changes: any[] }) {
-        console.log(response);
-        console.log(response.changes);
-        console.log(response.summary);
-
+        editTool.applyStyles(response.changes);
         waitingForResponse = false;
         messages = [
             ...messages,

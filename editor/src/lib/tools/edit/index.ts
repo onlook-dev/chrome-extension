@@ -7,6 +7,7 @@ import { findCommonParent, getUniqueSelector } from '../utilities';
 import { handleEditEvent } from './handleEvents';
 import { DragManager } from './drag';
 import type { Tool } from '../index';
+import { camelCase } from 'lodash';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
@@ -271,6 +272,18 @@ export class EditTool implements Tool {
 				});
 				el.remove()
 			}
+		});
+	};
+
+	applyStyles = (changes: { property: string, value: string }[]) => {
+		const selected = this.selectorEngine.selected;
+		if (selected.length == 0) return;
+		selected.forEach((el) => {
+			changes.forEach(({ property, value }) => {
+				// Convert to camel case
+
+				el.style[camelCase(property)] = value;
+			});
 		});
 	};
 }
