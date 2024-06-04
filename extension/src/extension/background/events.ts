@@ -30,6 +30,7 @@ import { onMessage } from 'webext-bridge/background'
 import { ProjectStatus, type Team, type User } from '$shared/models'
 import { forwardToActiveTab } from '$lib/utils/helpers'
 import { MessageType } from '$shared/message'
+import { TranslationService } from '$lib/translation'
 
 export class BackgroundEventHandlers {
     projectService: FirebaseProjectService
@@ -38,6 +39,7 @@ export class BackgroundEventHandlers {
     editEventService: EditEventService
     projectTabManager: ProjectTabService
     entitiesService: EntitySubsciptionService
+    translationService: TranslationService
 
     constructor() {
         this.projectTabManager = new ProjectTabService()
@@ -50,6 +52,7 @@ export class BackgroundEventHandlers {
             this.teamService,
             this.userService
         )
+        this.translationService = new TranslationService()
     }
 
     setDefaultMaps() {
@@ -155,7 +158,9 @@ export class BackgroundEventHandlers {
         // Message directly from editor window
         onMessage(MessageType.SEND_CHAT_MESSAGE, async ({ data }) => {
             const { content } = (data as { content: string })
-            return { content: content }
+            console.log("Received message from editor: ", content)
+            const res = await this.translationService.getStyleChange({ request: content })
+            return res
         })
 
         tabIdRequestStream.subscribe(([_, sender]) => {

@@ -2,7 +2,7 @@
     import type { EditTool } from "$lib/tools/edit";
     import { Input } from "$lib/components/ui/input/index.js";
     import { Separator } from "$lib/components/ui/separator/index.js";
-    import { MessageService, MessageType } from "$shared/message";
+    import { MessageType } from "$shared/message";
     import { sendMessage } from "webext-bridge/window";
 
     export let editTool: EditTool;
@@ -15,65 +15,19 @@
         ASSISTANT = "assistant",
     }
 
-    let messages: any[] = [
-        {
-            role: Roles.USER,
-            content: "1!",
-        },
-        {
-            role: Roles.ASSISTANT,
-            content: "2?",
-        },
-        {
-            role: Roles.USER,
-            content: "3, world!",
-        },
-        {
-            role: Roles.ASSISTANT,
-            content: "4! How can I help you today?",
-        },
-        {
-            role: Roles.USER,
-            content: "5, world!",
-        },
-        {
-            role: Roles.ASSISTANT,
-            content: "6! How can I help you today?",
-        },
-        {
-            role: Roles.USER,
-            content: "7, world!",
-        },
-        {
-            role: Roles.ASSISTANT,
-            content: "8! How can I help you today?",
-        },
-        {
-            role: Roles.USER,
-            content: "9, world!",
-        },
-        {
-            role: Roles.ASSISTANT,
-            content: "10! How can I help you today?",
-        },
-        {
-            role: Roles.USER,
-            content: "11, world!",
-        },
-        {
-            role: Roles.ASSISTANT,
-            content: "12! How can I help you today?",
-        },
-    ];
+    let messages: any[] = [];
 
-    function handleChatResponse(response: any) {
-        console.log("response", response);
+    function handleChatResponse(response: { summary: string; changes: any[] }) {
+        console.log(response);
+        console.log(response.changes);
+        console.log(response.summary);
+
         waitingForResponse = false;
         messages = [
             ...messages,
             {
                 role: Roles.ASSISTANT,
-                content: response.content,
+                content: response.summary,
             },
         ];
     }

@@ -9,15 +9,19 @@ import { z } from "zod";
  * to the model along with the class name.
  */
 
-class TranslationTool extends StructuredTool {
-  name = "modify_code";
-  description = "A tool to process modified code with changes.";
+class StyleTool extends StructuredTool {
+  name = "style_change";
+  description = "A tool to modify the style of an element";
   schema = z.object({
-    code: z.string().describe("The modified code chunk with the required changes implemented."),
+    changes: z.array(z.object({
+      property: z.string().describe("The CSS property to change"),
+      value: z.string().describe("The value to set the property to"),
+    })).describe("An array of changes to make to the style"),
+    summary: z.string().describe("A summary of the changes made"),
   });
   async _call(params: z.infer<typeof this.schema>) {
     return "The answer";
   }
 }
 
-export const translationTool = convertToOpenAITool(new TranslationTool());
+export const styleTool = convertToOpenAITool(new StyleTool());
