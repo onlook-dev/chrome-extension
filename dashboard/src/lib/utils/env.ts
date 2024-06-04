@@ -43,7 +43,6 @@ import {
 	PUBLIC_PROD_LANGFUSE_SECRET_KEY,
 	PUBLIC_PROD_LANGFUSE_PUBLIC_KEY,
 	PUBLIC_PROD_LANGFUSE_BASE_URL
-
 } from '$env/static/public';
 
 import { Tier } from '$shared/models';
@@ -96,23 +95,12 @@ const prodGithubConfig = {
 	privateKey: PUBLIC_PROD_GITHUB_PRIVATE_KEY
 };
 
-const testOpenAiConfig = {
-	apiKey: PUBLIC_TEST_OPENAI_API_KEY,
-	organization: PUBLIC_TEST_OPENAI_ORG,
-};
-
-const prodOpenAiConfig = {
-	apiKey: PUBLIC_PROD_OPENAI_API_KEY,
-	organization: PUBLIC_PROD_OPENAI_ORG,
-};
-
 export const isDevelopment: boolean = import.meta.env.DEV;
 export const isFirebaseEmulator: boolean = import.meta.env.VITE_FIREBASE_EMULATOR;
 export const firebaseConfig = isDevelopment ? testFirebaseConfig : prodFirebaseConfig;
 export const stripeConfig = isDevelopment ? testStripeConfig : prodStripeConfig;
 export const baseUrl = isDevelopment ? PUBLIC_TEST_URL : PUBLIC_PROD_URL;
 export const githubConfig = isDevelopment ? testGithubConfig : prodGithubConfig;
-export const openAiConfig = isDevelopment ? testOpenAiConfig : prodOpenAiConfig;
 export const mixpanelToken = isDevelopment ? PUBLIC_TEST_MIXPANEL_TOKEN : PUBLIC_PROD_MIXPANEL_TOKEN;
 
 export const priceIdMapping = {
@@ -127,6 +115,11 @@ export const priceIdMapping = {
 export const tierMapping = Object.fromEntries(
 	Object.entries(priceIdMapping).map(([key, value]) => [value, key])
 );
+
+export const openAiConfig = {
+	apiKey: isDevelopment ? PUBLIC_TEST_OPENAI_API_KEY : PUBLIC_PROD_OPENAI_API_KEY,
+	organization: isDevelopment ? PUBLIC_TEST_OPENAI_ORG : PUBLIC_PROD_OPENAI_ORG,
+};
 
 export const langfuseConfig = {
 	secretKey: isDevelopment ? PUBLIC_TEST_LANGFUSE_SECRET_KEY : PUBLIC_PROD_LANGFUSE_SECRET_KEY,

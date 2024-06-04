@@ -154,7 +154,6 @@ export class BackgroundEventHandlers {
 
         // Message directly from editor window
         onMessage(MessageType.SEND_CHAT_MESSAGE, async ({ data }) => {
-            console.log('BG received chat', data)
             const { content } = (data as { content: string })
             return { content: content }
         })
