@@ -54,6 +54,7 @@
     "mixpanel-browser": "juanfer0002/mixpanel-js-mv3#fetch-support-for-mv3-extensions",
     "nanoid": "^5.0.3",
     "rxjs": "^7.8.1",
-    "valid-url": "^1.0.9"
+    "valid-url": "^1.0.9",
+    "webext-bridge": "^6.0.1"
   }
 }

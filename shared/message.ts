@@ -1,3 +1,5 @@
+export const MESSAGING_NAMESPACE = "aa5d4a6b-d04d-4cb4-8476-3cc14241facd";
+
 export enum MessageType {
     // Auth
     DASHBOARD_SIGN_IN = "DASHBOARD_SIGN_IN",
@@ -13,13 +15,16 @@ export enum MessageType {
     APPLY_EDIT_EVENTS = "APPLY_EDIT_EVENTS",
     REVERT_EDIT_EVENTS = "REVERT_EDIT_EVENTS",
 
-    // Getting
+    // Getting project
     GET_PROJECT = "GET_PROJECT",
     GET_PROJECTS = "GET_PROJECTS",
 
-    // Saving
+    // Saving project
     PREPARE_SAVE = "PREPARE_SAVE",
     PUBLISH_PROJECT = "PUBLISH_PROJECT",
+
+    // Chat
+    SEND_CHAT_MESSAGE = "SEND_CHAT_MESSAGE",
 
     // Generic type to get callback response
     RESPONSE = "RESPONSE"

@@ -26,9 +26,10 @@ import { FirebaseService } from '$lib/storage'
 import { FirebaseProjectService } from '$lib/storage/project'
 import { ProjectTabService } from '$lib/projects'
 import { EntitySubsciptionService } from './entities'
-
+import { onMessage } from 'webext-bridge/background'
 import { ProjectStatus, type Team, type User } from '$shared/models'
 import { forwardToActiveTab } from '$lib/utils/helpers'
+import { MessageType } from '$shared/message'
 
 export class BackgroundEventHandlers {
     projectService: FirebaseProjectService
@@ -108,7 +109,7 @@ export class BackgroundEventHandlers {
             this.setStartupState()
 
             if (details.reason == "install") {
-                //call a function to handle a first install
+                // Call a function to handle a first install
                 this.openOrCreateNewTab(`${baseUrl}${DashboardRoutes.WELCOME}`)
             }
         })
@@ -149,6 +150,13 @@ export class BackgroundEventHandlers {
 
         chrome.tabs.onRemoved.addListener((tabId: number) => {
             this.projectTabManager.removeTabState(tabId)
+        })
+
+        // Message directly from editor window
+        onMessage(MessageType.SEND_CHAT_MESSAGE, async ({ data }) => {
+            console.log('BG received chat', data)
+            const { content } = (data as { content: string })
+            return { content: content }
         })
 
         tabIdRequestStream.subscribe(([_, sender]) => {
@@ -210,5 +218,4 @@ export class BackgroundEventHandlers {
             trackEvent('Edit Event', { type: editEvent.editType })
         })
     }
-
 }
