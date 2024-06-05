@@ -13,7 +13,6 @@
   import { ApplyChangesService } from "$lib/tools/edit/applyChange";
 
   import * as Accordion from "$lib/components/ui/accordion";
-  import Separator from "../ui/separator/separator.svelte";
   import SelectInput from "./inputs/SelectInput.svelte";
   import ColorInput from "./inputs/ColorInput.svelte";
   import NumberUnitInput from "./inputs/NumberUnitInput.svelte";

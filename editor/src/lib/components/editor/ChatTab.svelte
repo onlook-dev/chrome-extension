@@ -1,27 +1,46 @@
 <script lang="ts">
     import type { EditTool } from "$lib/tools/edit";
-    import { Input } from "$lib/components/ui/input/index.js";
+    import { TextArea } from "$lib/components/ui/textarea/index.js";
     import { Separator } from "$lib/components/ui/separator/index.js";
     import { MessageType } from "$shared/message";
     import { sendMessage } from "webext-bridge/window";
+    import { writable, type Writable } from "svelte/store";
+    import { onMount } from "svelte";
 
     export let editTool: EditTool;
     export let cardHeight: string;
     let scrollContainer: HTMLDivElement;
     let waitingForResponse = false;
 
+    // Chat state
+    let chatHistoryMap: WeakMap<HTMLElement, any[]> = new Map();
+    let chatHistory: any[] = [];
+    let lastSelectedElement: HTMLElement;
+    onMount(() => {
+        editTool.selectorEngine.selectedStore.subscribe((selected) => {
+            if (lastSelectedElement) {
+                chatHistoryMap.set(lastSelectedElement, chatHistory);
+            }
+            if (selected && selected.length > 0) {
+                // TODO: Handle multiple
+                chatHistory = chatHistoryMap.get(selected[0]) || [];
+                lastSelectedElement = selected[0];
+            } else {
+                chatHistory = [];
+            }
+        });
+    });
+
     enum Roles {
         USER = "user",
         ASSISTANT = "assistant",
     }
 
-    let messages: any[] = [];
-
     function handleChatResponse(response: { summary: string; changes: any[] }) {
         editTool.applyStyles(response.changes);
         waitingForResponse = false;
-        messages = [
-            ...messages,
+        chatHistory = [
+            ...chatHistory,
             {
                 role: Roles.ASSISTANT,
                 content: response.summary,
@@ -35,8 +54,8 @@
         const input = event.currentTarget as HTMLInputElement;
         const content = input.value;
 
-        messages = [
-            ...messages,
+        chatHistory = [
+            ...chatHistory,
             {
                 role: Roles.USER,
                 content,
@@ -62,7 +81,7 @@
 
 <div class="w-full h-full">
     <div
-        class="w-full h-[calc({cardHeight}-160px)] text-xs overflow-auto overscroll-contain flex flex-col-reverse"
+        class="w-full h-[calc({cardHeight}-180px)] text-xs overflow-auto overscroll-contain flex flex-col-reverse"
         bind:this={scrollContainer}
     >
         {#if waitingForResponse}
@@ -74,7 +93,7 @@
                 </div>
             </div>
         {/if}
-        {#each messages.toReversed() as message, i}
+        {#each chatHistory.toReversed() as message, i}
             {#if message.role === Roles.ASSISTANT}
                 <div class="flex items-start gap-3 my-1.5">
                     <div
@@ -98,7 +117,7 @@
     </div>
     <Separator />
     <div class="mt-2 p-[2px]">
-        <Input
+        <TextArea
             class="m-0 text-xs p-0 ring-0 border-0 focus:border-0 focus:ring-0 active:border-0 active:ring-0 focus-visible:ring-0 focus-visible:border-0"
             type="text"
             placeholder="Type what you'd like to change..."

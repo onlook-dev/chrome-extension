@@ -101,7 +101,7 @@
           </Tabs.List>
           <Separator class="mt-1" />
           <div
-            class="h-[calc({cardHeight}-4rem)] overscroll-contain overflow-auto"
+            class="h-[calc({cardHeight}-8rem)] overscroll-contain overflow-auto"
           >
             <Tabs.Content value={TabValue.MANUAL}
               ><CssTab {editTool} /></Tabs.Content
