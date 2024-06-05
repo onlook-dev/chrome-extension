@@ -23,7 +23,7 @@
   let editTool: EditTool = toolManager.editTool;
 
   const cardWidth = "232px";
-  let selectedTab: string = TabValue.ASSISTED;
+  let selectedTab: string = TabValue.MANUAL;
   let isInputFocused = false;
   let panelCollapsed = false;
   let cardRef: HTMLDivElement;
