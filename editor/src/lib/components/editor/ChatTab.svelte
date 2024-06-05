@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { EditTool } from "$lib/tools/edit";
-    import { TextArea } from "$lib/components/ui/textarea/index.js";
+    import { Textarea } from "$lib/components/ui/textarea/index.js";
     import { Separator } from "$lib/components/ui/separator/index.js";
     import { MessageType } from "$shared/message";
     import { sendMessage } from "webext-bridge/window";
@@ -81,7 +81,7 @@
 
 <div class="w-full h-full">
     <div
-        class="w-full h-[calc({cardHeight}-180px)] text-xs overflow-auto overscroll-contain flex flex-col-reverse"
+        class="w-full h-[calc({cardHeight}-170px)] text-xs overflow-auto overscroll-contain flex flex-col-reverse"
         bind:this={scrollContainer}
     >
         {#if waitingForResponse}
@@ -116,11 +116,11 @@
         {/each}
     </div>
     <Separator />
-    <div class="mt-2 p-[2px]">
-        <TextArea
-            class="m-0 text-xs p-0 ring-0 border-0 focus:border-0 focus:ring-0 active:border-0 active:ring-0 focus-visible:ring-0 focus-visible:border-0"
-            type="text"
+    <div class="mt-4 p-[2px]">
+        <Textarea
+            class="h-8 min-h-8 max-h-8 resize-none m-0 text-xs p-0 ring-0 border-0 focus:border-0 focus:ring-0 active:border-0 active:ring-0 focus-visible:ring-0 focus-visible:border-0"
             placeholder="Type what you'd like to change..."
+            maxlength={140}
             on:keypress={(event) => {
                 if (event.key === "Enter") {
                     submitMessage(event);

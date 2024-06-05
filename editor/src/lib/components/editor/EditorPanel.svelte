@@ -101,7 +101,7 @@
           </Tabs.List>
           <Separator class="mt-1" />
           <div
-            class="h-[calc({cardHeight}-8rem)] overscroll-contain overflow-auto"
+            class="h-[calc({cardHeight}-6rem)] overscroll-contain overflow-auto"
           >
             <Tabs.Content value={TabValue.MANUAL}
               ><CssTab {editTool} /></Tabs.Content
@@ -110,7 +110,6 @@
               ><ChatTab {editTool} {cardHeight} /></Tabs.Content
             >
           </div>
-          <Card.Footer class="flex justify-between"></Card.Footer>
         </Tabs.Root>
       </Card.Content>
     </Card.Root>
