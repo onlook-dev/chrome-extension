@@ -41,7 +41,7 @@ export async function captureActiveTab(refresh = false): Promise<string> {
 
 export async function captureTab(windowId: number): Promise<string> {
     return new Promise((resolve, reject) => {
-        chrome.tabs.captureVisibleTab(windowId, { format: 'jpeg' }, uri => {
+        chrome.tabs.captureVisibleTab(windowId, { format: 'jpeg', quality: 50 }, uri => {
             if (chrome.runtime.lastError) {
                 reject(chrome.runtime.lastError)
             } else {

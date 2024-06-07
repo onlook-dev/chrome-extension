@@ -103,7 +103,7 @@ export class ScreenshotService {
 	}
 
 	takePageScreenshot(): Promise<HTMLCanvasElement> {
-		// Filter our onlook elements
+		// Filter out onlook elements
 		function filter(node: Element) {
 			try {
 				if (node.tagName.toUpperCase() === DATA_ONLOOK_ID.toUpperCase() || node.id === `#${DATA_ONLOOK_ID}` || node.hasAttribute(DATA_ONLOOK_IGNORE) || node.tagName.toUpperCase() === ONLOOK_TOOLBAR.toUpperCase()) {
