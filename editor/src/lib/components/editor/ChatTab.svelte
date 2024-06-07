@@ -4,8 +4,9 @@
     import { Separator } from "$lib/components/ui/separator/index.js";
     import { MessageType } from "$shared/message";
     import { sendMessage } from "webext-bridge/window";
-    import { writable, type Writable } from "svelte/store";
     import { onMount } from "svelte";
+    import { camelCase } from "lodash";
+    import { ApplyChangesService } from "$lib/tools/edit/applyChange";
 
     export let editTool: EditTool;
     export let cardHeight: string;
@@ -16,6 +17,8 @@
     let chatHistoryMap: WeakMap<HTMLElement, any[]> = new Map();
     let chatHistory: any[] = [];
     let lastSelectedElement: HTMLElement;
+    const applyChangeService = new ApplyChangesService();
+
     onMount(() => {
         editTool.selectorEngine.selectedStore.subscribe((selected) => {
             if (lastSelectedElement) {
@@ -37,7 +40,14 @@
     }
 
     function handleChatResponse(response: { summary: string; changes: any[] }) {
-        editTool.applyStyles(response.changes);
+        const selected = editTool.selectorEngine.selected;
+        if (selected.length == 0) return;
+        selected.forEach((el) => {
+            response.changes.forEach(({ property, value }) => {
+                applyChangeService.applyStyle(el, camelCase(property), value);
+            });
+        });
+
         waitingForResponse = false;
         chatHistory = [
             ...chatHistory,

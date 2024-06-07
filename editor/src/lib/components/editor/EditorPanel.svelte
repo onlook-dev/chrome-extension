@@ -92,11 +92,11 @@
           <Tabs.List class="bg-transparent p-0 gap-4 select-none">
             <Tabs.Trigger
               class="bg-transparent p-0 text-xs"
-              value={TabValue.MANUAL}>Manual styles</Tabs.Trigger
+              value={TabValue.MANUAL}>Set styles</Tabs.Trigger
             >
             <Tabs.Trigger
               class="bg-transparent p-0 text-xs"
-              value={TabValue.ASSISTED}>Assisted styles</Tabs.Trigger
+              value={TabValue.ASSISTED}>Generate styles</Tabs.Trigger
             >
           </Tabs.List>
           <Separator class="mt-1" />

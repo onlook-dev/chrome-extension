@@ -7,15 +7,15 @@ import { findCommonParent, getUniqueSelector } from '../utilities';
 import { handleEditEvent } from './handleEvents';
 import { DragManager } from './drag';
 import type { Tool } from '../index';
-import { camelCase } from 'lodash';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
 	overlayManager: OverlayManager;
+	dragManager: DragManager;
+
 	elResizeObserver: ResizeObserver;
 	oldText: string | undefined;
 	copiedElement: HTMLElement | undefined;
-	dragManager: DragManager;
 	lastKnownScrollPosition = 0;
 	ticking = false;
 
@@ -276,14 +276,6 @@ export class EditTool implements Tool {
 	};
 
 	applyStyles = (changes: { property: string, value: string }[]) => {
-		const selected = this.selectorEngine.selected;
-		if (selected.length == 0) return;
-		selected.forEach((el) => {
-			changes.forEach(({ property, value }) => {
-				// Convert to camel case
 
-				el.style[camelCase(property)] = value;
-			});
-		});
 	};
 }

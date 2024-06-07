@@ -158,7 +158,6 @@ export class BackgroundEventHandlers {
         // Message directly from editor window
         onMessage(MessageType.SEND_CHAT_MESSAGE, async ({ data }) => {
             const { content } = (data as { content: string })
-            console.log("Received message from editor: ", content)
             const res = await this.translationService.getStyleChange({ request: content })
             return res
         })

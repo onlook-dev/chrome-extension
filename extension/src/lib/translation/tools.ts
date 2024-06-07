@@ -14,9 +14,9 @@ class StyleTool extends StructuredTool {
   description = "A tool to modify the style of an element";
   schema = z.object({
     changes: z.array(z.object({
-      property: z.string().describe("The CSS property to change"),
-      value: z.string().describe("The value to set the property to"),
-    })).describe("An array of changes to make to the style"),
+      property: z.string().describe("The CSS property to change. Must be a valid CSS property."),
+      value: z.string().describe("The value to set the property to. Must be a valid CSS value. Hex code must have hastag # in front."),
+    })).describe("An array of style changes to make to the style"),
     summary: z.string().describe("A summary of the changes made"),
   });
   async _call(params: z.infer<typeof this.schema>) {

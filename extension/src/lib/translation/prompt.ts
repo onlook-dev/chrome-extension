@@ -37,21 +37,7 @@ export class StylePromptService extends PromptService<{ request: string }> {
       request: "request"
     };
 
-    const prompt = "You are an HTML and CSS expert. Given the request, return the CSS to modify the HTMLElement\nRequest: {request}\n";
-
-    // const examplePrompt = "Request: {request}\nOutput: {output}";
-    // const examples: Example[] = [
-    //   {
-    //     request: "New Text",
-    //     output: "Hello World"
-    //   },
-    // ];
-    // const exmapleObj = {
-    //   prompt: examplePrompt,
-    //   examples: examples
-    // }
-    // super(prompt, inputs, exmapleObj);
-
-    super(prompt, inputs,);
+    const prompt = "You are an HTML and CSS expert. Given the request, return the CSS to modify the HTMLElement. Make sure CSS values are valid  such as # in front of hex code, etc. \nRequest: {request}\n";
+    super(prompt, inputs);
   }
 }
