@@ -7,7 +7,6 @@ import { ProjectStatus, type Project } from "$shared/models";
 import type { ScreenshotService } from "$extension/content/screenshot";
 import type { AltScreenshotService } from "$extension/content/altScreenshot";
 import type { ProjectChangeService } from "$lib/projects/changes";
-import { consoleLogImage } from "$lib/utils/helpers";
 
 export class PublishProjectService {
     constructor(
@@ -18,8 +17,12 @@ export class PublishProjectService {
     ) { }
 
     public async publish(open = true) {
-        if (this.project.status !== ProjectStatus.PREPARED)
-            await this.prepare();
+        try {
+            if (this.project.status !== ProjectStatus.PREPARED)
+                await this.prepare();
+        } catch (e) {
+            console.error("Error preparing project", e);
+        }
 
         await sendPublishProjectRequest(this.project);
         if (open)
@@ -85,12 +88,9 @@ export class PublishProjectService {
         for (const activity of activities) {
             await this.screenshotService.takeActivityScreenshot(activity, afterCanvas, false);
         }
-
         // Update project after screenshot
         const afterScreenshot = afterCanvas.toDataURL('image/png');
         this.project.hostData.previewImage = afterScreenshot;
-
-        consoleLogImage(afterScreenshot);
     }
 
     async altTakeActivityScreenshots() {
