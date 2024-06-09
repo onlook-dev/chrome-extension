@@ -274,8 +274,4 @@ export class EditTool implements Tool {
 			}
 		});
 	};
-
-	applyStyles = (changes: { property: string, value: string }[]) => {
-
-	};
 }
