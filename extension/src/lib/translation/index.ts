@@ -3,11 +3,13 @@ import { StylePromptService } from "./prompt";
 import { langfuseConfig, openAiConfig } from "$lib/utils/env";
 import { CallbackHandler } from "langfuse-langchain";
 import { type RunnableConfig } from "@langchain/core/runnables";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { createOpenAIFunctionsAgent, AgentExecutor } from "langchain/agents";
-import { type StructuredToolInterface } from "@langchain/core/tools";
 import { z } from "zod";
-import { DynamicStructuredTool } from "@langchain/community/tools/dynamic";
+import { ChatMessageHistory } from "langchain/stores/message/in_memory";
+import { RunnableWithMessageHistory } from "@langchain/core/runnables";
+import {
+  ChatPromptTemplate,
+  MessagesPlaceholder,
+} from "@langchain/core/prompts";
 
 export class TranslationService {
   private stylePromptService: StylePromptService;
@@ -40,12 +42,23 @@ export class TranslationService {
       cache: true,
     }).withStructuredOutput(this.styleResponse)
 
-    // Pass message history here
-    const prompt = await this.stylePromptService.getPrompt(variables);
+    const prompt = ChatPromptTemplate.fromMessages([
+      ["system", "You are an HTML and CSS expert. Given the request, return the CSS to modify the HTMLElement. Make sure CSS values are valid  such as # in front of hex code, etc."],
+      new MessagesPlaceholder("history"),
+      ["human", "{request}"],
+    ]);
+
+    const chain = prompt.pipe(model);
+
+    const chainWithHistory = new RunnableWithMessageHistory({
+      runnable: chain,
+      getMessageHistory: (sessionId: string) => new ChatMessageHistory(),
+      inputMessagesKey: "question",
+      historyMessagesKey: "history",
+    });
+
     try {
-      console.log("Prompt", prompt);
-      const response = await model.invoke(prompt, config);
-      console.log("Response", response);
+      const response = await chainWithHistory.invoke(variables, config);
       return response;
     } catch (error) {
       console.error(error);
