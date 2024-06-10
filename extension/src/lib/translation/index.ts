@@ -10,10 +10,13 @@ import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
+import { AIMessage, HumanMessage } from "@langchain/core/messages";
 
 export class TranslationService {
   private stylePromptService: StylePromptService;
   private traceHandler: CallbackHandler;
+  private chainWithHistory: RunnableWithMessageHistory<any, any>;
+  private history = new Map<string, ChatMessageHistory>();
 
   private styleResponse = z.object({
     changes: z.array(z.object({
@@ -24,16 +27,6 @@ export class TranslationService {
   })
 
   constructor(private projectId: string = "default") {
-    this.stylePromptService = new StylePromptService();
-    this.traceHandler = new CallbackHandler({ ...langfuseConfig, sessionId: this.projectId });
-  }
-
-  async getStyleChange(variables: typeof this.stylePromptService.inputVariables): Promise<z.infer<typeof this.styleResponse> | { error: string }> {
-    const config: RunnableConfig = {
-      configurable: { sessionId: "1" },
-      callbacks: [this.traceHandler],
-      runName: "Style run"
-    };
 
     const model = new ChatOpenAI({
       openAIApiKey: openAiConfig.apiKey,
@@ -50,15 +43,37 @@ export class TranslationService {
 
     const chain = prompt.pipe(model);
 
-    const chainWithHistory = new RunnableWithMessageHistory({
+    this.chainWithHistory = new RunnableWithMessageHistory({
       runnable: chain,
-      getMessageHistory: (sessionId: string) => new ChatMessageHistory(),
+      getMessageHistory: (sessionId: string) => {
+        const his = this.history.get(sessionId) || new ChatMessageHistory();
+        this.history.set(sessionId, his);
+        return his;
+      },
       inputMessagesKey: "question",
       historyMessagesKey: "history",
     });
 
+    this.stylePromptService = new StylePromptService();
+    this.traceHandler = new CallbackHandler({ ...langfuseConfig, sessionId: this.projectId });
+  }
+
+  async getStyleChange(variables: typeof this.stylePromptService.inputVariables): Promise<z.infer<typeof this.styleResponse> | { error: string }> {
+    const sessionId = "1";
+    const config: RunnableConfig = {
+      configurable: { sessionId: sessionId },
+      callbacks: [this.traceHandler],
+      runName: "Style run"
+    };
+
     try {
-      const response = await chainWithHistory.invoke(variables, config);
+      const response = await this.chainWithHistory.invoke(variables, config);
+
+      // Save history
+      const his = this.history.get(sessionId) || new ChatMessageHistory();
+      his.addMessage(new HumanMessage(variables.request));
+      this.history.set(sessionId, his);
+
       return response;
     } catch (error) {
       console.error(error);
