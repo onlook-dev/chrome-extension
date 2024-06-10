@@ -8,6 +8,7 @@ export type { ProcessedActivity, FileContentData, StyleTranslationInput, TextTra
 export type { HostData } from './hostData';
 export type { Payment } from './payment';
 export type { TemplateNode, Position, TagInfo } from './node';
+export type { InvokeParams, InvokeResponse } from './llm';
 
 // Enums, not types
 export { ProjectStatus } from './project';

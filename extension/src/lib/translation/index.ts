@@ -1,24 +1,25 @@
 import { ChatOpenAI } from "@langchain/openai";
-import { StylePromptService } from "./prompt";
 import { langfuseConfig, openAiConfig } from "$lib/utils/env";
 import { CallbackHandler } from "langfuse-langchain";
 import { type RunnableConfig } from "@langchain/core/runnables";
-import { z } from "zod";
 import { ChatMessageHistory } from "langchain/stores/message/in_memory";
 import { RunnableWithMessageHistory } from "@langchain/core/runnables";
 import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
-import { AIMessage, HumanMessage } from "@langchain/core/messages";
+import { HumanMessage } from "@langchain/core/messages";
+import { DynamicStructuredTool } from "@langchain/community/tools/dynamic";
+import { z } from "zod";
+import type { InvokeParams, InvokeResponse } from "$shared/models";
+import { JsonOutputParser } from "@langchain/core/output_parsers";
 
 export class TranslationService {
-  private stylePromptService: StylePromptService;
   private traceHandler: CallbackHandler;
   private chainWithHistory: RunnableWithMessageHistory<any, any>;
   private history = new Map<string, ChatMessageHistory>();
 
-  private styleResponse = z.object({
+  private styleSchema = z.object({
     changes: z.array(z.object({
       property: z.string().describe("The CSS property to change. Must be a valid CSS property."),
       value: z.string().describe("The value to set the property to. Must be a valid CSS value. Hex code must have hastag # in front."),
@@ -27,21 +28,31 @@ export class TranslationService {
   })
 
   constructor(private projectId: string = "default") {
-
     const model = new ChatOpenAI({
       openAIApiKey: openAiConfig.apiKey,
       modelName: "gpt-4o",
       temperature: 0,
       cache: true,
-    }).withStructuredOutput(this.styleResponse)
+    });
+
+    const styleTool = new DynamicStructuredTool({
+      name: "style_change",
+      description: "A tool to modify the style of an element",
+      schema: this.styleSchema,
+      func: async (params: z.infer<typeof this.styleSchema>) => {
+        return "The answer";
+      },
+    });
+
+    const modelWithTools = model.bindTools([styleTool]);
 
     const prompt = ChatPromptTemplate.fromMessages([
-      ["system", "You are an HTML and CSS expert. Given the request, return the CSS to modify the HTMLElement. Make sure CSS values are valid  such as # in front of hex code, etc."],
+      ["system", "You are an HTML and CSS expert. Given the request, return the correct tool calls. If no valid tools for the request, return 'Sorry, I cannot do that.'."],
       new MessagesPlaceholder("history"),
-      ["human", "{request}"],
+      ["human", "{content}"],
     ]);
 
-    const chain = prompt.pipe(model);
+    const chain = prompt.pipe(modelWithTools);
 
     this.chainWithHistory = new RunnableWithMessageHistory({
       runnable: chain,
@@ -54,31 +65,34 @@ export class TranslationService {
       historyMessagesKey: "history",
     });
 
-    this.stylePromptService = new StylePromptService();
     this.traceHandler = new CallbackHandler({ ...langfuseConfig, sessionId: this.projectId });
   }
 
-  async getStyleChange(variables: typeof this.stylePromptService.inputVariables): Promise<z.infer<typeof this.styleResponse> | { error: string }> {
+  async invoke(params: InvokeParams): Promise<InvokeResponse | { content: string }> {
+    // TODO: Session should be select + projectId
     const sessionId = "1";
+
     const config: RunnableConfig = {
       configurable: { sessionId: sessionId },
       callbacks: [this.traceHandler],
-      runName: "Style run"
+      runName: "Prompt run"
     };
 
     try {
-      const response = await this.chainWithHistory.invoke(variables, config);
-
+      const response = await this.chainWithHistory.invoke(params, config);
       // Save history
       const his = this.history.get(sessionId) || new ChatMessageHistory();
-      his.addMessage(new HumanMessage(variables.request));
+      his.addMessage(new HumanMessage(params));
       this.history.set(sessionId, his);
 
-      return response;
+      return {
+        tool_calls: response.tool_calls,
+        content: response.content
+      };
     } catch (error) {
       console.error(error);
       return {
-        error: `${error}`
+        content: `${error}`
       }
     }
   }

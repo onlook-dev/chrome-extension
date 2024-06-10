@@ -30,14 +30,3 @@ export class PromptService<T extends PromptVariables> {
     return prompt
   }
 }
-
-export class StylePromptService extends PromptService<{ request: string }> {
-  constructor() {
-    const inputs = {
-      request: "request"
-    };
-
-    const prompt = "You are an HTML and CSS expert. Given the request, return the CSS to modify the HTMLElement. Make sure CSS values are valid  such as # in front of hex code, etc. \nRequest: {request}\n";
-    super(prompt, inputs);
-  }
-}

@@ -1,5 +1,4 @@
 <script lang="ts">
-    import type { EditTool } from "$lib/tools/edit";
     import { Textarea } from "$lib/components/ui/textarea/index.js";
     import { Separator } from "$lib/components/ui/separator/index.js";
     import { MessageType } from "$shared/message";
@@ -7,6 +6,8 @@
     import { onMount } from "svelte";
     import { camelCase } from "lodash";
     import { ApplyChangesService } from "$lib/tools/edit/applyChange";
+    import type { InvokeParams, InvokeResponse } from "$shared/models";
+    import type { EditTool } from "$lib/tools/edit";
 
     export let editTool: EditTool;
     export let cardHeight: string;
@@ -39,23 +40,42 @@
         ASSISTANT = "assistant",
     }
 
-    function handleChatResponse(response: { summary: string; changes: any[] }) {
-        const selected = editTool.selectorEngine.selected;
-        if (selected.length == 0) return;
-        selected.forEach((el) => {
-            response.changes.forEach(({ property, value }) => {
-                applyChangeService.applyStyle(el, camelCase(property), value);
-            });
-        });
-
-        waitingForResponse = false;
+    function addChatMessage(role: Roles, content: string) {
         chatHistory = [
             ...chatHistory,
             {
-                role: Roles.ASSISTANT,
-                content: response.summary,
+                role,
+                content,
             },
         ];
+    }
+
+    function handleChatResponse(response: InvokeResponse) {
+        console.log("Chat response", response);
+        waitingForResponse = false;
+        const selected = editTool.selectorEngine.selected;
+        if (selected.length == 0) return;
+
+        response.tool_calls.forEach((toolCall) => {
+            // Handle style change
+            if (toolCall.name === "style_change") {
+                addChatMessage(Roles.ASSISTANT, toolCall.args.summary);
+
+                selected.forEach((el) => {
+                    toolCall.args.changes.forEach(({ property, value }) => {
+                        applyChangeService.applyStyle(
+                            el,
+                            camelCase(property),
+                            value,
+                        );
+                    });
+                });
+            }
+        });
+
+        if (response.content && response.content.length > 0) {
+            addChatMessage(Roles.ASSISTANT, response.content);
+        }
     }
 
     function submitMessage(event: Event) {
