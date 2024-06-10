@@ -47,7 +47,9 @@
   "dependencies": {
     "@extend-chrome/messages": "^1.2.2",
     "@extend-chrome/storage": "^1.5.0",
-    "@langchain/openai": "^0.1.1",
+    "@langchain/community": "^0.2.9",
+    "@langchain/langgraph": "^0.0.22",
+    "@langchain/openai": "^0.1.2",
     "@skeletonlabs/skeleton": "^2.8.0",
     "@types/valid-url": "^1.0.7",
     "firebase": "^10.7.1",
