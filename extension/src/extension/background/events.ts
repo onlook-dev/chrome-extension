@@ -157,9 +157,7 @@ export class BackgroundEventHandlers {
 
         // Message directly from editor window
         onMessage(MessageType.SEND_CHAT_MESSAGE, async ({ data }) => {
-            const { content } = (data as { content: string })
-            const res = await this.translationService.invoke({ content, element: '' })
-            console.log('Response', res)
+            const res = await this.translationService.invoke(data as any)
             return res
         })
 

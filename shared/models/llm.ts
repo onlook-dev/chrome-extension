@@ -10,3 +10,7 @@ export interface InvokeParams {
     content: string;
     element: string;
 }
+
+export enum Tools {
+    STYLE = "style_tool",
+}

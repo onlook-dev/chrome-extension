@@ -7,7 +7,7 @@ import { DynamicStructuredTool } from "@langchain/community/tools/dynamic";
 import { z } from "zod";
 
 import type { RunnableConfig } from "@langchain/core/runnables";
-import type { InvokeParams, InvokeResponse } from "$shared/models";
+import { Tools, type InvokeParams, type InvokeResponse } from "$shared/models";
 
 export class TranslationService {
   private traceHandler: CallbackHandler;
@@ -23,8 +23,8 @@ export class TranslationService {
 
   constructor(private projectId: string = "default") {
     const styleTool = new DynamicStructuredTool({
-      name: "style_change",
-      description: "A tool to modify the style of an element",
+      name: Tools.STYLE,
+      description: "A tool to add, remove or modify the styles of an element. When adding or modifying style, if no value specified, make an appropriate guess. When removing a style, set the value to the appropriate default value.",
       schema: this.styleSchema,
       func: async (params: z.infer<typeof this.styleSchema>) => {
         return "The answer";
@@ -39,8 +39,8 @@ export class TranslationService {
     }).bindTools([styleTool]);
 
     const prompt = ChatPromptTemplate.fromMessages([
-      ["system", "You are an HTML and CSS expert. Given the request, return the correct tool calls. If no valid tools for the request, return 'Sorry, I cannot do that.'."],
-      ["human", "{content}"],
+      ["system", "You are an HTML, JS and CSS expert. Given the request, return the correct tool calls or answer. If no valid tools for the request, return 'Sorry, I cannot do that.'."],
+      ["human", "Element:`{element}`\nRequest: {content}"],
     ]);
 
     this.runnable = prompt.pipe(modelWithTools);

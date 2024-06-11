@@ -1,4 +1,6 @@
 <script lang="ts">
+	// @ts-ignore
+	import { decompress } from '@onlook/helpers';
 	import { jsToCssProperty } from '$shared/helpers';
 	import { projectsMapStore, usersMapStore } from '$lib/utils/store';
 	import { GithubLogo, Trash } from 'svelte-radix';
@@ -11,7 +13,6 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 
 	import type { Activity, GithubSettings, Project, TemplateNode } from '$shared/models';
-	import { decompress } from '@onlook/helpers';
 
 	export let activity: Activity;
 	export let project: Project;

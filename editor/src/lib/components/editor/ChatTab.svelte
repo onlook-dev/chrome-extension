@@ -6,8 +6,13 @@
     import { onMount } from "svelte";
     import { camelCase } from "lodash";
     import { ApplyChangesService } from "$lib/tools/edit/applyChange";
-    import type { InvokeParams, InvokeResponse } from "$shared/models";
+    import {
+        Tools,
+        type InvokeParams,
+        type InvokeResponse,
+    } from "$shared/models";
     import type { EditTool } from "$lib/tools/edit";
+    import { DATA_ONLOOK_ID } from "$shared/constants";
 
     export let editTool: EditTool;
     export let cardHeight: string;
@@ -51,13 +56,14 @@
     }
 
     function handleChatResponse(response: InvokeResponse | any) {
+        console.log(response);
         waitingForResponse = false;
         const selected = editTool.selectorEngine.selected;
         if (selected.length == 0) return;
 
         response.tool_calls.forEach((toolCall) => {
             // Handle style change
-            if (toolCall.name === "style_change") {
+            if (toolCall.name === Tools.STYLE) {
                 addChatMessage(Roles.ASSISTANT, toolCall.args.summary);
 
                 selected.forEach((el) => {
@@ -77,6 +83,25 @@
         }
     }
 
+    function getElementString(): string {
+        if (!editTool.selectorEngine.selected.length) return;
+        const element = editTool.selectorEngine.selected[0];
+        let tagName = element.tagName.toLowerCase();
+        let attributes = Array.from(element.attributes)
+            .filter(
+                (attr) =>
+                    attr.name !== DATA_ONLOOK_ID &&
+                    attr.name !== "data-old-vals",
+            )
+            .map((attr) => `${attr.name}="${attr.value}"`)
+            .join(" ");
+        let openingTag = `<${tagName} ${attributes}>`;
+
+        // Construct the closing tag
+        let closingTag = `</${tagName}>`;
+        return `${openingTag}...${closingTag}`;
+    }
+
     function submitMessage(event: Event) {
         event.preventDefault();
         event.currentTarget;
@@ -93,6 +118,7 @@
 
         const params = {
             content,
+            element: getElementString(),
         } as InvokeParams;
         // Send message to chat service in background
         sendMessage(MessageType.SEND_CHAT_MESSAGE, params as any).then(
