@@ -13,6 +13,7 @@
     } from "$shared/models";
     import type { EditTool } from "$lib/tools/edit";
     import { DATA_ONLOOK_ID } from "$shared/constants";
+    import { Shadow } from "radix-icons-svelte";
 
     export let editTool: EditTool;
     export let cardHeight: string;
@@ -146,9 +147,9 @@
         {#if waitingForResponse}
             <div class="flex items-start gap-3 my-1.5 opacity-70">
                 <div
-                    class="bg-stone-800 rounded rounded-bl-none p-3 max-w-[70%]"
+                    class="bg-stone-800 rounded rounded-bl-none p-2 max-w-[70%]"
                 >
-                    <p>...</p>
+                    <Shadow class="animate-spin mx-1" />
                 </div>
             </div>
         {/if}
