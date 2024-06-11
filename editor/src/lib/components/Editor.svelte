@@ -2,6 +2,9 @@
   import { ToolManager, ToolName } from "$lib/tools";
   import { EventListenerService } from "./listener";
   import { onMount } from "svelte";
+  import { setNamespace } from "webext-bridge/window";
+  import { MESSAGING_NAMESPACE } from "$shared/message";
+
   import EditorPanel from "./editor/EditorPanel.svelte";
   import LayersPanel from "./layers/LayersPanel.svelte";
   import ElementsPanel from "./elements/ElementsPanel.svelte";
@@ -13,6 +16,7 @@
   onMount(() => {
     // Listen for general events
     eventListener.listen();
+    setNamespace(MESSAGING_NAMESPACE);
   });
 
   export function getActiveToolName(): ToolName {

@@ -1,4 +1,4 @@
-import { MessageService, MessageType } from '$shared/message'
+import { MESSAGING_NAMESPACE, MessageService, MessageType } from '$shared/message'
 import { authUserBucket, projectsMapBucket } from '$lib/utils/localstorage'
 import {
 	applyProjectChangesStream,
@@ -13,6 +13,7 @@ import { ProjectTabService } from '$lib/projects'
 import { ProjectChangeService } from '$lib/projects/changes'
 
 import { ProjectStatus, type EditEvent, type Project } from '$shared/models'
+import { allowWindowMessaging } from "webext-bridge/content-script";
 
 const screenshotService = new ScreenshotService()
 const altScreenshotService = new AltScreenshotService()
@@ -21,6 +22,8 @@ const projectTabManager = new ProjectTabService()
 const projectChangeService = new ProjectChangeService()
 
 export function setupListeners() {
+	allowWindowMessaging(MESSAGING_NAMESPACE);
+
 	// Listen for messages from console. Should always check for console only.
 	messageService.subscribe(MessageType.DASHBOARD_SIGN_IN, (user) => {
 		authUserBucket.set({ authUser: user })

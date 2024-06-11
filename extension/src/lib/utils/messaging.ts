@@ -1,8 +1,6 @@
 import { getMessage } from '@extend-chrome/messages'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
-
-import type { MouseEvent } from '$shared/constants'
 import type { Project, EditEvent } from '$shared/models'
 import type { SendOptions } from '@extend-chrome/messages/types/types'
 
@@ -42,12 +40,6 @@ function getExtendedMessages<T>(
 		})
 	)
 	return [sendExtended, streamExtended]
-}
-
-export interface ActivityInspectDetail {
-	selector: string
-	event: MouseEvent
-	scrollToElement: boolean
 }
 
 export interface EditProjectRequest {

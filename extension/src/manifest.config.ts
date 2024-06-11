@@ -48,16 +48,6 @@ export default defineManifest(async env => ({
 			matches: ['<all_urls>']
 		}
 	],
-	commands: {
-		_execute_browser_action: {
-			suggested_key: {
-				windows: 'Alt+Shift+D',
-				mac: 'Alt+Shift+D',
-				chromeos: 'Alt+Shift+D',
-				linux: 'Alt+Shift+D'
-			}
-		}
-	},
 	key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0ZbbiZr79FXRJD9Z+jGZsskQstsnkpMHy2yh0HO/udWPFWx/RMjztm/5WQ5p1rIKdBPPZ+xx0WmBZte8OGJ+Ls8MWXo9oUIsKFfxeD8eFNEpaFNKZ6hCvck761/ZXaMN4kCsnwzadR6dTcEoyuPgdUjsrMzDOdCgBgornITel+YfgML6rJb0dBjoTiI1SHGXt5jhO18hjFI9knNtTt2zrQK773YV3fWFKkqCWwWSSlmc0vsivKVgSAie6olRNmV4UyfO7iosFDyA2Q4UoTgMovrwy233OXPi2H24VVXqRYF8wNn1VnakoQWdp+n8zcju+iyPdvjM1w40uv8Hvxnb9wIDAQAB',
 	host_permissions: ['<all_urls>'],
 	permissions: [

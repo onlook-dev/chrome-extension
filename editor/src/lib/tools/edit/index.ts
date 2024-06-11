@@ -11,10 +11,11 @@ import type { Tool } from '../index';
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
 	overlayManager: OverlayManager;
+	dragManager: DragManager;
+
 	elResizeObserver: ResizeObserver;
 	oldText: string | undefined;
 	copiedElement: HTMLElement | undefined;
-	dragManager: DragManager;
 	lastKnownScrollPosition = 0;
 	ticking = false;
 

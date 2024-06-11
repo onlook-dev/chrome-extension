@@ -49,7 +49,6 @@ export class ApplyChangesService {
     const oldVals = this.getAndSetOldVal(el, 'style', key);
     // Update the style
     el.style[key] = value;
-
     if (!emit) return;
 
     // Emit event
