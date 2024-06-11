@@ -80,6 +80,7 @@ export class MessageService {
     }
 
     private handleMessage(event: MessageEvent) {
+        // TODO: Check that same origin message came from Onlook
         if (this.allowedOrigins.has(event.origin)) {
             const message: IMessage = event.data;
             let payload = message.payload ? JSON.parse(message.payload) : message.payload;
