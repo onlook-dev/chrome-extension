@@ -3,7 +3,7 @@ import { langfuseConfig, openAiConfig } from "$lib/utils/env";
 import { CallbackHandler } from "langfuse-langchain";
 import { type RunnableConfig } from "@langchain/core/runnables";
 import { ChatMessageHistory } from "langchain/stores/message/in_memory";
-import { RunnableWithMessageHistory } from "@langchain/core/runnables";
+import { RunnableWithMessageHistory, Runnable } from "@langchain/core/runnables";
 import {
   ChatPromptTemplate,
   MessagesPlaceholder,
@@ -16,7 +16,7 @@ import { JsonOutputParser } from "@langchain/core/output_parsers";
 
 export class TranslationService {
   private traceHandler: CallbackHandler;
-  private chainWithHistory: RunnableWithMessageHistory<any, any>;
+  private chainWithHistory: Runnable<any, any>;
   private history = new Map<string, ChatMessageHistory>();
 
   private styleSchema = z.object({
@@ -48,7 +48,7 @@ export class TranslationService {
 
     const prompt = ChatPromptTemplate.fromMessages([
       ["system", "You are an HTML and CSS expert. Given the request, return the correct tool calls. If no valid tools for the request, return 'Sorry, I cannot do that.'."],
-      new MessagesPlaceholder("history"),
+      // new MessagesPlaceholder("history"),
       ["human", "{content}"],
     ]);
 
@@ -64,6 +64,7 @@ export class TranslationService {
       inputMessagesKey: "question",
       historyMessagesKey: "history",
     });
+    this.chainWithHistory = chain
 
     this.traceHandler = new CallbackHandler({ ...langfuseConfig, sessionId: this.projectId });
   }
