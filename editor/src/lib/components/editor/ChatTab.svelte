@@ -50,8 +50,7 @@
         ];
     }
 
-    function handleChatResponse(response: InvokeResponse) {
-        console.log("Chat response", response);
+    function handleChatResponse(response: InvokeResponse | any) {
         waitingForResponse = false;
         const selected = editTool.selectorEngine.selected;
         if (selected.length == 0) return;
@@ -92,14 +91,18 @@
             },
         ];
 
+        const params = {
+            content,
+        } as InvokeParams;
         // Send message to chat service in background
-        sendMessage(MessageType.SEND_CHAT_MESSAGE, { content }).then(
+        sendMessage(MessageType.SEND_CHAT_MESSAGE, params as any).then(
             handleChatResponse,
         );
 
         waitingForResponse = true;
         input.value = "";
 
+        // Scroll to end of chat when new messages added
         setTimeout(() => {
             scrollContainer.scrollTo({
                 top: scrollContainer.scrollHeight,
