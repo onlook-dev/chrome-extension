@@ -38,7 +38,7 @@ export function convertChangeObjectToEditEvents(selector: string, editType: Edit
   Object.entries(changeObject).forEach(([key, { oldVal, newVal, createdAt, updatedAt }]) => {
     const editEvent: EditEvent = {
       selector,
-      createdAt: updatedAt ?? createdAt ?? new Date().toISOString(),
+      createdAt: createdAt ?? updatedAt ?? new Date().toISOString(),
       editType,
       oldVal: { [key]: oldVal },
       newVal: { [key]: newVal }
