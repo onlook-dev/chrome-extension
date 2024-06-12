@@ -15,7 +15,7 @@
     MagnifyingGlass,
     Input,
   } from "radix-icons-svelte";
-  import { fade, slide } from "svelte/transition";
+  import { slide } from "svelte/transition";
 
   export let editTool: EditTool;
   let elementManager: ElementsManager = new ElementsManager();

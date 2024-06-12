@@ -1,9 +1,9 @@
 import { ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, layersWeakMap, } from '$lib/states/editor';
-import { EditType, type InsertRemoveVal } from '$shared/models';
+import { EditType, type StructureVal } from '$shared/models';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
-import { findCommonParent, getUniqueSelector } from '../utilities';
+import { findCommonParent, getDataOnlookComponentId, getDataOnlookId, getUniqueSelector } from '../utilities';
 import { handleEditEvent } from './handleEvents';
 import { DragManager } from './drag';
 import type { Tool } from '../index';
@@ -224,20 +224,12 @@ export class EditTool implements Tool {
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return
 		const selectedEl = selected[0];
-		// Insert element into childrens list 
-		selectedEl.appendChild(el);
 
 		// Emit event
-		const serializer = new XMLSerializer();
-		const xmlStr = serializer.serializeToString(el);
-		const position = Array.from(selectedEl.children).indexOf(el);
-		const componentId = el.dataset.onlookComponentId;
-		handleEditEvent({
-			el: selectedEl,
-			editType: EditType.INSERT,
-			newValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}`, componentId } as InsertRemoveVal,
-			oldValue: {}
-		});
+		this.handleStructureChange(el, EditType.INSERT, selectedEl, getDataOnlookComponentId(el))
+
+		// Insert element into childrens list 
+		selectedEl.appendChild(el);
 		this.simulateClick([el]);
 	};
 
@@ -258,20 +250,45 @@ export class EditTool implements Tool {
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return;
 		selected.forEach((el) => {
-			const componentId = el.dataset.onlookComponentId;
+			const componentId = getDataOnlookComponentId(el);
+			this.handleStructureChange(el, EditType.REMOVE, selected, componentId)
+
 			if (componentId) {
-				const serializer = new XMLSerializer();
-				const xmlStr = serializer.serializeToString(el);
-				const parent = el.parentElement;
-				const position = Array.from(parent.children).indexOf(el);
-				handleEditEvent({
-					el: parent,
-					editType: EditType.REMOVE,
-					newValue: { removed: getUniqueSelector(el), componentId },
-					oldValue: { childContent: xmlStr, childSelector: getUniqueSelector(el), position: `${position}`, componentId } as InsertRemoveVal,
-				});
 				el.remove()
 			}
 		});
 	};
+
+	handleStructureChange = (el, editType, parent, componentId?: string) => {
+		console.log('handleStructureChange', el, editType, componentId)
+		const xmlStr = (new XMLSerializer).serializeToString(el);
+		console.log('parent', parent)
+		const parentSelector = getUniqueSelector(parent);
+		const parentPath = getDataOnlookId(parent);
+		const index = Array.from(parent.children).indexOf(el).toString();
+
+		const deleteVal = {
+			parentSelector,
+			parentPath,
+			index: index,
+			componentId,
+			content: '',
+		} as StructureVal;
+
+		const insertVal = {
+			parentSelector,
+			parentPath,
+			index,
+			componentId,
+			content: xmlStr,
+		} as StructureVal;
+
+		// These are the same, just flipped
+		handleEditEvent({
+			el,
+			editType,
+			newValue: editType === EditType.REMOVE ? deleteVal : insertVal,
+			oldValue: editType === EditType.REMOVE ? insertVal : deleteVal
+		});
+	}
 }

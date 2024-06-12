@@ -78,8 +78,8 @@ export class EditEventService {
   }
 
   updateActivityWithEditEvent(activity: Activity, editEvent: EditEvent): Activity {
-    // Update activity
     switch (editEvent.editType) {
+      // Element attribute changes
       case EditType.STYLE:
         activity.styleChanges = convertEditEventToChangeObject(editEvent, activity.styleChanges)
         break
@@ -89,11 +89,15 @@ export class EditEventService {
       case EditType.CLASS:
         activity.attributeChanges = convertEditEventToChangeObject(editEvent, activity.attributeChanges ?? {})
         break
+      // Structural changes
       case EditType.INSERT:
         activity = this.handleInsertChange(editEvent, activity)
         break
       case EditType.REMOVE:
         activity = this.handleRemoveChange(editEvent, activity)
+        break
+      case EditType.MOVE:
+        activity = this.handleMoveChange(editEvent, activity)
         break
       default:
         console.error('Edit type not supported: ', editEvent.editType)
@@ -112,14 +116,36 @@ export class EditEventService {
   }
 
   handleInsertChange(editEvent: EditEvent, activity: Activity) {
-    // TODO: Handle
+    /**
+     * Save as new element in activity. Store raw string.
+     */
+
+    console.log('Insert change not supported yet')
+    console.log(editEvent)
+    activity.insertChanges = {
+      ...activity.insertChanges,
+      [editEvent.selector]: editEvent.newVal
+    }
     return activity
   }
 
   handleRemoveChange(editEvent: EditEvent, activity: Activity) {
-    // TODO: Handle
+    /**
+    * If an inserted component, remove the insert change
+    */
+    console.log('Remove change not supported yet')
+
     return activity
   }
+
+  handleMoveChange(editEvent: EditEvent, activity: Activity) {
+    /**
+    * If an inserted component, update the insert change
+    */
+    console.log('Move change not supported yet')
+    return activity
+  }
+
 
   isActivityEmpty(activity: Activity): boolean {
     return Object.keys(activity.styleChanges).length === 0

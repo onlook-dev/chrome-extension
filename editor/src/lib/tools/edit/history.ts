@@ -1,9 +1,7 @@
-import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$shared/models';
+import { EditType, type EditEvent, type TextVal, type StructureVal } from '$shared/models';
 import { get, writable } from 'svelte/store';
 import { MessageService, MessageType } from '$shared/message';
 import { ApplyChangesService } from './applyChange';
-
-import type { MoveVal } from '$shared/models/editor';
 
 import Sortable from 'sortablejs';
 import { dragContainers } from '$lib/states/editor';
@@ -133,14 +131,18 @@ function applyClassEvent(event: EditEvent, element: HTMLElement) {
   });
 }
 
-function applyInsertEvent(event: EditEvent, parent: HTMLElement) {
-  const newVal = event.newVal as InsertRemoveVal;
+function applyInsertEvent(event: EditEvent, element: HTMLElement) {
+  // TODO: Fix this
+  const newVal = event.newVal as StructureVal;
+  const parent = document.querySelector(newVal.parentSelector) as HTMLElement;
+
   if (!parent) return;
   const parser = new DOMParser();
-  const doc = parser.parseFromString(newVal.childContent, "application/xml");
+  const doc = parser.parseFromString(newVal.content, "application/xml");
   const el = doc.documentElement
+
   if (!el) return;
-  const pos = parseInt(newVal.position);
+  const pos = parseInt(newVal.index);
   if (pos >= parent.childNodes.length) {
     parent.insertBefore(el, parent.childNodes[pos]);
   } else {
@@ -148,15 +150,14 @@ function applyInsertEvent(event: EditEvent, parent: HTMLElement) {
   }
 }
 
-function applyRemoveEvent(event: EditEvent, parent: HTMLElement) {
-  const oldVal = event.oldVal as InsertRemoveVal;
-  const el = parent.querySelector(oldVal.childSelector);
-  if (el) el.remove();
+function applyRemoveEvent(event: EditEvent, element: HTMLElement) {
+  // TODO: Fix this
+  if (element) element.remove();
 }
 
 function applyMoveEvent(event: EditEvent, element: HTMLElement) {
-  const oldVal = event.oldVal as MoveVal;
-  const newVal = event.newVal as MoveVal;
+  const oldVal = event.oldVal as StructureVal;
+  const newVal = event.newVal as StructureVal;
   const parent = document.querySelector(oldVal.parentSelector) as HTMLElement;
 
   let container = dragContainers.get(parent) ?? Sortable.create(parent, {

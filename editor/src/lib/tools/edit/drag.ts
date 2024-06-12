@@ -1,14 +1,13 @@
 import { writable, type Writable } from 'svelte/store';
 import { handleEditEvent } from "$lib/tools/edit/handleEvents";
 import { EditType } from "$shared/models";
-import { getUniqueSelector } from "$lib/tools/utilities";
+import { getDataOnlookId, getUniqueSelector } from "$lib/tools/utilities";
+import { dragContainers } from '$lib/states/editor';
+import Sortable from 'sortablejs';
 
 import type { OverlayManager } from '../selection/overlay';
 import type { SelectorEngine } from '../selection/selector';
-import type { MoveVal } from "$shared/models/editor";
-
-import Sortable from 'sortablejs';
-import { dragContainers } from '$lib/states/editor';
+import type { StructureVal } from '$shared/models/editor';
 
 export class DragManager {
     selectedSnapshot: HTMLElement[] = [];
@@ -102,12 +101,14 @@ export class DragManager {
             editType: EditType.MOVE,
             newValue: {
                 parentSelector: getUniqueSelector(el.parentNode as HTMLElement),
+                parentPath: getDataOnlookId(el.parentNode as HTMLElement),
                 index: newIndex,
-            } as MoveVal,
+            } as StructureVal,
             oldValue: {
                 parentSelector: getUniqueSelector(el.parentNode as HTMLElement),
+                parentPath: getDataOnlookId(el.parentNode as HTMLElement),
                 index: oldIndex,
-            } as MoveVal,
+            } as StructureVal,
         });
     }
 }

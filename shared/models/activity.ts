@@ -1,4 +1,3 @@
-import type { Component } from "./editor";
 import type { EventMetadata } from "./eventData";
 
 // All the changes that happen to an element when switched to another element
@@ -45,4 +44,8 @@ export enum ActivityStatus {
   PUBLISH_SUCCESS = 'PUBLISH_SUCCESS',
   PUBLISH_FAILED = 'PUBLISH_FAILED',
   ARCHIVED = 'ARCHIVED',
+}
+
+export interface Component {
+
 }
