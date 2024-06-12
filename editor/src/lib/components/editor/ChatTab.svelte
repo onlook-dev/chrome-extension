@@ -57,7 +57,6 @@
     }
 
     function handleChatResponse(response: InvokeResponse | any) {
-        console.log(response);
         waitingForResponse = false;
         const selected = editTool.selectorEngine.selected;
         if (selected.length == 0) return;

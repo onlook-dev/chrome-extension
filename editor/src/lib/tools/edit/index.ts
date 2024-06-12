@@ -257,7 +257,7 @@ export class EditTool implements Tool {
 				this.handleStructureChange(el, EditType.REMOVE_CHILD, parent, componentId)
 				parent.removeChild(el);
 			} else {
-				console.log("Can only delete custom elements")
+				console.warn("Can only delete custom elements")
 			}
 		});
 	};
@@ -266,8 +266,6 @@ export class EditTool implements Tool {
 		const xmlStr = (new XMLSerializer).serializeToString(el);
 		const childSelector = getUniqueSelector(el);
 		const childPath = getDataOnlookId(el);
-		const parentSelector = getUniqueSelector(parent);
-		const parentPath = getDataOnlookId(parent);
 		const index = Array.from(parent.children).indexOf(el).toString();
 
 		const deleteVal = {

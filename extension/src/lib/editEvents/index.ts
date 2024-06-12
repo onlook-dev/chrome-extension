@@ -117,7 +117,9 @@ export class EditEventService {
       [editEvent.selector]: {
         key: editEvent.selector,
         oldVal: { ...editEvent.oldVal } as StructureVal,
-        newVal: { ...editEvent.newVal } as StructureVal
+        newVal: { ...editEvent.newVal } as StructureVal,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       } as ChangeValues
     }
     return activity
@@ -145,7 +147,9 @@ export class EditEventService {
         [editEvent.selector]: {
           key: editEvent.selector,
           oldVal: { ...editEvent.oldVal } as StructureVal,
-          newVal: { ...editEvent.newVal } as StructureVal
+          newVal: { ...editEvent.newVal } as StructureVal,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         } as ChangeValues
       }
     }
@@ -153,42 +157,59 @@ export class EditEventService {
   }
 
   handleMoveChange(editEvent: EditEvent, activity: Activity) {
-    /**
-    * If the moved element is an inserted component, update its insert index
-    * Else, save the move event
-    */
-    const newVal = { ...editEvent.newVal } as StructureVal
+    const newVal = { ...editEvent.newVal } as StructureVal;
+    const oldVal = { ...editEvent.oldVal } as StructureVal;
+
+    // Initialize the storage for final move positions if not already present
+    if (!activity.finalMovePositions) {
+      activity.finalMovePositions = {};
+    }
+
+    // Check if this is related to an inserted component
     if (
       activity.insertChildChanges &&
       activity.insertChildChanges[editEvent.selector] &&
-      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId &&
       (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId === newVal.componentId
     ) {
-      const matchingInsertChange = activity.insertChildChanges[editEvent.selector]
-      activity.insertChildChanges = {
-        ...activity.insertChildChanges,
-        [editEvent.selector]: {
-          key: editEvent.selector,
-          oldVal: { ...(matchingInsertChange.oldVal as StructureVal) } as StructureVal,
-          newVal: { ...(matchingInsertChange.newVal as StructureVal), index: (editEvent.newVal as StructureVal).index } as StructureVal
-        } as ChangeValues
+      // Update inserted component index
+      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).index = newVal.index;
+    } else if (activity.moveChildChanges && activity.moveChildChanges[editEvent.selector]) {
+      // Existing move update
+      const existingMove = activity.finalMovePositions[editEvent.selector];
+      if (existingMove && existingMove.newIndex === oldVal.index) {
+        // If the new move is a reversal of the previous move, cancel it
+        delete activity.finalMovePositions[editEvent.selector];
+        delete activity.moveChildChanges[editEvent.selector];
+      } else {
+        // Update the move to reflect the latest intended position
+        activity.finalMovePositions[editEvent.selector] = {
+          originalIndex: existingMove ? existingMove.originalIndex : oldVal.index,
+          newIndex: newVal.index
+        };
       }
     } else {
-      if (!activity.moveChildChanges) {
-        activity.moveChildChanges = {}
-      }
-      activity.moveChildChanges = {
-        ...activity.moveChildChanges,
-        [editEvent.selector]: {
-          key: editEvent.selector,
-          oldVal: { ...editEvent.oldVal } as StructureVal,
-          newVal: { ...editEvent.newVal } as StructureVal
-        } as ChangeValues
-      }
+      // New move
+      activity.finalMovePositions[editEvent.selector] = {
+        originalIndex: oldVal.index,
+        newIndex: newVal.index
+      };
     }
-    return activity
-  }
 
+    // Rebuild the moveChildChanges from finalMovePositions for output
+    activity.moveChildChanges = {};
+
+    for (let selector in activity.finalMovePositions) {
+      const move = activity.finalMovePositions[selector];
+      activity.moveChildChanges[selector] = {
+        key: selector,
+        oldVal: { ...oldVal, index: move.originalIndex },
+        newVal: { ...newVal, index: move.newIndex }
+      };
+    }
+
+    console.log('activity', activity);
+    return activity;
+  }
 
   isActivityEmpty(activity: Activity): boolean {
     return Object.keys(activity.styleChanges).length === 0

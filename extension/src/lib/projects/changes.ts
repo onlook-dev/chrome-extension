@@ -133,6 +133,9 @@ export class ProjectChangeService {
                 editEvents.push(...event)
             }
         }
+
+        // Order events chronologically
+        editEvents.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
         return editEvents
     }
 }

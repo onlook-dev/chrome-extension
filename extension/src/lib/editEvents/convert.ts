@@ -35,10 +35,10 @@ export function convertEditEventToChangeObject(editEvent: EditEvent, changeObjec
 export function convertChangeObjectToEditEvents(selector: string, editType: EditType, changeObject: Record<string, ChangeValues> | StructureVal): EditEvent[] {
   const editEvents: EditEvent[] = [];
 
-  Object.entries(changeObject).forEach(([key, { oldVal, newVal }]) => {
+  Object.entries(changeObject).forEach(([key, { oldVal, newVal, createdAt, updatedAt }]) => {
     const editEvent: EditEvent = {
       selector,
-      createdAt: new Date().toISOString(),
+      createdAt: updatedAt ?? createdAt ?? new Date().toISOString(),
       editType,
       oldVal: { [key]: oldVal },
       newVal: { [key]: newVal }
@@ -52,10 +52,10 @@ export function convertChangeObjectToEditEvents(selector: string, editType: Edit
 export function convertStructureChangeToEditEvents(selector: string, editType: EditType, changeObject: Record<string, ChangeValues> | StructureVal): EditEvent[] {
   const editEvents: EditEvent[] = [];
 
-  Object.entries(changeObject).forEach(([key, { oldVal, newVal }]) => {
+  Object.entries(changeObject).forEach(([key, { oldVal, newVal, createdAt, updatedAt }]) => {
     const editEvent: EditEvent = {
       selector,
-      createdAt: new Date().toISOString(),
+      createdAt: updatedAt ?? createdAt ?? new Date().toISOString(),
       editType,
       oldVal,
       newVal
