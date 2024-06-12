@@ -235,11 +235,15 @@ class ClickRect extends RectImpl {
     }
 
     render({ width, height, top, left, margin, padding }) {
-        this.updateMargin(margin, { width, height, });
-        this.updatePadding(padding, { width, height, });
+        try {
+            this.updateMargin(margin, { width, height, });
+            this.updatePadding(padding, { width, height, });
 
-        // Render the base rect (the element itself) on top
-        super.render({ width, height, top, left, });
+            // Render the base rect (the element itself) on top
+            super.render({ width, height, top, left, });
+        } catch (error) {
+            console.error(error);
+        }
     }
 }
 
