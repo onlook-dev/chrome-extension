@@ -23,6 +23,7 @@ export interface Activity {
   // TODO: Finish implementing this
   insertChanges?: Record<string, Component>;
   deleteChanges?: Record<string, Component>;
+  moveChanges?: Record<string, Component>;
 
   // Handles the code written to GitHub
   status?: ActivityStatus;

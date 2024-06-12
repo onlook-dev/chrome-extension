@@ -252,10 +252,12 @@ export class EditTool implements Tool {
 		if (selected.length == 0) return;
 		selected.forEach((el) => {
 			const componentId = getDataOnlookComponentId(el);
-			this.handleStructureChange(el, EditType.REMOVE, selected, componentId)
-
 			if (componentId) {
-				el.remove()
+				const parent = el.parentElement;
+				this.handleStructureChange(el, EditType.REMOVE, parent, componentId)
+				parent.removeChild(el);
+			} else {
+				console.log("Can only delete custom elements")
 			}
 		});
 	};

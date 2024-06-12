@@ -116,33 +116,47 @@ export class EditEventService {
   }
 
   handleInsertChange(editEvent: EditEvent, activity: Activity) {
+    console.log("Insert change", editEvent)
     /**
      * Save as new element in activity. Store raw string.
      */
 
-    console.log('Insert change not supported yet')
-    console.log(editEvent)
     activity.insertChanges = {
       ...activity.insertChanges,
       [editEvent.selector]: editEvent.newVal
     }
+
+    console.log("Insert changes", activity.insertChanges)
     return activity
   }
 
   handleRemoveChange(editEvent: EditEvent, activity: Activity) {
+    console.log("Remove change", editEvent)
     /**
     * If an inserted component, remove the insert change
     */
-    console.log('Remove change not supported yet')
+    if (activity.insertChanges && activity.insertChanges[editEvent.selector]) {
+      delete activity.insertChanges[editEvent.selector]
+    }
 
+    console.log("Insert changes", activity.insertChanges)
+    console.log("Delete changes", activity.deleteChanges)
     return activity
   }
 
   handleMoveChange(editEvent: EditEvent, activity: Activity) {
+    console.log("Move change", editEvent)
     /**
     * If an inserted component, update the insert change
     */
-    console.log('Move change not supported yet')
+    if (activity.insertChanges && activity.insertChanges[editEvent.selector]) {
+      activity.insertChanges[editEvent.selector] = {
+        ...activity.insertChanges[editEvent.selector],
+        ...editEvent.newVal
+      }
+    }
+    console.log("Insert changes", activity.insertChanges)
+    console.log("Move changes", activity.moveChanges)
     return activity
   }
 
