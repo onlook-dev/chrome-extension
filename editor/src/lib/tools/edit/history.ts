@@ -158,7 +158,6 @@ function applyRemoveEvent(event: EditEvent, element: HTMLElement) {
 function applyMoveEvent(event: EditEvent, element: HTMLElement) {
   const oldVal = event.oldVal as StructureVal;
   const newVal = event.newVal as StructureVal;
-  const child = document.querySelector(oldVal.childSelector) as HTMLElement;
 
   let container = dragContainers.get(element) ?? Sortable.create(element, {
     animation: 150,
