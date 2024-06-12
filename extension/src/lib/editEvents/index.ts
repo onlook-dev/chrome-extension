@@ -134,9 +134,11 @@ export class EditEventService {
   handleRemoveChange(editEvent: EditEvent, activity: Activity) {
     console.log("Remove change", editEvent)
     /**
-    * If an inserted component, remove the insert change
+    * If the remove element is an inserted component, remove it from insertChildChanges
+    * Else, add as a new deleteChildChange
     */
-    if (activity.insertChildChanges && activity.insertChildChanges[editEvent.selector]) {
+    const newVal = editEvent.newVal as StructureVal
+    if (activity.insertChildChanges && activity.insertChildChanges[editEvent.selector] && activity.insertChildChanges[editEvent.selector].componentId === newVal.componentId) {
       delete activity.insertChildChanges[editEvent.selector]
     } else {
       if (!activity.deleteChildChanges) {
@@ -144,10 +146,9 @@ export class EditEventService {
       }
       activity.deleteChildChanges = {
         ...activity.deleteChildChanges,
-        [editEvent.selector]: editEvent.newVal as StructureVal
+        [editEvent.selector]: newVal
       }
     }
-
     console.log("Insert changes", activity.insertChildChanges)
     console.log("Delete changes", activity.deleteChildChanges)
     return activity
@@ -156,12 +157,22 @@ export class EditEventService {
   handleMoveChange(editEvent: EditEvent, activity: Activity) {
     console.log("Move change", editEvent)
     /**
-    * If an inserted component, update the insert change
+    * If the moved element is an inserted component, update its insert index
+    * Else, save the move event
     */
-    if (activity.insertChildChanges && activity.insertChildChanges[editEvent.selector]) {
+    const newVal = editEvent.newVal as StructureVal
+    if (activity.insertChildChanges && activity.insertChildChanges[editEvent.selector] && activity.insertChildChanges[editEvent.selector].componentId === newVal.componentId) {
       activity.insertChildChanges[editEvent.selector] = {
         ...activity.insertChildChanges[editEvent.selector],
         ...editEvent.newVal
+      }
+    } else {
+      if (!activity.moveChildChanges) {
+        activity.moveChildChanges = {}
+      }
+      activity.moveChildChanges = {
+        ...activity.moveChildChanges,
+        [editEvent.selector]: newVal
       }
     }
     console.log("Insert changes", activity.insertChildChanges)

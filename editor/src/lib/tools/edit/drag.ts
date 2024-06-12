@@ -1,7 +1,7 @@
 import { writable, type Writable } from 'svelte/store';
 import { handleEditEvent } from "$lib/tools/edit/handleEvents";
 import { EditType } from "$shared/models";
-import { getDataOnlookId, getUniqueSelector } from "$lib/tools/utilities";
+import { getDataOnlookComponentId, getDataOnlookId, getUniqueSelector } from "$lib/tools/utilities";
 import { dragContainers } from '$lib/states/editor';
 import Sortable from 'sortablejs';
 
@@ -103,11 +103,13 @@ export class DragManager {
             newValue: {
                 childSelector: getUniqueSelector(el),
                 childPath: getDataOnlookId(el),
+                componentId: getDataOnlookComponentId(el),
                 index: newIndex,
             } as StructureVal,
             oldValue: {
                 childSelector: getUniqueSelector(el),
                 childPath: getDataOnlookId(el),
+                componentId: getDataOnlookComponentId(el),
                 index: oldIndex,
             } as StructureVal,
         });
