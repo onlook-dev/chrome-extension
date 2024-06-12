@@ -225,12 +225,13 @@ export class EditTool implements Tool {
 		if (selected.length == 0) return
 		const selectedEl = selected[0];
 
-		// Emit event
-		this.handleStructureChange(el, EditType.INSERT, selectedEl, getDataOnlookComponentId(el))
-
 		// Insert element into childrens list 
 		selectedEl.appendChild(el);
-		this.simulateClick([el]);
+		const insertedEl = selectedEl.lastElementChild as HTMLElement;
+
+		// Emit event
+		this.handleStructureChange(insertedEl, EditType.INSERT, selectedEl, getDataOnlookComponentId(el))
+		this.simulateClick([insertedEl]);
 	};
 
 	copyElement = () => {
@@ -260,9 +261,7 @@ export class EditTool implements Tool {
 	};
 
 	handleStructureChange = (el, editType, parent, componentId?: string) => {
-		console.log('handleStructureChange', el, editType, componentId)
 		const xmlStr = (new XMLSerializer).serializeToString(el);
-		console.log('parent', parent)
 		const parentSelector = getUniqueSelector(parent);
 		const parentPath = getDataOnlookId(parent);
 		const index = Array.from(parent.children).indexOf(el).toString();

@@ -132,7 +132,6 @@ function applyClassEvent(event: EditEvent, element: HTMLElement) {
 }
 
 function applyInsertEvent(event: EditEvent, element: HTMLElement) {
-  // TODO: Fix this
   const newVal = event.newVal as StructureVal;
   const parent = document.querySelector(newVal.parentSelector) as HTMLElement;
 
@@ -151,8 +150,12 @@ function applyInsertEvent(event: EditEvent, element: HTMLElement) {
 }
 
 function applyRemoveEvent(event: EditEvent, element: HTMLElement) {
-  // TODO: Fix this
-  if (element) element.remove();
+  if (!element) return;
+  const newVal = event.newVal as StructureVal;
+  const parent = document.querySelector(newVal.parentSelector) as HTMLElement;
+
+  if (!parent) return;
+  parent.removeChild(element);
 }
 
 function applyMoveEvent(event: EditEvent, element: HTMLElement) {
@@ -164,15 +167,10 @@ function applyMoveEvent(event: EditEvent, element: HTMLElement) {
     animation: 150,
     easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
   });
-
-  // Move el to newIndex
   const order = container.toArray();
-  const oldIndex = Array.prototype.indexOf.call(parent.children, element);
-
-  if (oldIndex === -1) return; // Element not found in the array
 
   // Remove the element from the old position
-  const [movedElement] = order.splice(oldIndex, 1);
+  const [movedElement] = order.splice(oldVal.index, 1);
 
   // Insert the element to the new position
   order.splice(newVal.index, 0, movedElement);
@@ -211,8 +209,6 @@ export function applyEvent(event: EditEvent, emit: boolean = true) {
 }
 
 export function toggleEventVisibility(event: EditEvent, visible: boolean) {
-  const element: HTMLElement | undefined = document.querySelector(event.selector);
-  if (!element) return;
   if (visible) {
     const reverseEvent: EditEvent = createReverseEvent(event);
     applyEvent(reverseEvent, false);

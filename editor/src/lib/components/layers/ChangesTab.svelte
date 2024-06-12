@@ -126,7 +126,7 @@
       </div>
       <div class="flex flex-row items-center space-x-1">
         <p class="opacity-60">Element:</p>
-        <span class="text-red bg-red/20 p-1"
+        <span class="text-red bg-red/20 p-1 truncate"
           >{event.componentId ?? shortenSelector(event.selector)}</span
         >
       </div>
@@ -143,9 +143,6 @@
           </li>
           <li class="opacity-60">
             Position: {event.newVal["position"] || "0"}
-          </li>
-          <li class="opacity-60">
-            Id: {event.newVal["componentId"]}
           </li>
         {:else if event.editType === EditType.REMOVE}
           <li class="opacity-60">
