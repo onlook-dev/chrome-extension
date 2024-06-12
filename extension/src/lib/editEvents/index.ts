@@ -112,7 +112,6 @@ export class EditEventService {
     /**
      * Save as new element in activity. Store raw string.
      */
-
     activity.insertChildChanges = {
       ...activity.insertChildChanges,
       [editEvent.selector]: {
@@ -165,12 +164,13 @@ export class EditEventService {
       (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId &&
       (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId === newVal.componentId
     ) {
+      const matchingInsertChange = activity.insertChildChanges[editEvent.selector]
       activity.insertChildChanges = {
         ...activity.insertChildChanges,
         [editEvent.selector]: {
           key: editEvent.selector,
-          oldVal: { ...editEvent.oldVal } as StructureVal,
-          newVal: { ...editEvent.newVal } as StructureVal
+          oldVal: { ...(matchingInsertChange.oldVal as StructureVal) } as StructureVal,
+          newVal: { ...(matchingInsertChange.newVal as StructureVal), index: (editEvent.newVal as StructureVal).index } as StructureVal
         } as ChangeValues
       }
     } else {

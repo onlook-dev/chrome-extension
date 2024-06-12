@@ -133,7 +133,6 @@ export class ProjectChangeService {
                 editEvents.push(...event)
             }
         }
-
         return editEvents
     }
 }
