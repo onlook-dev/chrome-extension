@@ -104,11 +104,6 @@ export class EditEventService {
         break
     }
 
-    // If componentId exists, handle the custom element
-    if (editEvent.componentId) {
-
-    }
-
     activity.path = editEvent.path ?? activity.path
     activity.updatedAt = new Date().toISOString()
     activity.status = ActivityStatus.EDITED
@@ -120,6 +115,9 @@ export class EditEventService {
     /**
      * Save as new element in activity. Store raw string.
      */
+    if (!activity.insertChanges) {
+      activity.insertChanges = {}
+    }
 
     activity.insertChanges = {
       ...activity.insertChanges,
@@ -137,6 +135,14 @@ export class EditEventService {
     */
     if (activity.insertChanges && activity.insertChanges[editEvent.selector]) {
       delete activity.insertChanges[editEvent.selector]
+    } else {
+      if (!activity.deleteChanges) {
+        activity.deleteChanges = {}
+      }
+      activity.deleteChanges = {
+        ...activity.deleteChanges,
+        [editEvent.selector]: editEvent.oldVal
+      }
     }
 
     console.log("Insert changes", activity.insertChanges)
@@ -166,5 +172,7 @@ export class EditEventService {
       && Object.keys(activity.textChanges ?? {}).length === 0
       && Object.keys(activity.attributeChanges ?? {}).length === 0
       && Object.keys(activity.insertChanges ?? {}).length === 0
+      && Object.keys(activity.deleteChanges ?? {}).length === 0
+      && Object.keys(activity.moveChanges ?? {}).length === 0
   }
 }
