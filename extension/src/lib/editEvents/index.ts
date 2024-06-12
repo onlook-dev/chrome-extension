@@ -166,14 +166,17 @@ export class EditEventService {
     }
 
     // Check if this is related to an inserted component
-    if (
-      activity.insertChildChanges &&
-      activity.insertChildChanges[editEvent.selector] &&
-      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId === newVal.componentId
-    ) {
-      // Update inserted component index
-      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).index = newVal.index;
-    } else if (activity.moveChildChanges && activity.moveChildChanges[editEvent.selector]) {
+    if (activity.moveChildChanges && activity.moveChildChanges[editEvent.selector]) {
+      if (
+        activity.insertChildChanges &&
+        activity.insertChildChanges[editEvent.selector] &&
+        (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId === newVal.componentId
+      ) {
+        // Update inserted component index
+        (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).index = newVal.index;
+        (activity.insertChildChanges[editEvent.selector]).updatedAt = new Date().toISOString();
+      }
+
       // Existing move update
       const existingMove = activity.finalMovePositions[editEvent.selector];
       if (existingMove && existingMove.newIndex === oldVal.index) {
@@ -203,11 +206,10 @@ export class EditEventService {
       activity.moveChildChanges[selector] = {
         key: selector,
         oldVal: { ...oldVal, index: move.originalIndex },
-        newVal: { ...newVal, index: move.newIndex }
-      };
+        newVal: { ...newVal, index: move.newIndex },
+        updatedAt: new Date().toISOString(),
+      } as ChangeValues;
     }
-
-    console.log('activity', activity);
     return activity;
   }
 
