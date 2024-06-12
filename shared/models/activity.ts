@@ -22,9 +22,9 @@ export interface Activity {
   attributeChanges?: Record<string, ChangeValues>;
 
   // TODO: Finish implementing this
-  insertChildChanges?: Record<string, StructureVal>;
-  deleteChildChanges?: Record<string, StructureVal>;
-  moveChildChanges?: Record<string, StructureVal>;
+  insertChildChanges?: Record<string, ChangeValues>;
+  deleteChildChanges?: Record<string, ChangeValues>;
+  moveChildChanges?: Record<string, ChangeValues>;
 
   // Handles the code written to GitHub
   status?: ActivityStatus;
@@ -33,8 +33,8 @@ export interface Activity {
 
 export interface ChangeValues {
   key: string;
-  oldVal: string;
-  newVal: string;
+  oldVal: string | StructureVal;
+  newVal: string | StructureVal;
 }
 
 export enum ActivityStatus {

@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid'
 import { convertEditEventToChangeObject } from './convert'
 import { EditType, ActivityStatus, ProjectStatus } from '$shared/models'
 
-import type { Project, EditEvent, Activity, StructureVal, } from '$shared/models'
+import type { Project, EditEvent, Activity, StructureVal, ChangeValues, } from '$shared/models'
 import type { ProjectTabService } from '$lib/projects'
 
 interface QueueItem {
@@ -115,7 +115,11 @@ export class EditEventService {
 
     activity.insertChildChanges = {
       ...activity.insertChildChanges,
-      [editEvent.selector]: { ...editEvent.newVal } as StructureVal
+      [editEvent.selector]: {
+        key: editEvent.selector,
+        oldVal: { ...editEvent.oldVal } as StructureVal,
+        newVal: { ...editEvent.newVal } as StructureVal
+      } as ChangeValues
     }
     return activity
   }
@@ -129,8 +133,8 @@ export class EditEventService {
     if (
       activity.insertChildChanges &&
       activity.insertChildChanges[editEvent.selector] &&
-      activity.insertChildChanges[editEvent.selector].componentId &&
-      activity.insertChildChanges[editEvent.selector].componentId === newVal.componentId
+      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId &&
+      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId === newVal.componentId
     ) {
       delete activity.insertChildChanges[editEvent.selector]
     } else {
@@ -139,7 +143,11 @@ export class EditEventService {
       }
       activity.deleteChildChanges = {
         ...activity.deleteChildChanges,
-        [editEvent.selector]: newVal
+        [editEvent.selector]: {
+          key: editEvent.selector,
+          oldVal: { ...editEvent.oldVal } as StructureVal,
+          newVal: { ...editEvent.newVal } as StructureVal
+        } as ChangeValues
       }
     }
     return activity
@@ -154,12 +162,16 @@ export class EditEventService {
     if (
       activity.insertChildChanges &&
       activity.insertChildChanges[editEvent.selector] &&
-      activity.insertChildChanges[editEvent.selector].componentId &&
-      activity.insertChildChanges[editEvent.selector].componentId === newVal.componentId
+      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId &&
+      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId === newVal.componentId
     ) {
       activity.insertChildChanges = {
         ...activity.insertChildChanges,
-        [editEvent.selector]: newVal
+        [editEvent.selector]: {
+          key: editEvent.selector,
+          oldVal: { ...editEvent.oldVal } as StructureVal,
+          newVal: { ...editEvent.newVal } as StructureVal
+        } as ChangeValues
       }
     } else {
       if (!activity.moveChildChanges) {
@@ -167,7 +179,11 @@ export class EditEventService {
       }
       activity.moveChildChanges = {
         ...activity.moveChildChanges,
-        [editEvent.selector]: newVal
+        [editEvent.selector]: {
+          key: editEvent.selector,
+          oldVal: { ...editEvent.oldVal } as StructureVal,
+          newVal: { ...editEvent.newVal } as StructureVal
+        } as ChangeValues
       }
     }
     return activity

@@ -181,6 +181,7 @@ function applyMoveEvent(event: EditEvent, element: HTMLElement) {
 
 export function applyEvent(event: EditEvent, emit: boolean = true) {
   const element: HTMLElement | undefined = document.querySelector(event.selector);
+  console.log("Applying event", event);
   switch (event.editType) {
     case EditType.STYLE:
       applyStyleEvent(event, element);
