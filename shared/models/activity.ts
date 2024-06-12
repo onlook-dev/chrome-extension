@@ -1,3 +1,4 @@
+import type { StructureVal } from "./editor";
 import type { EventMetadata } from "./eventData";
 
 // All the changes that happen to an element when switched to another element
@@ -21,9 +22,9 @@ export interface Activity {
   attributeChanges?: Record<string, ChangeValues>;
 
   // TODO: Finish implementing this
-  insertChanges?: Record<string, Component>;
-  deleteChanges?: Record<string, Component>;
-  moveChanges?: Record<string, Component>;
+  insertChildChanges?: Record<string, StructureVal>;
+  deleteChildChanges?: Record<string, StructureVal>;
+  moveChildChanges?: Record<string, StructureVal>;
 
   // Handles the code written to GitHub
   status?: ActivityStatus;
@@ -45,8 +46,4 @@ export enum ActivityStatus {
   PUBLISH_SUCCESS = 'PUBLISH_SUCCESS',
   PUBLISH_FAILED = 'PUBLISH_FAILED',
   ARCHIVED = 'ARCHIVED',
-}
-
-export interface Component {
-
 }

@@ -30,7 +30,8 @@ export function addToHistory(event: EditEvent) {
     // Deduplicate last event
     const lastEvent = history[history.length - 1];
     if (
-      lastEvent.editType !== EditType.INSERT &&
+      // TODO: Revisit this with other structural changes
+      lastEvent.editType !== EditType.INSERT_CHILD &&
       lastEvent.editType === event.editType &&
       lastEvent.selector === event.selector &&
       compareKeys(lastEvent.newVal as Record<string, string>, event.newVal as Record<string, string>)
@@ -76,21 +77,21 @@ export function redoEvent(event: EditEvent) {
 
 export function createReverseEvent(event: EditEvent): EditEvent {
   switch (event.editType) {
-    case EditType.INSERT:
+    case EditType.INSERT_CHILD:
       return {
         createdAt: event.createdAt,
         selector: event.selector,
-        editType: EditType.REMOVE,
+        editType: EditType.REMOVE_CHILD,
         newVal: event.oldVal,
         oldVal: event.newVal,
         path: event.path,
         componentId: event.componentId,
       } as EditEvent;
-    case EditType.REMOVE:
+    case EditType.REMOVE_CHILD:
       return {
         createdAt: event.createdAt,
         selector: event.selector,
-        editType: EditType.INSERT,
+        editType: EditType.INSERT_CHILD,
         newVal: event.oldVal,
         oldVal: event.newVal,
         path: event.path,
@@ -133,37 +134,33 @@ function applyClassEvent(event: EditEvent, element: HTMLElement) {
 
 function applyInsertEvent(event: EditEvent, element: HTMLElement) {
   const newVal = event.newVal as StructureVal;
-  const parent = document.querySelector(newVal.parentSelector) as HTMLElement;
-
-  if (!parent) return;
   const parser = new DOMParser();
   const doc = parser.parseFromString(newVal.content, "application/xml");
   const el = doc.documentElement
 
   if (!el) return;
   const pos = parseInt(newVal.index);
-  if (pos >= parent.childNodes.length) {
-    parent.insertBefore(el, parent.childNodes[pos]);
+  if (pos >= element.childNodes.length) {
+    element.insertBefore(el, element.childNodes[pos]);
   } else {
-    parent.appendChild(el);
+    element.appendChild(el);
   }
 }
 
 function applyRemoveEvent(event: EditEvent, element: HTMLElement) {
   if (!element) return;
   const newVal = event.newVal as StructureVal;
-  const parent = document.querySelector(newVal.parentSelector) as HTMLElement;
-
-  if (!parent) return;
-  parent.removeChild(element);
+  const child = document.querySelector(newVal.childSelector) as HTMLElement;
+  if (!child) return;
+  element.removeChild(child);
 }
 
 function applyMoveEvent(event: EditEvent, element: HTMLElement) {
   const oldVal = event.oldVal as StructureVal;
   const newVal = event.newVal as StructureVal;
-  const parent = document.querySelector(oldVal.parentSelector) as HTMLElement;
+  const child = document.querySelector(oldVal.childSelector) as HTMLElement;
 
-  let container = dragContainers.get(parent) ?? Sortable.create(parent, {
+  let container = dragContainers.get(element) ?? Sortable.create(element, {
     animation: 150,
     easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
   });
@@ -177,7 +174,7 @@ function applyMoveEvent(event: EditEvent, element: HTMLElement) {
   container.sort(order, true);
 
   // Clean up if container created
-  if (!dragContainers.has(parent)) {
+  if (!dragContainers.has(element)) {
     container.destroy();
   }
 }
@@ -194,13 +191,13 @@ export function applyEvent(event: EditEvent, emit: boolean = true) {
     case EditType.CLASS:
       applyClassEvent(event, element);
       break;
-    case EditType.INSERT:
+    case EditType.INSERT_CHILD:
       applyInsertEvent(event, element);
       break;
-    case EditType.REMOVE:
+    case EditType.REMOVE_CHILD:
       applyRemoveEvent(event, element);
       break;
-    case EditType.MOVE:
+    case EditType.MOVE_CHILD:
       applyMoveEvent(event, element);
       break;
   }

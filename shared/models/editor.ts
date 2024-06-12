@@ -13,9 +13,9 @@ export enum EditType {
   TEXT = "TEXT",
   STYLE = "STYLE",
   CLASS = "CLASS",
-  INSERT = "INSERT",
-  REMOVE = "REMOVE",
-  MOVE = "MOVE",
+  INSERT_CHILD = "INSERT_CHILD",
+  REMOVE_CHILD = "REMOVE_CHILD",
+  MOVE_CHILD = "MOVE_CHILD",
 }
 
 export type TextVal = {
@@ -23,8 +23,8 @@ export type TextVal = {
 }
 
 export type StructureVal = {
-  parentSelector: string;
-  parentPath?: string;
+  childSelector: string;
+  childPath?: string;
   index: string;
 
   // If component, keep content since it doesn't exist in code

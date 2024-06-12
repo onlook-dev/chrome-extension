@@ -96,17 +96,18 @@ export class DragManager {
     }
 
     handleMoveEvent(el, oldIndex, newIndex) {
+        const parent = el.parentElement;
         handleEditEvent({
-            el,
-            editType: EditType.MOVE,
+            el: parent,
+            editType: EditType.MOVE_CHILD,
             newValue: {
-                parentSelector: getUniqueSelector(el.parentNode as HTMLElement),
-                parentPath: getDataOnlookId(el.parentNode as HTMLElement),
+                childSelector: getUniqueSelector(el),
+                childPath: getDataOnlookId(el),
                 index: newIndex,
             } as StructureVal,
             oldValue: {
-                parentSelector: getUniqueSelector(el.parentNode as HTMLElement),
-                parentPath: getDataOnlookId(el.parentNode as HTMLElement),
+                childSelector: getUniqueSelector(el),
+                childPath: getDataOnlookId(el),
                 index: oldIndex,
             } as StructureVal,
         });

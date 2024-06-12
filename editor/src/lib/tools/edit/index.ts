@@ -230,7 +230,7 @@ export class EditTool implements Tool {
 		const insertedEl = selectedEl.lastElementChild as HTMLElement;
 
 		// Emit event
-		this.handleStructureChange(insertedEl, EditType.INSERT, selectedEl, getDataOnlookComponentId(el))
+		this.handleStructureChange(insertedEl, EditType.INSERT_CHILD, selectedEl, getDataOnlookComponentId(el))
 		this.simulateClick([insertedEl]);
 	};
 
@@ -254,7 +254,7 @@ export class EditTool implements Tool {
 			const componentId = getDataOnlookComponentId(el);
 			if (componentId) {
 				const parent = el.parentElement;
-				this.handleStructureChange(el, EditType.REMOVE, parent, componentId)
+				this.handleStructureChange(el, EditType.REMOVE_CHILD, parent, componentId)
 				parent.removeChild(el);
 			} else {
 				console.log("Can only delete custom elements")
@@ -264,21 +264,23 @@ export class EditTool implements Tool {
 
 	handleStructureChange = (el, editType, parent, componentId?: string) => {
 		const xmlStr = (new XMLSerializer).serializeToString(el);
+		const childSelector = getUniqueSelector(el);
+		const childPath = getDataOnlookId(el);
 		const parentSelector = getUniqueSelector(parent);
 		const parentPath = getDataOnlookId(parent);
 		const index = Array.from(parent.children).indexOf(el).toString();
 
 		const deleteVal = {
-			parentSelector,
-			parentPath,
+			childSelector,
+			childPath,
 			index: index,
 			componentId,
 			content: '',
 		} as StructureVal;
 
 		const insertVal = {
-			parentSelector,
-			parentPath,
+			childSelector,
+			childPath,
 			index,
 			componentId,
 			content: xmlStr,
@@ -286,10 +288,10 @@ export class EditTool implements Tool {
 
 		// These are the same, just flipped
 		handleEditEvent({
-			el,
+			el: parent,
 			editType,
-			newValue: editType === EditType.REMOVE ? deleteVal : insertVal,
-			oldValue: editType === EditType.REMOVE ? insertVal : deleteVal
+			newValue: editType === EditType.REMOVE_CHILD ? deleteVal : insertVal,
+			oldValue: editType === EditType.REMOVE_CHILD ? insertVal : deleteVal
 		});
 	}
 }

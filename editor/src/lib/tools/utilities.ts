@@ -78,6 +78,14 @@ export const findCommonParent = (...nodes): HTMLElement => {
 
 export const getUniqueSelector = (el: HTMLElement): string => {
   let selector = el.tagName.toLowerCase()
+  // If data-onlook-id exists or data-onlook-component-id exists, use that
+  if (el.hasAttribute(DATA_ONLOOK_ID)) {
+    return `[${DATA_ONLOOK_ID}="${el.getAttribute(DATA_ONLOOK_ID)}"]`
+  }
+  if (el.hasAttribute(DATA_ONLOOK_COMPONENT_ID)) {
+    return `[${DATA_ONLOOK_COMPONENT_ID}="${el.getAttribute(DATA_ONLOOK_COMPONENT_ID)}"]`
+  }
+
   try {
     if (el.nodeType !== Node.ELEMENT_NODE) { return selector }
     selector = finder(el, { className: () => false })
