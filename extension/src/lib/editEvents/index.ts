@@ -69,11 +69,6 @@ export class EditEventService {
         path: editEvent.path,
         snapshot: editEvent.snapshot,
         styleChanges: {},
-        textChanges: {},
-        attributeChanges: {},
-        insertChildChanges: {},
-        deleteChildChanges: {},
-        moveChildChanges: {},
         visible: true
       } as Activity
     }
@@ -94,13 +89,13 @@ export class EditEventService {
         break
       // Structural changes
       case EditType.INSERT_CHILD:
-        activity = this.handleInsertChange(editEvent, activity)
+        activity = { ...this.handleInsertChange(editEvent, activity) }
         break
       case EditType.REMOVE_CHILD:
-        activity = this.handleRemoveChange(editEvent, activity)
+        activity = { ...this.handleRemoveChange(editEvent, activity) }
         break
       case EditType.MOVE_CHILD:
-        activity = this.handleMoveChange(editEvent, activity)
+        activity = { ...this.handleMoveChange(editEvent, activity) }
         break
       default:
         console.error('Edit type not supported: ', editEvent.editType)
@@ -114,31 +109,29 @@ export class EditEventService {
   }
 
   handleInsertChange(editEvent: EditEvent, activity: Activity) {
-    console.log("Insert change", editEvent)
     /**
      * Save as new element in activity. Store raw string.
      */
-    if (!activity.insertChildChanges) {
-      activity.insertChildChanges = {}
-    }
 
     activity.insertChildChanges = {
       ...activity.insertChildChanges,
-      [editEvent.selector]: editEvent.newVal as StructureVal
+      [editEvent.selector]: { ...editEvent.newVal } as StructureVal
     }
-
-    console.log("Insert changes", activity.insertChildChanges)
     return activity
   }
 
   handleRemoveChange(editEvent: EditEvent, activity: Activity) {
-    console.log("Remove change", editEvent)
     /**
     * If the remove element is an inserted component, remove it from insertChildChanges
     * Else, add as a new deleteChildChange
     */
-    const newVal = editEvent.newVal as StructureVal
-    if (activity.insertChildChanges && activity.insertChildChanges[editEvent.selector] && activity.insertChildChanges[editEvent.selector].componentId === newVal.componentId) {
+    const newVal = { ...editEvent.newVal } as StructureVal
+    if (
+      activity.insertChildChanges &&
+      activity.insertChildChanges[editEvent.selector] &&
+      activity.insertChildChanges[editEvent.selector].componentId &&
+      activity.insertChildChanges[editEvent.selector].componentId === newVal.componentId
+    ) {
       delete activity.insertChildChanges[editEvent.selector]
     } else {
       if (!activity.deleteChildChanges) {
@@ -149,22 +142,24 @@ export class EditEventService {
         [editEvent.selector]: newVal
       }
     }
-    console.log("Insert changes", activity.insertChildChanges)
-    console.log("Delete changes", activity.deleteChildChanges)
     return activity
   }
 
   handleMoveChange(editEvent: EditEvent, activity: Activity) {
-    console.log("Move change", editEvent)
     /**
     * If the moved element is an inserted component, update its insert index
     * Else, save the move event
     */
-    const newVal = editEvent.newVal as StructureVal
-    if (activity.insertChildChanges && activity.insertChildChanges[editEvent.selector] && activity.insertChildChanges[editEvent.selector].componentId === newVal.componentId) {
-      activity.insertChildChanges[editEvent.selector] = {
-        ...activity.insertChildChanges[editEvent.selector],
-        ...editEvent.newVal
+    const newVal = { ...editEvent.newVal } as StructureVal
+    if (
+      activity.insertChildChanges &&
+      activity.insertChildChanges[editEvent.selector] &&
+      activity.insertChildChanges[editEvent.selector].componentId &&
+      activity.insertChildChanges[editEvent.selector].componentId === newVal.componentId
+    ) {
+      activity.insertChildChanges = {
+        ...activity.insertChildChanges,
+        [editEvent.selector]: newVal
       }
     } else {
       if (!activity.moveChildChanges) {
@@ -175,8 +170,6 @@ export class EditEventService {
         [editEvent.selector]: newVal
       }
     }
-    console.log("Insert changes", activity.insertChildChanges)
-    console.log("Move changes", activity.moveChildChanges)
     return activity
   }
 
