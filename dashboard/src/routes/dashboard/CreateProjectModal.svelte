@@ -2,6 +2,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import Input from '$lib/components/ui/input/input.svelte';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 	import { MessageService, MessageType } from '$shared/message';
 	import { Plus } from 'svelte-radix';
 	let modalOpen = false;
@@ -42,6 +43,7 @@
 						MessageService.getInstance().publish(MessageType.OPEN_URL, { url, inject: true });
 						url = '';
 						modalOpen = false;
+						trackMixpanelEvent('Create Project from dashboard', { url });
 					}}>Create and Edit</Button
 				>
 			</div>

@@ -139,6 +139,7 @@ function applyInsertEvent(event: EditEvent, element: HTMLElement) {
   const child = doc.documentElement
 
   if (!child) return;
+  console.log(element)
   const pos = parseInt(newVal.index);
   if (pos < element.children.length) {
     element.insertBefore(child, element.children[pos]);
@@ -179,6 +180,7 @@ function applyMoveEvent(event: EditEvent, element: HTMLElement) {
 }
 
 export function applyEvent(event: EditEvent, emit: boolean = true) {
+  console.log(event);
   const element: HTMLElement | undefined = document.querySelector(event.selector);
   switch (event.editType) {
     case EditType.STYLE:

@@ -94,7 +94,11 @@
 
 	function requestEditProject() {
 		messageService.publish(MessageType.EDIT_PROJECT, project);
-		trackMixpanelEvent('Edit Project', { projectId: project?.id });
+		trackMixpanelEvent('Edit project from dashboard', {
+			projectId: project?.id,
+			projectName: project?.name,
+			url: project?.hostUrl
+		});
 	}
 </script>
 

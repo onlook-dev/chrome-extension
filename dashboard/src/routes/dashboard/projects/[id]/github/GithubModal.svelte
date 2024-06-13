@@ -18,6 +18,7 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 
 	import type { Project, Team, User } from '$shared/models';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	export let project: Project;
 	export let user: User;
@@ -59,6 +60,11 @@
 
 	function connectToGithub() {
 		window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
+		trackMixpanelEvent('Connect to Github started', {
+			projectId: project?.id,
+			projectName: project?.name,
+			url: project?.hostUrl
+		});
 	}
 
 	function connectExistingProject(connectProj: Project) {

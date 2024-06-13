@@ -111,9 +111,11 @@ export class EditEventService {
     /**
      * Save as new element in activity. Store raw string.
      */
+
+    const newVal = { ...editEvent.newVal } as StructureVal
     activity.insertChildChanges = {
       ...activity.insertChildChanges,
-      [editEvent.selector]: {
+      [newVal.childSelector]: {
         key: editEvent.selector,
         oldVal: { ...editEvent.oldVal } as StructureVal,
         newVal: { ...editEvent.newVal } as StructureVal,
@@ -121,6 +123,7 @@ export class EditEventService {
         updatedAt: new Date().toISOString()
       } as ChangeValues
     }
+
     return activity
   }
 
@@ -130,20 +133,21 @@ export class EditEventService {
     * Else, add as a new deleteChildChange
     */
     const newVal = { ...editEvent.newVal } as StructureVal
+    const childSelector = newVal.childSelector
     if (
       activity.insertChildChanges &&
-      activity.insertChildChanges[editEvent.selector] &&
-      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId &&
-      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId === newVal.componentId
+      activity.insertChildChanges[childSelector] &&
+      (activity.insertChildChanges[childSelector].newVal as StructureVal).componentId &&
+      (activity.insertChildChanges[childSelector].newVal as StructureVal).componentId === newVal.componentId
     ) {
-      delete activity.insertChildChanges[editEvent.selector]
+      delete activity.insertChildChanges[childSelector]
     } else {
       if (!activity.deleteChildChanges) {
         activity.deleteChildChanges = {}
       }
       activity.deleteChildChanges = {
         ...activity.deleteChildChanges,
-        [editEvent.selector]: {
+        [childSelector]: {
           key: editEvent.selector,
           oldVal: { ...editEvent.oldVal } as StructureVal,
           newVal: { ...editEvent.newVal } as StructureVal,
@@ -163,6 +167,7 @@ export class EditEventService {
 
     const newVal = { ...editEvent.newVal } as StructureVal;
     const oldVal = { ...editEvent.oldVal } as StructureVal;
+    const childSelector = newVal.childSelector;
 
     // Initialize the storage for final move positions if not already present
     if (!activity.finalMovePositions) {
@@ -172,29 +177,29 @@ export class EditEventService {
     // Check if this is related to an inserted component
     if (
       activity.insertChildChanges &&
-      activity.insertChildChanges[editEvent.selector] &&
-      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).componentId === newVal.componentId
+      activity.insertChildChanges[childSelector] &&
+      (activity.insertChildChanges[childSelector].newVal as StructureVal).componentId === newVal.componentId
     ) {
       // Update inserted component index
-      (activity.insertChildChanges[editEvent.selector].newVal as StructureVal).index = newVal.index;
-      (activity.insertChildChanges[editEvent.selector]).updatedAt = new Date().toISOString();
-    } else if (activity.moveChildChanges && activity.moveChildChanges[editEvent.selector]) {
+      (activity.insertChildChanges[childSelector].newVal as StructureVal).index = newVal.index;
+      (activity.insertChildChanges[childSelector]).updatedAt = new Date().toISOString();
+    } else if (activity.moveChildChanges && activity.moveChildChanges[childSelector]) {
       // Existing move update
-      const existingMove = activity.finalMovePositions[editEvent.selector];
+      const existingMove = activity.finalMovePositions[childSelector];
       if (existingMove && existingMove.newIndex === oldVal.index) {
         // If the new move is a reversal of the previous move, cancel it
-        delete activity.finalMovePositions[editEvent.selector];
-        delete activity.moveChildChanges[editEvent.selector];
+        delete activity.finalMovePositions[childSelector];
+        delete activity.moveChildChanges[childSelector];
       } else {
         // Update the move to reflect the latest intended position
-        activity.finalMovePositions[editEvent.selector] = {
+        activity.finalMovePositions[childSelector] = {
           originalIndex: existingMove ? existingMove.originalIndex : oldVal.index,
           newIndex: newVal.index
         };
       }
     } else {
       // New move
-      activity.finalMovePositions[editEvent.selector] = {
+      activity.finalMovePositions[childSelector] = {
         originalIndex: oldVal.index,
         newIndex: newVal.index
       };

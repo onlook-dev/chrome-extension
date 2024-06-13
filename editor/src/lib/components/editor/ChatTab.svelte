@@ -14,6 +14,7 @@
     import type { EditTool } from "$lib/tools/edit";
     import { DATA_ONLOOK_ID } from "$shared/constants";
     import { Shadow } from "radix-icons-svelte";
+    import { EditSource } from "$shared/models/editor";
 
     export let editTool: EditTool;
     export let cardHeight: string;
@@ -74,6 +75,7 @@
                             value,
                             true,
                             false,
+                            EditSource.CHAT,
                         );
                     });
                 });

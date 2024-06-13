@@ -13,6 +13,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
 	import type { Project, Team } from '$shared/models';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	export let projectService: FirebaseService<Project>;
 	export let project: Project;
@@ -84,6 +85,12 @@
 			.finally(() => {
 				goto(DashboardRoutes.DASHBOARD);
 			});
+
+		trackMixpanelEvent('Project deleted', {
+			projectId: project.id,
+			projectName: project.name,
+			url: project.hostUrl
+		});
 	}
 </script>
 
@@ -157,6 +164,11 @@
 						return;
 					}
 					activeActivityId = activity.id;
+					trackMixpanelEvent('Activity selected', {
+						projectId: project.id,
+						projectName: project.name,
+						projectUrl: project.hostUrl
+					});
 				}}
 			>
 				<Card.Header class="p-2 pb-1">

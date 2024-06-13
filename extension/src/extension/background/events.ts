@@ -21,7 +21,7 @@ import {
 import { signInUser, signOut, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { captureActiveTab } from './screenshot'
 import { EditEventService } from '$lib/editEvents'
-import { trackEvent } from '$lib/mixpanel'
+import { trackMixpanelEvent } from '$lib/mixpanel'
 import { FirebaseService } from '$lib/storage'
 import { FirebaseProjectService } from '$lib/storage/project'
 import { ProjectTabService } from '$lib/projects'
@@ -217,7 +217,7 @@ export class BackgroundEventHandlers {
                 return
             }
             this.editEventService.handleEditEvent(editEvent, tab)
-            trackEvent('Edit Event', { type: editEvent.editType })
+            trackMixpanelEvent('Edit event on editor', { type: editEvent.editType, source: editEvent.source })
         })
     }
 }

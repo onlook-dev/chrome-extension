@@ -231,7 +231,6 @@ export class EditTool implements Tool {
 
 		// Emit event
 		this.handleStructureChange(insertedEl, EditType.INSERT_CHILD, selectedEl, getDataOnlookComponentId(el))
-		this.simulateClick([insertedEl]);
 	};
 
 	copyElement = () => {

@@ -114,7 +114,9 @@ export class ProjectPublisher extends EventEmitter {
       this.emitEvent({
         type: ProjectPublisherEventType.PUBLISHING,
       });
-      trackMixpanelEvent('Publish Project to GitHub', {
+      trackMixpanelEvent('Create GitHub pull request', {
+        projectId: this.project.id,
+        url: this.project.hostUrl,
         changes: this.processedActivities.length
       });
       return await this.publishFiles(title, description);

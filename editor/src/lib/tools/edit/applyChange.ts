@@ -1,4 +1,5 @@
 import { EditType } from "$shared/models";
+import { EditSource } from "$shared/models/editor";
 import { getUniqueSelector } from "../utilities";
 import { handleEditEvent, undebounceHandleEditEvent } from "./handleEvents";
 import { tw } from 'twind'
@@ -45,7 +46,7 @@ export class ApplyChangesService {
     }
   }
 
-  applyStyle(el: HTMLElement, key: string, value: string, emit = true, debounce = false) {
+  applyStyle(el: HTMLElement, key: string, value: string, emit = true, debounce = false, source = EditSource.MANUAL) {
     const oldVals = this.getAndSetOldVal(el, 'style', key);
     // Update the style
     el.style[key] = value;
@@ -56,6 +57,7 @@ export class ApplyChangesService {
       editType: EditType.STYLE,
       newValue: { [key]: value },
       oldValue: { [key]: oldVals.style[key] },
+      source,
     }
     // Emit event
     if (debounce) {
