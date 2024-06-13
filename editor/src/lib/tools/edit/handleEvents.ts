@@ -2,7 +2,6 @@ import { addToHistory } from "./history";
 import { getDataOnlookComponentId, getDataOnlookId, getSnapshot, getUniqueSelector } from "../utilities";
 import { EditType, type EditEvent, type StructureVal } from "$shared/models";
 import { MessageService, MessageType } from "$shared/message";
-import { DATA_ONLOOK_SNAPSHOT } from "$shared/constants";
 
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
 const messageService = MessageService.getInstance();
@@ -53,7 +52,7 @@ function undebounceHandleEditEvent(param: HandleEditEventParams) {
     newVal: param.newValue,
     oldVal: param.oldValue,
     path: getDataOnlookId(el),
-    snapshot: el.getAttribute(DATA_ONLOOK_SNAPSHOT),
+    snapshot: getSnapshot(el),
     componentId
   };
   addToHistory(event);
@@ -61,8 +60,8 @@ function undebounceHandleEditEvent(param: HandleEditEventParams) {
   // If event is applied to an inserted component, send an updated insert event for the nearest ancestor that does not have data-onlook-component-id
   // This way, it is saved in the activity as an insert only once, the content will be used to update the inserted component
   if (componentId) {
-    let parent = el.parentElement;
     let child = el;
+    let parent = el.parentElement;
     while (parent && getDataOnlookComponentId(parent)) {
       child = parent;
       parent = parent.parentElement;

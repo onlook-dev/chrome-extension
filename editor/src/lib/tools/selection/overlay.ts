@@ -235,6 +235,7 @@ class ClickRect extends RectImpl {
     }
 
     render({ width, height, top, left, margin, padding }) {
+        // Sometimes a selected element can be removed. We handle this gracefully.
         try {
             this.updateMargin(margin, { width, height, });
             this.updatePadding(padding, { width, height, });
