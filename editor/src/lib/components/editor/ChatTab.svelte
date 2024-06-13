@@ -72,6 +72,8 @@
                             el,
                             camelCase(property),
                             value,
+                            true,
+                            false,
                         );
                     });
                 });
