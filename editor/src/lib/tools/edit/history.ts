@@ -138,7 +138,6 @@ function applyInsertEvent(event: EditEvent, element: HTMLElement) {
   const doc = parser.parseFromString(newVal.content, "application/xml");
   const child = doc.documentElement
 
-  console.log('Inserting child', element, child);
   if (!child) return;
   const pos = parseInt(newVal.index);
   if (pos < element.children.length) {
@@ -181,7 +180,6 @@ function applyMoveEvent(event: EditEvent, element: HTMLElement) {
 
 export function applyEvent(event: EditEvent, emit: boolean = true) {
   const element: HTMLElement | undefined = document.querySelector(event.selector);
-  console.log('Applying event', event, element);
   switch (event.editType) {
     case EditType.STYLE:
       applyStyleEvent(event, element);
