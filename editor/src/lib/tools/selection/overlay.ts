@@ -243,7 +243,7 @@ class ClickRect extends RectImpl {
             // Render the base rect (the element itself) on top
             super.render({ width, height, top, left, });
         } catch (error) {
-            console.error(error);
+            console.warn(error);
         }
     }
 }

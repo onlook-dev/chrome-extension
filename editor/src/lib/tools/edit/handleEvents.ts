@@ -92,7 +92,8 @@ export function undebounceHandleEditEvent(param: HandleEditEventParams) {
       oldVal: { ...structureVal, content: '' },
       path: getDataOnlookId(parent),
       snapshot: getSnapshot(parent),
-      componentId: getDataOnlookComponentId(parent)
+      componentId: getDataOnlookComponentId(parent),
+      source: param.source || EditSource.MANUAL
     };
   }
 

@@ -157,7 +157,10 @@ export class BackgroundEventHandlers {
 
         // Message directly from editor window
         onMessage(MessageType.SEND_CHAT_MESSAGE, async ({ data }) => {
+            const startTime = Date.now()
             const res = await this.translationService.invoke(data as any)
+            const latency = Date.now() - startTime
+            trackMixpanelEvent('Send chat', { query: (data as any)?.content, latency: `${latency}ms` })
             return res
         })
 
@@ -169,6 +172,7 @@ export class BackgroundEventHandlers {
             project.status = ProjectStatus.PUBLISHED
             this.projectService.post(project)
             projectsMapBucket.set({ [project.id]: project })
+            trackMixpanelEvent('Publishing project from editor', { projectId: project.id, projectName: project.name, projectUrl: project.hostUrl })
         })
 
         pageScreenshotRequestStream.subscribe(async ([{ signature, refresh }]) => {

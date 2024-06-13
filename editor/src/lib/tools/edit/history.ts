@@ -86,6 +86,7 @@ export function createReverseEvent(event: EditEvent): EditEvent {
         oldVal: event.newVal,
         path: event.path,
         componentId: event.componentId,
+        source: event.source,
       } as EditEvent;
     case EditType.REMOVE_CHILD:
       return {
@@ -96,6 +97,7 @@ export function createReverseEvent(event: EditEvent): EditEvent {
         oldVal: event.newVal,
         path: event.path,
         componentId: event.componentId,
+        source: event.source,
       } as EditEvent;
     case EditType.STYLE || EditType.TEXT:
     default:
@@ -107,6 +109,7 @@ export function createReverseEvent(event: EditEvent): EditEvent {
         oldVal: event.newVal,
         path: event.path,
         componentId: event.componentId,
+        source: event.source,
       } as EditEvent;
   }
 }
@@ -139,7 +142,6 @@ function applyInsertEvent(event: EditEvent, element: HTMLElement) {
   const child = doc.documentElement
 
   if (!child) return;
-  console.log(element)
   const pos = parseInt(newVal.index);
   if (pos < element.children.length) {
     element.insertBefore(child, element.children[pos]);
@@ -180,7 +182,6 @@ function applyMoveEvent(event: EditEvent, element: HTMLElement) {
 }
 
 export function applyEvent(event: EditEvent, emit: boolean = true) {
-  console.log(event);
   const element: HTMLElement | undefined = document.querySelector(event.selector);
   switch (event.editType) {
     case EditType.STYLE:
