@@ -4,9 +4,15 @@ export type EditEvent = {
   editType: EditType;
   newVal: Record<string, string> | TextVal | StructureVal;
   oldVal: Record<string, string> | TextVal | StructureVal;
-  path?: string | undefined;
-  snapshot?: string | undefined;
-  componentId?: string | undefined;
+  path?: string;
+  snapshot?: string;
+  componentId?: string;
+  source?: EditSource;
+}
+
+export enum EditSource {
+  MANUAL = "MANUAL",
+  PROMPT = "PROMPT",
 }
 
 export enum EditType {

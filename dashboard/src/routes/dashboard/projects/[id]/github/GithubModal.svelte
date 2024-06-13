@@ -7,6 +7,7 @@
 	import { GithubLogo } from 'svelte-radix';
 	import { FirebaseService } from '$lib/storage';
 	import { timeSince } from '$shared/helpers';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	import PublishModal from './PublishModal.svelte';
 	import GitHub from '~icons/mdi/github';
@@ -59,6 +60,11 @@
 
 	function connectToGithub() {
 		window.location.href = `${githubConfig.appUrl}/installations/new?state=${project?.id}`;
+		trackMixpanelEvent('Connect to Github started', {
+			projectId: project?.id,
+			projectName: project?.name,
+			url: project?.hostUrl
+		});
 	}
 
 	function connectExistingProject(connectProj: Project) {

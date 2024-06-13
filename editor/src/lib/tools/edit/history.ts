@@ -86,6 +86,7 @@ export function createReverseEvent(event: EditEvent): EditEvent {
         oldVal: event.newVal,
         path: event.path,
         componentId: event.componentId,
+        source: event.source,
       } as EditEvent;
     case EditType.REMOVE_CHILD:
       return {
@@ -96,6 +97,7 @@ export function createReverseEvent(event: EditEvent): EditEvent {
         oldVal: event.newVal,
         path: event.path,
         componentId: event.componentId,
+        source: event.source,
       } as EditEvent;
     case EditType.STYLE || EditType.TEXT:
     default:
@@ -107,6 +109,7 @@ export function createReverseEvent(event: EditEvent): EditEvent {
         oldVal: event.newVal,
         path: event.path,
         componentId: event.componentId,
+        source: event.source,
       } as EditEvent;
   }
 }

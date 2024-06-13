@@ -2,6 +2,7 @@ import { addToHistory } from "./history";
 import { getDataOnlookComponentId, getDataOnlookId, getSnapshot, getUniqueSelector } from "../utilities";
 import { EditType, type EditEvent, type StructureVal } from "$shared/models";
 import { MessageService, MessageType } from "$shared/message";
+import { EditSource } from "$shared/models/editor";
 
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
 const messageService = MessageService.getInstance();
@@ -40,6 +41,7 @@ interface HandleEditEventParams {
   editType: EditType,
   newValue: EditEvent["newVal"],
   oldValue: EditEvent["oldVal"],
+  source?: EditSource
 }
 
 export function undebounceHandleEditEvent(param: HandleEditEventParams) {
@@ -53,7 +55,8 @@ export function undebounceHandleEditEvent(param: HandleEditEventParams) {
     oldVal: param.oldValue,
     path: getDataOnlookId(el),
     snapshot: getSnapshot(el),
-    componentId
+    componentId,
+    source: param.source || EditSource.MANUAL
   };
   addToHistory(event);
 
@@ -89,7 +92,8 @@ export function undebounceHandleEditEvent(param: HandleEditEventParams) {
       oldVal: { ...structureVal, content: '' },
       path: getDataOnlookId(parent),
       snapshot: getSnapshot(parent),
-      componentId: getDataOnlookComponentId(parent)
+      componentId: getDataOnlookComponentId(parent),
+      source: param.source || EditSource.MANUAL
     };
   }
 

@@ -4,10 +4,11 @@
 	import { onMount } from 'svelte';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 	import type { Team, User } from '$shared/models';
+
 	import CopyIcon from '~icons/mdi/content-copy';
 	import Share from '~icons/solar/share-outline';
-	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	export let teamId: string;
 	const userService = new FirebaseService<User>(FirestoreCollections.USERS);

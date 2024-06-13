@@ -7,6 +7,7 @@
 	import { projectsMapStore, teamsMapStore } from '$lib/utils/store';
 	import { goto } from '$app/navigation';
 	import { DashboardRoutes, FirestoreCollections } from '$shared/constants';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -84,6 +85,12 @@
 			.finally(() => {
 				goto(DashboardRoutes.DASHBOARD);
 			});
+
+		trackMixpanelEvent('Project deleted', {
+			projectId: project.id,
+			projectName: project.name,
+			url: project.hostUrl
+		});
 	}
 </script>
 
@@ -157,6 +164,11 @@
 						return;
 					}
 					activeActivityId = activity.id;
+					trackMixpanelEvent('Activity selected', {
+						projectId: project.id,
+						projectName: project.name,
+						projectUrl: project.hostUrl
+					});
 				}}
 			>
 				<Card.Header class="p-2 pb-1">

@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { Separator } from "$lib/components/ui/separator";
   import { editorPanelVisible } from "$lib/states/editor";
-  import { DragHandleDots2, Minus, Size } from "radix-icons-svelte";
+  import { DragHandleDots2, Minus, Size, MagicWand } from "radix-icons-svelte";
   import { draggable } from "$lib/utils";
   import { ToolName, type ToolManager } from "$lib/tools";
 
@@ -92,11 +92,14 @@
           <Tabs.List class="bg-transparent p-0 gap-4 select-none">
             <Tabs.Trigger
               class="bg-transparent p-0 text-xs"
-              value={TabValue.MANUAL}>Set styles</Tabs.Trigger
+              value={TabValue.MANUAL}>Set Styles</Tabs.Trigger
             >
             <Tabs.Trigger
               class="bg-transparent p-0 text-xs"
-              value={TabValue.ASSISTED}>Generate styles</Tabs.Trigger
+              value={TabValue.ASSISTED}
+            >
+              <MagicWand class="mr-2" />
+              AI Styles</Tabs.Trigger
             >
           </Tabs.List>
           <Separator class="mt-1" />

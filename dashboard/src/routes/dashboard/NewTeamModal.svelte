@@ -4,10 +4,11 @@
 	import { nanoid } from 'nanoid';
 	import { FirestoreCollections, MAX_TITLE_LENGTH } from '$shared/constants';
 	import { FirebaseService } from '$lib/storage';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
-	import * as Dialog from '$lib/components/ui/dialog';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Dialog from '$lib/components/ui/dialog';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	let plan = Tier.FREE;
@@ -41,6 +42,7 @@
 
 		// Save to firebase. Firebase function will update user.
 		teamService.post(newTeam);
+		trackMixpanelEvent('Create Team', { teamId: newTeam.id, teamName: newTeam.name });
 	}
 </script>
 

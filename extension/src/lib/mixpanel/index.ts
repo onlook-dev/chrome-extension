@@ -26,7 +26,7 @@ export function identifyUser(id: string) {
     }
 }
 
-export function trackEvent(eventName: string, properties: Record<string, any>) {
+export function trackMixpanelEvent(eventName: string, properties: Record<string, any>) {
     try {
         mixpanel.track(eventName, properties);
     } catch (error) {

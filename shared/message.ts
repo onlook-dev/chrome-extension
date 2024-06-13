@@ -43,13 +43,13 @@ export interface IMessage {
     const messageService = MessageService.getInstance();
     // Publish and get response
     messageService.publish(MessageType.GET_PROJECT, { projectId: "123" }, (response) => {
-        console.log("Received project data:", response);
+        console.only("Received project data:", response);
     });
 
     // Subscribe to a message type and send response
     if (correlationId) {
         messageService.publish(MessageType.RESPONSE, { status: "Edit successful" }, response => {
-            console.log("Edit response sent back.");
+            console.only("Edit response sent back.");
         }, correlationId);
     }
  */

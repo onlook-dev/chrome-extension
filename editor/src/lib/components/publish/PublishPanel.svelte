@@ -117,7 +117,7 @@
           variant="ghost"
           on:click={() => {
             navigator.clipboard.writeText(
-              `https://app.onlook.dev/dashboard/projects/${currentProject.id}`
+              `https://app.onlook.dev/dashboard/projects/${currentProject.id}`,
             );
             publishTool.publish(false);
             copied = true;
@@ -156,7 +156,7 @@
               <Shadow class="mr-2 animate-spin" />
               Saving project
             {:else}
-              <Dashboard class="mr-2" />Open in Dashboard
+              <Dashboard class="mr-2" />Save to Dashboard
             {/if}
           </Button>
         </div>

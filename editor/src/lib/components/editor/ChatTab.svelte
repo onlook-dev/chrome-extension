@@ -14,6 +14,7 @@
     import type { EditTool } from "$lib/tools/edit";
     import { DATA_ONLOOK_ID } from "$shared/constants";
     import { Shadow } from "radix-icons-svelte";
+    import { EditSource } from "$shared/models/editor";
 
     export let editTool: EditTool;
     export let cardHeight: string;
@@ -74,6 +75,7 @@
                             value,
                             true,
                             false,
+                            EditSource.PROMPT,
                         );
                     });
                 });
@@ -158,7 +160,7 @@
             {#if message.role === Roles.ASSISTANT}
                 <div class="flex items-start gap-3 my-1.5">
                     <div
-                        class="bg-stone-800 rounded rounded-bl-none p-3 max-w-[70%]"
+                        class="bg-stone-800 rounded rounded-bl-none p-2 max-w-[75%] min-w-10"
                     >
                         <p>{message.content}</p>
                     </div>
@@ -168,7 +170,7 @@
             {#if message.role === Roles.USER}
                 <div class="flex items-start gap-3 my-1.5 justify-end">
                     <div
-                        class="bg-violet-800 rounded rounded-br-none p-3 max-w-[70%]"
+                        class="bg-violet-800 rounded rounded-br-none p-2 max-w-[75%] min-w-10"
                     >
                         <p>{message.content}</p>
                     </div>
