@@ -1,10 +1,12 @@
 <script lang="ts">
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import Input from '$lib/components/ui/input/input.svelte';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 	import { MessageService, MessageType } from '$shared/message';
 	import { Plus } from 'svelte-radix';
+
+	import Button from '$lib/components/ui/button/button.svelte';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import * as Dialog from '$lib/components/ui/dialog';
+
 	let modalOpen = false;
 	let url = '';
 </script>

@@ -7,11 +7,11 @@
 	import { getStripeSubscriptionEnd } from '$lib/stripe/stripe';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
-	import * as Dialog from '$lib/components/ui/dialog';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import PlanFeatureRow from './PlanFeatureRow.svelte';
-	import { trackMixpanelEvent } from '$lib/mixpanel/client';
+	import * as Dialog from '$lib/components/ui/dialog';
 
 	export let teamId: string;
 	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);

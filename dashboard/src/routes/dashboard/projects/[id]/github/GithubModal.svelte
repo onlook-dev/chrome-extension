@@ -7,6 +7,7 @@
 	import { GithubLogo } from 'svelte-radix';
 	import { FirebaseService } from '$lib/storage';
 	import { timeSince } from '$shared/helpers';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	import PublishModal from './PublishModal.svelte';
 	import GitHub from '~icons/mdi/github';
@@ -18,7 +19,6 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 
 	import type { Project, Team, User } from '$shared/models';
-	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	export let project: Project;
 	export let user: User;

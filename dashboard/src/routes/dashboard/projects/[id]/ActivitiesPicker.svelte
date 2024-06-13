@@ -7,13 +7,13 @@
 	import { projectsMapStore, teamsMapStore } from '$lib/utils/store';
 	import { goto } from '$app/navigation';
 	import { DashboardRoutes, FirestoreCollections } from '$shared/constants';
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
 	import type { Project, Team } from '$shared/models';
-	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
 	export let projectService: FirebaseService<Project>;
 	export let project: Project;

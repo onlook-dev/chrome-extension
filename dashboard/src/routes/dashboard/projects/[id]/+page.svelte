@@ -15,12 +15,12 @@
 
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import * as Resizable from '$lib/components/ui/resizable';
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
 	import ImageDetailView from './ImageDetailView.svelte';
 	import GithubModal from './github/GithubModal.svelte';
 	import ActivityDetail from './ActivityDetail.svelte';
+	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
+	import * as Resizable from '$lib/components/ui/resizable';
 
 	let project: Project | undefined;
 	let messageService: MessageService;
