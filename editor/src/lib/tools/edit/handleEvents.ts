@@ -42,7 +42,7 @@ interface HandleEditEventParams {
   oldValue: EditEvent["oldVal"],
 }
 
-function undebounceHandleEditEvent(param: HandleEditEventParams) {
+export function undebounceHandleEditEvent(param: HandleEditEventParams) {
   const el = param.el;
   const componentId = getDataOnlookComponentId(el);
   let event: EditEvent = {
