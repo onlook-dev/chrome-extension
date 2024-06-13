@@ -1,6 +1,6 @@
 import { addToHistory } from "./history";
-import { getSnapshot, getUniqueSelector } from "../utilities";
-import { EditType, type EditEvent } from "$shared/models";
+import { getDataOnlookComponentId, getDataOnlookId, getSnapshot, getUniqueSelector } from "../utilities";
+import { EditType, type EditEvent, type StructureVal } from "$shared/models";
 import { MessageService, MessageType } from "$shared/message";
 import { DATA_ONLOOK_SNAPSHOT } from "$shared/constants";
 
@@ -44,20 +44,54 @@ interface HandleEditEventParams {
 }
 
 function undebounceHandleEditEvent(param: HandleEditEventParams) {
+  const el = param.el;
   const selector =
-    elementSelectorCache.get(param.el) || getUniqueSelector(param.el);
-
-  const event: EditEvent = {
+    elementSelectorCache.get(el) || getUniqueSelector(el);
+  const snapshot = el.getAttribute(DATA_ONLOOK_SNAPSHOT);
+  const componentId = getDataOnlookComponentId(el);
+  const path = getDataOnlookId(el);
+  let event: EditEvent = {
     createdAt: new Date().toISOString(),
-    selector: selector,
+    selector,
     editType: param.editType,
     newVal: param.newValue,
     oldVal: param.oldValue,
-    path: param.el.dataset.onlookId,
-    snapshot: getSnapshot(param.el),
-    componentId: param.el.dataset.onlookComponentId
+    path,
+    snapshot,
+    componentId
   };
   addToHistory(event);
+
+  // If event is applied to an inserted component, send an updated insert event for the parent element instead
+  // This way, it is saved in the activity as an insert only once, the content will be used to update the inserted component
+  if (componentId) {
+    const parent = el.parentElement;
+    const parentSelector =
+      elementSelectorCache.get(parent) || getUniqueSelector(parent);
+    const content = (new XMLSerializer).serializeToString(el);
+
+    // This is the insert event for child
+    const structureVal: StructureVal = {
+      childSelector: selector,
+      childPath: getDataOnlookId(el),
+      index: Array.from(parent.children).indexOf(el).toString(),
+      componentId: getDataOnlookComponentId(parent),
+      content: content
+    };
+
+    // This is the insert event for parent
+    event = {
+      createdAt: new Date().toISOString(),
+      selector: parentSelector,
+      editType: EditType.INSERT_CHILD,
+      newVal: structureVal,
+      oldVal: { ...structureVal, content: '' },
+      path: getDataOnlookId(parent),
+      snapshot: getSnapshot(parent),
+      componentId: getDataOnlookComponentId(parent)
+    };
+  }
+
   messageService.publish(MessageType.EDIT_EVENT, event);
 }
 

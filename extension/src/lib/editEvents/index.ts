@@ -52,7 +52,6 @@ export class EditEventService {
   }
 
   async getOrCreateActivityFromEditEvent(project: Project, editEvent: EditEvent): Promise<Activity> {
-
     let activity = project.activities[editEvent.selector]
     // Create activity if it doesn't exist
     if (!activity) {
@@ -157,6 +156,11 @@ export class EditEventService {
   }
 
   handleMoveChange(editEvent: EditEvent, activity: Activity) {
+    /**
+     * If the moved element is an inserted component, update the element's position in insertChildChanges
+     * Update the moved element changes list using a finalMovePosition list to reduce redundant moves
+    */
+
     const newVal = { ...editEvent.newVal } as StructureVal;
     const oldVal = { ...editEvent.oldVal } as StructureVal;
 
@@ -208,8 +212,6 @@ export class EditEventService {
         updatedAt: new Date().toISOString(),
       } as ChangeValues;
     }
-
-    console.log('activity', activity);
     return activity;
   }
 
