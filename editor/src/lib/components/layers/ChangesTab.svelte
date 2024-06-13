@@ -61,6 +61,11 @@
     if (!event) return;
     undoEvent(event);
   }
+
+  function formatEditEventType(eventType: string) {
+    const s = eventType.replace("_", " ").toLowerCase();
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
 </script>
 
 <div class="text-xs flex flex-col space-y-2">
@@ -126,8 +131,14 @@
       </div>
       <div class="flex flex-row items-center space-x-1">
         <p class="opacity-60">Element:</p>
-        <span class="text-red bg-red/20 p-1"
+        <span class="text-red bg-red/20 p-1 truncate"
           >{event.componentId ?? shortenSelector(event.selector)}</span
+        >
+      </div>
+      <div class="flex flex-row items-center space-x-1">
+        <p class="opacity-60">Action:</p>
+        <span class="text-red bg-red/20 p-1 truncate"
+          >{formatEditEventType(event.editType)}</span
         >
       </div>
       <ul
@@ -137,17 +148,14 @@
           : 'bg-stone-900'}"
         transition:slide
       >
-        {#if event.editType === EditType.INSERT}
+        {#if event.editType === EditType.INSERT_CHILD}
           <li class="opacity-60">
             Inserted: {event.newVal["componentId"]?.split("-")[0] || "Element"}
           </li>
           <li class="opacity-60">
             Position: {event.newVal["position"] || "0"}
           </li>
-          <li class="opacity-60">
-            Id: {event.newVal["componentId"]}
-          </li>
-        {:else if event.editType === EditType.REMOVE}
+        {:else if event.editType === EditType.REMOVE_CHILD}
           <li class="opacity-60">
             Removed: {event.oldVal["componentId"]?.split("-")[0] || "Element"}
           </li>

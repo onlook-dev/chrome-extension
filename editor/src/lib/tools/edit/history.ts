@@ -1,9 +1,7 @@
-import { EditType, type EditEvent, type TextVal, type InsertRemoveVal } from '$shared/models';
+import { EditType, type EditEvent, type TextVal, type StructureVal } from '$shared/models';
 import { get, writable } from 'svelte/store';
 import { MessageService, MessageType } from '$shared/message';
 import { ApplyChangesService } from './applyChange';
-
-import type { MoveVal } from '$shared/models/editor';
 
 import Sortable from 'sortablejs';
 import { dragContainers } from '$lib/states/editor';
@@ -32,7 +30,8 @@ export function addToHistory(event: EditEvent) {
     // Deduplicate last event
     const lastEvent = history[history.length - 1];
     if (
-      lastEvent.editType !== EditType.INSERT &&
+      // TODO: Revisit this with other structural changes
+      lastEvent.editType !== EditType.INSERT_CHILD &&
       lastEvent.editType === event.editType &&
       lastEvent.selector === event.selector &&
       compareKeys(lastEvent.newVal as Record<string, string>, event.newVal as Record<string, string>)
@@ -78,21 +77,21 @@ export function redoEvent(event: EditEvent) {
 
 export function createReverseEvent(event: EditEvent): EditEvent {
   switch (event.editType) {
-    case EditType.INSERT:
+    case EditType.INSERT_CHILD:
       return {
         createdAt: event.createdAt,
         selector: event.selector,
-        editType: EditType.REMOVE,
+        editType: EditType.REMOVE_CHILD,
         newVal: event.oldVal,
         oldVal: event.newVal,
         path: event.path,
         componentId: event.componentId,
       } as EditEvent;
-    case EditType.REMOVE:
+    case EditType.REMOVE_CHILD:
       return {
         createdAt: event.createdAt,
         selector: event.selector,
-        editType: EditType.INSERT,
+        editType: EditType.INSERT_CHILD,
         newVal: event.oldVal,
         oldVal: event.newVal,
         path: event.path,
@@ -133,52 +132,48 @@ function applyClassEvent(event: EditEvent, element: HTMLElement) {
   });
 }
 
-function applyInsertEvent(event: EditEvent, parent: HTMLElement) {
-  const newVal = event.newVal as InsertRemoveVal;
-  if (!parent) return;
+function applyInsertEvent(event: EditEvent, element: HTMLElement) {
+  const newVal = event.newVal as StructureVal;
   const parser = new DOMParser();
-  const doc = parser.parseFromString(newVal.childContent, "application/xml");
-  const el = doc.documentElement
-  if (!el) return;
-  const pos = parseInt(newVal.position);
-  if (pos >= parent.childNodes.length) {
-    parent.insertBefore(el, parent.childNodes[pos]);
+  const doc = parser.parseFromString(newVal.content, "application/xml");
+  const child = doc.documentElement
+
+  if (!child) return;
+  const pos = parseInt(newVal.index);
+  if (pos < element.children.length) {
+    element.insertBefore(child, element.children[pos]);
   } else {
-    parent.appendChild(el);
+    element.appendChild(child);
   }
 }
 
-function applyRemoveEvent(event: EditEvent, parent: HTMLElement) {
-  const oldVal = event.oldVal as InsertRemoveVal;
-  const el = parent.querySelector(oldVal.childSelector);
-  if (el) el.remove();
+function applyRemoveEvent(event: EditEvent, element: HTMLElement) {
+  if (!element) return;
+  const newVal = event.newVal as StructureVal;
+  const child = document.querySelector(newVal.childSelector) as HTMLElement;
+  if (!child) return;
+  element.removeChild(child);
 }
 
 function applyMoveEvent(event: EditEvent, element: HTMLElement) {
-  const oldVal = event.oldVal as MoveVal;
-  const newVal = event.newVal as MoveVal;
-  const parent = document.querySelector(oldVal.parentSelector) as HTMLElement;
+  const oldVal = event.oldVal as StructureVal;
+  const newVal = event.newVal as StructureVal;
 
-  let container = dragContainers.get(parent) ?? Sortable.create(parent, {
+  let container = dragContainers.get(element) ?? Sortable.create(element, {
     animation: 150,
     easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
   });
-
-  // Move el to newIndex
   const order = container.toArray();
-  const oldIndex = Array.prototype.indexOf.call(parent.children, element);
-
-  if (oldIndex === -1) return; // Element not found in the array
 
   // Remove the element from the old position
-  const [movedElement] = order.splice(oldIndex, 1);
+  const [movedElement] = order.splice(oldVal.index, 1);
 
   // Insert the element to the new position
   order.splice(newVal.index, 0, movedElement);
   container.sort(order, true);
 
   // Clean up if container created
-  if (!dragContainers.has(parent)) {
+  if (!dragContainers.has(element)) {
     container.destroy();
   }
 }
@@ -195,13 +190,13 @@ export function applyEvent(event: EditEvent, emit: boolean = true) {
     case EditType.CLASS:
       applyClassEvent(event, element);
       break;
-    case EditType.INSERT:
+    case EditType.INSERT_CHILD:
       applyInsertEvent(event, element);
       break;
-    case EditType.REMOVE:
+    case EditType.REMOVE_CHILD:
       applyRemoveEvent(event, element);
       break;
-    case EditType.MOVE:
+    case EditType.MOVE_CHILD:
       applyMoveEvent(event, element);
       break;
   }
@@ -210,8 +205,6 @@ export function applyEvent(event: EditEvent, emit: boolean = true) {
 }
 
 export function toggleEventVisibility(event: EditEvent, visible: boolean) {
-  const element: HTMLElement | undefined = document.querySelector(event.selector);
-  if (!element) return;
   if (visible) {
     const reverseEvent: EditEvent = createReverseEvent(event);
     applyEvent(reverseEvent, false);

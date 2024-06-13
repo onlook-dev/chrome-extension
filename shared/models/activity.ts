@@ -1,4 +1,4 @@
-import type { Component } from "./editor";
+import type { EditType, StructureVal } from "./editor";
 import type { EventMetadata } from "./eventData";
 
 // All the changes that happen to an element when switched to another element
@@ -21,9 +21,11 @@ export interface Activity {
   textChanges?: Record<string, ChangeValues>;
   attributeChanges?: Record<string, ChangeValues>;
 
-  // TODO: Finish implementing this
-  insertChanges?: Record<string, Component>;
-  deleteChanges?: Record<string, Component>;
+  // TODO: Structure changes should be chronological
+  insertChildChanges?: Record<string, ChangeValues>;
+  deleteChildChanges?: Record<string, ChangeValues>;
+  moveChildChanges?: Record<string, ChangeValues>;
+  finalMovePositions?: Record<string, { originalIndex: string, newIndex: string }>;
 
   // Handles the code written to GitHub
   status?: ActivityStatus;
@@ -32,8 +34,10 @@ export interface Activity {
 
 export interface ChangeValues {
   key: string;
-  oldVal: string;
-  newVal: string;
+  createdAt?: string;
+  updatedAt?: string;
+  oldVal: string | StructureVal;
+  newVal: string | StructureVal;
 }
 
 export enum ActivityStatus {

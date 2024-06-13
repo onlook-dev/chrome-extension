@@ -12,7 +12,13 @@
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 
-	import type { Activity, GithubSettings, Project, TemplateNode } from '$shared/models';
+	import type {
+		Activity,
+		GithubSettings,
+		Project,
+		StructureVal,
+		TemplateNode
+	} from '$shared/models';
 
 	export let activity: Activity;
 	export let project: Project;
@@ -46,6 +52,10 @@
 		}/blob/${ref}/${
 			githubSettings.rootPath ? `${githubSettings.rootPath}/` : ''
 		}${filePath}#L${startLine}-L${endLine}`;
+	}
+
+	function getStructureValue(value: string | StructureVal): StructureVal {
+		return value as StructureVal;
 	}
 </script>
 
@@ -171,5 +181,32 @@
 				{/if}
 			{/if}
 		</p>
+	{/if}
+
+	{#if activity.insertChildChanges && Object.keys(activity.insertChildChanges).length > 0}
+		{#each Object.values(activity.insertChildChanges) as insertChange}
+			<p>
+				<span class="text-primary">{userName}</span>
+				added element at position
+				<span class="text-brand">{getStructureValue(insertChange.newVal).index}</span>
+			</p>
+			<iframe
+				title="inserted element"
+				class="w-full h-full items-center border"
+				srcdoc={getStructureValue(insertChange.newVal).content}
+			></iframe>
+		{/each}
+	{/if}
+
+	{#if activity.moveChildChanges && Object.keys(activity.moveChildChanges).length > 0}
+		{#each Object.values(activity.moveChildChanges) as moveChange}
+			<p>
+				<span class="text-primary">{userName}</span>
+				moved element from position
+				<span class="text-brand">{getStructureValue(moveChange.oldVal).index}</span>
+				to position
+				<span class="text-brand">{getStructureValue(moveChange.newVal).index}</span>
+			</p>
+		{/each}
 	{/if}
 </div>

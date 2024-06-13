@@ -1,4 +1,4 @@
-import { convertChangeObjectToEditEvents } from "$lib/editEvents/convert";
+import { convertChangeObjectToEditEvents, convertStructureChangeToEditEvents } from "$lib/editEvents/convert";
 import { getCSSFramework } from "$lib/utils/styleFramework";
 import { MessageService, MessageType } from "$shared/message";
 
@@ -115,6 +115,27 @@ export class ProjectChangeService {
                 editEvents.push(...event)
             }
         }
+        if (activity.insertChildChanges) {
+            for (const [key, changeValues] of Object.entries(activity.insertChildChanges)) {
+                const event = convertStructureChangeToEditEvents(activity.selector, EditType.INSERT_CHILD, { [key]: changeValues })
+                editEvents.push(...event)
+            }
+        }
+        if (activity.deleteChildChanges) {
+            for (const [key, changeValues] of Object.entries(activity.deleteChildChanges)) {
+                const event = convertStructureChangeToEditEvents(activity.selector, EditType.REMOVE_CHILD, { [key]: changeValues })
+                editEvents.push(...event)
+            }
+        }
+        if (activity.moveChildChanges) {
+            for (const [key, changeValues] of Object.entries(activity.moveChildChanges)) {
+                const event = convertStructureChangeToEditEvents(activity.selector, EditType.MOVE_CHILD, { [key]: changeValues })
+                editEvents.push(...event)
+            }
+        }
+
+        // Order events chronologically
+        editEvents.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
         return editEvents
     }
 }

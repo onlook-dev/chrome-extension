@@ -1,14 +1,13 @@
 import { writable, type Writable } from 'svelte/store';
 import { handleEditEvent } from "$lib/tools/edit/handleEvents";
 import { EditType } from "$shared/models";
-import { getUniqueSelector } from "$lib/tools/utilities";
+import { getDataOnlookComponentId, getDataOnlookId, getUniqueSelector } from "$lib/tools/utilities";
+import { dragContainers } from '$lib/states/editor';
+import Sortable from 'sortablejs';
 
 import type { OverlayManager } from '../selection/overlay';
 import type { SelectorEngine } from '../selection/selector';
-import type { MoveVal } from "$shared/models/editor";
-
-import Sortable from 'sortablejs';
-import { dragContainers } from '$lib/states/editor';
+import type { StructureVal } from '$shared/models/editor';
 
 export class DragManager {
     selectedSnapshot: HTMLElement[] = [];
@@ -97,17 +96,25 @@ export class DragManager {
     }
 
     handleMoveEvent(el, oldIndex, newIndex) {
+        const parent = el.parentElement;
+        const childSelector = getUniqueSelector(el);
+        const childPath = getDataOnlookId(el);
+        const componentId = getDataOnlookComponentId(el);
         handleEditEvent({
-            el,
-            editType: EditType.MOVE,
+            el: parent,
+            editType: EditType.MOVE_CHILD,
             newValue: {
-                parentSelector: getUniqueSelector(el.parentNode as HTMLElement),
+                childSelector,
+                childPath,
+                componentId,
                 index: newIndex,
-            } as MoveVal,
+            } as StructureVal,
             oldValue: {
-                parentSelector: getUniqueSelector(el.parentNode as HTMLElement),
+                childSelector,
+                childPath,
+                componentId,
                 index: oldIndex,
-            } as MoveVal,
+            } as StructureVal,
         });
     }
 }

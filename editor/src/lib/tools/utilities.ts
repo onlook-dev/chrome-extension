@@ -1,5 +1,6 @@
 import { DATA_ONLOOK_ID, DATA_ONLOOK_SNAPSHOT, ONLOOK_TOOLBAR } from '$shared/constants'
 import { finder } from '$lib/tools/selection/uniqueSelector'
+import { DATA_ONLOOK_COMPONENT_ID } from '$lib/constants'
 
 export const deepElementFromPoint = (x, y): HTMLElement => {
   const el = document.elementFromPoint(x, y)
@@ -29,6 +30,8 @@ export const isFixed = elem => {
 export const isOffBounds = node => node?.closest && (node.closest(ONLOOK_TOOLBAR) || node.closest(`#${ONLOOK_TOOLBAR}`))
 
 export const getDataOnlookId = node => node?.getAttribute(DATA_ONLOOK_ID)
+
+export const getDataOnlookComponentId = node => node?.getAttribute(DATA_ONLOOK_COMPONENT_ID)
 
 export const getByDataOnlookId = id => document.querySelectorAll(`[${DATA_ONLOOK_ID}="${id}"]`)
 
@@ -75,6 +78,14 @@ export const findCommonParent = (...nodes): HTMLElement => {
 
 export const getUniqueSelector = (el: HTMLElement): string => {
   let selector = el.tagName.toLowerCase()
+  // If data-onlook-id exists or data-onlook-component-id exists, use that
+  if (el.hasAttribute(DATA_ONLOOK_ID)) {
+    return `[${DATA_ONLOOK_ID}="${el.getAttribute(DATA_ONLOOK_ID)}"]`
+  }
+  if (el.hasAttribute(DATA_ONLOOK_COMPONENT_ID)) {
+    return `[${DATA_ONLOOK_COMPONENT_ID}="${el.getAttribute(DATA_ONLOOK_COMPONENT_ID)}"]`
+  }
+
   try {
     if (el.nodeType !== Node.ELEMENT_NODE) { return selector }
     selector = finder(el, { className: () => false })

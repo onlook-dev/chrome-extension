@@ -1,4 +1,4 @@
-import type { ChangeValues, EditEvent, EditType } from '$shared/models'
+import type { ChangeValues, EditEvent, EditType, StructureVal } from '$shared/models'
 
 // Look in tests for example. 
 export function convertEditEventToChangeObject(editEvent: EditEvent, changeObject: Record<string, ChangeValues>) {
@@ -32,13 +32,13 @@ export function convertEditEventToChangeObject(editEvent: EditEvent, changeObjec
   return changeObject;
 }
 
-export function convertChangeObjectToEditEvents(selector: string, editType: EditType, changeObject: Record<string, ChangeValues>): EditEvent[] {
+export function convertChangeObjectToEditEvents(selector: string, editType: EditType, changeObject: Record<string, ChangeValues> | StructureVal): EditEvent[] {
   const editEvents: EditEvent[] = [];
 
-  Object.entries(changeObject).forEach(([key, { oldVal, newVal }]) => {
+  Object.entries(changeObject).forEach(([key, { oldVal, newVal, createdAt, updatedAt }]) => {
     const editEvent: EditEvent = {
       selector,
-      createdAt: new Date().toISOString(),
+      createdAt: createdAt ?? updatedAt ?? new Date().toISOString(),
       editType,
       oldVal: { [key]: oldVal },
       newVal: { [key]: newVal }
@@ -48,3 +48,21 @@ export function convertChangeObjectToEditEvents(selector: string, editType: Edit
 
   return editEvents;
 }
+
+export function convertStructureChangeToEditEvents(selector: string, editType: EditType, changeObject: Record<string, ChangeValues> | StructureVal): EditEvent[] {
+  const editEvents: EditEvent[] = [];
+
+  Object.entries(changeObject).forEach(([key, { oldVal, newVal, createdAt, updatedAt }]) => {
+    const editEvent: EditEvent = {
+      selector,
+      createdAt: updatedAt ?? createdAt ?? new Date().toISOString(),
+      editType,
+      oldVal,
+      newVal
+    };
+    editEvents.push(editEvent);
+  });
+
+  return editEvents;
+}
+

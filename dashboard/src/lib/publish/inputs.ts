@@ -12,7 +12,7 @@ export function getStyleTranslationInput(content: string, templateNode: Template
     framework,
     css,
     code: startTagContent,
-    tailwind
+    tailwind: tailwind as string
   }
 }
 
@@ -25,8 +25,8 @@ export function getTextTranslationInput(content: string, templateNode: TemplateN
 
   return {
     framework,
-    oldText,
-    newText,
+    oldText: oldText as string,
+    newText: newText as string,
     code: `${startTagContent}${childrenContent}${endTagContent}`
   }
 }

@@ -2,8 +2,8 @@ export type EditEvent = {
   createdAt: string;
   selector: string;
   editType: EditType;
-  newVal: Record<string, string> | Component | TextVal | MoveVal;
-  oldVal: Record<string, string> | Component | TextVal | MoveVal;
+  newVal: Record<string, string> | TextVal | StructureVal;
+  oldVal: Record<string, string> | TextVal | StructureVal;
   path?: string | undefined;
   snapshot?: string | undefined;
   componentId?: string | undefined;
@@ -13,29 +13,21 @@ export enum EditType {
   TEXT = "TEXT",
   STYLE = "STYLE",
   CLASS = "CLASS",
-  INSERT = "INSERT",
-  REMOVE = "REMOVE",
-  MOVE = "MOVE",
-}
-
-export interface Component {
-  id?: string; // Exists if Onlook custom component
-  parentSelector: string;
-  index: number; // Index within parent
-  content: string; // String content of the element (For reversibility)
+  INSERT_CHILD = "INSERT_CHILD",
+  REMOVE_CHILD = "REMOVE_CHILD",
+  MOVE_CHILD = "MOVE_CHILD",
 }
 
 export type TextVal = {
   text: string;
 }
 
-export type InsertRemoveVal = {
-  childContent: string;
+export type StructureVal = {
   childSelector: string;
-  position: string;
-}
+  childPath?: string;
+  index: string;
 
-export type MoveVal = {
-  parentSelector: string;
-  index: number;
+  // If component, keep content since it doesn't exist in code
+  componentId?: string;
+  content?: string;
 }
