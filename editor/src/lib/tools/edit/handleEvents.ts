@@ -45,38 +45,40 @@ interface HandleEditEventParams {
 
 function undebounceHandleEditEvent(param: HandleEditEventParams) {
   const el = param.el;
-  const selector =
-    elementSelectorCache.get(el) || getUniqueSelector(el);
-  const snapshot = el.getAttribute(DATA_ONLOOK_SNAPSHOT);
   const componentId = getDataOnlookComponentId(el);
-  const path = getDataOnlookId(el);
   let event: EditEvent = {
     createdAt: new Date().toISOString(),
-    selector,
+    selector: elementSelectorCache.get(el) || getUniqueSelector(el),
     editType: param.editType,
     newVal: param.newValue,
     oldVal: param.oldValue,
-    path,
-    snapshot,
+    path: getDataOnlookId(el),
+    snapshot: el.getAttribute(DATA_ONLOOK_SNAPSHOT),
     componentId
   };
   addToHistory(event);
 
-  // If event is applied to an inserted component, send an updated insert event for the parent element instead
+  // If event is applied to an inserted component, send an updated insert event for the nearest ancestor that does not have data-onlook-component-id
   // This way, it is saved in the activity as an insert only once, the content will be used to update the inserted component
   if (componentId) {
-    const parent = el.parentElement;
-    const parentSelector =
-      elementSelectorCache.get(parent) || getUniqueSelector(parent);
-    const content = (new XMLSerializer).serializeToString(el);
+    let parent = el.parentElement;
+    let child = el;
+    while (parent && getDataOnlookComponentId(parent)) {
+      child = parent;
+      parent = parent.parentElement;
+    }
+    if (!parent) return;
+
+    const parentSelector = elementSelectorCache.get(parent) || getUniqueSelector(parent);
+    const content = (new XMLSerializer).serializeToString(child);
 
     // This is the insert event for child
     const structureVal: StructureVal = {
-      childSelector: selector,
-      childPath: getDataOnlookId(el),
-      index: Array.from(parent.children).indexOf(el).toString(),
+      childSelector: getUniqueSelector(child),
+      childPath: getDataOnlookId(child),
+      index: Array.from(parent.children).indexOf(child).toString(),
       componentId: getDataOnlookComponentId(parent),
-      content: content
+      content
     };
 
     // This is the insert event for parent
