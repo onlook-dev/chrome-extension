@@ -187,7 +187,7 @@
 					{/if}
 				</Card.Header>
 				<Card.Content class="p-2 space-y-1">
-					<Card.Title class="font-normal">{shortenSelector(activity.selector)}</Card.Title>
+					<Card.Title class="font-normal truncate">{shortenSelector(activity.selector)}</Card.Title>
 					<Card.Description>{new Array(activity.styleChanges).length} changes</Card.Description>
 				</Card.Content>
 			</Card.Root>
