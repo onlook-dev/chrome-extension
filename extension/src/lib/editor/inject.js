@@ -10,6 +10,11 @@ function addCustomElements() {
     onlookScript.src = platform.runtime.getURL('src/lib/editor/bundle.min.js');
     document.body.appendChild(onlookScript);
 
+    // Add singleFile hook since crxjs does not support MAIN world. We have to manually inject.
+    const singleFileScript = document.createElement('script');
+    singleFileScript.type = 'module';
+    singleFileScript.src = platform.runtime.getURL('lib/single-file-hooks-frames.js');
+
     const onlookToolbar = document.createElement(ONLOOK_TOOLBAR);
     document.body.append(onlookToolbar);
   }

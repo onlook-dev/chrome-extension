@@ -40,16 +40,18 @@ export default defineManifest(async env => ({
 			match_about_blank: true,
 			match_origin_as_fallback: true
 		},
-		{
-			matches: ["<all_urls>"],
-			js: [
-				"lib/single-file-hooks-frames.js"
-			],
-			run_at: "document_start",
-			all_frames: true,
-			match_about_blank: true,
-			match_origin_as_fallback: true,
-		},
+		// NOTE: `world: "MAIN"` does not work with crxjs, we have to load it in the extension inject script instead. See `inject.js`
+		// {
+		// 	matches: ["<all_urls>"],
+		// 	js: [
+		// 		"lib/single-file-hooks-frames.js"
+		// 	],
+		// 	run_at: "document_start",
+		// 	all_frames: true,
+		// 	match_about_blank: true,
+		// 	match_origin_as_fallback: true,
+		// 	world: "MAIN"
+		// },
 		{
 			matches: ["<all_urls>"],
 			js: [
