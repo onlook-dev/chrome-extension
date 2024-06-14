@@ -1,5 +1,6 @@
 import { initializeMixpanel } from "$lib/mixpanel";
 import { BackgroundEventHandlers } from "./events";
+import "/lib/single-file-background.js";
 
 try {
 	const handler = new BackgroundEventHandlers()

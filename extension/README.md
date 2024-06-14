@@ -50,4 +50,6 @@ $ npm run build
 2. Enable Developer Mode by clicking the toggle switch next to `Developer mode`.
 3. Click the `LOAD UNPACKED` button and select the `/dist` directory.
 
-![Example](https://wd.imgix.net/image/BhuKGJaIeLNPW9ehns59NfwqKxF2/vOu7iPbaapkALed96rzN.png?auto=format&w=571)
+## SingleFile
+We're using the [SingleFile](https://github.com/gildas-lormeau/SingleFile-MV3) library which is under `lib` at the root level. This is because of the setup here:
+https://github.com/gildas-lormeau/SingleFile-MV3/wiki/How-to-integrate-the-API-of-SingleFile-Lite-into-an-extension

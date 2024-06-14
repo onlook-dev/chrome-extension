@@ -27,6 +27,39 @@ export default defineManifest(async env => ({
 			matches: ['<all_urls>'],
 			js: ['src/extension/content/index.ts'],
 			run_at: 'document_idle'
+		},
+		{
+			matches: ["<all_urls>"],
+			js: [
+				"lib/chrome-browser-polyfill.js",
+				"lib/single-file-frames.js",
+				"lib/single-file-extension-frames.js"
+			],
+			run_at: "document_start",
+			all_frames: true,
+			match_about_blank: true,
+			match_origin_as_fallback: true
+		},
+		{
+			matches: ["<all_urls>"],
+			js: [
+				"lib/single-file-hooks-frames.js"
+			],
+			run_at: "document_start",
+			all_frames: true,
+			match_about_blank: true,
+			match_origin_as_fallback: true,
+		},
+		{
+			matches: ["<all_urls>"],
+			js: [
+				"lib/chrome-browser-polyfill.js",
+				"lib/single-file-bootstrap.js",
+				"lib/single-file-extension-core.js",
+				"lib/single-file.js"
+			],
+			run_at: "document_start",
+			all_frames: false
 		}
 	],
 	background: {
@@ -46,6 +79,10 @@ export default defineManifest(async env => ({
 		{
 			resources: ['src/lib/editor/*'],
 			matches: ['<all_urls>']
+		},
+		{
+			resources: ["lib/single-file-hooks-frames.js"],
+			matches: ["<all_urls>"]
 		}
 	],
 	key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0ZbbiZr79FXRJD9Z+jGZsskQstsnkpMHy2yh0HO/udWPFWx/RMjztm/5WQ5p1rIKdBPPZ+xx0WmBZte8OGJ+Ls8MWXo9oUIsKFfxeD8eFNEpaFNKZ6hCvck761/ZXaMN4kCsnwzadR6dTcEoyuPgdUjsrMzDOdCgBgornITel+YfgML6rJb0dBjoTiI1SHGXt5jhO18hjFI9knNtTt2zrQK773YV3fWFKkqCWwWSSlmc0vsivKVgSAie6olRNmV4UyfO7iosFDyA2Q4UoTgMovrwy233OXPi2H24VVXqRYF8wNn1VnakoQWdp+n8zcju+iyPdvjM1w40uv8Hvxnb9wIDAQAB',
