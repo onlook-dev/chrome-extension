@@ -23,7 +23,7 @@
   export let select: (
     e: Event,
     node: HTMLElement,
-    nodeRef: HTMLDivElement
+    nodeRef: HTMLDivElement,
   ) => void;
   export let mouseEnter: (e: Event, node: HTMLElement) => void;
 
@@ -144,7 +144,7 @@
         on:mouseover={(e) => mouseEnter(e, node)}
         class=" {hoverClass} {selectedClass} {paddingY}"
       >
-        {node.nodeValue}
+        {node?.nodeValue}
       </div>
     {:else if isEmpty}
       <div
@@ -171,7 +171,7 @@
       >
         <NodeIcon {node} {iconClass} />
         <span class="text-ellipsis overflow-hidden">
-          {node.firstChild.nodeValue || name}
+          {node.firstChild?.nodeValue || name}
         </span>
       </div>
     {:else}
