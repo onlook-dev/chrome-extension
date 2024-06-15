@@ -111,7 +111,6 @@ export class EditEventService {
     /**
      * Save as new element in activity. Store raw string.
      */
-    console.log('before insert', editEvent, activity)
     const newVal = { ...editEvent.newVal } as StructureVal
     activity.insertChildChanges = {
       ...activity.insertChildChanges,
@@ -123,7 +122,6 @@ export class EditEventService {
         updatedAt: new Date().toISOString()
       } as ChangeValues
     }
-    console.log('after', activity)
     return activity
   }
 
