@@ -130,15 +130,17 @@ export class EditEventService {
     * If the remove element is an inserted component, remove it from insertChildChanges
     * Else, add as a new deleteChildChange
     */
+    console.log('editEvent', editEvent)
     const newVal = { ...editEvent.newVal } as StructureVal
     const childSelector = newVal.childSelector
     if (
       activity.insertChildChanges &&
       activity.insertChildChanges[childSelector] &&
-      (activity.insertChildChanges[childSelector].newVal as StructureVal).componentId &&
-      (activity.insertChildChanges[childSelector].newVal as StructureVal).componentId === newVal.componentId
+      (activity.insertChildChanges[childSelector].newVal as StructureVal).componentId
     ) {
       delete activity.insertChildChanges[childSelector]
+    } else if (newVal.componentId) {
+      // Don't record if inserted component. Note: When we start writing to code, be sure to remove componentId.
     } else {
       if (!activity.deleteChildChanges) {
         activity.deleteChildChanges = {}
