@@ -130,7 +130,6 @@ export class EditEventService {
     * If the remove element is an inserted component, remove it from insertChildChanges
     * Else, add as a new deleteChildChange
     */
-    console.log('editEvent', editEvent)
     const newVal = { ...editEvent.newVal } as StructureVal
     const childSelector = newVal.childSelector
     if (
