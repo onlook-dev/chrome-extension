@@ -143,6 +143,15 @@ function applyInsertEvent(event: EditEvent, element: HTMLElement) {
 
   if (!child) return;
   const pos = parseInt(newVal.index);
+  // If child exists inside parent using childSelector, replace it
+  if (newVal.childSelector) {
+    const oldChild = element.querySelector(newVal.childSelector) as HTMLElement;
+    if (oldChild) {
+      element.replaceChild(child, oldChild);
+      return;
+    }
+  }
+
   if (pos < element.children.length) {
     element.insertBefore(child, element.children[pos]);
   } else {
