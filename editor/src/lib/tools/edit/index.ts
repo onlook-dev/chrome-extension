@@ -1,4 +1,4 @@
-import { ONLOOK_EDITABLE } from '$lib/constants';
+import { DATA_ONLOOK_COMPONENT_ID, ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, layersWeakMap, } from '$lib/states/editor';
 import { EditType, type StructureVal } from '$shared/models';
 import { OverlayManager } from '../selection/overlay';
@@ -6,6 +6,9 @@ import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getDataOnlookComponentId, getDataOnlookId, getUniqueSelector } from '../utilities';
 import { handleEditEvent } from './handleEvents';
 import { DragManager } from './drag';
+import { DATA_ONLOOK_ID } from '$shared/constants';
+import { nanoid } from 'nanoid';
+
 import type { Tool } from '../index';
 
 export class EditTool implements Tool {
@@ -15,7 +18,7 @@ export class EditTool implements Tool {
 
 	elResizeObserver: ResizeObserver;
 	oldText: string | undefined;
-	copiedElement: HTMLElement | undefined;
+	copiedElements: HTMLElement[] = [];
 	lastKnownScrollPosition = 0;
 	ticking = false;
 
@@ -236,14 +239,19 @@ export class EditTool implements Tool {
 	copyElement = () => {
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return;
-		this.copiedElement = selected[0]
+		this.copiedElements = selected
 	};
 
 	pasteElement = () => {
-		if (!this.copiedElement) return;
-		const clonedElement = this.copiedElement.cloneNode(true) as HTMLElement;
-		this.insertElement(clonedElement);
-		this.simulateClick([clonedElement]);
+		console.log(this.copiedElements)
+		if (!this.copiedElements.length) return;
+		this.copiedElements.forEach((copiedEl) => {
+			const clonedElement = copiedEl.cloneNode(true) as HTMLElement;
+			clonedElement.removeAttribute(DATA_ONLOOK_ID);
+			clonedElement.removeAttribute(DATA_ONLOOK_COMPONENT_ID);
+			clonedElement.setAttribute(DATA_ONLOOK_COMPONENT_ID, `${clonedElement.tagName.toLowerCase()}-${nanoid()}`)
+			this.insertElement(clonedElement);
+		})
 	};
 
 	deleteElement = () => {
