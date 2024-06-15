@@ -236,25 +236,35 @@ export class EditTool implements Tool {
 		this.handleStructureChange(insertedEl, EditType.INSERT_CHILD, selectedEl, getDataOnlookComponentId(el))
 	};
 
-	copyElement = () => {
+	copyElements = () => {
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return;
-		this.copiedElements = selected
+		const clonedElements = selected.map((el) => this.cloneElement(el));
+		this.copiedElements = clonedElements;
 	};
 
-	pasteElement = () => {
+	cloneElement = (el) => {
+		const clonedElement = el.cloneNode(true) as HTMLElement;
+		clonedElement.removeAttribute(DATA_ONLOOK_ID);
+		clonedElement.removeAttribute(DATA_ONLOOK_COMPONENT_ID);
+		clonedElement.setAttribute(DATA_ONLOOK_COMPONENT_ID, `${clonedElement.tagName.toLowerCase()}-${nanoid()}`)
+		return clonedElement;
+	};
+
+	cutElements = () => {
+		this.copyElements();
+		this.deleteElements();
+	}
+
+	pasteElements = () => {
 		console.log(this.copiedElements)
 		if (!this.copiedElements.length) return;
-		this.copiedElements.forEach((copiedEl) => {
-			const clonedElement = copiedEl.cloneNode(true) as HTMLElement;
-			clonedElement.removeAttribute(DATA_ONLOOK_ID);
-			clonedElement.removeAttribute(DATA_ONLOOK_COMPONENT_ID);
-			clonedElement.setAttribute(DATA_ONLOOK_COMPONENT_ID, `${clonedElement.tagName.toLowerCase()}-${nanoid()}`)
-			this.insertElement(clonedElement);
+		this.copiedElements.forEach((el) => {
+			this.insertElement(el);
 		})
 	};
 
-	deleteElement = () => {
+	deleteElements = () => {
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return;
 		selected.forEach((el) => {

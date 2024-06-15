@@ -134,6 +134,7 @@ export class EditEventService {
     */
     const newVal = { ...editEvent.newVal } as StructureVal
     const childSelector = newVal.childSelector
+    console.log('Remove change', editEvent, activity)
     if (
       activity.insertChildChanges &&
       activity.insertChildChanges[childSelector] &&

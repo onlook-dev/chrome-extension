@@ -209,4 +209,19 @@
 			</p>
 		{/each}
 	{/if}
+
+	{#if activity.deleteChildChanges && Object.keys(activity.deleteChildChanges).length > 0}
+		{#each Object.values(activity.deleteChildChanges) as deleteChange}
+			<p>
+				<span class="text-primary">{userName}</span>
+				removed element at position
+				<span class="text-brand">{getStructureValue(deleteChange.newVal).index}</span>
+			</p>
+			<iframe
+				title="inserted element"
+				class="w-full h-full items-center border"
+				srcdoc={getStructureValue(deleteChange.oldVal).content}
+			></iframe>
+		{/each}
+	{/if}
 </div>
