@@ -233,7 +233,8 @@ export class EditTool implements Tool {
 		const insertedEl = selectedEl.lastElementChild as HTMLElement;
 
 		// Emit event
-		this.handleStructureChange(insertedEl, EditType.INSERT_CHILD, selectedEl, getDataOnlookComponentId(el))
+		const childIndex = Array.from(selectedEl.children).indexOf(insertedEl).toString();
+		this.handleStructureChange(insertedEl, EditType.INSERT_CHILD, selectedEl, getDataOnlookComponentId(el), childIndex)
 	};
 
 	copyElements = () => {
@@ -257,7 +258,6 @@ export class EditTool implements Tool {
 	}
 
 	pasteElements = () => {
-		console.log(this.copiedElements)
 		if (!this.copiedElements.length) return;
 		this.copiedElements.forEach((el) => {
 			this.insertElement(el);
@@ -271,24 +271,24 @@ export class EditTool implements Tool {
 			const componentId = getDataOnlookComponentId(el);
 			if (componentId) {
 				const parent = el.parentElement;
-				this.handleStructureChange(el, EditType.REMOVE_CHILD, parent, componentId)
+				const childIndex = Array.from(parent.children).indexOf(el).toString();
 				parent.removeChild(el);
+				this.handleStructureChange(el, EditType.REMOVE_CHILD, parent, componentId, childIndex)
 			} else {
 				console.warn("Can only delete custom elements")
 			}
 		});
 	};
 
-	handleStructureChange = (el, editType, parent, componentId?: string) => {
+	handleStructureChange = (el, editType, parent, componentId?: string, index?: string) => {
 		const xmlStr = (new XMLSerializer).serializeToString(el);
 		const childSelector = getUniqueSelector(el);
 		const childPath = getDataOnlookId(el);
-		const index = Array.from(parent.children).indexOf(el).toString();
 
 		const deleteVal = {
 			childSelector,
 			childPath,
-			index: index,
+			index,
 			componentId,
 			content: '',
 		} as StructureVal;

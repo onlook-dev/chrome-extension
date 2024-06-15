@@ -141,7 +141,7 @@ function applyInsertEvent(event: EditEvent, element: HTMLElement) {
   const doc = parser.parseFromString(newVal.content, "application/xml");
   const child = doc.documentElement
 
-  if (!child) return;
+  if (!child || !element) return;
   const pos = parseInt(newVal.index);
   // If child exists inside parent using childSelector, replace it
   if (newVal.childSelector) {

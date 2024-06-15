@@ -73,10 +73,7 @@
 						class="px-2"
 						on:click={() => {
 							if (!project.githubSettings || !activity.path) return;
-							window.open(
-								getGitHubPath(project.githubSettings, activity.path, activity.snapshot),
-								'_blank'
-							);
+							window.open(getGitHubPath(project.githubSettings, activity.path), '_blank');
 						}}
 					>
 						<GithubLogo class="w-4 h-4" />
