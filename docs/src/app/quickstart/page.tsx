@@ -101,20 +101,20 @@ export default function DocumentationPage() {
         <div className="flex-1 overflow-auto p-8">
           <div className="mx-auto max-w-3xl space-y-8">
             <div>
-              <h1 className="text-3xl font-bold">Introduction to Acme Docs</h1>
+              <h1 className="text-3xl font-bold">Introduction to Onlook</h1>
               <p className="mt-2 text-gray-500 dark:text-gray-400">
-                Welcome to the Acme Docs, your comprehensive guide to building modern web applications with our powerful
+                Welcome to the Onlook documentation, the first developer docs for designers
                 framework.
               </p>
             </div>
             <div>
               <h2 className="text-2xl font-bold">Getting Started</h2>
               <p className="mt-2 text-gray-500 dark:text-gray-400">
-                To get started with Acme Docs, follow these simple steps:
+                To get started with Onlook, follow these simple steps:
               </p>
               <ol className="mt-4 space-y-2 text-gray-500 dark:text-gray-400">
                 <li>
-                  <span className="font-medium text-gray-900 dark:text-gray-50">1. Install the framework</span>-
+                  <span className="font-medium text-gray-900 dark:text-gray-50">1. Install the extension</span>-
                   Download the latest version of Acme Docs and install it using npm or yarn.
                 </li>
                 <li>
@@ -122,7 +122,7 @@ export default function DocumentationPage() {
                   Acme Docs CLI to quickly scaffold a new project with all the necessary files and configurations.
                 </li>
                 <li>
-                  <span className="font-medium text-gray-900 dark:text-gray-50">3. Explore the documentation</span>-
+                  <span className="font-medium text-gray-900 dark:text-gray-50">3. Publish project</span>-
                   Browse through the comprehensive documentation to learn about the various features and capabilities of
                   Acme Docs.
                 </li>
