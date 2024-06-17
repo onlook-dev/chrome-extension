@@ -111,7 +111,6 @@ export class EditEventService {
     /**
      * Save as new element in activity. Store raw string.
      */
-
     const newVal = { ...editEvent.newVal } as StructureVal
     activity.insertChildChanges = {
       ...activity.insertChildChanges,
@@ -123,7 +122,6 @@ export class EditEventService {
         updatedAt: new Date().toISOString()
       } as ChangeValues
     }
-
     return activity
   }
 
@@ -134,13 +132,10 @@ export class EditEventService {
     */
     const newVal = { ...editEvent.newVal } as StructureVal
     const childSelector = newVal.childSelector
-    if (
-      activity.insertChildChanges &&
-      activity.insertChildChanges[childSelector] &&
-      (activity.insertChildChanges[childSelector].newVal as StructureVal).componentId &&
-      (activity.insertChildChanges[childSelector].newVal as StructureVal).componentId === newVal.componentId
-    ) {
+    if (activity.insertChildChanges && activity.insertChildChanges[childSelector]) {
       delete activity.insertChildChanges[childSelector]
+    } else if (newVal.componentId) {
+      // Don't record if inserted component. Note: When we start writing to code, be sure to remove componentId.
     } else {
       if (!activity.deleteChildChanges) {
         activity.deleteChildChanges = {}
@@ -175,11 +170,7 @@ export class EditEventService {
     }
 
     // Check if this is related to an inserted component
-    if (
-      activity.insertChildChanges &&
-      activity.insertChildChanges[childSelector] &&
-      (activity.insertChildChanges[childSelector].newVal as StructureVal).componentId === newVal.componentId
-    ) {
+    if (activity.insertChildChanges && activity.insertChildChanges[childSelector]) {
       // Update inserted component index
       (activity.insertChildChanges[childSelector].newVal as StructureVal).index = newVal.index;
       (activity.insertChildChanges[childSelector]).updatedAt = new Date().toISOString();

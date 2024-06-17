@@ -183,7 +183,7 @@
         <Textarea
             class="h-8 min-h-8 max-h-8 resize-none m-0 text-xs p-0 ring-0 border-0 focus:border-0 focus:ring-0 active:border-0 active:ring-0 focus-visible:ring-0 focus-visible:border-0"
             placeholder="Type what you'd like to change..."
-            maxlength={140}
+            maxlength={500}
             on:keypress={(event) => {
                 if (event.key === "Enter") {
                     submitMessage(event);

@@ -1,4 +1,4 @@
-import { ONLOOK_EDITABLE } from '$lib/constants';
+import { DATA_ONLOOK_COMPONENT_ID, ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, layersWeakMap, } from '$lib/states/editor';
 import { EditType, type StructureVal } from '$shared/models';
 import { OverlayManager } from '../selection/overlay';
@@ -6,6 +6,9 @@ import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getDataOnlookComponentId, getDataOnlookId, getUniqueSelector } from '../utilities';
 import { handleEditEvent } from './handleEvents';
 import { DragManager } from './drag';
+import { DATA_ONLOOK_ID } from '$shared/constants';
+import { nanoid } from 'nanoid';
+
 import type { Tool } from '../index';
 
 export class EditTool implements Tool {
@@ -15,7 +18,7 @@ export class EditTool implements Tool {
 
 	elResizeObserver: ResizeObserver;
 	oldText: string | undefined;
-	copiedElement: HTMLElement | undefined;
+	copiedElements: HTMLElement[] = [];
 	lastKnownScrollPosition = 0;
 	ticking = false;
 
@@ -230,47 +233,62 @@ export class EditTool implements Tool {
 		const insertedEl = selectedEl.lastElementChild as HTMLElement;
 
 		// Emit event
-		this.handleStructureChange(insertedEl, EditType.INSERT_CHILD, selectedEl, getDataOnlookComponentId(el))
+		const childIndex = Array.from(selectedEl.children).indexOf(insertedEl).toString();
+		this.handleStructureChange(insertedEl, EditType.INSERT_CHILD, selectedEl, getDataOnlookComponentId(el), childIndex)
 	};
 
-	copyElement = () => {
+	copyElements = () => {
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return;
-		this.copiedElement = selected[0]
+		const clonedElements = selected.map((el) => this.cloneElement(el));
+		this.copiedElements = clonedElements;
 	};
 
-	pasteElement = () => {
-		if (!this.copiedElement) return;
-		const clonedElement = this.copiedElement.cloneNode(true) as HTMLElement;
-		this.insertElement(clonedElement);
-		this.simulateClick([clonedElement]);
+	cloneElement = (el) => {
+		const clonedElement = el.cloneNode(true) as HTMLElement;
+		clonedElement.removeAttribute(DATA_ONLOOK_ID);
+		clonedElement.removeAttribute(DATA_ONLOOK_COMPONENT_ID);
+		clonedElement.setAttribute(DATA_ONLOOK_COMPONENT_ID, `${clonedElement.tagName.toLowerCase()}-${nanoid()}`)
+		return clonedElement;
 	};
 
-	deleteElement = () => {
+	cutElements = () => {
+		this.copyElements();
+		this.deleteElements();
+	}
+
+	pasteElements = () => {
+		if (!this.copiedElements.length) return;
+		this.copiedElements.forEach((el) => {
+			this.insertElement(el);
+		})
+	};
+
+	deleteElements = () => {
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return;
 		selected.forEach((el) => {
 			const componentId = getDataOnlookComponentId(el);
 			if (componentId) {
 				const parent = el.parentElement;
-				this.handleStructureChange(el, EditType.REMOVE_CHILD, parent, componentId)
+				const childIndex = Array.from(parent.children).indexOf(el).toString();
 				parent.removeChild(el);
+				this.handleStructureChange(el, EditType.REMOVE_CHILD, parent, componentId, childIndex)
 			} else {
 				console.warn("Can only delete custom elements")
 			}
 		});
 	};
 
-	handleStructureChange = (el, editType, parent, componentId?: string) => {
+	handleStructureChange = (el, editType, parent, componentId?: string, index?: string) => {
 		const xmlStr = (new XMLSerializer).serializeToString(el);
 		const childSelector = getUniqueSelector(el);
 		const childPath = getDataOnlookId(el);
-		const index = Array.from(parent.children).indexOf(el).toString();
 
 		const deleteVal = {
 			childSelector,
 			childPath,
-			index: index,
+			index,
 			componentId,
 			content: '',
 		} as StructureVal;

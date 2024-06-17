@@ -49,10 +49,11 @@ export class HotKeys {
           e.stopPropagation();
         },
         // TODO: This is disabled for a separate task. Need to handle edge cases.
-        // [`${this.metaKey}+c`]: () => editTool.copyElement(),
-        // [`${this.metaKey}+v`]: () => editTool.pasteElement(),
+        [`${this.metaKey}+c`]: () => editTool.copyElements(),
+        [`${this.metaKey}+x`]: () => editTool.cutElements(),
+        [`${this.metaKey}+v`]: () => editTool.pasteElements(),
         [`${this.deleteKey}`]: (e) => {
-          editTool.deleteElement()
+          editTool.deleteElements()
           e.preventDefault();
           e.stopPropagation();
         },
