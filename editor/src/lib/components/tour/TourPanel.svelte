@@ -1,4 +1,11 @@
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+<script lang="ts">
+    let tourVisible = true;
+</script>
+
+<div
+    class="{tourVisible ? 'visible' : 'invisible'} 
+        fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+>
     <div
         class="border bg-black rounded-lg shadow-lg w-full max-w-3xl p-8 md:p-12"
     >
@@ -134,6 +141,7 @@
             <div class="flex justify-end">
                 <button
                     class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                    on:click={() => (tourVisible = false)}
                 >
                     Got it, let's get started!
                 </button>

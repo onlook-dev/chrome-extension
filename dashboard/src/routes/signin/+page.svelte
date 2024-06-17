@@ -1,14 +1,16 @@
 <script>
 	import { Button } from '$lib/components/ui/button';
-	import * as Card from '$lib/components/ui/card';
-	import BackgroundImage from '$lib/assets/signin-bg.png';
 	import { DashboardRoutes } from '$shared/constants';
 	import { signInWithGoogle } from '$lib/firebase/auth';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { userStore } from '$lib/utils/store';
+
+	import * as Card from '$lib/components/ui/card';
 	import Google from '~icons/devicon/google';
 	import Spinner from '$lib/components/ui/spinner';
+	import BackgroundImage from '$lib/assets/signin-bg.png';
+	import LogoText from '$lib/assets/logo-text.png';
 
 	let loading = false;
 
@@ -22,18 +24,22 @@
 </script>
 
 <div
-	class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-sky-200 via-indigo-200 to-pink-200"
+	class="flex flex-col items-center justify-center min-h-screen"
 	style="background-image: url({BackgroundImage}); background-size: cover; background-position: center;"
 >
-	<Card.Root class="w-2/3 h-2/3 max-w-[26rem] max-h-[25rem] rounded-none px-4">
-		<Card.Header class="text-light">
-			<h1 class="text-2xl">Onlook</h1>
-			<h2 class="text-xl text-tertiary">Where Creativity meets Code</h2>
+	<Card.Root
+		class="w-2/3 h-2/3 max-w-[24rem] max-h-[20rem] rounded-lg p-2 bg-transparent/90 shadow"
+	>
+		<Card.Header class="text-light gap-4">
+			<img src={LogoText} alt="Onlook Logo" class="object-contain h-3" />
+			<h2 class="text-tertiary text-center text-sm">
+				Sign in to design on any site for free –<br /> No credit card required
+			</h2>
 		</Card.Header>
 
 		<Card.Content class="space-y-4">
 			<Button
-				class="w-full space-x-2 h-10 font-normal bg-surface text-state-default rounded-none border-none"
+				class="border w-full space-x-2 h-10 font-normal bg-surface text-state-default rounded-none"
 				variant="outline"
 				on:click={() => {
 					loading = true;
@@ -48,18 +54,18 @@
 					<span>Sign in with Google</span>
 				{/if}</Button
 			>
-			<p class="text-sm text-brand">
-				If you have a GitHub email associated with your Gmail, be sure to sign in with it. If not,
-				no worries.
-			</p>
 		</Card.Content>
 		<Card.Footer>
-			<p class="text-sm font-light">
-				<span class="text-tertiary">By clicking on Sign-In, you agree to Onlook’s</span>
+			<p class="text-xs font-light text-tertiary">
+				<span class="">By clicking on Sign-In, you agree to Onlook’s</span>
 				<!-- TODO: Add terms of service -->
-				<a href={DashboardRoutes.PRIVACY} target="_blank">Terms of Service </a>
+				<a class="text-stone-300/80" href={DashboardRoutes.PRIVACY} target="_blank"
+					>Terms of Service
+				</a>
 				<span class="text-tertiary">and</span>
-				<a href={DashboardRoutes.PRIVACY} target="_blank">Privacy Policy</a>.
+				<a class="text-stone-300/80" href={DashboardRoutes.PRIVACY} target="_blank"
+					>Privacy Policy</a
+				>.
 			</p>
 		</Card.Footer>
 	</Card.Root>
