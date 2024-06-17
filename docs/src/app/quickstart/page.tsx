@@ -5,13 +5,13 @@ import { Search } from "lucide-react"
 
 export default function DocumentationPage() {
   return (
-    <div className="flex h-screen w-screen flex-col">
-      <header className="sticky top-0 z-50 flex flex-1 w-full items-center border-b bg-white px-6 shadow-sm dark:border-gray-800 dark:bg-gray-950">
+    <div className="flex h-full w-screen flex-col overscroll-none">
+      <header className="sticky top-0 z-50 flex w-full items-center border-b bg-white px-6 shadow-sm dark:border-gray-800 dark:bg-gray-950">
         <Link className="flex items-center gap-4" href="#">
           <Logo width={25} height={25} />
           <span className="text-lg font-semibold">Onlook Docs</span>
         </Link>
-        <nav className="ml-auto flex items-center gap-4">
+        <nav className="h-12 ml-auto flex items-center gap-4">
           <Link className="text-sm font-medium hover:underline underline-offset-4" href="#">
             Docs
           </Link>
