@@ -21,8 +21,8 @@
 		</Dialog.Header>
 		<Dialog.Description>
 			<p>
-				<span class="text-[#00DEBA]">Add your URL to create a new project. </span>
-				<span>You can also click the Onlook icon on the page to quick start.</span>
+				<span>Add your URL to create a new project or try a </span>
+				<span class="text-[#00DEBA]">Demo Project</span>
 			</p>
 		</Dialog.Description>
 
