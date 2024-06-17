@@ -2,6 +2,7 @@ import Link from "next/link"
 import Logo from "@/components/logo"
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
+import { ModeToggle } from "@/components/mode-toggle"
 
 export default function DocumentationPage() {
   return (
@@ -12,6 +13,8 @@ export default function DocumentationPage() {
           <span className="text-lg font-semibold">Onlook Docs</span>
         </Link>
         <nav className="h-12 ml-auto flex items-center gap-4">
+          <ModeToggle />
+
           <Link className="text-sm font-medium hover:underline underline-offset-4" href="#">
             Docs
           </Link>

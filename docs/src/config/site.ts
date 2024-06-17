@@ -12,7 +12,7 @@ export const siteConfig: SiteConfig = {
     author: "https://onlook.dev",
   },
   links: {
-    github: "",
+    quickstart: "/quickstart",
   },
   ogImage: `${env.NEXT_PUBLIC_APP_URL}/og.jpg`,
 }
