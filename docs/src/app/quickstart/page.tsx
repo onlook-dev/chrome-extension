@@ -14,7 +14,6 @@ export default function DocumentationPage() {
         </Link>
         <nav className="h-12 ml-auto flex items-center gap-4">
           <ModeToggle />
-
           <Link className="text-sm font-medium hover:underline underline-offset-4" href="#">
             Docs
           </Link>
