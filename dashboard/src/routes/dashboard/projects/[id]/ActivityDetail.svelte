@@ -11,6 +11,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import * as Tabs from '$lib/components/ui/tabs';
 
 	import type {
 		Activity,
@@ -190,11 +191,25 @@
 				added element at position
 				<span class="text-brand">{getStructureValue(insertChange.newVal).index}</span>
 			</p>
-			<iframe
-				title="inserted element"
-				class="w-full h-full items-center border"
-				srcdoc={getStructureValue(insertChange.newVal).content}
-			></iframe>
+
+			<Tabs.Root value="preview" class="w-full">
+				<Tabs.List class="grid w-full grid-cols-2">
+					<Tabs.Trigger value="preview">Preview</Tabs.Trigger>
+					<Tabs.Trigger value="code">Code</Tabs.Trigger>
+				</Tabs.List>
+				<Tabs.Content value="preview"
+					><iframe
+						title="inserted element"
+						class="w-full h-full items-center border"
+						srcdoc={getStructureValue(insertChange.newVal).content}
+					></iframe></Tabs.Content
+				>
+				<Tabs.Content class="w-full h-full" value="code"
+					><p class="items-center border overflow-auto">
+						{getStructureValue(insertChange.newVal).content}
+					</p></Tabs.Content
+				>
+			</Tabs.Root>
 		{/each}
 	{/if}
 
