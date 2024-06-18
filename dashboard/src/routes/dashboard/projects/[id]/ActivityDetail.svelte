@@ -164,7 +164,7 @@
 
 			<CodeBlock
 				slot="code"
-				language="html"
+				language="css"
 				code={getStyleChangesAsCss(Object.values(activity.styleChanges))}
 			/>
 		</ChangeView>
