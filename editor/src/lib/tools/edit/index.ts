@@ -227,15 +227,15 @@ export class EditTool implements Tool {
 		if (!el) return;
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return
-		const selectedEl = selected[0];
+		const parent = selected[0];
 
 		// Insert element into childrens list 
-		selectedEl.appendChild(el);
-		const insertedEl = selectedEl.lastElementChild as HTMLElement;
+		parent.appendChild(el);
+		const child = parent.lastElementChild;
 
 		// Emit event
-		const childIndex = Array.from(selectedEl.children).indexOf(insertedEl).toString();
-		this.handleStructureChange(insertedEl, EditType.INSERT_CHILD, selectedEl, getDataOnlookComponentId(el), childIndex)
+		const childIndex = Array.from(parent.children).indexOf(child).toString();
+		this.handleStructureChange(child, parent, EditType.INSERT_CHILD, childIndex)
 	};
 
 	copyElements = () => {
@@ -268,24 +268,24 @@ export class EditTool implements Tool {
 	deleteElements = () => {
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return;
-		selected.forEach((el) => {
-			const componentId = getDataOnlookComponentId(el);
-			if (componentId) {
-				const parent = el.parentElement;
-				const childIndex = Array.from(parent.children).indexOf(el).toString();
-				parent.removeChild(el);
-				this.handleStructureChange(el, EditType.REMOVE_CHILD, parent, componentId, childIndex)
-			} else {
-				console.warn("Can only delete custom elements")
+		selected.forEach((child) => {
+			const componentId = getDataOnlookComponentId(child);
+			if (!componentId) {
+				console.warn("Deleting a non-custom element is not supported")
+				return
 			}
+			const parent = child.parentElement;
+			const childIndex = Array.from(parent.children).indexOf(child).toString();
+			parent.removeChild(child);
+			this.handleStructureChange(child, parent, EditType.REMOVE_CHILD, childIndex)
 		});
 	};
 
-	handleStructureChange = (el, editType, parent, componentId?: string, index?: string) => {
-		const content = getCustomComponentContent(el)
-		const selector = getUniqueSelector(el);
-		const path = getDataOnlookId(el);
-
+	handleStructureChange = (child, parent, editType, index?: string) => {
+		const content = getCustomComponentContent(child)
+		const selector = getUniqueSelector(child);
+		const path = getDataOnlookId(child);
+		const componentId = getDataOnlookComponentId(child);
 		const deleteVal = {
 			selector,
 			path,

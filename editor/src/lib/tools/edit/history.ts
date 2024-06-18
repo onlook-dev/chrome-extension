@@ -32,7 +32,9 @@ export function addToHistory(event: EditEvent) {
     const lastEvent = history[history.length - 1];
     if (
       // TODO: Revisit this with other structural changes
-      lastEvent.editType !== EditType.INSERT_CHILD &&
+      (lastEvent.editType === EditType.STYLE ||
+        lastEvent.editType === EditType.CLASS ||
+        lastEvent.editType === EditType.TEXT) &&
       lastEvent.editType === event.editType &&
       lastEvent.selector === event.selector &&
       compareKeys(lastEvent.newVal as Record<string, string>, event.newVal as Record<string, string>)
@@ -77,41 +79,25 @@ export function redoEvent(event: EditEvent) {
 }
 
 export function createReverseEvent(event: EditEvent): EditEvent {
+  const reverseEvent: EditEvent = {
+    ...event,
+    newVal: event.oldVal,
+    oldVal: event.newVal,
+  };
   switch (event.editType) {
     case EditType.INSERT_CHILD:
       return {
-        createdAt: event.createdAt,
-        selector: event.selector,
+        ...reverseEvent,
         editType: EditType.REMOVE_CHILD,
-        newVal: event.oldVal,
-        oldVal: event.newVal,
-        path: event.path,
-        componentId: event.componentId,
-        source: event.source,
+
       } as EditEvent;
     case EditType.REMOVE_CHILD:
       return {
-        createdAt: event.createdAt,
-        selector: event.selector,
+        ...reverseEvent,
         editType: EditType.INSERT_CHILD,
-        newVal: event.oldVal,
-        oldVal: event.newVal,
-        path: event.path,
-        componentId: event.componentId,
-        source: event.source,
       } as EditEvent;
-    case EditType.STYLE || EditType.TEXT:
     default:
-      return {
-        createdAt: event.createdAt,
-        selector: event.selector,
-        editType: event.editType,
-        newVal: event.oldVal,
-        oldVal: event.newVal,
-        path: event.path,
-        componentId: event.componentId,
-        source: event.source,
-      } as EditEvent;
+      return reverseEvent;
   }
 }
 
@@ -146,6 +132,7 @@ function applyInsertEvent(event: EditEvent, element: HTMLElement) {
 
   if (!child || !element) return;
   const pos = parseInt(newVal.index);
+
   // If child exists inside parent using childSelector, replace it
   if (newVal.selector) {
     const oldChild = element.querySelector(newVal.selector) as HTMLElement;
