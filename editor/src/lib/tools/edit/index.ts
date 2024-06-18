@@ -1,6 +1,6 @@
 import { DATA_ONLOOK_COMPONENT_ID, ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, layersWeakMap, } from '$lib/states/editor';
-import { EditType, type StructureVal } from '$shared/models';
+import { EditType, type ChildVal } from '$shared/models';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getDataOnlookComponentId, getDataOnlookId, getUniqueSelector } from '../utilities';
@@ -8,6 +8,7 @@ import { handleEditEvent } from './handleEvents';
 import { DragManager } from './drag';
 import { DATA_ONLOOK_ID } from '$shared/constants';
 import { nanoid } from 'nanoid';
+import { getCustomComponentContent } from '$shared/helpers';
 
 import type { Tool } from '../index';
 
@@ -61,8 +62,6 @@ export class EditTool implements Tool {
 	}
 
 	onClick(e: MouseEvent): void {
-		editorPanelVisible.set(true);
-
 		this.selectorEngine.handleClick(e);
 		this.overlayManager.clear();
 		this.elResizeObserver.disconnect();
@@ -75,10 +74,8 @@ export class EditTool implements Tool {
 
 	onDoubleClick(e: MouseEvent): void {
 		if (this.selectorEngine.editing) this.removeEditability({ target: this.selectorEngine.editing });
-		editorPanelVisible.set(true);
-		this.overlayManager.clear()
-		this.elResizeObserver.disconnect();
 		this.selectorEngine.handleDoubleClick(e);
+		this.overlayManager.clear();
 		this.addEditability(this.selectorEngine.editing);
 	}
 
@@ -186,19 +183,6 @@ export class EditTool implements Tool {
 		}
 	}
 
-	addEditability = (el: HTMLElement) => {
-		if (!el) return;
-		this.oldText = el.textContent;
-		el.setAttribute("contenteditable", "true");
-		el.setAttribute("spellcheck", "true");
-		el.classList.add(ONLOOK_EDITABLE);
-		el.focus();
-
-		el.addEventListener("keydown", this.stopBubbling);
-		el.addEventListener("blur", this.removeEditability);
-		el.addEventListener("input", this.handleInput);
-	}
-
 	handleInput = ({ target }) => {
 		const newText = target.textContent
 		handleEditEvent({
@@ -211,8 +195,20 @@ export class EditTool implements Tool {
 
 	stopBubbling = (e) => e.key != "Escape" && e.stopPropagation();
 
+	addEditability = (el: HTMLElement) => {
+		if (!el) return;
+		this.oldText = el.textContent;
+		el.setAttribute("contenteditable", "true");
+		el.setAttribute("spellcheck", "true");
+		el.focus();
+
+		el.addEventListener("keydown", this.stopBubbling);
+		el.addEventListener("blur", this.removeEditability);
+		el.addEventListener("input", this.handleInput);
+		this.overlayManager.updateEditRect(el);
+	}
+
 	removeEditability = ({ target }) => {
-		target.classList.remove(ONLOOK_EDITABLE);
 		target.removeAttribute("contenteditable");
 		target.removeAttribute("spellcheck");
 		target.removeEventListener("blur", this.removeEditability);
@@ -220,21 +216,22 @@ export class EditTool implements Tool {
 		target.removeEventListener("input", this.handleInput);
 		this.oldText = undefined;
 		this.selectorEngine.editingStore.set(undefined);
+		this.overlayManager.removeEditRect();
 	};
 
 	insertElement = (el: HTMLElement) => {
 		if (!el) return;
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return
-		const selectedEl = selected[0];
+		const parent = selected[0];
 
 		// Insert element into childrens list 
-		selectedEl.appendChild(el);
-		const insertedEl = selectedEl.lastElementChild as HTMLElement;
+		parent.appendChild(el);
+		const child = parent.lastElementChild;
 
 		// Emit event
-		const childIndex = Array.from(selectedEl.children).indexOf(insertedEl).toString();
-		this.handleStructureChange(insertedEl, EditType.INSERT_CHILD, selectedEl, getDataOnlookComponentId(el), childIndex)
+		const childIndex = Array.from(parent.children).indexOf(child).toString();
+		this.handleStructureChange(child, parent, EditType.INSERT_CHILD, childIndex)
 	};
 
 	copyElements = () => {
@@ -267,39 +264,39 @@ export class EditTool implements Tool {
 	deleteElements = () => {
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return;
-		selected.forEach((el) => {
-			const componentId = getDataOnlookComponentId(el);
-			if (componentId) {
-				const parent = el.parentElement;
-				const childIndex = Array.from(parent.children).indexOf(el).toString();
-				parent.removeChild(el);
-				this.handleStructureChange(el, EditType.REMOVE_CHILD, parent, componentId, childIndex)
-			} else {
-				console.warn("Can only delete custom elements")
+		selected.forEach((child) => {
+			const componentId = getDataOnlookComponentId(child);
+			if (!componentId) {
+				console.warn("Deleting a non-custom element is not supported")
+				return
 			}
+			const parent = child.parentElement;
+			const childIndex = Array.from(parent.children).indexOf(child).toString();
+			parent.removeChild(child);
+			this.handleStructureChange(child, parent, EditType.REMOVE_CHILD, childIndex)
 		});
 	};
 
-	handleStructureChange = (el, editType, parent, componentId?: string, index?: string) => {
-		const xmlStr = (new XMLSerializer).serializeToString(el);
-		const childSelector = getUniqueSelector(el);
-		const childPath = getDataOnlookId(el);
-
+	handleStructureChange = (child, parent, editType, index?: string) => {
+		const content = getCustomComponentContent(child)
+		const selector = getUniqueSelector(child);
+		const path = getDataOnlookId(child);
+		const componentId = getDataOnlookComponentId(child);
 		const deleteVal = {
-			childSelector,
-			childPath,
+			selector,
+			path,
 			index,
 			componentId,
 			content: '',
-		} as StructureVal;
+		} as ChildVal;
 
 		const insertVal = {
-			childSelector,
-			childPath,
+			selector,
+			path,
 			index,
 			componentId,
-			content: xmlStr,
-		} as StructureVal;
+			content,
+		} as ChildVal;
 
 		// These are the same, just flipped
 		handleEditEvent({

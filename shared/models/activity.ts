@@ -1,4 +1,4 @@
-import type { EditType, StructureVal } from "./editor";
+import type { EditType, ChildVal } from "./editor";
 import type { EventMetadata } from "./eventData";
 
 // All the changes that happen to an element when switched to another element
@@ -36,8 +36,8 @@ export interface ChangeValues {
   key: string;
   createdAt?: string;
   updatedAt?: string;
-  oldVal: string | StructureVal;
-  newVal: string | StructureVal;
+  oldVal: string | ChildVal;
+  newVal: string | ChildVal;
 }
 
 export enum ActivityStatus {

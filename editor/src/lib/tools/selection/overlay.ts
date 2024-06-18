@@ -49,7 +49,6 @@ class RectImpl implements Rect {
 }
 
 class HoverRect extends RectImpl {
-
     constructor() {
         super()
         this.rectElement.setAttribute('stroke-width', '1')
@@ -61,7 +60,6 @@ class HoverRect extends RectImpl {
 }
 
 class ClickRect extends RectImpl {
-
     constructor() {
         super()
         this.rectElement.setAttribute('stroke-width', '2')
@@ -249,11 +247,22 @@ class ClickRect extends RectImpl {
 }
 
 class ParentRect extends RectImpl {
-
     constructor() {
         super()
         this.rectElement.setAttribute('stroke-width', '1')
         this.rectElement.setAttribute('stroke-dasharray', '5')
+    }
+
+    render(rect) {
+        super.render(rect)
+    }
+}
+
+class EditRect extends RectImpl {
+    constructor() {
+        super()
+        this.rectElement.setAttribute('stroke', '#00ff94')
+        this.rectElement.setAttribute('stroke-width', '1')
     }
 
     render(rect) {
@@ -266,12 +275,14 @@ export class OverlayManager {
     hoverRect: HoverRect
     clickedRects: ClickRect[]
     parentRect: ParentRect
+    editRect: EditRect
 
     constructor() {
         this.rectPopover = new RectPopover();
         this.hoverRect = new HoverRect();
         this.clickedRects = [];
         this.parentRect = new ParentRect();
+        this.editRect = new EditRect();
 
         this.rectPopover.shadow.appendChild(this.hoverRect.element)
         this.rectPopover.shadow.appendChild(this.parentRect.element)
@@ -282,6 +293,7 @@ export class OverlayManager {
         this.removeParentRect()
         this.removeHoverRect()
         this.removeClickedRects()
+        this.removeEditRect()
     }
 
     addClickRect = (el: HTMLElement) => {
@@ -297,16 +309,24 @@ export class OverlayManager {
     }
 
     updateParentRect = (el: HTMLElement) => {
-        if (!el || !this.parentRect) return
+        if (!el) return
         const rect = el.getBoundingClientRect()
         this.parentRect.render(rect)
     }
 
     updateHoverRect = (el: HTMLElement) => {
-        if (!el || !this.hoverRect) return
+        if (!el) return
         const rect = el.getBoundingClientRect()
         this.hoverRect.render(rect)
+    }
 
+    updateEditRect = (el: HTMLElement) => {
+        if (!el) return
+        const rect = el.getBoundingClientRect()
+        this.editRect.render(rect)
+        this.clickedRects.forEach(clickRect => {
+            clickRect.updateStrokeColor('#FF0E48')
+        })
     }
 
     hideHoverRect = () => {
@@ -319,6 +339,10 @@ export class OverlayManager {
 
     removeHoverRect = () => {
         this.hoverRect.render({ width: 0, height: 0, top: 0, left: 0 })
+    }
+
+    removeEditRect = () => {
+        this.editRect.render({ width: 0, height: 0, top: 0, left: 0 })
     }
 
     removeClickedRects = () => {

@@ -2,7 +2,7 @@ export type { Project } from './project';
 export type { Team } from './team';
 export type { User } from './user';
 export type { Activity, ChangeValues } from './activity';
-export type { EditEvent, TextVal, StructureVal } from './editor';
+export type { EditEvent, TextVal, ChildVal } from './editor';
 export type { TreeItem, GithubRepo, GithubSettings, GithubAuth, GithubHistory } from './github';
 export type { ProcessedActivity, FileContentData, StyleTranslationInput, TextTranslationInput } from './translation';
 export type { HostData } from './hostData';

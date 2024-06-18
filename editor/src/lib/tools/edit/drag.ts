@@ -7,7 +7,7 @@ import Sortable from 'sortablejs';
 
 import type { OverlayManager } from '../selection/overlay';
 import type { SelectorEngine } from '../selection/selector';
-import type { StructureVal } from '$shared/models/editor';
+import type { ChildVal } from '$shared/models/editor';
 
 export class DragManager {
     selectedSnapshot: HTMLElement[] = [];
@@ -47,6 +47,7 @@ export class DragManager {
     move(el: HTMLElement, newIndex: number): void {
         const parent = el.parentElement;
         if (!parent) return;
+
         const container = dragContainers.get(parent);
         if (!container) return;
 
@@ -95,26 +96,32 @@ export class DragManager {
         dragContainers.delete(el);
     }
 
-    handleMoveEvent(el, oldIndex, newIndex) {
-        const parent = el.parentElement;
-        const childSelector = getUniqueSelector(el);
-        const childPath = getDataOnlookId(el);
-        const componentId = getDataOnlookComponentId(el);
+    handleMoveEvent(child, oldIndex, newIndex) {
+        const parent = child.parentElement;
+        if (!parent) {
+            console.error('Parent not found during drag event');
+            return;
+        };
+
+        const selector = getUniqueSelector(child);
+        const path = getDataOnlookId(child);
+        const componentId = getDataOnlookComponentId(child);
+
         handleEditEvent({
             el: parent,
             editType: EditType.MOVE_CHILD,
             newValue: {
-                childSelector,
-                childPath,
+                selector,
+                path,
                 componentId,
                 index: newIndex,
-            } as StructureVal,
+            } as ChildVal,
             oldValue: {
-                childSelector,
-                childPath,
+                selector,
+                path,
                 componentId,
                 index: oldIndex,
-            } as StructureVal,
+            } as ChildVal,
         });
     }
 }
