@@ -2,8 +2,8 @@ export type EditEvent = {
   createdAt: string;
   selector: string;
   editType: EditType;
-  newVal: Record<string, string> | TextVal | StructureVal;
-  oldVal: Record<string, string> | TextVal | StructureVal;
+  newVal: Record<string, string> | TextVal | ChildVal;
+  oldVal: Record<string, string> | TextVal | ChildVal;
   path?: string;
   snapshot?: string;
   componentId?: string;
@@ -28,12 +28,10 @@ export type TextVal = {
   text: string;
 }
 
-export type StructureVal = {
-  childSelector: string;
-  childPath?: string;
+export type ChildVal = {
+  selector: string;
   index: string;
-
-  // If component, keep content since it doesn't exist in code
   componentId?: string;
   content?: string;
+  path?: string;
 }

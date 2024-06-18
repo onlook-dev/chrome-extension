@@ -1,8 +1,9 @@
 import { addToHistory } from "./history";
-import { getDataOnlookComponentId, getDataOnlookId, getSnapshot, getUniqueSelector } from "../utilities";
-import { EditType, type EditEvent, type StructureVal } from "$shared/models";
+import { getDataOnlookComponentId, getDataOnlookId, getUniqueSelector } from "../utilities";
+import { EditType, type EditEvent, type ChildVal } from "$shared/models";
 import { MessageService, MessageType } from "$shared/message";
 import { EditSource } from "$shared/models/editor";
+import { getCustomComponentContent } from "$shared/helpers";
 
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
 const messageService = MessageService.getInstance();
@@ -71,14 +72,14 @@ export function undebounceHandleEditEvent(param: HandleEditEventParams) {
     if (!parent) return;
 
     const parentSelector = elementSelectorCache.get(parent) || getUniqueSelector(parent);
-    const content = (new XMLSerializer).serializeToString(child);
+    const content = getCustomComponentContent(child);
 
     // This is the insert event for child
-    const structureVal: StructureVal = {
-      childSelector: getUniqueSelector(child),
-      childPath: getDataOnlookId(child),
+    const childVal: ChildVal = {
+      selector: getUniqueSelector(child),
+      path: getDataOnlookId(child),
       index: Array.from(parent.children).indexOf(child).toString(),
-      componentId: getDataOnlookComponentId(parent),
+      componentId: getDataOnlookComponentId(child),
       content
     };
 
@@ -87,8 +88,8 @@ export function undebounceHandleEditEvent(param: HandleEditEventParams) {
       createdAt: new Date().toISOString(),
       selector: parentSelector,
       editType: EditType.INSERT_CHILD,
-      newVal: structureVal,
-      oldVal: { ...structureVal, content: '' },
+      newVal: childVal,
+      oldVal: { ...childVal, content: '' },
       path: getDataOnlookId(parent),
       componentId: getDataOnlookComponentId(parent),
       source: param.source || EditSource.MANUAL

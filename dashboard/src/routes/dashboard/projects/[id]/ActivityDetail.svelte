@@ -11,14 +11,13 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import * as Tabs from '$lib/components/ui/tabs';
 
 	import type {
 		Activity,
 		ChangeValues,
+		ChildVal,
 		GithubSettings,
 		Project,
-		StructureVal,
 		TemplateNode
 	} from '$shared/models';
 	import ChangeView from './ChangeView.svelte';
@@ -58,8 +57,8 @@
 		}${filePath}#L${startLine}-L${endLine}`;
 	}
 
-	function getStructureValue(value: string | StructureVal): StructureVal {
-		return value as StructureVal;
+	function getStructureValue(value: string | ChildVal): ChildVal {
+		return value as ChildVal;
 	}
 
 	function sortChangeValues(a: ChangeValues, b: ChangeValues) {

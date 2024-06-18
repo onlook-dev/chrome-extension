@@ -24,6 +24,8 @@ export const DATA_ONLOOK_ID = "data-onlook-id";
 export const DATA_ONLOOK_IGNORE = "data-onlook-ignore";
 export const DATA_ONLOOK_SAVED = "data-onlook-saved";
 export const DATA_ONLOOK_SNAPSHOT = "data-onlook-snapshot";
+export const DATA_ONLOOK_OLD_VALS = "data-onlook-old-vals";
+export const DATA_ONLOOK_COMPONENT_ID = "data-onlook-component-id";
 
 // Dashboard routes
 export enum DashboardRoutes {

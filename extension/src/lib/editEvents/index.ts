@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid'
 import { convertEditEventToChangeObject } from './convert'
 import { EditType, ActivityStatus, ProjectStatus } from '$shared/models'
 
-import type { Project, EditEvent, Activity, StructureVal, ChangeValues, } from '$shared/models'
+import type { Project, EditEvent, Activity, ChildVal, ChangeValues, } from '$shared/models'
 import type { ProjectTabService } from '$lib/projects'
 
 interface QueueItem {
@@ -111,13 +111,13 @@ export class EditEventService {
     /**
      * Save as new element in activity. Store raw string.
      */
-    const newVal = { ...editEvent.newVal } as StructureVal
+    const newVal = { ...editEvent.newVal } as ChildVal
     activity.insertChildChanges = {
       ...activity.insertChildChanges,
-      [newVal.childSelector]: {
+      [newVal.selector]: {
         key: editEvent.selector,
-        oldVal: { ...editEvent.oldVal } as StructureVal,
-        newVal: { ...editEvent.newVal } as StructureVal,
+        oldVal: { ...editEvent.oldVal } as ChildVal,
+        newVal: { ...editEvent.newVal } as ChildVal,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       } as ChangeValues
@@ -130,8 +130,8 @@ export class EditEventService {
     * If the remove element is an inserted component, remove it from insertChildChanges
     * Else, add as a new deleteChildChange
     */
-    const newVal = { ...editEvent.newVal } as StructureVal
-    const childSelector = newVal.childSelector
+    const newVal = { ...editEvent.newVal } as ChildVal
+    const childSelector = newVal.selector
     if (activity.insertChildChanges && activity.insertChildChanges[childSelector]) {
       delete activity.insertChildChanges[childSelector]
     } else if (newVal.componentId) {
@@ -144,8 +144,8 @@ export class EditEventService {
         ...activity.deleteChildChanges,
         [childSelector]: {
           key: editEvent.selector,
-          oldVal: { ...editEvent.oldVal } as StructureVal,
-          newVal: { ...editEvent.newVal } as StructureVal,
+          oldVal: { ...editEvent.oldVal } as ChildVal,
+          newVal: { ...editEvent.newVal } as ChildVal,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         } as ChangeValues
@@ -160,9 +160,9 @@ export class EditEventService {
      * Update the moved element changes list using a finalMovePosition list to reduce redundant moves
     */
 
-    const newVal = { ...editEvent.newVal } as StructureVal;
-    const oldVal = { ...editEvent.oldVal } as StructureVal;
-    const childSelector = newVal.childSelector;
+    const newVal = { ...editEvent.newVal } as ChildVal;
+    const oldVal = { ...editEvent.oldVal } as ChildVal;
+    const childSelector = newVal.selector;
 
     // Initialize the storage for final move positions if not already present
     if (!activity.finalMovePositions) {
@@ -172,7 +172,7 @@ export class EditEventService {
     // Check if this is related to an inserted component
     if (activity.insertChildChanges && activity.insertChildChanges[childSelector]) {
       // Update inserted component index
-      (activity.insertChildChanges[childSelector].newVal as StructureVal).index = newVal.index;
+      (activity.insertChildChanges[childSelector].newVal as ChildVal).index = newVal.index;
       (activity.insertChildChanges[childSelector]).updatedAt = new Date().toISOString();
     } else if (activity.moveChildChanges && activity.moveChildChanges[childSelector]) {
       // Existing move update

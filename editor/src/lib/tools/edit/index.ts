@@ -1,6 +1,6 @@
 import { DATA_ONLOOK_COMPONENT_ID, ONLOOK_EDITABLE } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, layersWeakMap, } from '$lib/states/editor';
-import { EditType, type StructureVal } from '$shared/models';
+import { EditType, type ChildVal } from '$shared/models';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getDataOnlookComponentId, getDataOnlookId, getUniqueSelector } from '../utilities';
@@ -10,6 +10,7 @@ import { DATA_ONLOOK_ID } from '$shared/constants';
 import { nanoid } from 'nanoid';
 
 import type { Tool } from '../index';
+import { cleanCustomComponent, getCustomComponentContent } from '$shared/helpers';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
@@ -281,25 +282,25 @@ export class EditTool implements Tool {
 	};
 
 	handleStructureChange = (el, editType, parent, componentId?: string, index?: string) => {
-		const xmlStr = (new XMLSerializer).serializeToString(el);
-		const childSelector = getUniqueSelector(el);
-		const childPath = getDataOnlookId(el);
+		const content = getCustomComponentContent(el)
+		const selector = getUniqueSelector(el);
+		const path = getDataOnlookId(el);
 
 		const deleteVal = {
-			childSelector,
-			childPath,
+			selector,
+			path,
 			index,
 			componentId,
 			content: '',
-		} as StructureVal;
+		} as ChildVal;
 
 		const insertVal = {
-			childSelector,
-			childPath,
+			selector,
+			path,
 			index,
 			componentId,
-			content: xmlStr,
-		} as StructureVal;
+			content,
+		} as ChildVal;
 
 		// These are the same, just flipped
 		handleEditEvent({

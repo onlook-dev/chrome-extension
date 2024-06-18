@@ -1,4 +1,4 @@
-import type { ChangeValues, EditEvent, EditType, StructureVal } from '$shared/models'
+import type { ChangeValues, ChildVal, EditEvent, EditType } from '$shared/models'
 
 // Look in tests for example. 
 export function convertEditEventToChangeObject(editEvent: EditEvent, changeObject: Record<string, ChangeValues>) {
@@ -32,16 +32,22 @@ export function convertEditEventToChangeObject(editEvent: EditEvent, changeObjec
   return changeObject;
 }
 
-export function convertChangeObjectToEditEvents(selector: string, editType: EditType, changeObject: Record<string, ChangeValues> | StructureVal): EditEvent[] {
+export function convertChangeObjectToEditEvents(
+  selector: string,
+  editType: EditType,
+  changeObject: Record<string, ChangeValues> | ChildVal
+): EditEvent[] {
   const editEvents: EditEvent[] = [];
 
-  Object.entries(changeObject).forEach(([key, { oldVal, newVal, createdAt, updatedAt }]) => {
+  Object.entries(changeObject).forEach(([key, value]) => {
+    const { oldVal, newVal, createdAt, updatedAt } = (value as ChangeValues);
+
     const editEvent: EditEvent = {
       selector,
       createdAt: createdAt ?? updatedAt ?? new Date().toISOString(),
       editType,
-      oldVal: { [key]: oldVal },
-      newVal: { [key]: newVal }
+      oldVal: { [key]: oldVal as string },
+      newVal: { [key]: newVal as string }
     };
     editEvents.push(editEvent);
   });
@@ -49,16 +55,20 @@ export function convertChangeObjectToEditEvents(selector: string, editType: Edit
   return editEvents;
 }
 
-export function convertStructureChangeToEditEvents(selector: string, editType: EditType, changeObject: Record<string, ChangeValues> | StructureVal): EditEvent[] {
+export function convertStructureChangeToEditEvents(
+  selector: string,
+  editType: EditType,
+  changeObject: Record<string, ChangeValues> | ChildVal
+): EditEvent[] {
   const editEvents: EditEvent[] = [];
-
-  Object.entries(changeObject).forEach(([key, { oldVal, newVal, createdAt, updatedAt }]) => {
+  Object.entries(changeObject).forEach(([key, value]) => {
+    const { oldVal, newVal, createdAt, updatedAt } = (value as ChangeValues);
     const editEvent: EditEvent = {
       selector,
       createdAt: updatedAt ?? createdAt ?? new Date().toISOString(),
       editType,
-      oldVal,
-      newVal
+      oldVal: oldVal as ChildVal,
+      newVal: newVal as ChildVal
     };
     editEvents.push(editEvent);
   });
