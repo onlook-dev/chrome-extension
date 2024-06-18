@@ -96,26 +96,26 @@ export class DragManager {
         dragContainers.delete(el);
     }
 
-    handleMoveEvent(el, oldIndex, newIndex) {
-        const parent = el.parentElement;
+    handleMoveEvent(child, oldIndex, newIndex) {
+        const parent = child.parentElement;
         if (!parent) return;
 
-        const childSelector = getUniqueSelector(el);
-        const childPath = getDataOnlookId(el);
-        const componentId = getDataOnlookComponentId(el);
+        const selector = getUniqueSelector(child);
+        const path = getDataOnlookId(child);
+        const componentId = getDataOnlookComponentId(child);
 
         handleEditEvent({
             el: parent,
             editType: EditType.MOVE_CHILD,
             newValue: {
-                selector: childSelector,
-                path: childPath,
+                selector,
+                path,
                 componentId,
                 index: newIndex,
             } as ChildVal,
             oldValue: {
-                selector: childSelector,
-                path: childPath,
+                selector,
+                path,
                 componentId,
                 index: oldIndex,
             } as ChildVal,
