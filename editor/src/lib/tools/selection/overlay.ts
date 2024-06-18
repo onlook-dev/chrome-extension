@@ -46,14 +46,9 @@ class RectImpl implements Rect {
         this.element.style.top = `${top}px`
         this.element.style.left = `${left}px`
     }
-
-    updateStrokeColor = (color: string) => {
-        this.rectElement.setAttribute('stroke', color)
-    }
 }
 
 class HoverRect extends RectImpl {
-
     constructor() {
         super()
         this.rectElement.setAttribute('stroke-width', '1')
@@ -266,7 +261,8 @@ class ParentRect extends RectImpl {
 class EditRect extends RectImpl {
     constructor() {
         super()
-        this.rectElement.setAttribute('stroke', '#00FF94')
+        this.rectElement.setAttribute('stroke', '#00ff94')
+        this.rectElement.setAttribute('stroke-width', '1')
     }
 
     render(rect) {
@@ -313,22 +309,24 @@ export class OverlayManager {
     }
 
     updateParentRect = (el: HTMLElement) => {
-        if (!el || !this.parentRect) return
+        if (!el) return
         const rect = el.getBoundingClientRect()
         this.parentRect.render(rect)
     }
 
     updateHoverRect = (el: HTMLElement) => {
-        if (!el || !this.hoverRect) return
+        if (!el) return
         const rect = el.getBoundingClientRect()
         this.hoverRect.render(rect)
     }
 
     updateEditRect = (el: HTMLElement) => {
-        if (!el || !this.editRect) return
+        if (!el) return
         const rect = el.getBoundingClientRect()
         this.editRect.render(rect)
-        console.log('edit rect', rect)
+        this.clickedRects.forEach(clickRect => {
+            clickRect.updateStrokeColor('#FF0E48')
+        })
     }
 
     hideHoverRect = () => {
