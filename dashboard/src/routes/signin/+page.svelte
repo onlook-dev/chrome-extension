@@ -28,11 +28,11 @@
 	style="background-image: url({BackgroundImage}); background-size: cover; background-position: center;"
 >
 	<Card.Root
-		class="w-2/3 h-2/3 max-w-[24rem] max-h-[20rem] rounded-lg p-2 bg-transparent/90 shadow"
+		class="w-2/3 h-2/3 max-w-[26rem] max-h-[20rem] rounded-lg p-2 bg-transparent/90 shadow"
 	>
 		<Card.Header class="text-light gap-4">
 			<img src={LogoText} alt="Onlook Logo" class="object-contain h-3" />
-			<h2 class="text-tertiary text-center text-sm">
+			<h2 class="text-tertiary text-center">
 				Sign in to design on any site for free –<br /> No credit card required
 			</h2>
 		</Card.Header>
