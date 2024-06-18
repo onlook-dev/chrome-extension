@@ -9,6 +9,7 @@
   import LayersPanel from "./layers/LayersPanel.svelte";
   import ElementsPanel from "./elements/ElementsPanel.svelte";
   import PublishPanel from "./publish/PublishPanel.svelte";
+  import TourPanel from "./tour/TourPanel.svelte";
 
   const toolManager: ToolManager = new ToolManager();
   const eventListener: EventListenerService = new EventListenerService();
@@ -28,6 +29,7 @@
   }
 </script>
 
+<TourPanel />
 <EditorPanel {toolManager} />
 <PublishPanel {toolManager} />
 <LayersPanel editTool={toolManager?.editTool} />
