@@ -15,11 +15,14 @@
 
 	import type {
 		Activity,
+		ChangeValues,
 		GithubSettings,
 		Project,
 		StructureVal,
 		TemplateNode
 	} from '$shared/models';
+	import ChangeView from './ChangeView.svelte';
+	import CodeBlock from './CodeBlock.svelte';
 
 	export let activity: Activity;
 	export let project: Project;
@@ -57,6 +60,20 @@
 
 	function getStructureValue(value: string | StructureVal): StructureVal {
 		return value as StructureVal;
+	}
+
+	function sortChangeValues(a: ChangeValues, b: ChangeValues) {
+		return (
+			parseInt(getStructureValue(a.newVal).index) - parseInt(getStructureValue(b.newVal).index)
+		);
+	}
+
+	function getStyleChangesAsCss(styleChanges: ChangeValues[]) {
+		let content = '';
+		styleChanges.forEach((styleChange) => {
+			content += `${jsToCssProperty(styleChange.key)}: ${styleChange.newVal};\n`;
+		});
+		return content;
 	}
 </script>
 
@@ -130,24 +147,29 @@
 			<span class="text-brand">{decompress(activity.path).path}</span>
 		</p>
 	{/if}
+	<div>
+		<span class=""><span class="text-primary">{userName}</span> updated styles </span>
+		<ChangeView>
+			<div class="pl-4" slot="preview">
+				{#each Object.values(activity.styleChanges) as styleChange}
+					<span class="text-sky-300">{jsToCssProperty(styleChange.key)}</span>
+					{#if styleChange.oldVal !== ''}
+						from
+						<span class="text-brand">{styleChange.oldVal}</span>
+					{/if}
+					to
+					<span class="text-brand">{styleChange.newVal}</span>
+					<br />
+				{/each}
+			</div>
 
-	{#each Object.values(activity.styleChanges) as styleChange}
-		<p>
-			<span class="text-primary">{userName}</span>
-			{#if styleChange.oldVal === ''}
-				added style
-				<span class="text-sky-300">{jsToCssProperty(styleChange.key)}</span>
-				with value
-			{:else}
-				update style of
-				<span class="text-sky-300">{jsToCssProperty(styleChange.key)}</span>
-				from
-				<span class="text-brand">{styleChange.oldVal}</span>
-				to
-			{/if}
-			<span class="text-brand">{styleChange.newVal}</span>
-		</p>
-	{/each}
+			<CodeBlock
+				slot="code"
+				language="html"
+				code={getStyleChangesAsCss(Object.values(activity.styleChanges))}
+			/>
+		</ChangeView>
+	</div>
 
 	{#if activity.textChanges && Object.keys(activity.textChanges).length > 0}
 		<p>
@@ -185,36 +207,31 @@
 	{/if}
 
 	{#if activity.insertChildChanges && Object.keys(activity.insertChildChanges).length > 0}
-		{#each Object.values(activity.insertChildChanges) as insertChange}
+		{#each Object.values(activity.insertChildChanges).sort(sortChangeValues) as insertChange}
 			<p>
 				<span class="text-primary">{userName}</span>
 				added element at position
 				<span class="text-brand">{getStructureValue(insertChange.newVal).index}</span>
 			</p>
 
-			<Tabs.Root value="preview" class="w-full">
-				<Tabs.List class="grid w-full grid-cols-2">
-					<Tabs.Trigger value="preview">Preview</Tabs.Trigger>
-					<Tabs.Trigger value="code">Code</Tabs.Trigger>
-				</Tabs.List>
-				<Tabs.Content value="preview"
-					><iframe
-						title="inserted element"
-						class="w-full h-full items-center border"
-						srcdoc={getStructureValue(insertChange.newVal).content}
-					></iframe></Tabs.Content
-				>
-				<Tabs.Content class="w-full h-full" value="code"
-					><p class="items-center border overflow-auto">
-						{getStructureValue(insertChange.newVal).content}
-					</p></Tabs.Content
-				>
-			</Tabs.Root>
+			<ChangeView>
+				<iframe
+					slot="preview"
+					title="inserted element"
+					class="w-full h-full items-center border bg-surface"
+					srcdoc={getStructureValue(insertChange.newVal).content}
+				></iframe>
+				<CodeBlock
+					slot="code"
+					language="html"
+					code={getStructureValue(insertChange.newVal).content}
+				/>
+			</ChangeView>
 		{/each}
 	{/if}
 
 	{#if activity.moveChildChanges && Object.keys(activity.moveChildChanges).length > 0}
-		{#each Object.values(activity.moveChildChanges) as moveChange}
+		{#each Object.values(activity.moveChildChanges).sort(sortChangeValues) as moveChange}
 			<p>
 				<span class="text-primary">{userName}</span>
 				moved element from position
@@ -226,7 +243,7 @@
 	{/if}
 
 	{#if activity.deleteChildChanges && Object.keys(activity.deleteChildChanges).length > 0}
-		{#each Object.values(activity.deleteChildChanges) as deleteChange}
+		{#each Object.values(activity.deleteChildChanges).sort(sortChangeValues) as deleteChange}
 			<p>
 				<span class="text-primary">{userName}</span>
 				removed element at position
