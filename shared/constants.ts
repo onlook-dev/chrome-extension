@@ -20,6 +20,7 @@ export const FEEDBACK_LINK = "https://i6u7z7qkhxw.typeform.com/to/X4CeiAVd";
 // Editor
 export const ONLOOK_TOOLBAR = "onlook-toolbar";
 export const ONLOOK_RECT_ID = "onlook-rect";
+export const ONLOOK_GLOBAL_STYLES = "onlook-global-styles";
 export const DATA_ONLOOK_ID = "data-onlook-id";
 export const DATA_ONLOOK_IGNORE = "data-onlook-ignore";
 export const DATA_ONLOOK_SAVED = "data-onlook-saved";

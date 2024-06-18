@@ -7,7 +7,8 @@ export class SelectorEngine {
   hoveredStore: Writable<HTMLElement | undefined> = writable(undefined);
   editingStore: Writable<HTMLElement | undefined> = writable(undefined);
   observer: MutationObserver;
-  constructor() {}
+
+  constructor() { }
 
   get selected() {
     return get(this.selectedStore);

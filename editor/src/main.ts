@@ -2,7 +2,7 @@ import App from './App.svelte';
 import config from '../twind.config';
 import 'construct-style-sheets-polyfill';
 import { twind, cssom, observe } from '@twind/core';
-import { ONLOOK_TOOLBAR } from '$shared/constants';
+import { ONLOOK_GLOBAL_STYLES, ONLOOK_TOOLBAR } from '$shared/constants';
 import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED, ONLOOK_EDITABLE, } from '$/lib/constants';
 
 class OnlookToolbar extends HTMLElement {
@@ -45,25 +45,29 @@ class OnlookToolbar extends HTMLElement {
 	connectedCallback() {
 		this.setAttribute('popover', 'manual')
 		this.showPopover && this.showPopover();
+		// Inject global styles
+		this.injectGlobalStyles();
 	}
 
 	disconnectedCallback() {
 		this.hidePopover && this.hidePopover();
+		// Remove global styles
+		this.removeGlobalStyles();
 	}
-}
 
-function injectGlobalStyles() {
-	const style = document.createElement('style');
-	style.textContent = `
-            .${ONLOOK_EDITABLE} {
-                outline: 2px solid #00ff94;
-            }
-        `;
-	document.head.appendChild(style);
+	injectGlobalStyles() {
+		const style = document.createElement('style');
+		style.id = ONLOOK_GLOBAL_STYLES
+		style.textContent = ``;
+		document.head.appendChild(style);
+	}
+
+	removeGlobalStyles() {
+		const style = document.getElementById(ONLOOK_GLOBAL_STYLES);
+		style && style.remove();
+	}
+
 }
 
 // Define the new element
 customElements.define(ONLOOK_TOOLBAR, OnlookToolbar);
-
-// Inject global styles
-injectGlobalStyles();

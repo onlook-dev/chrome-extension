@@ -69,7 +69,7 @@ export class EntitySubsciptionService {
             // Get users from activities
             const usersNotInMap: string[] = Object.values(projectsMap)
                 .flatMap(project =>
-                    Object.values<Activity>(project.activities).map((item: Activity) => item.userId)
+                    Object.values<Activity>(project?.activities || {}).map((item: Activity) => item.userId)
                 )
                 .filter((userId: string) => !mappedUserIds.includes(userId))
 

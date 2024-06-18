@@ -125,10 +125,8 @@ function applyClassEvent(event: EditEvent, element: HTMLElement) {
 function applyInsertEvent(event: EditEvent, element: HTMLElement) {
   const newVal = event.newVal as ChildVal;
   const parser = new DOMParser();
-  const doc = parser.parseFromString(newVal.content, "text/html");
+  const doc = parser.parseFromString(newVal.content, "application/xml");
   const child = doc.documentElement
-  // Reinsert the component's id
-  child.setAttribute(DATA_ONLOOK_COMPONENT_ID, newVal.componentId)
 
   if (!child || !element) return;
   const pos = parseInt(newVal.index);

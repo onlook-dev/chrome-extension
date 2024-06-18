@@ -45,9 +45,10 @@ interface HandleEditEventParams {
   source?: EditSource
 }
 
-function updateEventIfStructureChange(el, param): EditEvent {
+function updateEventIfStructureChange(param): EditEvent | undefined {
   // If event is applied to an inserted component, send an updated insert event for the nearest ancestor that does not have data-onlook-component-id
   // This way, it is saved in the activity as an insert only once, the content will be used to update the inserted component
+  const { el, source } = param;
 
   let child = el;
   let parent = el.parentElement;
@@ -55,6 +56,7 @@ function updateEventIfStructureChange(el, param): EditEvent {
     child = parent;
     parent = parent.parentElement;
   }
+
   if (!parent) return;
 
   const parentSelector = elementSelectorCache.get(parent) || getUniqueSelector(parent);
@@ -78,7 +80,7 @@ function updateEventIfStructureChange(el, param): EditEvent {
     oldVal: { ...childVal, content: '' },
     path: getDataOnlookId(parent),
     componentId: getDataOnlookComponentId(parent),
-    source: param.source || EditSource.MANUAL
+    source: source || EditSource.MANUAL
   } as EditEvent;
 }
 
@@ -99,7 +101,7 @@ export function undebounceHandleEditEvent(param: HandleEditEventParams) {
 
   addToHistory(event);
   if (componentId) {
-    event = updateEventIfStructureChange(event, param);
+    event = updateEventIfStructureChange(param) || event;
   }
   messageService.publish(MessageType.EDIT_EVENT, event);
 }

@@ -8,9 +8,9 @@ import { handleEditEvent } from './handleEvents';
 import { DragManager } from './drag';
 import { DATA_ONLOOK_ID } from '$shared/constants';
 import { nanoid } from 'nanoid';
+import { getCustomComponentContent } from '$shared/helpers';
 
 import type { Tool } from '../index';
-import { cleanCustomComponent, getCustomComponentContent } from '$shared/helpers';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
@@ -62,8 +62,6 @@ export class EditTool implements Tool {
 	}
 
 	onClick(e: MouseEvent): void {
-		editorPanelVisible.set(true);
-
 		this.selectorEngine.handleClick(e);
 		this.overlayManager.clear();
 		this.elResizeObserver.disconnect();
@@ -76,10 +74,8 @@ export class EditTool implements Tool {
 
 	onDoubleClick(e: MouseEvent): void {
 		if (this.selectorEngine.editing) this.removeEditability({ target: this.selectorEngine.editing });
-		editorPanelVisible.set(true);
-		this.overlayManager.clear()
-		this.elResizeObserver.disconnect();
 		this.selectorEngine.handleDoubleClick(e);
+		this.overlayManager.clear();
 		this.addEditability(this.selectorEngine.editing);
 	}
 
@@ -187,19 +183,6 @@ export class EditTool implements Tool {
 		}
 	}
 
-	addEditability = (el: HTMLElement) => {
-		if (!el) return;
-		this.oldText = el.textContent;
-		el.setAttribute("contenteditable", "true");
-		el.setAttribute("spellcheck", "true");
-		el.classList.add(ONLOOK_EDITABLE);
-		el.focus();
-
-		el.addEventListener("keydown", this.stopBubbling);
-		el.addEventListener("blur", this.removeEditability);
-		el.addEventListener("input", this.handleInput);
-	}
-
 	handleInput = ({ target }) => {
 		const newText = target.textContent
 		handleEditEvent({
@@ -212,8 +195,20 @@ export class EditTool implements Tool {
 
 	stopBubbling = (e) => e.key != "Escape" && e.stopPropagation();
 
+	addEditability = (el: HTMLElement) => {
+		if (!el) return;
+		this.oldText = el.textContent;
+		el.setAttribute("contenteditable", "true");
+		el.setAttribute("spellcheck", "true");
+		el.focus();
+
+		el.addEventListener("keydown", this.stopBubbling);
+		el.addEventListener("blur", this.removeEditability);
+		el.addEventListener("input", this.handleInput);
+		this.overlayManager.updateEditRect(el);
+	}
+
 	removeEditability = ({ target }) => {
-		target.classList.remove(ONLOOK_EDITABLE);
 		target.removeAttribute("contenteditable");
 		target.removeAttribute("spellcheck");
 		target.removeEventListener("blur", this.removeEditability);
@@ -221,6 +216,7 @@ export class EditTool implements Tool {
 		target.removeEventListener("input", this.handleInput);
 		this.oldText = undefined;
 		this.selectorEngine.editingStore.set(undefined);
+		this.overlayManager.removeEditRect();
 	};
 
 	insertElement = (el: HTMLElement) => {
