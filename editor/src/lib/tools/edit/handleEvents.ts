@@ -45,57 +45,62 @@ interface HandleEditEventParams {
   source?: EditSource
 }
 
+function updateEventIfStructureChange(el, param): EditEvent {
+  // If event is applied to an inserted component, send an updated insert event for the nearest ancestor that does not have data-onlook-component-id
+  // This way, it is saved in the activity as an insert only once, the content will be used to update the inserted component
+
+  let child = el;
+  let parent = el.parentElement;
+  while (parent && getDataOnlookComponentId(parent)) {
+    child = parent;
+    parent = parent.parentElement;
+  }
+  if (!parent) return;
+
+  const parentSelector = elementSelectorCache.get(parent) || getUniqueSelector(parent);
+  const content = getCustomComponentContent(child);
+
+  // This is the insert event for child
+  const childVal: ChildVal = {
+    selector: getUniqueSelector(child),
+    path: getDataOnlookId(child),
+    index: Array.from(parent.children).indexOf(child).toString(),
+    componentId: getDataOnlookComponentId(child),
+    content
+  };
+
+  // This is the insert event for parent
+  return {
+    createdAt: new Date().toISOString(),
+    selector: parentSelector,
+    editType: EditType.INSERT_CHILD,
+    newVal: childVal,
+    oldVal: { ...childVal, content: '' },
+    path: getDataOnlookId(parent),
+    componentId: getDataOnlookComponentId(parent),
+    source: param.source || EditSource.MANUAL
+  } as EditEvent;
+}
+
 export function undebounceHandleEditEvent(param: HandleEditEventParams) {
-  const el = param.el;
+  const { el, editType, newValue, oldValue, source } = param;
   const componentId = getDataOnlookComponentId(el);
+
   let event: EditEvent = {
     createdAt: new Date().toISOString(),
     selector: elementSelectorCache.get(el) || getUniqueSelector(el),
-    editType: param.editType,
-    newVal: param.newValue,
-    oldVal: param.oldValue,
+    editType: editType,
+    newVal: newValue,
+    oldVal: oldValue,
     path: getDataOnlookId(el),
     componentId,
-    source: param.source || EditSource.MANUAL
+    source: source || EditSource.MANUAL
   };
+
   addToHistory(event);
-
-  // If event is applied to an inserted component, send an updated insert event for the nearest ancestor that does not have data-onlook-component-id
-  // This way, it is saved in the activity as an insert only once, the content will be used to update the inserted component
   if (componentId) {
-    let child = el;
-    let parent = el.parentElement;
-    while (parent && getDataOnlookComponentId(parent)) {
-      child = parent;
-      parent = parent.parentElement;
-    }
-    if (!parent) return;
-
-    const parentSelector = elementSelectorCache.get(parent) || getUniqueSelector(parent);
-    const content = getCustomComponentContent(child);
-
-    // This is the insert event for child
-    const childVal: ChildVal = {
-      selector: getUniqueSelector(child),
-      path: getDataOnlookId(child),
-      index: Array.from(parent.children).indexOf(child).toString(),
-      componentId: getDataOnlookComponentId(child),
-      content
-    };
-
-    // This is the insert event for parent
-    event = {
-      createdAt: new Date().toISOString(),
-      selector: parentSelector,
-      editType: EditType.INSERT_CHILD,
-      newVal: childVal,
-      oldVal: { ...childVal, content: '' },
-      path: getDataOnlookId(parent),
-      componentId: getDataOnlookComponentId(parent),
-      source: param.source || EditSource.MANUAL
-    };
+    event = updateEventIfStructureChange(event, param);
   }
-
   messageService.publish(MessageType.EDIT_EVENT, event);
 }
 

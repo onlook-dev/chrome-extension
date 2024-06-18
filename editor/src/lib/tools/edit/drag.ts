@@ -98,7 +98,10 @@ export class DragManager {
 
     handleMoveEvent(child, oldIndex, newIndex) {
         const parent = child.parentElement;
-        if (!parent) return;
+        if (!parent) {
+            console.error('Parent not found during drag event');
+            return;
+        };
 
         const selector = getUniqueSelector(child);
         const path = getDataOnlookId(child);
