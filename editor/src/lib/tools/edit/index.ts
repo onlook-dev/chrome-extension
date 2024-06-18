@@ -256,9 +256,12 @@ export class EditTool implements Tool {
 
 	pasteElements = () => {
 		if (!this.copiedElements.length) return;
+
 		this.copiedElements.forEach((el) => {
 			this.insertElement(el);
 		})
+		const clonedCopiedElements = this.copiedElements.map((el) => this.cloneElement(el));
+		this.copiedElements = clonedCopiedElements;
 	};
 
 	deleteElements = () => {
