@@ -113,7 +113,7 @@ export class BackgroundEventHandlers {
 
             if (details.reason == "install") {
                 // Call a function to handle a first install
-                this.openOrCreateNewTab(`${baseUrl}${DashboardRoutes.WELCOME}`)
+                this.openOrCreateNewTab(`${baseUrl}${DashboardRoutes.HOME}`)
             }
         })
 
