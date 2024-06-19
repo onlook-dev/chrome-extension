@@ -74,6 +74,15 @@
 		});
 		return content;
 	}
+
+	function getLocation(activity: Activity) {
+		try {
+			if (!activity.path) return '';
+			return decompress(activity.path).path;
+		} catch (e) {
+			return '';
+		}
+	}
 </script>
 
 <div class="flex flex-col space-y-3 w-full p-4 text-tertiary">
@@ -140,12 +149,13 @@
 		Selector
 		<span class="text-brand">{activity.selector}</span>
 	</p>
-	{#if activity.path}
+	{#if getLocation(activity)}
 		<p class="break-all">
 			Location
-			<span class="text-brand">{decompress(activity.path).path}</span>
+			<span class="text-brand">{getLocation(activity)}</span>
 		</p>
 	{/if}
+
 	<div>
 		<span class=""><span class="text-primary">{userName}</span> updated styles </span>
 		<ChangeView>
