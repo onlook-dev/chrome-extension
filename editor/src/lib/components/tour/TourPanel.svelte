@@ -30,7 +30,7 @@
     {#if stage === 0}
         <Card.Root class="bg-blue-500/95 w-[40rem] max-w-2/3 mx-auto my-auto">
             <Card.Header class="text-xl">Ready for something new?</Card.Header>
-            <Card.Content class="px-6">
+            <Card.Content class="text-base px-6">
                 <div>
                     Unlike other design tools, Onlook lets you design directly
                     on the live page.<br /> This means your design is exactly how

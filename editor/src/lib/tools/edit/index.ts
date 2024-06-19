@@ -63,6 +63,10 @@ export class EditTool implements Tool {
 
 	onClick(e: MouseEvent): void {
 		this.selectorEngine.handleClick(e);
+
+		// If clicked on an editing element, ignore click
+		if (this.isClickedElementEditable()) return;
+
 		this.overlayManager.clear();
 		this.elResizeObserver.disconnect();
 
@@ -72,10 +76,15 @@ export class EditTool implements Tool {
 		});
 	}
 
+	isClickedElementEditable = () => {
+		if (this.selectorEngine.selected.length !== 1) return false;
+		return this.selectorEngine.selected[0] === this.selectorEngine.editing;
+	};
+
 	onDoubleClick(e: MouseEvent): void {
 		if (this.selectorEngine.editing) this.removeEditability({ target: this.selectorEngine.editing });
-		this.selectorEngine.handleDoubleClick(e);
 		this.overlayManager.clear();
+		this.selectorEngine.handleDoubleClick(e);
 		this.addEditability(this.selectorEngine.editing);
 	}
 

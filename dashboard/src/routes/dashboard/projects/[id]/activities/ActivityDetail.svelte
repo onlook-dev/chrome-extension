@@ -44,17 +44,21 @@
 		project = { ...project };
 	}
 
-	function getGitHubPath(githubSettings: GithubSettings, path: string, commit?: string) {
-		const ref = commit || githubSettings.baseBranch;
-		const node: TemplateNode = decompress(path);
-		const filePath = node.path;
-		const startLine = node.startTag.start.line;
-		const endLine = node.endTag ? node.endTag.end.line : node.startTag.end.line;
-		return `https://github.com/${githubSettings.owner}/${
-			githubSettings.repositoryName
-		}/blob/${ref}/${
-			githubSettings.rootPath ? `${githubSettings.rootPath}/` : ''
-		}${filePath}#L${startLine}-L${endLine}`;
+	function getGitHubPath(githubSettings: GithubSettings, path: string) {
+		try {
+			const node: TemplateNode = decompress(path);
+			const ref = node.commit || githubSettings.baseBranch;
+			const filePath = node.path;
+			const startLine = node.startTag.start.line;
+			const endLine = node.endTag ? node.endTag.end.line : node.startTag.end.line;
+			return `https://github.com/${githubSettings.owner}/${
+				githubSettings.repositoryName
+			}/blob/${ref}/${
+				githubSettings.rootPath ? `${githubSettings.rootPath}/` : ''
+			}${filePath}#L${startLine}-L${endLine}`;
+		} catch (e) {
+			return '';
+		}
 	}
 
 	function getStructureValue(value: string | ChildVal): ChildVal {
@@ -74,6 +78,15 @@
 		});
 		return content;
 	}
+
+	function getLocation(activity: Activity) {
+		try {
+			if (!activity.path) return '';
+			return decompress(activity.path).path;
+		} catch (e) {
+			return '';
+		}
+	}
 </script>
 
 <div class="flex flex-col space-y-3 w-full p-4 text-tertiary">
@@ -90,10 +103,7 @@
 						class="px-2"
 						on:click={() => {
 							if (!project.githubSettings || !activity.path) return;
-							window.open(
-								getGitHubPath(project.githubSettings, activity.path, activity.snapshot),
-								'_blank'
-							);
+							window.open(getGitHubPath(project.githubSettings, activity.path), '_blank');
 						}}
 					>
 						<GithubLogo class="w-4 h-4" />
@@ -140,35 +150,38 @@
 		Selector
 		<span class="text-brand">{activity.selector}</span>
 	</p>
-	{#if activity.path}
+	{#if getLocation(activity)}
 		<p class="break-all">
 			Location
-			<span class="text-brand">{decompress(activity.path).path}</span>
+			<span class="text-brand">{getLocation(activity)}</span>
 		</p>
 	{/if}
-	<div>
-		<span class=""><span class="text-primary">{userName}</span> updated styles </span>
-		<ChangeView>
-			<div class="pl-4" slot="preview">
-				{#each Object.values(activity.styleChanges) as styleChange}
-					<span class="text-sky-300">{jsToCssProperty(styleChange.key)}</span>
-					{#if styleChange.oldVal !== ''}
-						from
-						<span class="text-brand">{styleChange.oldVal}</span>
-					{/if}
-					to
-					<span class="text-brand">{styleChange.newVal}</span>
-					<br />
-				{/each}
-			</div>
 
-			<CodeBlock
-				slot="code"
-				language="css"
-				code={getStyleChangesAsCss(Object.values(activity.styleChanges))}
-			/>
-		</ChangeView>
-	</div>
+	{#if activity.styleChanges && Object.keys(activity.styleChanges).length > 0}
+		<div>
+			<span class=""><span class="text-primary">{userName}</span> updated styles </span>
+			<ChangeView>
+				<div class="pl-4" slot="preview">
+					{#each Object.values(activity.styleChanges) as styleChange}
+						<span class="text-sky-300">{jsToCssProperty(styleChange.key)}</span>
+						{#if styleChange.oldVal !== ''}
+							from
+							<span class="text-brand">{styleChange.oldVal}</span>
+						{/if}
+						to
+						<span class="text-brand">{styleChange.newVal}</span>
+						<br />
+					{/each}
+				</div>
+
+				<CodeBlock
+					slot="code"
+					language="css"
+					code={getStyleChangesAsCss(Object.values(activity.styleChanges))}
+				/>
+			</ChangeView>
+		</div>
+	{/if}
 
 	{#if activity.textChanges && Object.keys(activity.textChanges).length > 0}
 		<p>

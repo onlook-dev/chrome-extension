@@ -16,6 +16,8 @@ export const MAX_DESCRIPTION_LENGTH = 250;
 // Links
 export const SUPPORT_LINK = "mailto:support@onlook.dev";
 export const FEEDBACK_LINK = "https://i6u7z7qkhxw.typeform.com/to/X4CeiAVd";
+export const DEMO_LINK_PORTFOLIO = "https://portfolio-nextjs-onlook.vercel.app/";
+export const DEMO_LINK_DASHBOARD = "https://next-demo-onlook.vercel.app/";
 
 // Editor
 export const ONLOOK_TOOLBAR = "onlook-toolbar";

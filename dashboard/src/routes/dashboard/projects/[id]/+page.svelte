@@ -8,7 +8,7 @@
 	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
-	import { Pencil2, Shadow } from 'svelte-radix';
+	import { Pencil2, Shadow, ExclamationTriangle, ArrowLeft, Reload } from 'svelte-radix';
 	import { MessageService, MessageType } from '$shared/message';
 
 	import type { User, Activity, Project } from '$shared/models';
@@ -18,7 +18,7 @@
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
 	import ImageDetailView from './ImageDetailView.svelte';
 	import GithubModal from './github/GithubModal.svelte';
-	import ActivityDetail from './ActivityDetail.svelte';
+	import ActivityDetail from './activities/ActivityDetail.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import * as Resizable from '$lib/components/ui/resizable';
 
@@ -32,6 +32,7 @@
 	let activeActivityId: string = '';
 	let activeActivity: Activity | undefined;
 	let githubModalOpen: boolean = false;
+	let errorText = '';
 
 	$: if (project) {
 		activeActivity = Object.values(project.activities).find(
@@ -64,6 +65,8 @@
 			projectService
 				.subscribe(projectId, async (firebaseProject) => {
 					if (!firebaseProject || !Object.keys(firebaseProject).length) {
+						// Set timeout to error to give projects time to load
+						setTimeout(() => (errorText = 'Project not found'), 5000);
 						return;
 					}
 					$projectsMapStore.set(projectId, firebaseProject);
@@ -84,6 +87,9 @@
 				})
 				.then((unsubscribe) => {
 					unsubs.push(unsubscribe);
+				})
+				.catch((err) => {
+					errorText = err.message;
 				});
 		}
 	});
@@ -147,6 +153,22 @@
 				</Resizable.Pane>
 			{/if}
 		</Resizable.PaneGroup>
+	{:else if errorText}
+		<div class="flex flex-col items-center justify-center h-full space-y-8">
+			<p class="flex flex-row items-center text-lg">
+				<ExclamationTriangle class="mr-3" />
+				{errorText}
+			</p>
+
+			<div class="">
+				<Button variant="outline" class="ml-4" on:click={() => goto(DashboardRoutes.DASHBOARD)}
+					><ArrowLeft class="mr-2 w-4 h-4" /> Return to dashboard</Button
+				>
+				<Button class="ml-4" variant="outline" on:click={() => window.location.reload()}
+					><Reload class="mr-2 w-4 h-4" /> Retry</Button
+				>
+			</div>
+		</div>
 	{:else}
 		<div class="flex flex-row items-center justify-center h-full">
 			<Shadow class="animate-spin mr-2" />

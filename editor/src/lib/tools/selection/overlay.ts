@@ -261,8 +261,8 @@ class ParentRect extends RectImpl {
 class EditRect extends RectImpl {
     constructor() {
         super()
-        this.rectElement.setAttribute('stroke', '#00ff94')
-        this.rectElement.setAttribute('stroke-width', '1')
+        this.rectElement.setAttribute('stroke', '#00FF94')
+        this.rectElement.setAttribute('stroke-width', '2')
     }
 
     render(rect) {
@@ -286,6 +286,7 @@ export class OverlayManager {
 
         this.rectPopover.shadow.appendChild(this.hoverRect.element)
         this.rectPopover.shadow.appendChild(this.parentRect.element)
+        this.rectPopover.shadow.appendChild(this.editRect.element)
         document.body.appendChild(this.rectPopover)
     }
 
@@ -324,9 +325,6 @@ export class OverlayManager {
         if (!el) return
         const rect = el.getBoundingClientRect()
         this.editRect.render(rect)
-        this.clickedRects.forEach(clickRect => {
-            clickRect.updateStrokeColor('#FF0E48')
-        })
     }
 
     hideHoverRect = () => {

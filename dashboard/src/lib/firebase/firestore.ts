@@ -81,6 +81,7 @@ export async function subscribeToDocument(
 			callback(docSnap.data());
 		} else {
 			console.error(`No such document with ID: ${objectId} in collection ${collectionId}`);
+			callback(undefined);
 		}
 	});
 	return unsubscribe;

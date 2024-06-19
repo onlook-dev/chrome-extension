@@ -13,9 +13,7 @@
 		if (!codeBlock) return;
 		// Apply beautification
 		if (language === 'html') {
-			codeBlock.textContent = beautify.html(code, {
-				wrap_attributes: 'force'
-			});
+			codeBlock.textContent = beautify.html(code, { wrap_attributes: 'force' });
 		} else if (language === 'css') {
 			codeBlock.textContent = beautify.css(code, {});
 		} else if (language === 'javascript') {

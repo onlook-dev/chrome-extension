@@ -47,7 +47,7 @@
 </script>
 
 <div
-	class="pb-16 w-ful h-full overflow-auto text-primary grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
+	class="pb-16 w-full max-h-full overflow-auto text-primary grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
 >
 	{#if team?.projectIds.length}
 		{#each projects as project}
