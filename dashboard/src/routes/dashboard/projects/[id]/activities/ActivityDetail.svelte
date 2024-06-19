@@ -7,7 +7,7 @@
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
 
-	import ItemHeader from './ItemHeader.svelte';
+	import ItemHeader from '../ItemHeader.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
@@ -20,8 +20,8 @@
 		Project,
 		TemplateNode
 	} from '$shared/models';
-	import ChangeView from './ChangeView.svelte';
-	import CodeBlock from './CodeBlock.svelte';
+	import ChangeView from '../ChangeView.svelte';
+	import CodeBlock from '../CodeBlock.svelte';
 
 	export let activity: Activity;
 	export let project: Project;

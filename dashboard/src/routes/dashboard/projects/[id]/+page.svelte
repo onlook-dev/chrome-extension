@@ -18,7 +18,7 @@
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
 	import ImageDetailView from './ImageDetailView.svelte';
 	import GithubModal from './github/GithubModal.svelte';
-	import ActivityDetail from './ActivityDetail.svelte';
+	import ActivityDetail from './activities/ActivityDetail.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import * as Resizable from '$lib/components/ui/resizable';
 

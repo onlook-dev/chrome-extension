@@ -12,21 +12,23 @@
 	import { paymentsMapStore, teamsMapStore, userStore } from '$lib/utils/store';
 	import { FirebaseService } from '$lib/storage';
 
-	import AvatarDropdown from './AvatarDropdown.svelte';
+	import AvatarDropdown from './sidebar/AvatarDropdown.svelte';
 	import ProjectsView from './ProjectsView.svelte';
-	import NewTeamModal from './NewTeamModal.svelte';
-	import PlanModal from './PlanModal.svelte';
+	import NewTeamModal from './sidebar/NewTeamModal.svelte';
+	import PlanModal from './sidebar/PlanModal.svelte';
 	import * as Resizable from '$lib/components/ui/resizable';
 
 	import type { Team, Payment, User } from '$shared/models';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import CreateProjectModal from './CreateProjectModal.svelte';
+	import Tour from './tour/Tour.svelte';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
 	let user: User | null;
 	let activeTeamId: string = '';
 	let unsubs: any[] = [];
+	let createProjectModelOpen = false;
 
 	onMount(async () => {
 		// Get active team from params
@@ -74,6 +76,7 @@
 	<title>Onlook - Dashboard</title>
 </svelte:head>
 
+<Tour bind:createProjectModelOpen />
 <div class="dark w-screen h-screen bg-black">
 	<Resizable.PaneGroup direction="horizontal">
 		<Resizable.Pane class="min-w-56" minSize={8} defaultSize={8}>
@@ -130,7 +133,7 @@
 					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
 				</h1>
 				<div class="ml-auto">
-					<CreateProjectModal />
+					<CreateProjectModal bind:modalOpen={createProjectModelOpen} />
 				</div>
 			</div>
 			<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
