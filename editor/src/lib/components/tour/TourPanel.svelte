@@ -4,10 +4,11 @@
     import { onMount } from "svelte";
     import { sendMessage } from "webext-bridge/window";
     import * as Card from "$lib/components/ui/card";
+    import TourStep from "./TourStep.svelte";
 
     let stage = 0;
-    let maxStage = 3;
-    let tourVisible = false;
+    let maxStage = 4;
+    let tourVisible = true;
 
     $: if (stage > maxStage) {
         tourVisible = false;
@@ -25,10 +26,14 @@
 
 <div
     class="{tourVisible ? 'visible' : 'invisible'} 
-        fixed inset-0 z-50 flex bg-black/40"
+        fixed inset-0 z-50 w-screen h-screen flex {stage === 0
+        ? 'bg-black/40'
+        : ''}"
 >
     {#if stage === 0}
-        <Card.Root class="bg-blue-500/95 w-[40rem] max-w-2/3 mx-auto my-auto">
+        <Card.Root
+            class="bg-blue-500/95 border-blue-400 w-[40rem] max-w-2/3 m-auto"
+        >
             <Card.Header class="text-xl">Ready for something new?</Card.Header>
             <Card.Content class="text-base px-6">
                 <div>
@@ -49,72 +54,52 @@
             </Card.Footer>
         </Card.Root>
     {:else if stage === 1}
-        <Card.Root
-            class="w-[20rem] h-[15rem] mt-[8rem] ml-auto mr-[13rem] bg-blue-500/95 rounded-tr-none"
+        <TourStep
+            bind:stage
+            classes="mt-[1rem] mr-[10rem] rounded-tr-none"
+            headerText="Edit on any page"
         >
-            <Card.Header class="text-lg">Change any styles</Card.Header>
-            <Card.Content class="text-sm px-6">
-                <div>
-                    Click on any element on the page to start editing. Double
-                    click to edit text. <br /><br />You can use the design tools
-                    or try our AI assistant.
-                </div>
-            </Card.Content>
-            <Card.Footer class="flex flex-row gap-2">
-                <Button
-                    class="ml-auto"
-                    variant="ghost"
-                    on:click={() => (stage -= 1)}
-                >
-                    Back
-                </Button>
-                <Button on:click={() => (stage += 1)}>Next</Button>
-            </Card.Footer>
-        </Card.Root>
+            <div>
+                Click the extension icon to toggle the editor. <br />
+                <br />
+                Do this on any website to start designing that page.
+            </div>
+        </TourStep>
     {:else if stage === 2}
-        <Card.Root
-            class="w-[20rem] h-[15rem] mt-[5rem] ml-[10rem] bg-blue-500/95 rounded-tl-none"
+        <TourStep
+            bind:stage
+            classes="mt-[8rem] mr-[13rem] rounded-tr-none"
+            headerText="Change any styles"
         >
-            <Card.Header class="text-lg">See your changes</Card.Header>
-            <Card.Content class="text-sm px-6">
-                <div>
-                    Your changes are recorded in the changes tab. <br /> <br /> You
-                    can toggle the change or undo with cmd+z.
-                </div>
-            </Card.Content>
-            <Card.Footer class="flex flex-row gap-2">
-                <Button
-                    class="ml-auto"
-                    variant="ghost"
-                    on:click={() => (stage -= 1)}
-                >
-                    Back
-                </Button>
-                <Button on:click={() => (stage += 1)}>Next</Button>
-            </Card.Footer>
-        </Card.Root>
+            <div>
+                Click on any element on the page to start editing. Double click
+                to edit text. <br /> <br />You can use the design tools or try
+                our AI assistant.
+            </div>
+        </TourStep>
     {:else if stage === 3}
-        <Card.Root
-            class="w-[20rem] h-[15rem] mt-[5rem] ml-auto mr-[15rem] bg-blue-500/95 rounded-tr-none"
+        <TourStep
+            bind:stage
+            classes="mt-[5rem] ml-[10rem] rounded-tl-none"
+            headerText="See your changes"
         >
-            <Card.Header class="text-lg">Share your design</Card.Header>
-            <Card.Content class="text-sm px-6">
-                <div>
-                    Once finished, share your changes with a colleague. <br />
-                    <br />Your changes are recorded as code that can be easily
-                    used in your project.
-                </div>
-            </Card.Content>
-            <Card.Footer class="flex flex-row gap-2">
-                <Button
-                    class="ml-auto"
-                    variant="ghost"
-                    on:click={() => (stage -= 1)}
-                >
-                    Back
-                </Button>
-                <Button on:click={() => (stage += 1)}>Finish</Button>
-            </Card.Footer>
-        </Card.Root>
+            <div>
+                Your changes are recorded in the changes tab. <br /> <br /> You can
+                toggle the change or undo with cmd+z.
+            </div>
+        </TourStep>
+    {:else if stage === 4}
+        <TourStep
+            bind:stage
+            classes="mt-[5rem] mr-[15rem] rounded-tr-none"
+            headerText="Share your changes"
+            buttonText="Finish"
+        >
+            <div>
+                Once finished, share your changes with a colleague.
+                <br /> <br /> Changes are recorded as code that can be easily used
+                in your project.
+            </div>
+        </TourStep>
     {/if}
 </div>

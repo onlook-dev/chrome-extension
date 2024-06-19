@@ -11,18 +11,17 @@
 	} from '$shared/constants';
 	import { paymentsMapStore, teamsMapStore, userStore } from '$lib/utils/store';
 	import { FirebaseService } from '$lib/storage';
+	import { Shadow } from 'svelte-radix';
+	import type { Team, Payment, User } from '$shared/models';
 
 	import AvatarDropdown from './sidebar/AvatarDropdown.svelte';
 	import ProjectsView from './ProjectsView.svelte';
 	import NewTeamModal from './sidebar/NewTeamModal.svelte';
 	import PlanModal from './sidebar/PlanModal.svelte';
-	import * as Resizable from '$lib/components/ui/resizable';
-
-	import type { Team, Payment, User } from '$shared/models';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import CreateProjectModal from './CreateProjectModal.svelte';
-	import Tour from './Tour.svelte';
-	import { Shadow } from 'svelte-radix';
+	import IntroTour from '$lib/components/tour/IntroTour.svelte';
+	import * as Resizable from '$lib/components/ui/resizable';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
@@ -79,7 +78,7 @@
 
 <div class="dark w-screen h-screen bg-black">
 	{#if user}
-		<Tour bind:createProjectModelOpen bind:user />
+		<IntroTour bind:createProjectModelOpen bind:user />
 		<Resizable.PaneGroup direction="horizontal">
 			<Resizable.Pane class="min-w-56" minSize={8} defaultSize={8}>
 				<div class="flex flex-col w-full h-full p-0 bg-surface text-primary text-sm">
