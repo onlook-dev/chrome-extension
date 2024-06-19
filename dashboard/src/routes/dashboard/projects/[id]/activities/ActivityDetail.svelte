@@ -157,29 +157,31 @@
 		</p>
 	{/if}
 
-	<div>
-		<span class=""><span class="text-primary">{userName}</span> updated styles </span>
-		<ChangeView>
-			<div class="pl-4" slot="preview">
-				{#each Object.values(activity.styleChanges) as styleChange}
-					<span class="text-sky-300">{jsToCssProperty(styleChange.key)}</span>
-					{#if styleChange.oldVal !== ''}
-						from
-						<span class="text-brand">{styleChange.oldVal}</span>
-					{/if}
-					to
-					<span class="text-brand">{styleChange.newVal}</span>
-					<br />
-				{/each}
-			</div>
+	{#if activity.styleChanges && Object.keys(activity.styleChanges).length > 0}
+		<div>
+			<span class=""><span class="text-primary">{userName}</span> updated styles </span>
+			<ChangeView>
+				<div class="pl-4" slot="preview">
+					{#each Object.values(activity.styleChanges) as styleChange}
+						<span class="text-sky-300">{jsToCssProperty(styleChange.key)}</span>
+						{#if styleChange.oldVal !== ''}
+							from
+							<span class="text-brand">{styleChange.oldVal}</span>
+						{/if}
+						to
+						<span class="text-brand">{styleChange.newVal}</span>
+						<br />
+					{/each}
+				</div>
 
-			<CodeBlock
-				slot="code"
-				language="css"
-				code={getStyleChangesAsCss(Object.values(activity.styleChanges))}
-			/>
-		</ChangeView>
-	</div>
+				<CodeBlock
+					slot="code"
+					language="css"
+					code={getStyleChangesAsCss(Object.values(activity.styleChanges))}
+				/>
+			</ChangeView>
+		</div>
+	{/if}
 
 	{#if activity.textChanges && Object.keys(activity.textChanges).length > 0}
 		<p>
