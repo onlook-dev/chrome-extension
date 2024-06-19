@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { auth } from '$lib/firebase';
 	import { onMount, onDestroy } from 'svelte';
 	import { DashboardRoutes, MAX_TITLE_LENGTH, FirestoreCollections } from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 	import { truncateString } from '$shared/helpers';
-	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 	import { Pencil2, Shadow, ExclamationTriangle, ArrowLeft, Reload } from 'svelte-radix';
 	import { MessageService, MessageType } from '$shared/message';
-
 	import type { User, Activity, Project } from '$shared/models';
 
+	import ProjectTour from '$lib/components/tour/ProjectTour.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
@@ -106,6 +106,18 @@
 			url: project?.hostUrl
 		});
 	}
+
+	function pickActivity(activityId?: string) {
+		if (activityId) {
+			activeActivityId = activityId;
+			return;
+		}
+		// If no activity provided, pick first available activity
+		const activitiesVals = Object.values(project?.activities || {});
+		if (activitiesVals.length) {
+			activeActivityId = activitiesVals[0].id;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -114,6 +126,7 @@
 
 <div class="flex h-screen w-screen flex-col bg-black text-primary">
 	{#if project && user}
+		<ProjectTour bind:user {pickActivity} />
 		<!-- Header -->
 		<div class="flex flex-row items-center h-14 px-4">
 			<Breadcrumb.Root class="mr-auto ">

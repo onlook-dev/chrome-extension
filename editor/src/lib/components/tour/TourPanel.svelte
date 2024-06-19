@@ -26,7 +26,9 @@
 
 <div
     class="{tourVisible ? 'visible' : 'invisible'} 
-        fixed z-50 w-screen h-screen flex bg-black/40"
+        fixed inset-0 z-50 w-screen h-screen flex {stage === 0
+        ? 'bg-black/40'
+        : ''}"
 >
     {#if stage === 0}
         <Card.Root

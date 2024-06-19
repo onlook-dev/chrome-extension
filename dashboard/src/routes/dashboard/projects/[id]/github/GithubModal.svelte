@@ -8,6 +8,7 @@
 	import { FirebaseService } from '$lib/storage';
 	import { timeSince } from '$shared/helpers';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
+	import type { Project, Team, User } from '$shared/models';
 
 	import PublishModal from './PublishModal.svelte';
 	import GitHub from '~icons/mdi/github';
@@ -18,13 +19,12 @@
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import * as Dialog from '$lib/components/ui/dialog';
 
-	import type { Project, Team, User } from '$shared/models';
-
 	export let project: Project;
 	export let user: User;
 	export let projectService: FirebaseService<Project>;
 	export let githubModalOpen = false; // TODO: This might be better as a store
 	export let requestEditProject: () => void;
+
 	let publishModalOpen = false;
 	let matchingProjects: Project[] = [];
 
@@ -39,17 +39,22 @@
 			// Check other projects for installation
 			const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 			const team: Team = await teamService.get(project.teamId);
-			team.projectIds.forEach(async (projId) => {
-				if (projId === project.id) {
+			const projectHostUrl = new URL(project.hostUrl);
+			team.projectIds.forEach(async (teamProjectId) => {
+				if (teamProjectId === project.id) {
 					return;
 				}
 				try {
-					const proj = await projectService.get(projId);
+					const teamProject = await projectService.get(teamProjectId);
+					if (!teamProject || !teamProject.hostUrl) {
+						return;
+					}
+					const teamProjectHostUrl = new URL(teamProject.hostUrl);
 					if (
-						new URL(proj.hostUrl).hostname === new URL(project.hostUrl).hostname &&
-						proj.installationId
+						teamProjectHostUrl.hostname === projectHostUrl.hostname &&
+						teamProject.installationId
 					) {
-						matchingProjects = [...matchingProjects, proj];
+						matchingProjects = [...matchingProjects, teamProject];
 					}
 				} catch (error) {
 					console.error('Error fetching project:', error);

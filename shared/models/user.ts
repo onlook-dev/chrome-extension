@@ -5,5 +5,10 @@ export interface User {
   profileImage?: string;
   teamIds: string[];
   createdAt: string;
-  tourCompleted?: boolean;
+  toursCompleted?: { [key in TourName]?: boolean };
+}
+
+export enum TourName {
+  INTRO = 'INTRO',
+  PROJECT = 'PROJECT',
 }

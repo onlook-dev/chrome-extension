@@ -18,3 +18,4 @@ export { Tier, Role } from './team';
 export { ActivityStatus } from './activity';
 export { EditType } from './editor';
 export { Tools } from './llm';
+export { TourName } from './user';
