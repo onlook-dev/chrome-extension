@@ -1,8 +1,5 @@
 import { getBucket } from '@extend-chrome/storage'
-import type { User } from '../../../../shared/models/user'
-import type { Team } from '../../../../shared/models/team'
-import type { Project } from '../../../../shared/models/project'
-
+import type { User, Team, Project } from '$shared/models'
 // Maps that get shared across the whole extension using local storage
 // https://github.com/extend-chrome/storage
 
@@ -14,6 +11,10 @@ interface UserState {
 	user: User
 }
 
+interface AppState {
+	shouldTour: boolean
+}
+
 export enum InjectState {
 	injected = 'injected',
 	loaded = 'loaded',
@@ -23,6 +24,7 @@ export enum InjectState {
 // Objects
 export const authUserBucket = getBucket<AuthUserState>('AUTH_USER_STATE')
 export const userBucket = getBucket<UserState>('USER_STATE')
+export const stateBucket = getBucket<AppState>('APP_STATE')
 
 // Maps
 export const teamsMapBucket = getBucket<Map<string, Team>>('TEAMS_MAP')

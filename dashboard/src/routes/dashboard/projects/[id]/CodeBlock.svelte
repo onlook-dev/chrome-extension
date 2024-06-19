@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import hljs from 'highlight.js';
 	import beautify from 'js-beautify';
-	import 'highlight.js/styles/default.min.css';
+	import 'highlight.js/styles/dark.min.css';
 
 	export let code = '';
 	export let language = 'html';
@@ -14,17 +14,12 @@
 		// Apply beautification
 		if (language === 'html') {
 			codeBlock.textContent = beautify.html(code, {
-				indent_size: 2, // Adjust indent size to your preference
-				extra_liners: [] // Manage additional line breaks around HTML elements
+				wrap_attributes: 'force'
 			});
 		} else if (language === 'css') {
-			codeBlock.textContent = beautify.css(code, {
-				indent_size: 2 // Adjust indent size to your preference
-			});
+			codeBlock.textContent = beautify.css(code, {});
 		} else if (language === 'javascript') {
-			codeBlock.textContent = beautify.js(code, {
-				indent_size: 2 // Adjust indent size to your preference
-			});
+			codeBlock.textContent = beautify.js(code, {});
 		}
 		setTimeout(() => {
 			hljs.highlightElement(codeBlock);
