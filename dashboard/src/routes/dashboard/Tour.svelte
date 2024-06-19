@@ -9,7 +9,7 @@
 
 	export let createProjectModelOpen = false;
 	export let user: User;
-	let tourVisible = false;
+	let tourVisible = true;
 	let userService = new FirebaseService<User>(FirestoreCollections.USERS);
 
 	onMount(() => {
@@ -32,7 +32,10 @@
         fixed inset-0 z-50 bg-black/90 flex flex-col justify-center items-center"
 >
 	<div class="text-primary space-y-8 text-center">
-		<h1 class="text-xl">Pin the extension</h1>
+		<div>
+			<h1 class="text-xl">Pin the Extension</h1>
+			<h2 class="text-base text-tertiary">You will use the it to design in the browser</h2>
+		</div>
 		<img class="h-auto max-w-md rounded-lg" src={Pin} alt="Pin extension tip" />
 		<Button variant="primary" on:click={finishTour}
 			><DrawingPinFilled class="h-4 w-4 mr-2" /> I pinned the extension and am ready to design</Button
