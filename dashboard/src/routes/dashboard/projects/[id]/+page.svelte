@@ -65,7 +65,8 @@
 			projectService
 				.subscribe(projectId, async (firebaseProject) => {
 					if (!firebaseProject || !Object.keys(firebaseProject).length) {
-						errorText = 'Project not found';
+						// Set timeout to error to give projects time to load
+						setTimeout(() => (errorText = 'Project not found'), 5000);
 						return;
 					}
 					$projectsMapStore.set(projectId, firebaseProject);
@@ -152,12 +153,7 @@
 				</Resizable.Pane>
 			{/if}
 		</Resizable.PaneGroup>
-	{:else if !errorText}
-		<div class="flex flex-row items-center justify-center h-full">
-			<Shadow class="animate-spin mr-2" />
-			<p class="text-stone-500">Loading Project...</p>
-		</div>
-	{:else}
+	{:else if errorText}
 		<div class="flex flex-col items-center justify-center h-full space-y-8">
 			<p class="flex flex-row items-center text-lg">
 				<ExclamationTriangle class="mr-3" />
@@ -166,6 +162,11 @@
 			<Button class="ml-4" on:click={() => goto(DashboardRoutes.DASHBOARD)}
 				><ArrowLeft class="mr-2 w-4 h-4" /> Return to dashboard</Button
 			>
+		</div>
+	{:else}
+		<div class="flex flex-row items-center justify-center h-full">
+			<Shadow class="animate-spin mr-2" />
+			<p class="text-stone-500">Loading Project...</p>
 		</div>
 	{/if}
 </div>
