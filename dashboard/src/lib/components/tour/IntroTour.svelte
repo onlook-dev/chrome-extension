@@ -39,7 +39,7 @@
 	<div class="text-primary space-y-8 text-center pb-20">
 		<div>
 			<h1 class="text-xl">Pin the Extension</h1>
-			<h2 class="text-base text-tertiary">You will use the it to design in the browser</h2>
+			<h2 class="text-base text-tertiary">You will use it to design in the browser</h2>
 		</div>
 		<img class="h-auto max-w-md rounded-lg" src={Pin} alt="Pin extension tip" />
 		<Button variant="primary" on:click={finishTour}

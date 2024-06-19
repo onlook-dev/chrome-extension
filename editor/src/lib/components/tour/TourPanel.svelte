@@ -7,8 +7,8 @@
     import TourStep from "./TourStep.svelte";
 
     let stage = 0;
-    let maxStage = 3;
-    let tourVisible = false;
+    let maxStage = 4;
+    let tourVisible = true;
 
     $: if (stage > maxStage) {
         tourVisible = false;
@@ -56,6 +56,18 @@
     {:else if stage === 1}
         <TourStep
             bind:stage
+            classes="mt-[1rem] mr-[10rem] rounded-tr-none"
+            headerText="Edit on any page"
+        >
+            <div>
+                Click the extension icon to toggle the editor. <br />
+                <br />
+                Do this on any website to start designing that page.
+            </div>
+        </TourStep>
+    {:else if stage === 2}
+        <TourStep
+            bind:stage
             classes="mt-[8rem] mr-[13rem] rounded-tr-none"
             headerText="Change any styles"
         >
@@ -65,7 +77,7 @@
                 our AI assistant.
             </div>
         </TourStep>
-    {:else if stage === 2}
+    {:else if stage === 3}
         <TourStep
             bind:stage
             classes="mt-[5rem] ml-[10rem] rounded-tl-none"
@@ -76,12 +88,12 @@
                 toggle the change or undo with cmd+z.
             </div>
         </TourStep>
-    {:else if stage === 3}
+    {:else if stage === 4}
         <TourStep
             bind:stage
             classes="mt-[5rem] mr-[15rem] rounded-tr-none"
-            buttonText="Finish"
             headerText="Share your changes"
+            buttonText="Finish"
         >
             <div>
                 Once finished, share your changes with a colleague.
