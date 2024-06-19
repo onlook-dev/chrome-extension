@@ -44,17 +44,21 @@
 		project = { ...project };
 	}
 
-	function getGitHubPath(githubSettings: GithubSettings, path: string, commit?: string) {
-		const ref = commit || githubSettings.baseBranch;
-		const node: TemplateNode = decompress(path);
-		const filePath = node.path;
-		const startLine = node.startTag.start.line;
-		const endLine = node.endTag ? node.endTag.end.line : node.startTag.end.line;
-		return `https://github.com/${githubSettings.owner}/${
-			githubSettings.repositoryName
-		}/blob/${ref}/${
-			githubSettings.rootPath ? `${githubSettings.rootPath}/` : ''
-		}${filePath}#L${startLine}-L${endLine}`;
+	function getGitHubPath(githubSettings: GithubSettings, path: string) {
+		try {
+			const node: TemplateNode = decompress(path);
+			const ref = node.commit || githubSettings.baseBranch;
+			const filePath = node.path;
+			const startLine = node.startTag.start.line;
+			const endLine = node.endTag ? node.endTag.end.line : node.startTag.end.line;
+			return `https://github.com/${githubSettings.owner}/${
+				githubSettings.repositoryName
+			}/blob/${ref}/${
+				githubSettings.rootPath ? `${githubSettings.rootPath}/` : ''
+			}${filePath}#L${startLine}-L${endLine}`;
+		} catch (e) {
+			return '';
+		}
 	}
 
 	function getStructureValue(value: string | ChildVal): ChildVal {
@@ -99,10 +103,7 @@
 						class="px-2"
 						on:click={() => {
 							if (!project.githubSettings || !activity.path) return;
-							window.open(
-								getGitHubPath(project.githubSettings, activity.path, activity.snapshot),
-								'_blank'
-							);
+							window.open(getGitHubPath(project.githubSettings, activity.path), '_blank');
 						}}
 					>
 						<GithubLogo class="w-4 h-4" />
