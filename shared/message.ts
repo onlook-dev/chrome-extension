@@ -7,6 +7,7 @@ export enum MessageType {
 
     // Project
     OPEN_URL = "OPEN_URL",
+    SHOULD_TOUR = "SHOULD_TOUR",
 
     // Edit
     EDIT_EVENT = "EDIT_EVENT",

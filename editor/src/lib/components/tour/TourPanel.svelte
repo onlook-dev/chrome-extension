@@ -1,10 +1,23 @@
 <script lang="ts">
     import { Button } from "$lib/components/ui/button";
+    import { MessageType } from "$shared/message";
+    import { onMount } from "svelte";
+    import { sendMessage } from "webext-bridge/window";
     import * as Card from "$lib/components/ui/card";
 
     let stage = 0;
     let maxStage = 3;
-    $: tourVisible = stage <= maxStage;
+    let tourVisible = false;
+
+    $: if (stage > maxStage) {
+        tourVisible = false;
+    }
+
+    onMount(() => {
+        setTimeout(async () => {
+            tourVisible = await sendMessage(MessageType.SHOULD_TOUR, {});
+        }, 500);
+    });
 </script>
 
 <div
@@ -13,11 +26,12 @@
 >
     {#if stage === 0}
         <Card.Root class="bg-blue-500/95 w-[40rem] max-w-2/3 mx-auto my-auto">
-            <Card.Header class="text-xl">Welcome to Onlook</Card.Header>
-            <Card.Content class="text-sm px-6">
+            <Card.Header class="text-xl">Ready for something new?</Card.Header>
+            <Card.Content class="px-6">
                 <div>
-                    Onlook lets you design directly on the live page, no canvas
-                    needed.
+                    Unlike other design tools, Onlook lets you design directly
+                    on the live page.<br /> This means your design is exactly how
+                    it would look to your users.
                 </div>
             </Card.Content>
             <Card.Footer class="flex flex-row gap-2">
@@ -33,13 +47,14 @@
         </Card.Root>
     {:else if stage === 1}
         <Card.Root
-            class="w-[20rem] h-[12rem] mt-[10rem] ml-auto mr-[15rem] bg-blue-500/95 rounded-tr-none"
+            class="w-[20rem] h-[15rem] mt-[8rem] ml-auto mr-[13rem] bg-blue-500/95 rounded-tr-none"
         >
-            <Card.Header class="text-xl">Change any styles</Card.Header>
+            <Card.Header class="text-lg">Change any styles</Card.Header>
             <Card.Content class="text-sm px-6">
                 <div>
-                    Use the editor panel to update styles. Double click the
-                    element to edit text.
+                    Click on any element on the page to start editing. Double
+                    click to edit text. <br /><br />You can use the design tools
+                    or try our AI assistant.
                 </div>
             </Card.Content>
             <Card.Footer class="flex flex-row gap-2">
@@ -55,11 +70,14 @@
         </Card.Root>
     {:else if stage === 2}
         <Card.Root
-            class="w-[20rem] h-[12rem] mt-[5rem] ml-[10rem] bg-blue-500/95 rounded-tl-none"
+            class="w-[20rem] h-[15rem] mt-[5rem] ml-[10rem] bg-blue-500/95 rounded-tl-none"
         >
-            <Card.Header class="text-xl">See your changes</Card.Header>
+            <Card.Header class="text-lg">See your changes</Card.Header>
             <Card.Content class="text-sm px-6">
-                <div>You can undo with CMD+Z or redo with CMD+Shift+Z.</div>
+                <div>
+                    Your changes are recorded in the changes tab. <br /> <br /> You
+                    can toggle the change or undo with cmd+z.
+                </div>
             </Card.Content>
             <Card.Footer class="flex flex-row gap-2">
                 <Button
@@ -74,16 +92,14 @@
         </Card.Root>
     {:else if stage === 3}
         <Card.Root
-            class="w-[20rem] h-[13rem] mt-[5rem] ml-auto mr-[15rem] bg-blue-500/95 rounded-tr-none"
+            class="w-[20rem] h-[15rem] mt-[5rem] ml-auto mr-[15rem] bg-blue-500/95 rounded-tr-none"
         >
-            <Card.Header class="text-xl"
-                >Share or publish your design</Card.Header
-            >
+            <Card.Header class="text-lg">Share your design</Card.Header>
             <Card.Content class="text-sm px-6">
                 <div>
-                    Once finished, share your changes with a colleague or
-                    publish a code review. This will save time for your
-                    developer.
+                    Once finished, share your changes with a colleague. <br />
+                    <br />Your changes are recorded as code that can be easily
+                    used in your project.
                 </div>
             </Card.Content>
             <Card.Footer class="flex flex-row gap-2">

@@ -16,7 +16,8 @@ import {
     projectsMapBucket,
     teamsMapBucket,
     usersMapBucket,
-    getActiveUser
+    getActiveUser,
+    stateBucket
 } from '$lib/utils/localstorage'
 import { signInUser, signOut, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { captureActiveTab } from './screenshot'
@@ -59,6 +60,7 @@ export class BackgroundEventHandlers {
         teamsMapBucket.set({})
         projectsMapBucket.set({})
         usersMapBucket.set({})
+        stateBucket.set({ shouldTour: true })
     }
 
     openOrCreateNewTab(url: string, inject: boolean = false): Promise<chrome.tabs.Tab | undefined> {
@@ -163,6 +165,13 @@ export class BackgroundEventHandlers {
             trackMixpanelEvent('Send chat', { query: (data as any)?.content, latency: `${latency}ms` })
             return res
         })
+
+        onMessage(MessageType.SHOULD_TOUR, async () => {
+            const { shouldTour } = await stateBucket.get()
+            stateBucket.set({ shouldTour: false })
+            return shouldTour
+        })
+
 
         tabIdRequestStream.subscribe(([_, sender]) => {
             forwardToActiveTab(sender.tab, sendTabIdResponse)
