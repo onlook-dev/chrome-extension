@@ -20,7 +20,7 @@
 	import PlanModal from './sidebar/PlanModal.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import CreateProjectModal from './CreateProjectModal.svelte';
-	import StartTour from '$lib/components/tour/StartTour.svelte';
+	import IntroTour from '$lib/components/tour/IntroTour.svelte';
 	import * as Resizable from '$lib/components/ui/resizable';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
@@ -78,7 +78,7 @@
 
 <div class="dark w-screen h-screen bg-black">
 	{#if user}
-		<StartTour bind:createProjectModelOpen bind:user />
+		<IntroTour bind:createProjectModelOpen bind:user />
 		<Resizable.PaneGroup direction="horizontal">
 			<Resizable.Pane class="min-w-56" minSize={8} defaultSize={8}>
 				<div class="flex flex-col w-full h-full p-0 bg-surface text-primary text-sm">

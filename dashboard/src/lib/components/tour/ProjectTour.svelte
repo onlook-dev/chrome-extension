@@ -13,9 +13,6 @@
 	let userService = new FirebaseService<User>(FirestoreCollections.USERS);
 	let tourVisible = false;
 	let stage = 0;
-	let maxStage = 4;
-
-	$: if (stage > maxStage) tourVisible = false;
 
 	onMount(() => {
 		// Show if tour not completed
@@ -28,10 +25,11 @@
 		// Update the user object with the new tour status
 		const updatedTours = {
 			...user.toursCompleted,
-			[TourName.PROJECT]: false
+			[TourName.PROJECT]: true
 		};
 		user = { ...user, toursCompleted: updatedTours };
 		userService.post(user);
+		console.log(user.toursCompleted);
 	}
 </script>
 
