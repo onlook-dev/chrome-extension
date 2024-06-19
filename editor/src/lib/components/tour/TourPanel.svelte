@@ -15,7 +15,10 @@
 
     onMount(() => {
         setTimeout(async () => {
-            tourVisible = await sendMessage(MessageType.SHOULD_TOUR, {});
+            const shouldTour = await sendMessage(MessageType.SHOULD_TOUR, {});
+            if (shouldTour) {
+                tourVisible = true;
+            }
         }, 500);
     });
 </script>

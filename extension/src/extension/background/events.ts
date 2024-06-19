@@ -168,7 +168,9 @@ export class BackgroundEventHandlers {
 
         onMessage(MessageType.SHOULD_TOUR, async () => {
             const { shouldTour } = await stateBucket.get()
+            console.log('Should tour:', shouldTour)
             stateBucket.set({ shouldTour: false })
+            console.log('Should tour:', await stateBucket.get())
             return shouldTour
         })
 
