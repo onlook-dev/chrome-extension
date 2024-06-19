@@ -294,7 +294,7 @@ export class OverlayManager {
         this.removeParentRect()
         this.removeHoverRect()
         this.removeClickedRects()
-        console.log('Cleared overlay')
+        this.removeEditRect()
     }
 
     addClickRect = (el: HTMLElement) => {

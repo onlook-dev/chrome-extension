@@ -27,7 +27,7 @@ export class ToolManager {
   hotKeys: HotKeys;
 
   private clickTimer: any = null;
-  private delay: number = 50;
+  private delay: number = 10;
 
   eventsMap = {
     'mouseover': (e) => this.handleMouseOver(e),
