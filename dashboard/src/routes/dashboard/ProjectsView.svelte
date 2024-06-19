@@ -47,14 +47,14 @@
 </script>
 
 <div
-	class="pb-16 w-ful h-full overflow-auto text-primary grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
+	class="pb-16 w-full max-h-full overflow-auto text-primary grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"
 >
 	{#if team?.projectIds.length}
 		{#each projects as project}
 			{#if project && Object.keys(project).length}
 				<button
 					on:click={() => goto(`${DashboardRoutes.PROJECTS}/${project?.id}`)}
-					class="transition rounded space-y-4 p-4 border border-black hover:bg-surface hover:border-stone-700 block max-h-96"
+					class="transition rounded space-y-4 p-4 border border-black hover:bg-surface hover:border-stone-700 block"
 				>
 					<figure class="">
 						{#if project?.hostData?.previewImage}
