@@ -8,7 +8,7 @@
 	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
-	import { Pencil2, Shadow, ExclamationTriangle, ArrowLeft } from 'svelte-radix';
+	import { Pencil2, Shadow, ExclamationTriangle, ArrowLeft, Reload } from 'svelte-radix';
 	import { MessageService, MessageType } from '$shared/message';
 
 	import type { User, Activity, Project } from '$shared/models';
@@ -159,9 +159,15 @@
 				<ExclamationTriangle class="mr-3" />
 				{errorText}
 			</p>
-			<Button class="ml-4" on:click={() => goto(DashboardRoutes.DASHBOARD)}
-				><ArrowLeft class="mr-2 w-4 h-4" /> Return to dashboard</Button
-			>
+
+			<div class="">
+				<Button variant="outline" class="ml-4" on:click={() => goto(DashboardRoutes.DASHBOARD)}
+					><ArrowLeft class="mr-2 w-4 h-4" /> Return to dashboard</Button
+				>
+				<Button class="ml-4" variant="outline" on:click={() => window.location.reload()}
+					><Reload class="mr-2 w-4 h-4" /> Retry</Button
+				>
+			</div>
 		</div>
 	{:else}
 		<div class="flex flex-row items-center justify-center h-full">
