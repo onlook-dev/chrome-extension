@@ -5,4 +5,5 @@ export interface User {
   profileImage?: string;
   teamIds: string[];
   createdAt: string;
+  tourCompleted?: boolean;
 }

@@ -21,11 +21,12 @@
 	import type { Team, Payment, User } from '$shared/models';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import CreateProjectModal from './CreateProjectModal.svelte';
-	import Tour from './tour/Tour.svelte';
+	import Tour from './Tour.svelte';
+	import { Shadow } from 'svelte-radix';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
-	let user: User | null;
+	let user: User | undefined = undefined;
 	let activeTeamId: string = '';
 	let unsubs: any[] = [];
 	let createProjectModelOpen = false;
@@ -76,67 +77,74 @@
 	<title>Onlook - Dashboard</title>
 </svelte:head>
 
-<Tour bind:createProjectModelOpen />
 <div class="dark w-screen h-screen bg-black">
-	<Resizable.PaneGroup direction="horizontal">
-		<Resizable.Pane class="min-w-56" minSize={8} defaultSize={8}>
-			<div class="flex flex-col w-full h-full p-0 bg-surface text-primary text-sm">
-				<!-- Sidebar content -->
-				<AvatarDropdown {user} />
-				<!-- Project folder navigation -->
-				<div class="space-y-2">
-					{#if user?.teamIds}
-						{#each user?.teamIds as teamId}
-							<div
-								class="p-2 flex h-10 items-center {activeTeamId === teamId
-									? 'bg-black'
-									: 'hover:bg-stone-900'}"
-							>
-								<button
-									class="btn btn-ghost grid grid-cols-3 items-center w-full font-normal"
-									on:click={() => {
-										activeTeamId = teamId;
-										goto(`${DashboardRoutes.DASHBOARD}?${DashboardSearchParams.TEAM}=` + teamId, {
-											replaceState: true
-										});
-									}}
+	{#if user}
+		<Tour bind:createProjectModelOpen bind:user />
+		<Resizable.PaneGroup direction="horizontal">
+			<Resizable.Pane class="min-w-56" minSize={8} defaultSize={8}>
+				<div class="flex flex-col w-full h-full p-0 bg-surface text-primary text-sm">
+					<!-- Sidebar content -->
+					<AvatarDropdown {user} />
+					<!-- Project folder navigation -->
+					<div class="space-y-2">
+						{#if user?.teamIds}
+							{#each user?.teamIds as teamId}
+								<div
+									class="p-2 flex h-10 items-center {activeTeamId === teamId
+										? 'bg-black'
+										: 'hover:bg-stone-900'}"
 								>
-									<p class="{activeTeamId === teamId ? 'active ' : ''} col-span-2 text-left">
-										{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}
-									</p>
-									{#if activeTeamId === teamId}
-										<div class="col-start-3 justify-self-end">
-											<PlanModal {teamId} />
-										</div>
-									{/if}
-								</button>
-							</div>
-						{/each}
-					{/if}
-					<div class="px-6 py-2">
-						<NewTeamModal />
+									<button
+										class="btn btn-ghost grid grid-cols-3 items-center w-full font-normal"
+										on:click={() => {
+											activeTeamId = teamId;
+											goto(`${DashboardRoutes.DASHBOARD}?${DashboardSearchParams.TEAM}=` + teamId, {
+												replaceState: true
+											});
+										}}
+									>
+										<p class="{activeTeamId === teamId ? 'active ' : ''} col-span-2 text-left">
+											{$teamsMapStore.get(teamId)?.name ?? 'Unknown team'}
+										</p>
+										{#if activeTeamId === teamId}
+											<div class="col-start-3 justify-self-end">
+												<PlanModal {teamId} />
+											</div>
+										{/if}
+									</button>
+								</div>
+							{/each}
+						{/if}
+						<div class="px-6 py-2">
+							<NewTeamModal />
+						</div>
+					</div>
+					<div class="mt-auto m-4">
+						<Button
+							variant="secondary"
+							class="w-full"
+							on:click={() => window.open(FEEDBACK_LINK, '_blank')}>Give feedback</Button
+						>
 					</div>
 				</div>
-				<div class="mt-auto m-4">
-					<Button
-						variant="secondary"
-						class="w-full"
-						on:click={() => window.open(FEEDBACK_LINK, '_blank')}>Give feedback</Button
-					>
+			</Resizable.Pane>
+			<Resizable.Handle class="hover:bg-surface-brand bg-black" />
+			<Resizable.Pane class="p-6 space-y-6 h-full" minSize={50}>
+				<div class="flex flex-row w-full items-center">
+					<h1 class="text-xl text-primary">
+						{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
+					</h1>
+					<div class="ml-auto">
+						<CreateProjectModal bind:modalOpen={createProjectModelOpen} />
+					</div>
 				</div>
-			</div>
-		</Resizable.Pane>
-		<Resizable.Handle class="hover:bg-surface-brand bg-black" />
-		<Resizable.Pane class="p-6 space-y-6 h-full" minSize={50}>
-			<div class="flex flex-row w-full items-center">
-				<h1 class="text-xl text-primary">
-					{$teamsMapStore.get(activeTeamId)?.name ?? 'Unknown team'}
-				</h1>
-				<div class="ml-auto">
-					<CreateProjectModal bind:modalOpen={createProjectModelOpen} />
-				</div>
-			</div>
-			<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
-		</Resizable.Pane>
-	</Resizable.PaneGroup>
+				<ProjectsView team={$teamsMapStore.get(activeTeamId)} />
+			</Resizable.Pane>
+		</Resizable.PaneGroup>
+	{:else}
+		<div class="flex flex-row items-center justify-center h-full">
+			<Shadow class="animate-spin mr-2" />
+			<p class="text-stone-500">Loading User...</p>
+		</div>
+	{/if}
 </div>

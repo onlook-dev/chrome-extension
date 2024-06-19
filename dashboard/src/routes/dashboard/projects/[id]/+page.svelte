@@ -8,7 +8,7 @@
 	import { auth } from '$lib/firebase';
 	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
-	import { Pencil2, Shadow } from 'svelte-radix';
+	import { Pencil2, Shadow, ExclamationTriangle, ArrowLeft } from 'svelte-radix';
 	import { MessageService, MessageType } from '$shared/message';
 
 	import type { User, Activity, Project } from '$shared/models';
@@ -32,6 +32,7 @@
 	let activeActivityId: string = '';
 	let activeActivity: Activity | undefined;
 	let githubModalOpen: boolean = false;
+	let errorText = '';
 
 	$: if (project) {
 		activeActivity = Object.values(project.activities).find(
@@ -64,6 +65,7 @@
 			projectService
 				.subscribe(projectId, async (firebaseProject) => {
 					if (!firebaseProject || !Object.keys(firebaseProject).length) {
+						errorText = 'Project not found';
 						return;
 					}
 					$projectsMapStore.set(projectId, firebaseProject);
@@ -84,6 +86,9 @@
 				})
 				.then((unsubscribe) => {
 					unsubs.push(unsubscribe);
+				})
+				.catch((err) => {
+					errorText = err.message;
 				});
 		}
 	});
@@ -147,10 +152,20 @@
 				</Resizable.Pane>
 			{/if}
 		</Resizable.PaneGroup>
-	{:else}
+	{:else if !errorText}
 		<div class="flex flex-row items-center justify-center h-full">
 			<Shadow class="animate-spin mr-2" />
 			<p class="text-stone-500">Loading Project...</p>
+		</div>
+	{:else}
+		<div class="flex flex-col items-center justify-center h-full space-y-8">
+			<p class="flex flex-row items-center text-lg">
+				<ExclamationTriangle class="mr-3" />
+				{errorText}
+			</p>
+			<Button class="ml-4" on:click={() => goto(DashboardRoutes.DASHBOARD)}
+				><ArrowLeft class="mr-2 w-4 h-4" /> Return to dashboard</Button
+			>
 		</div>
 	{/if}
 </div>
