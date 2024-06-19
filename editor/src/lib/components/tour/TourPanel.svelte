@@ -8,7 +8,7 @@
 
     let stage = 0;
     let maxStage = 3;
-    let tourVisible = true;
+    let tourVisible = false;
 
     $: if (stage > maxStage) {
         tourVisible = false;
