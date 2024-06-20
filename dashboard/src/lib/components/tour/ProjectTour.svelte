@@ -2,10 +2,10 @@
 	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { TourName, type User } from '$shared/models';
-	import * as Card from '$lib/components/ui/card';
-	import TourStep from './TourStep.svelte';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
+	import * as Card from '$lib/components/ui/card';
+	import TourStep from './TourStep.svelte';
 
 	export let pickActivity: (activityId?: string) => void;
 	export let user: User;
