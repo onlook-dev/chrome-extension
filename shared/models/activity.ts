@@ -1,4 +1,4 @@
-import type { EditType, ChildVal } from "./editor";
+import type { ChildVal } from "./editor";
 import type { EventMetadata } from "./eventData";
 
 // All the changes that happen to an element when switched to another element

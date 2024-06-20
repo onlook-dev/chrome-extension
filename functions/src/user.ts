@@ -64,17 +64,20 @@ export const createUser = functions.auth.user().onCreate(async (user) => {
     .set(defaultTeam);
 
   // Create user
+  const newUser = {
+    id: user.uid,
+    name: user.displayName,
+    email: user.email,
+    profileImage: user.photoURL,
+    teamIds: [defaultTeam.id],
+    createdAt: new Date().toISOString(),
+  } as User;
+
   await admin
     .firestore()
     .collection(FirestoreCollections.USERS)
     .doc(user.uid)
-    .set({
-      id: user.uid,
-      name: user.displayName,
-      email: user.email,
-      profileImage: user.photoURL,
-      teamIds: [defaultTeam.id],
-    });
+    .set(newUser);
 
   await addProjectsToTeam(defaultTeam.id, demoProjects);
 });
