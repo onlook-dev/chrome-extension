@@ -2,10 +2,10 @@
 	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { TourName, type User } from '$shared/models';
-	import * as Card from '$lib/components/ui/card';
-	import TourStep from './TourStep.svelte';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
+	import * as Card from '$lib/components/ui/card';
+	import TourStep from './TourStep.svelte';
 
 	export let pickActivity: (activityId?: string) => void;
 	export let user: User;
@@ -13,6 +13,7 @@
 	let userService = new FirebaseService<User>(FirestoreCollections.USERS);
 	let tourVisible = false;
 	let stage = 0;
+	let maxStage = 4;
 
 	onMount(() => {
 		// Show if tour not completed
@@ -29,7 +30,6 @@
 		};
 		user = { ...user, toursCompleted: updatedTours };
 		userService.post(user);
-		console.log(user.toursCompleted);
 	}
 </script>
 
@@ -38,9 +38,9 @@
         fixed z-50 w-screen h-screen flex {stage === 0 ? 'bg-black/40' : ''}"
 >
 	{#if stage === 0}
-		<Card.Root class="bg-blue-500/95 border-blue-400 w-[40rem] max-w-2/3 m-auto">
+		<Card.Root class="bg-blue-600/95 border-blue-900 w-[40rem] max-w-2/3 m-auto">
 			<Card.Header class="text-xl">Welcome to your Project Page</Card.Header>
-			<Card.Content class="text-base px-6">
+			<Card.Content class="text-base px-6 text-blue-1000">
 				<div>
 					This is where you can review and publish the changes you made to your site.
 					<br />
@@ -48,13 +48,18 @@
 				</div>
 			</Card.Content>
 			<Card.Footer class="flex flex-row gap-2">
-				<Button class="ml-auto" variant="ghost" on:click={finishTour}>Skip</Button>
-				<Button on:click={() => (stage += 1)}>Start tour</Button>
+				<Button
+					class="ml-auto text-blue-700 rounded hover:bg-blue-400"
+					variant="ghost"
+					on:click={finishTour}>Skip</Button
+				>
+				<Button class="rounded text-blue-300" on:click={() => (stage += 1)}>Start tour</Button>
 			</Card.Footer>
 		</Card.Root>
 	{:else if stage === 1}
 		<TourStep
 			bind:stage
+			{maxStage}
 			classes="mt-[18rem] ml-[15rem] rounded-tl-none"
 			headerText="View your activities"
 			callback={pickActivity}
@@ -67,6 +72,7 @@
 	{:else if stage === 2}
 		<TourStep
 			bind:stage
+			{maxStage}
 			classes="mt-[5rem] mr-[17rem] rounded-tr-none"
 			headerText="Activity details"
 		>
@@ -76,7 +82,12 @@
 			</div>
 		</TourStep>
 	{:else if stage === 3}
-		<TourStep bind:stage classes="mt-[2rem] mr-[18rem] rounded-tr-none" headerText="Resume editing">
+		<TourStep
+			bind:stage
+			{maxStage}
+			classes="mt-[2rem] mr-[18rem] rounded-tr-none"
+			headerText="Resume editing"
+		>
 			<div>
 				You can resume editing the project, even if the page was closed.
 				<br /> <br />
@@ -86,6 +97,7 @@
 	{:else if stage === 4}
 		<TourStep
 			bind:stage
+			{maxStage}
 			classes="mt-[2rem] mr-[13rem] rounded-tr-none"
 			buttonText="Finish"
 			headerText="Connect your codebase"

@@ -3,22 +3,31 @@
     import * as Card from "$lib/components/ui/card";
 
     export let classes = "";
-    export let stage;
+    export let stage: number;
+    export let maxStage: number;
     export let buttonText = "Next";
     export let headerText = "How to use Onlook";
     export let callback: (() => void) | undefined = undefined;
 </script>
 
-<Card.Root class="w-[20rem] bg-blue-500/95 border-blue-400 m-auto {classes}">
-    <Card.Header class="text-lg">{headerText}</Card.Header>
-    <Card.Content class="text-sm px-6">
+<Card.Root
+    class="w-[20rem] max-w-[400px] bg-blue-600/95 border-blue-900 border-[0.5px] m-auto {classes}"
+>
+    <Card.Header>
+        <h1 class="text-base text-blue-900">Step {stage} of {maxStage}</h1>
+        <h1 class="text-lg">{headerText}</h1>
+    </Card.Header>
+    <Card.Content class="text-sm px-6 text-blue-1000">
         <slot />
     </Card.Content>
-    <Card.Footer class="flex flex-row gap-2">
-        <Button class="ml-auto" variant="ghost" on:click={() => (stage -= 1)}>
-            Back
-        </Button>
+    <Card.Footer class="flex flex-row gap-2 ">
         <Button
+            class="ml-auto text-blue-700 rounded hover:bg-blue-400"
+            variant="ghost"
+            on:click={() => (stage -= 1)}>Back</Button
+        >
+        <Button
+            class="rounded text-blue-300"
             on:click={() => {
                 stage += 1;
                 callback && callback();

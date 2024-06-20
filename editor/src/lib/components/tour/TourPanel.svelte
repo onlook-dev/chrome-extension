@@ -8,7 +8,7 @@
 
     let stage = 0;
     let maxStage = 4;
-    let tourVisible = true;
+    let tourVisible = false;
 
     $: if (stage > maxStage) {
         tourVisible = false;
@@ -32,10 +32,10 @@
 >
     {#if stage === 0}
         <Card.Root
-            class="bg-blue-500/95 border-blue-400 w-[40rem] max-w-2/3 m-auto"
+            class="bg-blue-600/95 border-blue-900 w-[40rem] max-w-2/3 m-auto"
         >
             <Card.Header class="text-xl">Ready for something new?</Card.Header>
-            <Card.Content class="text-base px-6">
+            <Card.Content class="text-base px-6 text-blue-1000">
                 <div>
                     Unlike other design tools, Onlook lets you design directly
                     on the live page.<br /> This means your design is exactly how
@@ -44,18 +44,22 @@
             </Card.Content>
             <Card.Footer class="flex flex-row gap-2">
                 <Button
-                    class="ml-auto"
+                    class="ml-auto text-blue-700 rounded hover:bg-blue-400"
                     variant="ghost"
                     on:click={() => (tourVisible = false)}
                 >
                     Skip
                 </Button>
-                <Button on:click={() => (stage += 1)}>Start tour</Button>
+                <Button
+                    class="rounded text-blue-300"
+                    on:click={() => (stage += 1)}>Start tour</Button
+                >
             </Card.Footer>
         </Card.Root>
     {:else if stage === 1}
         <TourStep
             bind:stage
+            {maxStage}
             classes="mt-[1rem] mr-[10rem] rounded-tr-none"
             headerText="Edit on any page"
         >
@@ -68,6 +72,7 @@
     {:else if stage === 2}
         <TourStep
             bind:stage
+            {maxStage}
             classes="mt-[8rem] mr-[13rem] rounded-tr-none"
             headerText="Change any styles"
         >
@@ -80,6 +85,7 @@
     {:else if stage === 3}
         <TourStep
             bind:stage
+            {maxStage}
             classes="mt-[5rem] ml-[10rem] rounded-tl-none"
             headerText="See your changes"
         >
@@ -91,6 +97,7 @@
     {:else if stage === 4}
         <TourStep
             bind:stage
+            {maxStage}
             classes="mt-[5rem] mr-[15rem] rounded-tr-none"
             headerText="Share your changes"
             buttonText="Finish"
