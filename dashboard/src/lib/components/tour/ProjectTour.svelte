@@ -11,7 +11,7 @@
 	export let user: User;
 
 	let userService = new FirebaseService<User>(FirestoreCollections.USERS);
-	let tourVisible = true;
+	let tourVisible = false;
 	let stage = 0;
 	let maxStage = 4;
 
