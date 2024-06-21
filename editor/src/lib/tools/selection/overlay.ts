@@ -1,4 +1,4 @@
-import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ELEMENT, ONLOOK_RECT_ID } from "$lib/constants";
+import { ONLOOK_RECT_ELEMENT } from "$lib/constants";
 import { EditorAttributes } from "$shared/constants";
 import { nanoid } from 'nanoid';
 
@@ -31,8 +31,8 @@ class RectImpl implements Rect {
         this.element.style.position = 'absolute'
         this.element.style.pointerEvents = 'none' // Ensure it doesn't interfere with other interactions
         this.element.style.zIndex = '999'
-        this.element.setAttribute(DATA_ONLOOK_IGNORE, 'true');
-        this.element.setAttribute('id', ONLOOK_RECT_ID)
+        this.element.setAttribute(EditorAttributes.DATA_ONLOOK_IGNORE, 'true');
+        this.element.setAttribute('id', EditorAttributes.ONLOOK_RECT_ID)
         this.element.appendChild(this.svgElement)
 
     }

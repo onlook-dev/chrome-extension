@@ -26,6 +26,7 @@ export enum EditorAttributes {
   ONLOOK_TOOLBAR = "onlook-toolbar",
   ONLOOK_RECT_ID = "onlook-rect",
   ONLOOK_GLOBAL_STYLES = "onlook-global-styles",
+
   DATA_ONLOOK_ID = "data-onlook-id",
   DATA_ONLOOK_IGNORE = "data-onlook-ignore",
   DATA_ONLOOK_SAVED = "data-onlook-saved",
