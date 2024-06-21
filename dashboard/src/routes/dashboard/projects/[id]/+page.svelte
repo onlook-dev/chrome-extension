@@ -167,7 +167,7 @@
 			{/if}
 		</Resizable.PaneGroup>
 	{:else if errorText}
-		<div class="flex flex-col items-center justify-center h-full space-y-8">
+		<div class="flex flex-col items-center justify-center h-full space-y-8 pb-10">
 			<p class="flex flex-row items-center text-lg">
 				<ExclamationTriangle class="mr-3" />
 				{errorText}
@@ -183,9 +183,9 @@
 			</div>
 		</div>
 	{:else}
-		<div class="flex flex-row items-center justify-center h-full">
+		<div class="flex flex-row items-center justify-center h-full pb-10">
 			<Shadow class="animate-spin mr-2" />
-			<p class="text-stone-500">Loading Project...</p>
+			<p class="text-tertiary">Loading Project...</p>
 		</div>
 	{/if}
 </div>
