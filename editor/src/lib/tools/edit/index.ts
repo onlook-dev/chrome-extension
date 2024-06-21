@@ -11,10 +11,12 @@ import { nanoid } from 'nanoid';
 import { getCustomComponentContent } from '$shared/helpers';
 
 import type { Tool } from '../index';
+import { ApplyChangesService } from './applyChange';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
 	overlayManager: OverlayManager;
+	applyChangeService: ApplyChangesService;
 	dragManager: DragManager;
 
 	elResizeObserver: ResizeObserver;
@@ -26,6 +28,7 @@ export class EditTool implements Tool {
 	constructor() {
 		this.selectorEngine = new SelectorEngine();
 		this.overlayManager = new OverlayManager();
+		this.applyChangeService = new ApplyChangesService();
 		this.dragManager = new DragManager(this.selectorEngine, this.overlayManager, this.updateClickedRects.bind(this));
 
 		// Initialize resize observer for click element resize
@@ -277,16 +280,20 @@ export class EditTool implements Tool {
 		if (selected.length == 0) return;
 		selected.forEach((child) => {
 			const componentId = getDataOnlookComponentId(child);
-			if (!componentId) {
-				console.warn("Deleting a non-custom element is not supported")
-				return
+			if (componentId) {
+				this.deleteCustomElement(child);
+			} else {
+				this.applyChangeService.applyStyle(child, 'display', 'none');
 			}
-			const parent = child.parentElement;
-			const childIndex = Array.from(parent.children).indexOf(child).toString();
-			parent.removeChild(child);
-			this.handleStructureChange(child, parent, EditType.REMOVE_CHILD, childIndex)
 		});
 	};
+
+	deleteCustomElement = (child: HTMLElement) => {
+		const parent = child.parentElement;
+		const childIndex = Array.from(parent.children).indexOf(child).toString();
+		parent.removeChild(child);
+		this.handleStructureChange(child, parent, EditType.REMOVE_CHILD, childIndex)
+	}
 
 	handleStructureChange = (child, parent, editType, index?: string) => {
 		const content = getCustomComponentContent(child)
