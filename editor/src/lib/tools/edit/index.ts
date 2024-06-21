@@ -79,13 +79,13 @@ export class EditTool implements Tool {
 	}
 
 	isClickedElementEditable = () => {
-		if (this.selectorEngine.selected.length !== 1) return false;
-		return this.selectorEngine.selected[0] === this.selectorEngine.editing;
+		const selected = this.selectorEngine.selected;
+		if (selected.length !== 1) return false;
+		return selected[selected.length - 1] === this.selectorEngine.editing;
 	};
 
 	onDoubleClick(e: MouseEvent): void {
 		if (this.selectorEngine.editing) this.removeEditability({ target: this.selectorEngine.editing });
-		this.overlayManager.clear();
 		this.selectorEngine.handleDoubleClick(e);
 		this.addEditability(this.selectorEngine.editing);
 	}
@@ -206,6 +206,16 @@ export class EditTool implements Tool {
 
 	stopBubbling = (e) => e.key != "Escape" && e.stopPropagation();
 
+	makeLastElementEditable = (e: Event) => {
+		if (this.selectorEngine.selected.length === 0) return;
+		const lastElement = this.selectorEngine.selected[this.selectorEngine.selected.length - 1];
+		this.selectorEngine.updateEditing(lastElement);
+		this.addEditability(lastElement);
+
+		e.preventDefault();
+		e.stopPropagation();
+	}
+
 	addEditability = (el: HTMLElement) => {
 		if (!el) return;
 		this.oldText = el.textContent;
@@ -216,7 +226,12 @@ export class EditTool implements Tool {
 		el.addEventListener("keydown", this.stopBubbling);
 		el.addEventListener("blur", this.removeEditability);
 		el.addEventListener("input", this.handleInput);
-		this.overlayManager.updateEditRect(el);
+
+		// Set timeout to beat single click race condition
+		setTimeout(() => {
+			this.overlayManager.clear();
+			this.overlayManager.updateEditRect(el);
+		}, 50)
 	}
 
 	removeEditability = ({ target }) => {
@@ -234,7 +249,7 @@ export class EditTool implements Tool {
 		if (!el) return;
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return
-		const parent = selected[0];
+		const parent = selected[selected.length - 1];
 
 		// Insert element into childrens list 
 		parent.appendChild(el);

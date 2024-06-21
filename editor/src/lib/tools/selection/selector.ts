@@ -41,14 +41,7 @@ export class SelectorEngine {
 
   handleClick = (e: MouseEvent) => {
     const target = deepElementFromPoint(e.clientX, e.clientY);
-    if (isOffBounds(target)) return;
-
-    if (!e.metaKey) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-
-    if (this.editing) return;
+    if (isOffBounds(target) || this.editing) return;
 
     if (!e.shiftKey) {
       this.select(target, true);
@@ -60,6 +53,12 @@ export class SelectorEngine {
         this.select(target);
       }
     }
+
+    if (!e.metaKey) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.blurInputs();
+    }
   }
 
   handleDoubleClick = (e: MouseEvent) => {
@@ -70,17 +69,21 @@ export class SelectorEngine {
       target = target.children[0] as HTMLElement;
     }
 
-    if (isOffBounds(target)) return;
+    if (target === this.editing || isOffBounds(target)) return;
 
     e.preventDefault();
     e.stopPropagation();
 
-    this.selectedStore.set([target]);
-    this.hoveredStore.set(undefined);
-    this.editingStore.set(target);
+    this.updateEditing(target);
   }
 
-  select(item, clear = false) {
+  updateEditing = (el: HTMLElement) => {
+    this.selectedStore.set([el]);
+    this.hoveredStore.set(undefined);
+    this.editingStore.set(el);
+  }
+
+  select = (item, clear = false) => {
     const targets = [item]
     const dataOnlookId = getDataOnlookId(item);
     // Select similar detected components
@@ -92,6 +95,15 @@ export class SelectorEngine {
       this.selectedStore.update((s) => [...s, ...targets])
     }
     rehoistPopovers();
+  }
+
+  blurInputs() {
+    // Inputs should be blurred so hotkeys work on them
+    this.selected.forEach((el) => {
+      if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+        el.blur();
+      }
+    });
   }
 
   unselect(item) {

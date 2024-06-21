@@ -63,6 +63,7 @@ export class HotKeys {
           e.preventDefault();
           e.stopPropagation();
         },
+        ["enter"]: (e) => editTool.makeLastElementEditable(e),
       },
       [ToolName.PUBLISH]: {
         ...sharedKeys

@@ -34,8 +34,9 @@
             }
             if (selected && selected.length > 0) {
                 // TODO: Handle multiple
-                chatHistory = chatHistoryMap.get(selected[0]) || [];
-                lastSelectedElement = selected[0];
+                chatHistory =
+                    chatHistoryMap.get(selected[selected.length - 1]) || [];
+                lastSelectedElement = selected[selected.length - 1];
             } else {
                 chatHistory = [];
             }
@@ -88,8 +89,9 @@
     }
 
     function getElementString(): string {
-        if (!editTool.selectorEngine.selected.length) return;
-        const element = editTool.selectorEngine.selected[0];
+        const selected = editTool.selectorEngine.selected;
+        if (!selected.length) return;
+        const element = selected[selected.length - 1];
         let tagName = element.tagName.toLowerCase();
         let attributes = Array.from(element.attributes)
             .filter(
