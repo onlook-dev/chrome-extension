@@ -79,8 +79,9 @@ export class EditTool implements Tool {
 	}
 
 	isClickedElementEditable = () => {
-		if (this.selectorEngine.selected.length !== 1) return false;
-		return this.selectorEngine.selected[0] === this.selectorEngine.editing;
+		const selected = this.selectorEngine.selected;
+		if (selected.length !== 1) return false;
+		return selected[selected.length - 1] === this.selectorEngine.editing;
 	};
 
 	onDoubleClick(e: MouseEvent): void {
@@ -248,7 +249,7 @@ export class EditTool implements Tool {
 		if (!el) return;
 		const selected = this.selectorEngine.selected;
 		if (selected.length == 0) return
-		const parent = selected[0];
+		const parent = selected[selected.length - 1];
 
 		// Insert element into childrens list 
 		parent.appendChild(el);

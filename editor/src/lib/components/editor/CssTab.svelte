@@ -9,22 +9,22 @@
     groupElementStylesByGroup,
   } from "$lib/tools/selection/styles";
 
-  import { onDestroy, onMount } from "svelte";
   import { ApplyChangesService } from "$lib/tools/edit/applyChange";
+  import { onDestroy, onMount } from "svelte";
 
   import * as Accordion from "$lib/components/ui/accordion";
-  import SelectInput from "./inputs/SelectInput.svelte";
+  import BorderInput from "./inputs/BorderInput.svelte";
   import ColorInput from "./inputs/ColorInput.svelte";
+  import NestedInputs from "./inputs/NestedInputs.svelte";
   import NumberUnitInput from "./inputs/NumberUnitInput.svelte";
+  import SelectInput from "./inputs/SelectInput.svelte";
   import TagInfo from "./inputs/TagInfo.svelte";
   import TailwindInput from "./inputs/TailwindInput.svelte";
-  import NestedInputs from "./inputs/NestedInputs.svelte";
   import TextInput from "./inputs/TextInput.svelte";
-  import BorderInput from "./inputs/BorderInput.svelte";
 
   import type { EditTool } from "$lib/tools/edit";
-  import AutolayoutInput from "./inputs/AutolayoutInput.svelte";
   import { redoStore } from "$lib/tools/edit/history";
+  import AutolayoutInput from "./inputs/AutolayoutInput.svelte";
   import DisplayInput from "./inputs/DisplayInput.svelte";
 
   export let editTool: EditTool;
@@ -52,7 +52,8 @@
 
   function selectedElementsChanged(selected: HTMLElement[]) {
     // TODO: Handle multiple elements. Show similar values and leave non-similar ones blank
-    el = selected[0];
+    if (!selected.length) return;
+    el = selected[selected.length - 1];
     if (el) {
       const computedStyles = getElementComputedStylesData(el);
       groupedStyles = groupElementStylesByGroup(computedStyles);
