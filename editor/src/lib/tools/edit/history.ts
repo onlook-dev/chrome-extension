@@ -107,6 +107,9 @@ function applyStyleEvent(event: EditEvent, element: HTMLElement) {
 }
 
 function applyTextEvent(event: EditEvent, element: HTMLElement) {
+  /**
+   *  Future improvements: Match the specific textNode patch and replace nodeValue. This way we can handle deeply nested text on input.
+   */
   if (!element) return;
   const newVal = event.newVal as TextVal;
   element.textContent = newVal.text;

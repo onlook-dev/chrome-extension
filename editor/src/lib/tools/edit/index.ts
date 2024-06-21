@@ -85,7 +85,6 @@ export class EditTool implements Tool {
 
 	onDoubleClick(e: MouseEvent): void {
 		if (this.selectorEngine.editing) this.removeEditability({ target: this.selectorEngine.editing });
-		this.overlayManager.clear();
 		this.selectorEngine.handleDoubleClick(e);
 		this.addEditability(this.selectorEngine.editing);
 	}
@@ -216,7 +215,12 @@ export class EditTool implements Tool {
 		el.addEventListener("keydown", this.stopBubbling);
 		el.addEventListener("blur", this.removeEditability);
 		el.addEventListener("input", this.handleInput);
-		this.overlayManager.updateEditRect(el);
+
+		// Set timeout to beat single click race condition
+		setTimeout(() => {
+			this.overlayManager.clear();
+			this.overlayManager.updateEditRect(el);
+		}, 50)
 	}
 
 	removeEditability = ({ target }) => {
