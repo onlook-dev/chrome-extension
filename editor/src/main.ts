@@ -1,9 +1,9 @@
-import App from './App.svelte';
-import config from '../twind.config';
+import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED } from '$/lib/constants';
+import { EditorAttributes } from '$shared/constants';
+import { cssom, observe, twind } from '@twind/core';
 import 'construct-style-sheets-polyfill';
-import { twind, cssom, observe } from '@twind/core';
-import { ONLOOK_GLOBAL_STYLES, ONLOOK_TOOLBAR } from '$shared/constants';
-import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED, ONLOOK_EDITABLE, } from '$/lib/constants';
+import config from '../twind.config';
+import App from './App.svelte';
 
 class OnlookToolbar extends HTMLElement {
 	app: any;
@@ -57,17 +57,17 @@ class OnlookToolbar extends HTMLElement {
 
 	injectGlobalStyles() {
 		const style = document.createElement('style');
-		style.id = ONLOOK_GLOBAL_STYLES
+		style.id = EditorAttributes.ONLOOK_GLOBAL_STYLES
 		style.textContent = ``;
 		document.head.appendChild(style);
 	}
 
 	removeGlobalStyles() {
-		const style = document.getElementById(ONLOOK_GLOBAL_STYLES);
+		const style = document.getElementById(EditorAttributes.ONLOOK_GLOBAL_STYLES);
 		style && style.remove();
 	}
 
 }
 
 // Define the new element
-customElements.define(ONLOOK_TOOLBAR, OnlookToolbar);
+customElements.define(EditorAttributes.ONLOOK_TOOLBAR, OnlookToolbar);

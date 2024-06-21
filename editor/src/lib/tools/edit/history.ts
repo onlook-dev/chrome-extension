@@ -1,16 +1,14 @@
-import { EditType, type EditEvent, type TextVal, type ChildVal } from '$shared/models';
-import { get, writable } from 'svelte/store';
 import { MessageService, MessageType } from '$shared/message';
+import { EditType, type ChildVal, type EditEvent, type TextVal } from '$shared/models';
+import { get, writable } from 'svelte/store';
 import { ApplyChangesService } from './applyChange';
 
-import Sortable from 'sortablejs';
 import { dragContainers } from '$lib/states/editor';
-import { DATA_ONLOOK_COMPONENT_ID } from '$shared/constants';
+import Sortable from 'sortablejs';
 
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
 const messageService = MessageService.getInstance();
-const applyChangeService = new ApplyChangesService();
 
 function compareKeys(a: Record<string, string>, b: Record<string, string>): boolean {
   if (!a || !b) return false;
@@ -118,6 +116,7 @@ function applyClassEvent(event: EditEvent, element: HTMLElement) {
   if (!element) return;
   Object.entries(event.newVal).forEach(([attr, newVal]) => {
     if (attr !== "full") return;
+    const applyChangeService = new ApplyChangesService();
     applyChangeService.applyClass(element, newVal, false);
   });
 }

@@ -1,15 +1,15 @@
-import { redoLastEvent, undoLastEvent } from "./edit/history";
-import { ToolName } from ".";
-import { ONLOOK_TOOLBAR } from "$shared/constants";
-import { sendMessage } from "webext-bridge/window";
-import type { EditTool } from "./edit";
-import hotkeys from "hotkeys-js";
+import { EditorAttributes } from "$shared/constants";
 import { MessageType } from "$shared/message";
+import hotkeys from "hotkeys-js";
+import { sendMessage } from "webext-bridge/window";
+import { ToolName } from ".";
+import type { EditTool } from "./edit";
+import { redoLastEvent, undoLastEvent } from "./edit/history";
 
 hotkeys.filter = function (event) {
   var target = (event.target || event.srcElement || event.currentTarget) as HTMLElement;
   var tagName = target.tagName;
-  return !(target.isContentEditable || tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || tagName.toLowerCase() === ONLOOK_TOOLBAR.toLowerCase());
+  return !(target.isContentEditable || tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA' || tagName.toLowerCase() === EditorAttributes.ONLOOK_TOOLBAR.toLowerCase());
 }
 
 export class HotKeys {

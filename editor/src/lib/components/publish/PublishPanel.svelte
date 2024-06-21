@@ -1,6 +1,8 @@
 <script lang="ts">
   import { savePanelVisible } from "$lib/states/editor";
   import { ToolManager, ToolName } from "$lib/tools";
+  import { draggable } from "$lib/utils";
+  import { ExternalLinks } from "$shared/constants";
   import {
     ChatBubble,
     Dashboard,
@@ -10,14 +12,12 @@
   } from "radix-icons-svelte";
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
-  import { FEEDBACK_LINK } from "$shared/constants";
-  import { draggable } from "$lib/utils";
 
-  import Logo from "./Logo.svelte";
-  import Button from "../ui/button/button.svelte";
-  import ProjectItem from "./ProjectItem.svelte";
-  import * as Card from "$lib/components/ui/card";
   import * as Accordion from "$lib/components/ui/accordion";
+  import * as Card from "$lib/components/ui/card";
+  import Button from "../ui/button/button.svelte";
+  import Logo from "./Logo.svelte";
+  import ProjectItem from "./ProjectItem.svelte";
 
   import type { PublishTool } from "$lib/tools/publish";
   import type { Project } from "$shared/models";
@@ -108,7 +108,7 @@
         <Button
           variant="ghost"
           class="ml-auto h-7 w-7 p-0"
-          on:click={() => window.open(FEEDBACK_LINK, "_blank")}
+          on:click={() => window.open(ExternalLinks.FEEDBACK_LINK, "_blank")}
         >
           <ChatBubble />
         </Button>

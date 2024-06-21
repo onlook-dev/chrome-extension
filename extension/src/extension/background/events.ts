@@ -1,37 +1,37 @@
-import { DashboardRoutes, FirestoreCollections } from '$shared/constants'
-import { baseUrl } from '$lib/utils/env'
-import {
-    editProjectRequestStream,
-    openUrlRequestStream,
-    editEventStream,
-    publishProjectStream,
-    sendPageScreenshotResponse,
-    pageScreenshotRequestStream,
-    tabIdRequestStream,
-    sendTabIdResponse,
-    sendApplyProjectChanges
-} from '$lib/utils/messaging'
-import {
-    authUserBucket,
-    projectsMapBucket,
-    teamsMapBucket,
-    usersMapBucket,
-    getActiveUser,
-    stateBucket
-} from '$lib/utils/localstorage'
-import { signInUser, signOut, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
-import { captureActiveTab } from './screenshot'
 import { EditEventService } from '$lib/editEvents'
+import { signInUser, signOut, subscribeToFirebaseAuthChanges } from '$lib/firebase/auth'
 import { trackMixpanelEvent } from '$lib/mixpanel'
+import { ProjectTabService } from '$lib/projects'
 import { FirebaseService } from '$lib/storage'
 import { FirebaseProjectService } from '$lib/storage/project'
-import { ProjectTabService } from '$lib/projects'
-import { EntitySubsciptionService } from './entities'
-import { onMessage } from 'webext-bridge/background'
-import { ProjectStatus, type Team, type User } from '$shared/models'
-import { forwardToActiveTab } from '$lib/utils/helpers'
-import { MessageType } from '$shared/message'
 import { TranslationService } from '$lib/translation'
+import { baseUrl } from '$lib/utils/env'
+import { forwardToActiveTab } from '$lib/utils/helpers'
+import {
+    authUserBucket,
+    getActiveUser,
+    projectsMapBucket,
+    stateBucket,
+    teamsMapBucket,
+    usersMapBucket
+} from '$lib/utils/localstorage'
+import {
+    editEventStream,
+    editProjectRequestStream,
+    openUrlRequestStream,
+    pageScreenshotRequestStream,
+    publishProjectStream,
+    sendApplyProjectChanges,
+    sendPageScreenshotResponse,
+    sendTabIdResponse,
+    tabIdRequestStream
+} from '$lib/utils/messaging'
+import { DashboardRoutes, FirestoreCollections } from '$shared/constants'
+import { MessageType } from '$shared/message'
+import { ProjectStatus, type Team, type User } from '$shared/models'
+import { onMessage } from 'webext-bridge/background'
+import { EntitySubsciptionService } from './entities'
+import { captureActiveTab } from './screenshot'
 
 export class BackgroundEventHandlers {
     projectService: FirebaseProjectService
@@ -173,7 +173,6 @@ export class BackgroundEventHandlers {
         })
 
         onMessage(MessageType.TOGGLE_EDITOR, async ({ sender }) => {
-            console.log('Toggle editor', sender)
             const tab = await chrome.tabs.get(sender.tabId)
             this.projectTabManager.toggleTab(tab)
         })
