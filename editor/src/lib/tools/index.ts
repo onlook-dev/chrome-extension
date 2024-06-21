@@ -26,9 +26,6 @@ export class ToolManager {
   publishTool: PublishTool;
   hotKeys: HotKeys;
 
-  private clickTimer: any = null;
-  private delay: number = 10;
-
   eventsMap = {
     'mouseover': (e) => this.handleMouseOver(e),
     'mouseout': (e) => this.handleMouseOut(e),
@@ -72,28 +69,11 @@ export class ToolManager {
   }
 
   handleClick(e: MouseEvent): void {
-    // Clear any existing timer
-    if (this.clickTimer !== null) {
-      clearTimeout(this.clickTimer);
-      this.clickTimer = null;
-    }
-
-    // Set a new timer
-    this.clickTimer = setTimeout(() => {
-      if (!this.selectedTool) return;
-      this.selectedTool.onClick(e);
-
-      this.clickTimer = null;
-    }, this.delay);
+    if (!this.selectedTool) return;
+    this.selectedTool.onClick(e);
   }
 
   handleDoubleClick(e: MouseEvent): void {
-    // If double click is detected, clear the timer to prevent single click action
-    if (this.clickTimer) {
-      clearTimeout(this.clickTimer);
-      this.clickTimer = null;
-    }
-
     if (!this.selectedTool) return;
     this.selectedTool.onDoubleClick(e);
   }
