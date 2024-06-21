@@ -10,8 +10,10 @@ export enum FirestoreCollections {
 }
 
 // Settings
-export const MAX_TITLE_LENGTH = 50;
-export const MAX_DESCRIPTION_LENGTH = 250;
+export enum LengthSettings {
+  MAX_TITLE_LENGTH = 50,
+  MAX_DESCRIPTION_LENGTH = 250
+}
 
 // Links
 export enum ExternalLinks {

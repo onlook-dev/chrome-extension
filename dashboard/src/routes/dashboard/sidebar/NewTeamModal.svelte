@@ -1,14 +1,14 @@
 <script lang="ts">
+	import { trackMixpanelEvent } from '$lib/mixpanel/client';
+	import { FirebaseService } from '$lib/storage';
 	import { teamsMapStore, userStore } from '$lib/utils/store';
+	import { FirestoreCollections, LengthSettings } from '$shared/constants';
 	import { Role, Tier, type Team } from '$shared/models';
 	import { nanoid } from 'nanoid';
-	import { FirestoreCollections, MAX_TITLE_LENGTH } from '$shared/constants';
-	import { FirebaseService } from '$lib/storage';
-	import { trackMixpanelEvent } from '$lib/mixpanel/client';
 
-	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import Input from '$lib/components/ui/input/input.svelte';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	let plan = Tier.FREE;
@@ -18,7 +18,8 @@
 
 	function createTeam() {
 		if (!$userStore) return;
-		nameError = !teamName || teamName.length === 0 || teamName.length > MAX_TITLE_LENGTH;
+		nameError =
+			!teamName || teamName.length === 0 || teamName.length > LengthSettings.MAX_TITLE_LENGTH;
 		if (nameError) return;
 
 		const newTeam: Team = {
@@ -60,7 +61,7 @@
 				bind:value={teamName}
 				type="text"
 				placeholder="Team name"
-				maxlength={MAX_TITLE_LENGTH}
+				maxlength={LengthSettings.MAX_TITLE_LENGTH}
 			/>
 
 			{#if nameError}

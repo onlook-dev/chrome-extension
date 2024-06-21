@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import { auth } from '$lib/firebase';
 	import { onMount, onDestroy } from 'svelte';
-	import { DashboardRoutes, MAX_TITLE_LENGTH, FirestoreCollections } from '$shared/constants';
+	import { DashboardRoutes, LengthSettings, FirestoreCollections } from '$shared/constants';
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 	import { truncateString } from '$shared/helpers';
 	import { FirebaseService } from '$lib/storage';
@@ -136,7 +136,7 @@
 					</Breadcrumb.Item>
 					<Breadcrumb.Separator class="p-0 m-0" />
 					<Breadcrumb.Item>
-						{truncateString(project?.name || 'Dashboard', MAX_TITLE_LENGTH)}
+						{truncateString(project?.name || 'Dashboard', LengthSettings.MAX_TITLE_LENGTH)}
 					</Breadcrumb.Item>
 				</Breadcrumb.List>
 			</Breadcrumb.Root>
