@@ -142,7 +142,7 @@
   }
 </script>
 
-{#if isNodeValid}
+{#if isNodeValid(node)}
   <div bind:this={nodeRef} class={depth > 0 ? "pl-2" : ""}>
     {#if isEmptyText}
       <!-- Nothing -->
