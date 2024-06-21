@@ -1,4 +1,4 @@
-import { DATA_ONLOOK_EJECT, DATA_ONLOOK_IGNORE, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED } from '$/lib/constants';
+import { DATA_ONLOOK_EJECT, DATA_ONLOOK_INJECT, DATA_ONLOOK_SAVED } from '$/lib/constants';
 import { EditorAttributes } from '$shared/constants';
 import { cssom, observe, twind } from '@twind/core';
 import 'construct-style-sheets-polyfill';
@@ -18,7 +18,7 @@ class OnlookToolbar extends HTMLElement {
 		this.style.inset = '0 auto auto 0'
 		this.style.width = '0'
 		this.style.height = '0'
-		this.setAttribute(DATA_ONLOOK_IGNORE, 'true');
+		this.setAttribute(EditorAttributes.DATA_ONLOOK_IGNORE, 'true');
 
 		// Attaches a shadow DOM
 		const shadowRoot = this.attachShadow({ mode: 'closed' });

@@ -3,17 +3,18 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 
 <script lang="ts">
-  import { TagMap } from "$lib/tools/selection/tag";
-  import { ChevronDown } from "radix-icons-svelte";
-  import { DATA_ONLOOK_IGNORE, IGNORE_TAGS } from "$lib/constants";
-  import { onMount } from "svelte";
-  import { slide } from "svelte/transition";
+  import { IGNORE_TAGS } from "$lib/constants";
   import {
+    layersHovered,
     layersPanelCollapsed,
     layersSelected,
-    layersHovered,
     layersWeakMap,
   } from "$lib/states/editor";
+  import { TagMap } from "$lib/tools/selection/tag";
+  import { EditorAttributes } from "$shared/constants";
+  import { ChevronDown } from "radix-icons-svelte";
+  import { onMount } from "svelte";
+  import { slide } from "svelte/transition";
   import NodeIcon from "./NodeIcon.svelte";
 
   export let node: HTMLElement | undefined;
@@ -128,9 +129,20 @@
       }
     };
   });
+
+  function isNodeValid(node) {
+    return (
+      node &&
+      node instanceof Node &&
+      node.nodeType == Node.ELEMENT_NODE &&
+      !IGNORE_TAGS.includes(node.nodeName) &&
+      // @ts-ignore
+      !node.hasAttribute(EditorAttributes.DATA_ONLOOK_IGNORE)
+    );
+  }
 </script>
 
-{#if node && node instanceof Node && node.nodeType == Node.ELEMENT_NODE && !IGNORE_TAGS.includes(node.nodeName) && !node.hasAttribute(DATA_ONLOOK_IGNORE)}
+{#if isNodeValid(node)}
   <div bind:this={nodeRef} class={depth > 0 ? "pl-2" : ""}>
     {#if isEmptyText}
       <!-- Nothing -->

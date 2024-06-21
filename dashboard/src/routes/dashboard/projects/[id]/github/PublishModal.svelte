@@ -1,33 +1,28 @@
 <script lang="ts">
-	import {
-		DashboardRoutes,
-		FirestoreCollections,
-		MAX_DESCRIPTION_LENGTH,
-		MAX_TITLE_LENGTH
-	} from '$shared/constants';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import { Progress } from '$lib/components/ui/progress/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { Textarea } from '$lib/components/ui/textarea';
 	import {
 		ProjectPublisher,
 		ProjectPublisherEventType,
 		type ProjectPublisherEvent
 	} from '$lib/publish';
-	import { projectsMapStore } from '$lib/utils/store';
-	import { nanoid } from 'nanoid';
-	import { baseUrl } from '$lib/utils/env';
-	import { toast } from '@zerodevx/svelte-toast';
 	import { FirebaseService } from '$lib/storage';
-	import { Label } from '$lib/components/ui/label/index.js';
-	import { Switch } from '$lib/components/ui/switch/index.js';
-	import { Textarea } from '$lib/components/ui/textarea';
+	import { baseUrl } from '$lib/utils/env';
+	import { projectsMapStore } from '$lib/utils/store';
+	import { DashboardRoutes, FirestoreCollections, LengthSettings } from '$shared/constants';
+	import { toast } from '@zerodevx/svelte-toast';
+	import { nanoid } from 'nanoid';
 	import { Pencil2 } from 'svelte-radix';
-	import { Progress } from '$lib/components/ui/progress/index.js';
 
-	import type { Project, GithubHistory, User } from '$shared/models';
+	import type { GithubHistory, Project, User } from '$shared/models';
 
-	import GitHub from '~icons/mdi/github';
-	import HistoriesView from './HistoriesView.svelte';
-	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Collapsible from '$lib/components/ui/collapsible';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import GitHub from '~icons/mdi/github';
+	import HistoriesView from './HistoriesView.svelte';
 
 	export let project: Project;
 	export let user: User;
@@ -196,7 +191,7 @@
 				type="text"
 				placeholder={titlePlaceholder}
 				class="w-full text-sm"
-				maxlength={MAX_TITLE_LENGTH}
+				maxlength={LengthSettings.MAX_TITLE_LENGTH}
 			/>
 			<Label>Description</Label>
 
@@ -205,7 +200,7 @@
 				bind:value={description}
 				class="h-24"
 				placeholder={descriptionPlaceholder}
-				maxlength={MAX_DESCRIPTION_LENGTH}
+				maxlength={LengthSettings.MAX_DESCRIPTION_LENGTH}
 			></Textarea>
 			<div class="mt-6 flex items-center justify-end">
 				{#if !publishError}

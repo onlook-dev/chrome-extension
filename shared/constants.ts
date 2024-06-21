@@ -10,8 +10,10 @@ export enum FirestoreCollections {
 }
 
 // Settings
-export const MAX_TITLE_LENGTH = 50;
-export const MAX_DESCRIPTION_LENGTH = 250;
+export enum LengthSettings {
+  MAX_TITLE_LENGTH = 50,
+  MAX_DESCRIPTION_LENGTH = 250
+}
 
 // Links
 export enum ExternalLinks {
@@ -26,6 +28,7 @@ export enum EditorAttributes {
   ONLOOK_TOOLBAR = "onlook-toolbar",
   ONLOOK_RECT_ID = "onlook-rect",
   ONLOOK_GLOBAL_STYLES = "onlook-global-styles",
+
   DATA_ONLOOK_ID = "data-onlook-id",
   DATA_ONLOOK_IGNORE = "data-onlook-ignore",
   DATA_ONLOOK_SAVED = "data-onlook-saved",

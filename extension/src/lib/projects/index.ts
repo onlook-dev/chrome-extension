@@ -1,11 +1,11 @@
+import { forwardToActiveTab } from "$lib/utils/helpers";
+import { getActiveUser, getProjectById, projectsMapBucket } from "$lib/utils/localstorage";
 import { sendApplyProjectChanges, sendGetTabId, tabIdResponseStream } from "$lib/utils/messaging";
-import { MAX_TITLE_LENGTH } from "$shared/constants";
+import { LengthSettings } from "$shared/constants";
+import type { HostData, Project } from "$shared/models";
+import { ProjectStatus } from "$shared/models";
 import { getBucket } from "@extend-chrome/storage";
 import { nanoid } from "nanoid";
-import { getActiveUser, getProjectById, projectsMapBucket } from "$lib/utils/localstorage";
-import { ProjectStatus } from "$shared/models";
-import type { Project, HostData } from "$shared/models";
-import { forwardToActiveTab } from "$lib/utils/helpers";
 
 const tabProjectIdBucket = getBucket<{ [tabId: string]: string }>('TABS_PROJECT_ID_MAP')
 const tabStateBucket = getBucket<{ [tabId: string]: TabState }>('TABS_STATE_MAP')
@@ -139,8 +139,8 @@ export class ProjectTabService {
         let projectName = tab.title || this.getDefaultname(tab.url);
 
         // Cut project name down 
-        if (projectName.length > MAX_TITLE_LENGTH) {
-            projectName = projectName.slice(0, MAX_TITLE_LENGTH)
+        if (projectName.length > LengthSettings.MAX_TITLE_LENGTH) {
+            projectName = projectName.slice(0, LengthSettings.MAX_TITLE_LENGTH)
         }
 
         const user = await getActiveUser();
