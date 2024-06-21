@@ -9,7 +9,6 @@ import Sortable from 'sortablejs';
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
 const messageService = MessageService.getInstance();
-const applyChangeService = new ApplyChangesService();
 
 function compareKeys(a: Record<string, string>, b: Record<string, string>): boolean {
   if (!a || !b) return false;
@@ -117,6 +116,7 @@ function applyClassEvent(event: EditEvent, element: HTMLElement) {
   if (!element) return;
   Object.entries(event.newVal).forEach(([attr, newVal]) => {
     if (attr !== "full") return;
+    const applyChangeService = new ApplyChangesService();
     applyChangeService.applyClass(element, newVal, false);
   });
 }
