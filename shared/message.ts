@@ -1,6 +1,8 @@
 export const MESSAGING_NAMESPACE = "aa5d4a6b-d04d-4cb4-8476-3cc14241facd";
 
 export enum MessageType {
+    TOGGLE_EDITOR = "TOGGLE_EDITOR",
+
     // Auth
     DASHBOARD_SIGN_IN = "DASHBOARD_SIGN_IN",
     DASHBOARD_SIGN_OUT = "DASHBOARD_SIGN_OUT",

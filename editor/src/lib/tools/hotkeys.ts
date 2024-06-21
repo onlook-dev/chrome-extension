@@ -1,8 +1,10 @@
-import hotkeys from "hotkeys-js";
 import { redoLastEvent, undoLastEvent } from "./edit/history";
 import { ToolName } from ".";
 import { ONLOOK_TOOLBAR } from "$shared/constants";
+import { sendMessage } from "webext-bridge/window";
 import type { EditTool } from "./edit";
+import hotkeys from "hotkeys-js";
+import { MessageType } from "$shared/message";
 
 hotkeys.filter = function (event) {
   var target = (event.target || event.srcElement || event.currentTarget) as HTMLElement;
@@ -36,8 +38,13 @@ export class HotKeys {
           node.textContent = node.textContent.replace('opt', 'alt')
         })
 
+    const sharedKeys = {
+      ["esc"]: () => sendMessage(MessageType.TOGGLE_EDITOR, {})
+    }
+
     this.toolKeyMaps = {
       [ToolName.EDIT]: {
+        ...sharedKeys,
         [`${this.metaKey}+z`]: (e) => {
           undoLastEvent()
           e.preventDefault();
@@ -57,7 +64,9 @@ export class HotKeys {
           e.stopPropagation();
         },
       },
-      [ToolName.PUBLISH]: {},
+      [ToolName.PUBLISH]: {
+        ...sharedKeys
+      },
     }
   }
 

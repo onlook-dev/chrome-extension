@@ -172,6 +172,12 @@ export class BackgroundEventHandlers {
             return shouldTour
         })
 
+        onMessage(MessageType.TOGGLE_EDITOR, async ({ sender }) => {
+            console.log('Toggle editor', sender)
+            const tab = await chrome.tabs.get(sender.tabId)
+            this.projectTabManager.toggleTab(tab)
+        })
+
         tabIdRequestStream.subscribe(([_, sender]) => {
             forwardToActiveTab(sender.tab, sendTabIdResponse)
         })
