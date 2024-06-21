@@ -2,25 +2,25 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { auth } from '$lib/firebase';
-	import { onMount, onDestroy } from 'svelte';
-	import { DashboardRoutes, LengthSettings, FirestoreCollections } from '$shared/constants';
-	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
-	import { truncateString } from '$shared/helpers';
-	import { FirebaseService } from '$lib/storage';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
-	import { Pencil2, Shadow, ExclamationTriangle, ArrowLeft, Reload } from 'svelte-radix';
+	import { FirebaseService } from '$lib/storage';
+	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
+	import { DashboardRoutes, FirestoreCollections, LengthSettings } from '$shared/constants';
+	import { truncateString } from '$shared/helpers';
 	import { MessageService, MessageType } from '$shared/message';
-	import type { User, Activity, Project } from '$shared/models';
+	import type { Activity, Project, User } from '$shared/models';
+	import { onDestroy, onMount } from 'svelte';
+	import { ArrowLeft, ExclamationTriangle, Pencil2, Reload, Shadow } from 'svelte-radix';
 
 	import ProjectTour from '$lib/components/tour/ProjectTour.svelte';
+	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Resizable from '$lib/components/ui/resizable';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import ActivitiesPicker from './ActivitiesPicker.svelte';
 	import ImageDetailView from './ImageDetailView.svelte';
-	import GithubModal from './github/GithubModal.svelte';
 	import ActivityDetail from './activities/ActivityDetail.svelte';
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import * as Resizable from '$lib/components/ui/resizable';
+	import GithubModal from './github/GithubModal.svelte';
 
 	let project: Project | undefined;
 	let messageService: MessageService;
@@ -66,7 +66,7 @@
 				.subscribe(projectId, async (firebaseProject) => {
 					if (!firebaseProject || !Object.keys(firebaseProject).length) {
 						// Set timeout to error to give projects time to load
-						setTimeout(() => (errorText = 'Project not found'), 5000);
+						setTimeout(() => (errorText = 'Project not found'), 10000);
 						return;
 					}
 					$projectsMapStore.set(projectId, firebaseProject);
@@ -167,7 +167,7 @@
 			{/if}
 		</Resizable.PaneGroup>
 	{:else if errorText}
-		<div class="flex flex-col items-center justify-center h-full space-y-8">
+		<div class="flex flex-col items-center justify-center h-full space-y-8 pb-10">
 			<p class="flex flex-row items-center text-lg">
 				<ExclamationTriangle class="mr-3" />
 				{errorText}
@@ -183,9 +183,9 @@
 			</div>
 		</div>
 	{:else}
-		<div class="flex flex-row items-center justify-center h-full">
+		<div class="flex flex-row items-center justify-center h-full pb-10">
 			<Shadow class="animate-spin mr-2" />
-			<p class="text-stone-500">Loading Project...</p>
+			<p class="text-tertiary">Loading Project...</p>
 		</div>
 	{/if}
 </div>

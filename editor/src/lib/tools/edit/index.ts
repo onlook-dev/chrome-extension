@@ -119,10 +119,19 @@ export class EditTool implements Tool {
 	}
 
 	onElementResize(els: Element[]): void {
+		this.updateEditRect();
 		this.updateClickedRects(els);
 	}
 
+	updateEditRect() {
+		const editing = this.selectorEngine.editing;
+		if (!editing) return;
+		this.overlayManager.updateEditRect(editing);
+	}
+
 	updateClickedRects(els: Element[]) {
+		if (this.selectorEngine.editing) return;
+
 		this.overlayManager.removeClickedRects();
 		els.forEach((el) => {
 			this.overlayManager.addClickRect(el as HTMLElement);
@@ -208,9 +217,12 @@ export class EditTool implements Tool {
 
 	makeLastElementEditable = (e: Event) => {
 		if (this.selectorEngine.selected.length === 0) return;
-		const lastElement = this.selectorEngine.selected[this.selectorEngine.selected.length - 1];
-		this.selectorEngine.updateEditing(lastElement);
-		this.addEditability(lastElement);
+		let target = this.selectorEngine.selected[this.selectorEngine.selected.length - 1];
+		while (target.children.length > 0) {
+			target = target.children[0] as HTMLElement;
+		}
+		this.selectorEngine.updateEditing(target);
+		this.addEditability(target);
 
 		e.preventDefault();
 		e.stopPropagation();

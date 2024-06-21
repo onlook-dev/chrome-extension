@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { TourName, type User } from '$shared/models';
+	import * as Card from '$lib/components/ui/card';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
-	import * as Card from '$lib/components/ui/card';
+	import { TourName, type User } from '$shared/models';
+	import { onMount } from 'svelte';
 	import TourStep from './TourStep.svelte';
 
 	export let pickActivity: (activityId?: string) => void;
@@ -38,14 +38,13 @@
         fixed z-50 w-screen h-screen flex {stage === 0 ? 'bg-black/40' : ''}"
 >
 	{#if stage === 0}
-		<Card.Root class="bg-blue-600/95 border-blue-900 w-[40rem] max-w-2/3 m-auto">
+		<Card.Root class="bg-blue-600 border-blue-900 w-[40rem] max-w-2/3 m-auto">
 			<Card.Header class="text-xl">Welcome to your Project Page</Card.Header>
 			<Card.Content class="text-base px-6 text-blue-1000">
-				<div>
-					This is where you can review and publish the changes you made to your site.
-					<br />
-					Share the link to this page with your teammates to collaborate.
-				</div>
+				<ul>
+					<li>This is where you can review and publish the changes you made to your site.</li>
+					<li>Share the link to this page with your teammates to collaborate.</li>
+				</ul>
 			</Card.Content>
 			<Card.Footer class="flex flex-row gap-2">
 				<Button
@@ -61,38 +60,37 @@
 			bind:stage
 			{maxStage}
 			classes="mt-[18rem] ml-[15rem] rounded-tl-none"
-			headerText="View your activities"
+			headerText="View your Activities"
 			callback={pickActivity}
 		>
-			<div>
-				Each activity represents a component you changed in your site. <br /> <br /> Click on an activity
-				to see details of the change.
-			</div>
+			<ul class="list-disc pl-5">
+				<li>Each element you update is an activity</li>
+				<li>Click on an activity to see details of the change</li>
+			</ul>
 		</TourStep>
 	{:else if stage === 2}
 		<TourStep
 			bind:stage
 			{maxStage}
 			classes="mt-[5rem] mr-[17rem] rounded-tr-none"
-			headerText="Activity details"
+			headerText="Dig into the Details"
 		>
-			<div>
-				Here you can see what changes were made and by whom.<br /> <br />
-				If your codebase is attached, you will also see where the code change should go.
-			</div>
+			<ul class="list-disc pl-5">
+				<li>See preview of the change, who made it and the correponding code</li>
+				<li>With GitHub attached, you will also see the affected code block</li>
+			</ul>
 		</TourStep>
 	{:else if stage === 3}
 		<TourStep
 			bind:stage
 			{maxStage}
 			classes="mt-[2rem] mr-[18rem] rounded-tr-none"
-			headerText="Resume editing"
+			headerText="Resume Editing"
 		>
-			<div>
-				You can resume editing the project, even if the page was closed.
-				<br /> <br />
-				This is also useful to see the change in context.
-			</div>
+			<ul class="list-disc pl-5">
+				<li>You can resume editing the project, even if the page was closed</li>
+				<li>The extension needs to be installed for this to work</li>
+			</ul>
 		</TourStep>
 	{:else if stage === 4}
 		<TourStep
@@ -100,13 +98,13 @@
 			{maxStage}
 			classes="mt-[2rem] mr-[13rem] rounded-tr-none"
 			buttonText="Finish"
-			headerText="Connect your codebase"
+			headerText="Connect your Codebase"
 			callback={finishTour}
 		>
-			<div>
-				Our most powerful feature, connect your codebase to see the changes in context.
-				<br /> <br /> Our AI agent can even implement the change for you in a pull request.
-			</div>
+			<ul class="list-disc pl-5">
+				<li>Our most powerful feature, connect your codebase to see the changes in context</li>
+				<li>Our AI agent can even implement the change as a pull request</li>
+			</ul>
 		</TourStep>
 	{/if}
 </div>

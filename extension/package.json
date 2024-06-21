@@ -2,7 +2,7 @@
   "name": "onlook.dev",
   "displayName": "Onlook (Beta)",
   "description": "Inspect, test, and edit any web app or website online.",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development nodemon --watch src/lib/editor/bundle.min.js --exec 'vite build --watch'",

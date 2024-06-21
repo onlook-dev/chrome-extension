@@ -142,9 +142,9 @@
 			</Resizable.Pane>
 		</Resizable.PaneGroup>
 	{:else}
-		<div class="flex flex-row items-center justify-center h-full">
-			<Shadow class="animate-spin mr-2" />
-			<p class="text-stone-500">Loading User...</p>
+		<div class="text-white flex flex-row items-center justify-center h-full pb-10">
+			<Shadow class=" animate-spin mr-2" />
+			<p class="text-tertiary">Loading User...</p>
 		</div>
 	{/if}
 </div>
