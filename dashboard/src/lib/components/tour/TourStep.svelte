@@ -11,16 +11,16 @@
 </script>
 
 <Card.Root
-	class="w-[20rem] max-w-[400px] bg-blue-600 border-blue-900 border-[0.5px] m-auto {classes}"
+	class="p-4 space-y-4 w-[20rem] max-w-[400px] bg-blue-600 border-blue-900 border-[0.5px] m-auto {classes}"
 >
-	<Card.Header>
+	<Card.Header class="p-0">
 		<h1 class="text-base text-blue-900">Step {stage} of {maxStage}</h1>
 		<h1 class="text-lg">{headerText}</h1>
 	</Card.Header>
-	<Card.Content class="text-sm px-6 text-blue-1000">
+	<Card.Content class="text-sm p-0 text-blue-1000">
 		<slot />
 	</Card.Content>
-	<Card.Footer class="flex flex-row gap-2 ">
+	<Card.Footer class="p-0 flex flex-row gap-2 ">
 		<Button
 			class="ml-auto text-blue-700 rounded hover:bg-blue-400"
 			variant="ghost"
