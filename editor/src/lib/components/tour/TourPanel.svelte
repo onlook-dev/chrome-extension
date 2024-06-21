@@ -1,9 +1,9 @@
 <script lang="ts">
     import { Button } from "$lib/components/ui/button";
+    import * as Card from "$lib/components/ui/card";
     import { MessageType } from "$shared/message";
     import { onMount } from "svelte";
     import { sendMessage } from "webext-bridge/window";
-    import * as Card from "$lib/components/ui/card";
     import TourStep from "./TourStep.svelte";
 
     let stage = 0;
@@ -32,7 +32,7 @@
 >
     {#if stage === 0}
         <Card.Root
-            class="bg-blue-600/95 border-blue-900 w-[40rem] max-w-2/3 m-auto"
+            class="bg-blue-600 border-blue-900 w-[40rem] max-w-2/3 m-auto"
         >
             <Card.Header class="text-xl">Ready for something new?</Card.Header>
             <Card.Content class="text-base px-6 text-blue-1000">

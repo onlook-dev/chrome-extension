@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { TourName, type User } from '$shared/models';
+	import * as Card from '$lib/components/ui/card';
 	import { FirebaseService } from '$lib/storage';
 	import { FirestoreCollections } from '$shared/constants';
-	import * as Card from '$lib/components/ui/card';
+	import { TourName, type User } from '$shared/models';
+	import { onMount } from 'svelte';
 	import TourStep from './TourStep.svelte';
 
 	export let pickActivity: (activityId?: string) => void;
@@ -38,7 +38,7 @@
         fixed z-50 w-screen h-screen flex {stage === 0 ? 'bg-black/40' : ''}"
 >
 	{#if stage === 0}
-		<Card.Root class="bg-blue-600/95 border-blue-900 w-[40rem] max-w-2/3 m-auto">
+		<Card.Root class="bg-blue-600 border-blue-900 w-[40rem] max-w-2/3 m-auto">
 			<Card.Header class="text-xl">Welcome to your Project Page</Card.Header>
 			<Card.Content class="text-base px-6 text-blue-1000">
 				<div>

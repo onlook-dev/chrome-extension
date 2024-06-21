@@ -11,7 +11,7 @@
 </script>
 
 <Card.Root
-	class="w-[20rem] max-w-[400px] bg-blue-600/95 border-blue-900 border-[0.5px] m-auto {classes}"
+	class="w-[20rem] max-w-[400px] bg-blue-600 border-blue-900 border-[0.5px] m-auto {classes}"
 >
 	<Card.Header>
 		<h1 class="text-base text-blue-900">Step {stage} of {maxStage}</h1>
