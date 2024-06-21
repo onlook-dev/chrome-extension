@@ -205,6 +205,16 @@ export class EditTool implements Tool {
 
 	stopBubbling = (e) => e.key != "Escape" && e.stopPropagation();
 
+	makeLastElementEditable = (e: Event) => {
+		if (this.selectorEngine.selected.length === 0) return;
+		const lastElement = this.selectorEngine.selected[this.selectorEngine.selected.length - 1];
+		this.selectorEngine.updateEditing(lastElement);
+		this.addEditability(lastElement);
+
+		e.preventDefault();
+		e.stopPropagation();
+	}
+
 	addEditability = (el: HTMLElement) => {
 		if (!el) return;
 		this.oldText = el.textContent;

@@ -74,12 +74,16 @@ export class SelectorEngine {
     e.preventDefault();
     e.stopPropagation();
 
-    this.selectedStore.set([target]);
-    this.hoveredStore.set(undefined);
-    this.editingStore.set(target);
+    this.updateEditing(target);
   }
 
-  select(item, clear = false) {
+  updateEditing = (el: HTMLElement) => {
+    this.selectedStore.set([el]);
+    this.hoveredStore.set(undefined);
+    this.editingStore.set(el);
+  }
+
+  select = (item, clear = false) => {
     const targets = [item]
     const dataOnlookId = getDataOnlookId(item);
     // Select similar detected components
