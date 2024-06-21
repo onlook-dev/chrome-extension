@@ -1,5 +1,5 @@
 import { DATA_ONLOOK_IGNORE, ONLOOK_RECT_ELEMENT, ONLOOK_RECT_ID } from "$lib/constants";
-import { ONLOOK_TOOLBAR } from "$shared/constants";
+import { EditorAttributes } from "$shared/constants";
 import { nanoid } from 'nanoid';
 
 interface Rect {
@@ -373,7 +373,7 @@ class RectPopover extends HTMLElement {
         this.setAttribute('popover', 'manual')
         this.showPopover && this.showPopover()
 
-        const toolbar = document.querySelector(ONLOOK_TOOLBAR) as HTMLElement
+        const toolbar = document.querySelector(EditorAttributes.ONLOOK_TOOLBAR) as HTMLElement
         if (toolbar) {
             toolbar.setAttribute('popover', 'manual')
             toolbar.hidePopover && toolbar.hidePopover()

@@ -1,5 +1,5 @@
-import { DATA_ONLOOK_COMPONENT_ID, DATA_ONLOOK_ID, DATA_ONLOOK_OLD_VALS } from "./constants";
-import type { Activity, ChangeValues, TemplateNode } from "./models";
+import { EditorAttributes } from "./constants";
+import type { Activity, ChangeValues } from "./models";
 
 export function jsToCssProperty(key: string) {
   if (!key) return "";
@@ -105,7 +105,7 @@ export function sortActivities(activities: Record<string, Activity>, reverse = f
 
 export function cleanCustomComponent(el: HTMLElement) {
   const cleanedChild = el.cloneNode(true) as HTMLElement;
-  cleanedChild.removeAttribute(DATA_ONLOOK_OLD_VALS);
+  cleanedChild.removeAttribute(EditorAttributes.DATA_ONLOOK_OLD_VALS);
   cleanedChild.setAttribute('contenteditable', 'false');
   return cleanedChild;
 }

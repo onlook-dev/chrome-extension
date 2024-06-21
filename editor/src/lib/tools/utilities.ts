@@ -1,6 +1,5 @@
-import { DATA_ONLOOK_ID, DATA_ONLOOK_SNAPSHOT, ONLOOK_TOOLBAR } from '$shared/constants'
 import { finder } from '$lib/tools/selection/uniqueSelector'
-import { DATA_ONLOOK_COMPONENT_ID } from '$lib/constants'
+import { EditorAttributes } from '$shared/constants'
 
 export const deepElementFromPoint = (x, y): HTMLElement => {
   const el = document.elementFromPoint(x, y)
@@ -27,13 +26,13 @@ export const isFixed = elem => {
   return false;
 }
 
-export const isOffBounds = node => node?.closest && (node.closest(ONLOOK_TOOLBAR) || node.closest(`#${ONLOOK_TOOLBAR}`))
+export const isOffBounds = node => node?.closest && (node.closest(EditorAttributes.ONLOOK_TOOLBAR) || node.closest(`#${EditorAttributes.ONLOOK_TOOLBAR}`))
 
-export const getDataOnlookId = node => node?.getAttribute(DATA_ONLOOK_ID)
+export const getDataOnlookId = node => node?.getAttribute(EditorAttributes.DATA_ONLOOK_ID)
 
-export const getDataOnlookComponentId = node => node?.getAttribute(DATA_ONLOOK_COMPONENT_ID)
+export const getDataOnlookComponentId = node => node?.getAttribute(EditorAttributes.DATA_ONLOOK_COMPONENT_ID)
 
-export const getByDataOnlookId = id => document.querySelectorAll(`[${DATA_ONLOOK_ID}="${id}"]`)
+export const getByDataOnlookId = id => document.querySelectorAll(`[${EditorAttributes.DATA_ONLOOK_ID}="${id}"]`)
 
 export const findCommonParent = (...nodes): HTMLElement => {
   // Early exit if there's only one node or no nodes
@@ -79,8 +78,8 @@ export const findCommonParent = (...nodes): HTMLElement => {
 export const getUniqueSelector = (el: HTMLElement): string => {
   let selector = el.tagName.toLowerCase()
   // If data-onlook-component-id exists, use that
-  if (el.hasAttribute(DATA_ONLOOK_COMPONENT_ID)) {
-    return `[${DATA_ONLOOK_COMPONENT_ID}="${el.getAttribute(DATA_ONLOOK_COMPONENT_ID)}"]`
+  if (el.hasAttribute(EditorAttributes.DATA_ONLOOK_COMPONENT_ID)) {
+    return `[${EditorAttributes.DATA_ONLOOK_COMPONENT_ID}="${el.getAttribute(EditorAttributes.DATA_ONLOOK_COMPONENT_ID)}"]`
   }
 
   try {
@@ -93,10 +92,10 @@ export const getUniqueSelector = (el: HTMLElement): string => {
 }
 
 export const getSnapshot = (el: HTMLElement): string | undefined => {
-  let snapshotEl = el.closest(`[${DATA_ONLOOK_SNAPSHOT}]`) as HTMLElement
+  let snapshotEl = el.closest(`[${EditorAttributes.DATA_ONLOOK_SNAPSHOT}]`) as HTMLElement
   // Search entire document 
   if (!snapshotEl) {
-    snapshotEl = document.querySelector(`[${DATA_ONLOOK_SNAPSHOT}]`) as HTMLElement
+    snapshotEl = document.querySelector(`[${EditorAttributes.DATA_ONLOOK_SNAPSHOT}]`) as HTMLElement
   }
   return snapshotEl?.dataset.onlookSnapshot
 }
@@ -110,7 +109,7 @@ export const rehoistPopovers = () => {
   }
 
   // This should be last one to hoist to show up above rects
-  const onlookToolbar = document.querySelector(ONLOOK_TOOLBAR) as HTMLElement
+  const onlookToolbar = document.querySelector(EditorAttributes.ONLOOK_TOOLBAR) as HTMLElement
   if (onlookToolbar) {
     onlookToolbar.hidePopover && onlookToolbar.hidePopover()
     onlookToolbar.showPopover && onlookToolbar.showPopover()

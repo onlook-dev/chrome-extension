@@ -1,6 +1,6 @@
 import { DATA_ONLOOK_COMPONENT_ID } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, layersWeakMap, } from '$lib/states/editor';
-import { DATA_ONLOOK_ID } from '$shared/constants';
+import { EditorAttributes } from '$shared/constants';
 import { getCustomComponentContent } from '$shared/helpers';
 import { EditType, type ChildVal } from '$shared/models';
 import { nanoid } from 'nanoid';
@@ -255,7 +255,7 @@ export class EditTool implements Tool {
 
 	cloneElement = (el) => {
 		const clonedElement = el.cloneNode(true) as HTMLElement;
-		clonedElement.removeAttribute(DATA_ONLOOK_ID);
+		clonedElement.removeAttribute(EditorAttributes.DATA_ONLOOK_ID);
 		clonedElement.removeAttribute(DATA_ONLOOK_COMPONENT_ID);
 		clonedElement.setAttribute(DATA_ONLOOK_COMPONENT_ID, `${clonedElement.tagName.toLowerCase()}-${nanoid()}`)
 		return clonedElement;

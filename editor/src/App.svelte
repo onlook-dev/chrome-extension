@@ -1,14 +1,14 @@
 <script lang="ts">
-  import "./app.pcss";
-  import { ToolName } from "$lib/tools";
-  import { historyStore } from "$lib/tools/edit/history";
-  import { ONLOOK_TOOLBAR } from "$shared/constants";
   import {
     DATA_ONLOOK_EJECT,
     DATA_ONLOOK_INJECT,
     DATA_ONLOOK_SAVED,
   } from "$lib/constants";
   import { savingProject } from "$lib/states/editor";
+  import { ToolName } from "$lib/tools";
+  import { historyStore } from "$lib/tools/edit/history";
+  import { EditorAttributes } from "$shared/constants";
+  import "./app.pcss";
 
   import Editor from "./lib/components/Editor.svelte";
 
@@ -35,6 +35,6 @@
   }
 </script>
 
-<div id={ONLOOK_TOOLBAR}>
+<div id={EditorAttributes.ONLOOK_TOOLBAR}>
   <Editor bind:this={editor} />
 </div>

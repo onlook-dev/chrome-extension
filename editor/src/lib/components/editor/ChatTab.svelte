@@ -1,20 +1,20 @@
 <script lang="ts">
-    import { Textarea } from "$lib/components/ui/textarea/index.js";
     import { Separator } from "$lib/components/ui/separator/index.js";
-    import { MessageType } from "$shared/message";
-    import { sendMessage } from "webext-bridge/window";
-    import { onMount } from "svelte";
-    import { camelCase } from "lodash";
+    import { Textarea } from "$lib/components/ui/textarea/index.js";
+    import type { EditTool } from "$lib/tools/edit";
     import { ApplyChangesService } from "$lib/tools/edit/applyChange";
+    import { EditorAttributes } from "$shared/constants";
+    import { MessageType } from "$shared/message";
     import {
         Tools,
         type InvokeParams,
         type InvokeResponse,
     } from "$shared/models";
-    import type { EditTool } from "$lib/tools/edit";
-    import { DATA_ONLOOK_ID } from "$shared/constants";
-    import { Shadow } from "radix-icons-svelte";
     import { EditSource } from "$shared/models/editor";
+    import { camelCase } from "lodash";
+    import { Shadow } from "radix-icons-svelte";
+    import { onMount } from "svelte";
+    import { sendMessage } from "webext-bridge/window";
 
     export let editTool: EditTool;
     export let cardHeight: string;
@@ -94,7 +94,7 @@
         let attributes = Array.from(element.attributes)
             .filter(
                 (attr) =>
-                    attr.name !== DATA_ONLOOK_ID &&
+                    attr.name !== EditorAttributes.DATA_ONLOOK_ID &&
                     attr.name !== "data-old-vals",
             )
             .map((attr) => `${attr.name}="${attr.value}"`)

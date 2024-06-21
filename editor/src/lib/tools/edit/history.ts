@@ -1,11 +1,10 @@
-import { EditType, type EditEvent, type TextVal, type ChildVal } from '$shared/models';
-import { get, writable } from 'svelte/store';
 import { MessageService, MessageType } from '$shared/message';
+import { EditType, type ChildVal, type EditEvent, type TextVal } from '$shared/models';
+import { get, writable } from 'svelte/store';
 import { ApplyChangesService } from './applyChange';
 
-import Sortable from 'sortablejs';
 import { dragContainers } from '$lib/states/editor';
-import { DATA_ONLOOK_COMPONENT_ID } from '$shared/constants';
+import Sortable from 'sortablejs';
 
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);

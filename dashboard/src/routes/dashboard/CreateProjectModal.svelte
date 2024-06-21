@@ -4,9 +4,9 @@
 	import { ArrowRight, Plus } from 'svelte-radix';
 
 	import Button from '$lib/components/ui/button/button.svelte';
-	import Input from '$lib/components/ui/input/input.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import { DEMO_LINK_PORTFOLIO } from '$shared/constants';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import { ExternalLinks } from '$shared/constants';
 
 	export let modalOpen = false;
 	let inputUrl = '';
@@ -55,7 +55,7 @@
 				<Button
 					class="m-0 p-0 ml-1 underline text-green-500"
 					variant="link"
-					on:click={() => openUrl(DEMO_LINK_PORTFOLIO)}
+					on:click={() => openUrl(ExternalLinks.DEMO_LINK_PORTFOLIO)}
 					>Demo project <ArrowRight class="h-4 w-4 ml-1" /></Button
 				>
 			</p>

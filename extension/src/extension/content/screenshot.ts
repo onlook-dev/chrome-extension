@@ -1,5 +1,5 @@
-import type { Activity } from '$shared/models'
-import { DATA_ONLOOK_ID, DATA_ONLOOK_IGNORE, ONLOOK_TOOLBAR } from '$shared/constants'
+import { EditorAttributes } from '$shared/constants';
+import type { Activity } from '$shared/models';
 import * as htmlToImage from 'html-to-image';
 
 export class ScreenshotService {
@@ -106,7 +106,7 @@ export class ScreenshotService {
 		// Filter out onlook elements
 		function filter(node: Element) {
 			try {
-				if (node.tagName.toUpperCase() === DATA_ONLOOK_ID.toUpperCase() || node.id === `#${DATA_ONLOOK_ID}` || node.hasAttribute(DATA_ONLOOK_IGNORE) || node.tagName.toUpperCase() === ONLOOK_TOOLBAR.toUpperCase()) {
+				if (node.tagName.toUpperCase() === EditorAttributes.DATA_ONLOOK_ID.toUpperCase() || node.id === `#${EditorAttributes.DATA_ONLOOK_ID}` || node.hasAttribute(EditorAttributes.DATA_ONLOOK_IGNORE) || node.tagName.toUpperCase() === EditorAttributes.ONLOOK_TOOLBAR.toUpperCase()) {
 					return false;
 				}
 				return true;

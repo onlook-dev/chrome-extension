@@ -1,27 +1,27 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { auth } from '$lib/firebase';
+	import { FirebaseService } from '$lib/storage';
+	import { paymentsMapStore, teamsMapStore, userStore } from '$lib/utils/store';
 	import {
 		DashboardRoutes,
 		DashboardSearchParams,
-		FEEDBACK_LINK,
+		ExternalLinks,
 		FirestoreCollections
 	} from '$shared/constants';
-	import { paymentsMapStore, teamsMapStore, userStore } from '$lib/utils/store';
-	import { FirebaseService } from '$lib/storage';
+	import type { Payment, Team, User } from '$shared/models';
+	import { onDestroy, onMount } from 'svelte';
 	import { Shadow } from 'svelte-radix';
-	import type { Team, Payment, User } from '$shared/models';
 
-	import AvatarDropdown from './sidebar/AvatarDropdown.svelte';
+	import IntroTour from '$lib/components/tour/IntroTour.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Resizable from '$lib/components/ui/resizable';
+	import CreateProjectModal from './CreateProjectModal.svelte';
 	import ProjectsView from './ProjectsView.svelte';
+	import AvatarDropdown from './sidebar/AvatarDropdown.svelte';
 	import NewTeamModal from './sidebar/NewTeamModal.svelte';
 	import PlanModal from './sidebar/PlanModal.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import CreateProjectModal from './CreateProjectModal.svelte';
-	import IntroTour from '$lib/components/tour/IntroTour.svelte';
-	import * as Resizable from '$lib/components/ui/resizable';
 
 	const teamService = new FirebaseService<Team>(FirestoreCollections.TEAMS);
 	const paymentService = new FirebaseService<Payment>(FirestoreCollections.PAYMENTS);
@@ -122,7 +122,8 @@
 						<Button
 							variant="secondary"
 							class="w-full"
-							on:click={() => window.open(FEEDBACK_LINK, '_blank')}>Give feedback</Button
+							on:click={() => window.open(ExternalLinks.FEEDBACK_LINK, '_blank')}
+							>Give feedback</Button
 						>
 					</div>
 				</div>
