@@ -1,17 +1,17 @@
-import { DATA_ONLOOK_COMPONENT_ID, ONLOOK_EDITABLE } from '$lib/constants';
+import { DATA_ONLOOK_COMPONENT_ID } from '$lib/constants';
 import { editorPanelVisible, elementsPanelVisible, layersWeakMap, } from '$lib/states/editor';
+import { DATA_ONLOOK_ID } from '$shared/constants';
+import { getCustomComponentContent } from '$shared/helpers';
 import { EditType, type ChildVal } from '$shared/models';
+import { nanoid } from 'nanoid';
 import { OverlayManager } from '../selection/overlay';
 import { SelectorEngine } from '../selection/selector';
 import { findCommonParent, getDataOnlookComponentId, getDataOnlookId, getUniqueSelector } from '../utilities';
-import { handleEditEvent } from './handleEvents';
+import { ApplyChangesService } from './applyChange';
 import { DragManager } from './drag';
-import { DATA_ONLOOK_ID } from '$shared/constants';
-import { nanoid } from 'nanoid';
-import { getCustomComponentContent } from '$shared/helpers';
+import { handleEditEvent } from './handleEvents';
 
 import type { Tool } from '../index';
-import { ApplyChangesService } from './applyChange';
 
 export class EditTool implements Tool {
 	selectorEngine: SelectorEngine;
