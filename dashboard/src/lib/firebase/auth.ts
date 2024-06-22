@@ -1,6 +1,8 @@
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
-import { auth } from '.';
+import { identifyMixpanelUser } from '$lib/mixpanel/client';
+import { FirebaseService } from '$lib/storage';
+import { USER_ID_KEY } from '$lib/utils/constants';
 import {
 	githubHistoryMapStore,
 	projectsMapStore,
@@ -9,17 +11,16 @@ import {
 	usersMapStore
 } from '$lib/utils/store';
 import { FirestoreCollections } from '$shared/constants';
-import { MessageType, MessageService } from '$shared/message';
-import { FirebaseService } from '$lib/storage';
+import { MessageType, } from '$shared/message';
 import type { User } from '$shared/models';
-import { identifyMixpanelUser } from '$lib/mixpanel/client';
-import { USER_ID_KEY } from '$lib/utils/constants';
+import { sendMessage } from 'webext-bridge/window';
+import { auth } from '.';
 
 export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged((authUser) => {
 		if (authUser) {
 			// Send authUser to extension
-			MessageService.getInstance().publish(MessageType.DASHBOARD_SIGN_IN, authUser);
+			sendMessage(MessageType.DASHBOARD_SIGN_IN, authUser as any);
 
 			// Listen and update user from remote
 			(new FirebaseService<User>(FirestoreCollections.USERS)).subscribe(authUser.uid, (user) => {
@@ -33,7 +34,7 @@ export function subscribeToFirebaseAuthChanges() {
 			});
 			localStorage.setItem(USER_ID_KEY, authUser.uid);
 		} else {
-			MessageService.getInstance().publish(MessageType.DASHBOARD_SIGN_OUT);
+			sendMessage(MessageType.DASHBOARD_SIGN_OUT, {});
 			// Clear data when signed out
 			userStore.set(undefined);
 			usersMapStore.set(new Map());

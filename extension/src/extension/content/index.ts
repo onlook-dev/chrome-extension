@@ -1,4 +1,6 @@
-import { MESSAGING_NAMESPACE, MessageService, MessageType } from '$shared/message'
+import { ProjectTabService } from '$lib/projects'
+import { ProjectChangeService } from '$lib/projects/changes'
+import { PublishProjectService } from '$lib/publish'
 import { authUserBucket, projectsMapBucket } from '$lib/utils/localstorage'
 import {
 	applyProjectChangesStream,
@@ -6,18 +8,16 @@ import {
 	sendEditProjectRequest,
 	sendOpenUrlRequest
 } from '$lib/utils/messaging'
-import { ScreenshotService } from './screenshot'
-import { PublishProjectService } from '$lib/publish'
+import { MESSAGING_NAMESPACE, MessageType } from '$shared/message'
 import { AltScreenshotService } from './altScreenshot'
-import { ProjectTabService } from '$lib/projects'
-import { ProjectChangeService } from '$lib/projects/changes'
+import { ScreenshotService } from './screenshot'
 
 import { ProjectStatus, type EditEvent, type Project } from '$shared/models'
-import { allowWindowMessaging } from "webext-bridge/content-script";
+import { allowWindowMessaging } from "webext-bridge/content-script"
+import { onMessage } from "webext-bridge/window"
 
 const screenshotService = new ScreenshotService()
 const altScreenshotService = new AltScreenshotService()
-const messageService = MessageService.getInstance()
 const projectTabManager = new ProjectTabService()
 const projectChangeService = new ProjectChangeService()
 
@@ -25,9 +25,6 @@ export function setupListeners() {
 	allowWindowMessaging(MESSAGING_NAMESPACE);
 
 	// Listen for messages from console. Should always check for console only.
-	messageService.subscribe(MessageType.DASHBOARD_SIGN_IN, (user) => {
-		authUserBucket.set({ authUser: user })
-	})
 
 	messageService.subscribe(MessageType.OPEN_URL, payload => {
 		sendOpenUrlRequest({ url: payload.url, inject: payload.inject })

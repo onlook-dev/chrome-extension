@@ -1,8 +1,9 @@
 import { convertChangeObjectToEditEvents, convertStructureChangeToEditEvents } from "$lib/editEvents/convert";
 import { getCSSFramework } from "$lib/utils/styleFramework";
-import { MessageService, MessageType } from "$shared/message";
+import { MessageType } from "$shared/message";
 
 import { EditType, type Activity, type EditEvent, type Project } from "$shared/models";
+import { sendMessage } from "webext-bridge/background";
 
 export class ProjectChangeService {
     constructor() { }
@@ -51,7 +52,8 @@ export class ProjectChangeService {
 
         const editEvents = this.getEditEventsFromProject(project)
         if (editEvents.length > 0) {
-            MessageService.getInstance().publish(revert ? MessageType.REVERT_EDIT_EVENTS : MessageType.APPLY_EDIT_EVENTS, editEvents)
+            const messageType = revert ? MessageType.REVERT_EDIT_EVENTS : MessageType.APPLY_EDIT_EVENTS
+            sendMessage(messageType, { editEvents, revert })
             shouldSaveProject = true
         }
 

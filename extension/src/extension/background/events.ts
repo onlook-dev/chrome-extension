@@ -18,7 +18,6 @@ import {
 import {
     editEventStream,
     editProjectRequestStream,
-    openUrlRequestStream,
     pageScreenshotRequestStream,
     publishProjectStream,
     sendApplyProjectChanges,
@@ -157,6 +156,16 @@ export class BackgroundEventHandlers {
             this.projectTabManager.removeTabState(tabId)
         })
 
+        onMessage(MessageType.OPEN_URL, async ({ data }) => {
+            const { url, inject } = data as { url: string, inject: boolean }
+            this.openOrCreateNewTab(url, inject)
+        })
+
+        onMessage(MessageType.DASHBOARD_SIGN_IN, ({ data }) => {
+            if (data)
+                authUserBucket.set({ authUser: data as any })
+        })
+
         // Message directly from editor window
         onMessage(MessageType.SEND_CHAT_MESSAGE, async ({ data }) => {
             const startTime = Date.now()
@@ -219,11 +228,6 @@ export class BackgroundEventHandlers {
             } else {
                 signOut()
             }
-        })
-
-        // Open url 
-        openUrlRequestStream.subscribe(([{ url, inject }, sender]) => {
-            this.openOrCreateNewTab(url, inject)
         })
 
         // Style change from (editor -> content script -> background)

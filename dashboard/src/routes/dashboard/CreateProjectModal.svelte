@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
-	import { MessageService, MessageType } from '$shared/message';
+	import { MessageType } from '$shared/message';
 	import { ArrowRight, Plus } from 'svelte-radix';
 
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { ExternalLinks } from '$shared/constants';
+	import { sendMessage } from 'webext-bridge/window';
 
 	export let modalOpen = false;
 	let inputUrl = '';
@@ -34,7 +35,7 @@
 	}
 
 	function openUrl(url: string) {
-		MessageService.getInstance().publish(MessageType.OPEN_URL, { url, inject: true });
+		sendMessage(MessageType.OPEN_URL, { url, inject: true });
 		url = '';
 		modalOpen = false;
 		trackMixpanelEvent('Create Project from dashboard', { url });

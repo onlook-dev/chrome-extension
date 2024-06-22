@@ -71,6 +71,7 @@
     "svelte-radix": "^1.1.0",
     "tailwind-merge": "^2.2.2",
     "tailwind-variants": "^0.2.1",
+    "webext-bridge": "^6.0.1",
     "zod-to-json-schema": "^3.22.4"
   },
   "optionalDependencies": {
