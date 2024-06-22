@@ -45,7 +45,6 @@
     "vite": "4.2.3"
   },
   "dependencies": {
-    "@extend-chrome/messages": "^1.2.2",
     "@extend-chrome/storage": "^1.5.0",
     "@langchain/community": "^0.2.9",
     "@langchain/langgraph": "^0.0.22",
@@ -58,7 +57,6 @@
     "mixpanel": "^0.18.0",
     "mixpanel-browser": "juanfer0002/mixpanel-js-mv3#fetch-support-for-mv3-extensions",
     "nanoid": "^5.0.3",
-    "rxjs": "^7.8.1",
     "valid-url": "^1.0.9",
     "webext-bridge": "^6.0.1"
   }
