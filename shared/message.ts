@@ -2,33 +2,20 @@ export const MESSAGING_NAMESPACE = "aa5d4a6b-d04d-4cb4-8476-3cc14241facd";
 
 export enum MessageType {
     TOGGLE_EDITOR = "TOGGLE_EDITOR",
-
-    // Auth
     DASHBOARD_SIGN_IN = "DASHBOARD_SIGN_IN",
     DASHBOARD_SIGN_OUT = "DASHBOARD_SIGN_OUT",
-
-    // Project
     OPEN_URL = "OPEN_URL",
     SHOULD_TOUR = "SHOULD_TOUR",
-
-    // Edit
     EDIT_EVENT = "EDIT_EVENT",
     EDIT_PROJECT = "EDIT_PROJECT",
     MERGE_PROJECT = "MERGE_PROJECT",
     APPLY_EDIT_EVENTS = "APPLY_EDIT_EVENTS",
     REVERT_EDIT_EVENTS = "REVERT_EDIT_EVENTS",
-
-    // Getting project
     GET_PROJECT = "GET_PROJECT",
     GET_PROJECTS = "GET_PROJECTS",
-
-    // Saving project
     PREPARE_SAVE = "PREPARE_SAVE",
     PUBLISH_PROJECT = "PUBLISH_PROJECT",
-
-    // Chat
     SEND_CHAT_MESSAGE = "SEND_CHAT_MESSAGE",
-
-    // Generic type to get callback response
-    RESPONSE = "RESPONSE"
+    GET_TAB_ID = "GET_TAB_ID",
+    GET_PAGE_SCREENSHOT = "GET_PAGE_SCREENSHOT",
 }
