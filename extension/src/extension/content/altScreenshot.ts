@@ -1,5 +1,4 @@
 import type { Activity } from '$shared/models'
-import { pageScreenshotResponseStream, sendPageScreenshotRequest } from '$lib/utils/messaging'
 import { nanoid } from 'nanoid'
 
 interface QueueItem {
@@ -122,12 +121,12 @@ export class AltScreenshotService {
 		return new Promise((resolve, reject) => {
 			// TODO: If hiding editor, should setTimeout 50ms to ensure editor is hidden
 			let signature = nanoid()
-			const subscription = pageScreenshotResponseStream.subscribe(([data]) => {
-				if (data.signature !== signature) return;
-				resolve(data.image);
-				subscription.unsubscribe();
-			});
-			sendPageScreenshotRequest({ signature, refresh });
+			// const subscription = pageScreenshotResponseStream.subscribe(([data]) => {
+			// 	if (data.signature !== signature) return;
+			// 	resolve(data.image);
+			// 	subscription.unsubscribe();
+			// });
+			// sendPageScreenshotRequest({ signature, refresh });
 		});
 	}
 }

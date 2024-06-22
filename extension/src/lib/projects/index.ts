@@ -1,6 +1,4 @@
-import { forwardToActiveTab } from "$lib/utils/helpers";
 import { getActiveUser, getProjectById, projectsMapBucket } from "$lib/utils/localstorage";
-import { sendApplyProjectChanges, sendGetTabId, tabIdResponseStream } from "$lib/utils/messaging";
 import { LengthSettings } from "$shared/constants";
 import type { HostData, Project } from "$shared/models";
 import { ProjectStatus } from "$shared/models";
@@ -60,13 +58,13 @@ export class ProjectTabService {
                 }
             } else {
                 // Content script
-                sendGetTabId().then(() => {
-                    const subscription = tabIdResponseStream.subscribe(([data]) => {
-                        resolve(data)
-                        subscription.unsubscribe();
-                    });
-                    sendGetTabId();
-                })
+                // sendGetTabId().then(() => {
+                //     const subscription = tabIdResponseStream.subscribe(([data]) => {
+                //         resolve(data)
+                //         subscription.unsubscribe();
+                //     });
+                //     sendGetTabId();
+                // })
             }
         })
     }
@@ -180,9 +178,9 @@ export class ProjectTabService {
         if (tabState === TabState.injected) {
             // Re-inject
             this.injectTab(tabId)
-            setTimeout(() => {
-                forwardToActiveTab({}, sendApplyProjectChanges)
-            }, 100)
+            // setTimeout(() => {
+            //     forwardToActiveTab({}, sendApplyProjectChanges)
+            // }, 100)
         } else {
             this.setTabState(tabId, TabState.none)
         }

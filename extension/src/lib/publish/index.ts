@@ -1,12 +1,9 @@
+import type { AltScreenshotService } from "$extension/content/altScreenshot";
+import type { ScreenshotService } from "$extension/content/screenshot";
 import { hideEditor, showEditor } from "$lib/editor/helpers";
-import { baseUrl } from "$lib/utils/env";
-import { sendOpenUrlRequest, sendPublishProjectRequest } from "$lib/utils/messaging";
-import { DashboardRoutes } from "$shared/constants";
+import type { ProjectChangeService } from "$lib/projects/changes";
 import { projectsMapBucket } from "$lib/utils/localstorage";
 import { ProjectStatus, type Project } from "$shared/models";
-import type { ScreenshotService } from "$extension/content/screenshot";
-import type { AltScreenshotService } from "$extension/content/altScreenshot";
-import type { ProjectChangeService } from "$lib/projects/changes";
 
 export class PublishProjectService {
     constructor(
@@ -24,9 +21,9 @@ export class PublishProjectService {
             console.error("Error preparing project", e);
         }
 
-        await sendPublishProjectRequest(this.project);
-        if (open)
-            sendOpenUrlRequest({ url: `${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}` })
+        // await sendPublishProjectRequest(this.project);
+        // if (open)
+        //     sendOpenUrlRequest({ url: `${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}` })
     }
 
     public async prepare() {
