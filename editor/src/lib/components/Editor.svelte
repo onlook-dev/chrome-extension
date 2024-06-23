@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ToolManager, ToolName } from "$lib/tools";
-  import { EventListenerService } from "./listener";
+  import { EventListenerService } from "../listener";
   import { onMount } from "svelte";
   import { setNamespace } from "webext-bridge/window";
   import { MESSAGING_NAMESPACE } from "$shared/message";

@@ -1,7 +1,7 @@
 import { getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
+import { convertEditEventToChangeObject } from '$shared/helpers'
 import { ActivityStatus, EditType, ProjectStatus } from '$shared/models'
 import { nanoid } from 'nanoid'
-import { convertEditEventToChangeObject } from './convert'
 
 import type { ProjectTabService } from '$lib/projects'
 import type { Activity, ChangeValues, ChildVal, EditEvent, Project, } from '$shared/models'

@@ -20,4 +20,5 @@ export class EventListenerService {
             console.log("Applying project change", project)
         })
     }
+
 }

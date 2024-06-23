@@ -1,9 +1,8 @@
-import { getCSSFramework } from "$lib/utils/styleFramework";
 import { convertChangeObjectToEditEvents, convertStructureChangeToEditEvents } from "$shared/helpers";
 import { MessageType } from "$shared/message";
+import { StyleFramework } from "$shared/models";
 
 import { EditType, type Activity, type EditEvent, type Project } from "$shared/models";
-import { sendMessage } from "webext-bridge/background";
 
 export class ProjectChangeService {
     constructor() { }
@@ -15,9 +14,8 @@ export class ProjectChangeService {
         const mergedActivities = { ...targetActivities };
 
         Object.keys(currentActivities).forEach(activityKey => {
-            const currentActivity = currentActivities[activityKey];
-            const targetActivity = mergedActivities[activityKey] || {};
-
+            const currentActivity: Activity = currentActivities[activityKey];
+            const targetActivity: Activity = mergedActivities[activityKey];
 
             // Merge style changes
             const currentStyles = currentActivity.styleChanges || {};
@@ -44,7 +42,7 @@ export class ProjectChangeService {
         };
     }
 
-    async applyProjectChanges(project: Project, tab: chrome.tabs.Tab, revert: boolean = false): Promise<boolean> {
+    async applyProjectChanges(project: Project, revert: boolean = false): Promise<boolean> {
         if (!project) return false
 
         let shouldSaveProject = false
@@ -52,7 +50,7 @@ export class ProjectChangeService {
         const editEvents = this.getEditEventsFromProject(project)
         if (editEvents.length > 0) {
             const messageType = revert ? MessageType.REVERT_EDIT_EVENTS : MessageType.APPLY_EDIT_EVENTS
-            sendMessage(messageType, { editEvents, revert }, `window@${tab.id}`)
+            // sendMessage(messageType, { editEvents, revert }, `window@${tab.id}`)
             shouldSaveProject = true
         }
 
@@ -67,7 +65,7 @@ export class ProjectChangeService {
 
         // Get style framework if did not exist
         if (!project.projectSettings?.styleFramework) {
-            const styleFramework = await getCSSFramework()
+            const styleFramework = await this.getCSSFramework()
             project.projectSettings = {
                 ...project.projectSettings,
                 styleFramework
@@ -138,5 +136,46 @@ export class ProjectChangeService {
         // Order events chronologically
         editEvents.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
         return editEvents
+    }
+
+    async isTailwindUsed() {
+        // Function to fetch and read the content of a stylesheet
+        async function fetchStylesheet(href: string) {
+            try {
+                const response = await fetch(href);
+                return await response.text();
+            } catch (error) {
+                console.error('Error fetching the stylesheet:', error);
+                return '';
+            }
+        }
+
+        // Get all stylesheet links on the page
+        const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]')) as HTMLLinkElement[];
+
+        // Check each stylesheet for Tailwind CSS patterns
+        for (let link of links) {
+            if (!link.href) continue; // Skip if no href attribute
+            const content = await fetchStylesheet(link.href);
+            // Look for a Tailwind CSS signature pattern
+            if (content.includes('tailwindcss') || content.includes('@tailwind')) {
+                return true; // Tailwind CSS pattern found
+            }
+        }
+
+        return false; // No Tailwind CSS patterns found in any stylesheet
+    }
+
+    async getCSSFramework(): Promise<StyleFramework | undefined> {
+        try {
+            if (await this.isTailwindUsed()) {
+                return StyleFramework.TailwindCSS;
+            } else {
+                return StyleFramework.InlineCSS;
+            }
+        } catch (error) {
+            console.error('Error detecting the CSS framework:', error);
+            return undefined;
+        }
     }
 }
