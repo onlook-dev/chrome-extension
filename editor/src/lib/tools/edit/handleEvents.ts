@@ -1,12 +1,12 @@
-import { addToHistory } from "./history";
-import { getDataOnlookComponentId, getDataOnlookId, getUniqueSelector } from "../utilities";
-import { EditType, type EditEvent, type ChildVal } from "$shared/models";
-import { MessageService, MessageType } from "$shared/message";
-import { EditSource } from "$shared/models/editor";
 import { getCustomComponentContent } from "$shared/helpers";
+import { MessageType } from "$shared/message";
+import { EditType, type ChildVal, type EditEvent } from "$shared/models";
+import { EditSource } from "$shared/models/editor";
+import { sendMessage } from "webext-bridge/window";
+import { getDataOnlookComponentId, getDataOnlookId, getUniqueSelector } from "../utilities";
+import { addToHistory } from "./history";
 
 const elementSelectorCache: WeakMap<object, string> = new WeakMap(); // Cache for element selectors
-const messageService = MessageService.getInstance();
 
 function debounce(func, wait) {
   const timeouts = {};
@@ -103,7 +103,7 @@ export function undebounceHandleEditEvent(param: HandleEditEventParams) {
   if (componentId) {
     event = updateEventIfStructureChange(param) || event;
   }
-  messageService.publish(MessageType.EDIT_EVENT, event);
+  sendMessage(MessageType.EDIT_EVENT, event);
 }
 
 let debouncedHandleEditEvent = debounce(undebounceHandleEditEvent, 1000);

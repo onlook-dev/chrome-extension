@@ -1,4 +1,5 @@
-import { expect, test, describe } from 'bun:test';
+// @ts-ignore - Module exists
+import { describe, expect, test } from 'bun:test';
 import { stringToHex } from '../src/lib/tools/edit/colors';
 
 describe('color parsing to HEX', () => {

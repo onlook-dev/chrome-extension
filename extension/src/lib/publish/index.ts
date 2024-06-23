@@ -1,19 +1,14 @@
+import type { AltScreenshotService } from "$extension/content/altScreenshot";
+import type { ScreenshotService } from "$extension/content/screenshot";
 import { hideEditor, showEditor } from "$lib/editor/helpers";
-import { baseUrl } from "$lib/utils/env";
-import { sendOpenUrlRequest, sendPublishProjectRequest } from "$lib/utils/messaging";
-import { DashboardRoutes } from "$shared/constants";
 import { projectsMapBucket } from "$lib/utils/localstorage";
 import { ProjectStatus, type Project } from "$shared/models";
-import type { ScreenshotService } from "$extension/content/screenshot";
-import type { AltScreenshotService } from "$extension/content/altScreenshot";
-import type { ProjectChangeService } from "$lib/projects/changes";
 
 export class PublishProjectService {
     constructor(
         private project: Project,
         private screenshotService: ScreenshotService,
         private altScreenshotService: AltScreenshotService,
-        private projectChangeService: ProjectChangeService
     ) { }
 
     public async publish(open = true) {
@@ -24,9 +19,9 @@ export class PublishProjectService {
             console.error("Error preparing project", e);
         }
 
-        await sendPublishProjectRequest(this.project);
-        if (open)
-            sendOpenUrlRequest({ url: `${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}` })
+        // await sendPublishProjectRequest(this.project);
+        // if (open)
+        //     sendOpenUrlRequest({ url: `${baseUrl}${DashboardRoutes.PROJECTS}/${this.project.id}` })
     }
 
     public async prepare() {
@@ -58,7 +53,7 @@ export class PublishProjectService {
         if (activities.length === 0) return;
 
         // Revert activity
-        this.projectChangeService.applyProjectChanges(this.project, true);
+        // this.projectChangeService.applyProjectChanges(this.project, true);
 
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -76,7 +71,7 @@ export class PublishProjectService {
         this.project.hostData.beforeImage = beforeScreenshot;
 
         // Apply activity
-        this.projectChangeService.applyProjectChanges(this.project);
+        // this.projectChangeService.applyProjectChanges(this.project);
 
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -109,7 +104,7 @@ export class PublishProjectService {
         hideEditor();
 
         // Revert activity
-        this.projectChangeService.applyProjectChanges(this.project, true);
+        // this.projectChangeService.applyProjectChanges(this.project, true);
 
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -125,7 +120,7 @@ export class PublishProjectService {
         this.project.hostData.beforeImage = await this.altScreenshotService.takePageScreenshot(false);
 
         // Apply activity
-        this.projectChangeService.applyProjectChanges(this.project);
+        // this.projectChangeService.applyProjectChanges(this.project);
 
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));

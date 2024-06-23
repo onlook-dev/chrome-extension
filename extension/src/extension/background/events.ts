@@ -6,7 +6,6 @@ import { FirebaseService } from '$lib/storage'
 import { FirebaseProjectService } from '$lib/storage/project'
 import { TranslationService } from '$lib/translation'
 import { baseUrl } from '$lib/utils/env'
-import { forwardToActiveTab } from '$lib/utils/helpers'
 import {
     authUserBucket,
     getActiveUser,
@@ -15,21 +14,10 @@ import {
     teamsMapBucket,
     usersMapBucket
 } from '$lib/utils/localstorage'
-import {
-    editEventStream,
-    editProjectRequestStream,
-    openUrlRequestStream,
-    pageScreenshotRequestStream,
-    publishProjectStream,
-    sendApplyProjectChanges,
-    sendPageScreenshotResponse,
-    sendTabIdResponse,
-    tabIdRequestStream
-} from '$lib/utils/messaging'
 import { DashboardRoutes, FirestoreCollections } from '$shared/constants'
 import { MessageType } from '$shared/message'
-import { ProjectStatus, type Team, type User } from '$shared/models'
-import { onMessage } from 'webext-bridge/background'
+import { ProjectStatus, type EditEvent, type Project, type Team, type User } from '$shared/models'
+import { onMessage, sendMessage } from 'webext-bridge/background'
 import { EntitySubsciptionService } from './entities'
 import { captureActiveTab } from './screenshot'
 
@@ -149,12 +137,35 @@ export class BackgroundEventHandlers {
         chrome.tabs.onUpdated.addListener(
             async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
                 if (changeInfo.status !== 'complete') return
-                this.projectTabManager.handleTabRefreshed(tabId, tab.url)
+                this.projectTabManager.handleTabRefreshed(tab)
             }
         )
 
         chrome.tabs.onRemoved.addListener((tabId: number) => {
             this.projectTabManager.removeTabState(tabId)
+        })
+
+        onMessage(MessageType.OPEN_URL, async ({ data }) => {
+            const { url, inject } = data as { url: string, inject: boolean }
+            this.openOrCreateNewTab(url, inject)
+        })
+
+        onMessage(MessageType.DASHBOARD_SIGN_IN, ({ data }) => {
+            if (data)
+                authUserBucket.set({ authUser: data as any })
+        })
+
+        onMessage(MessageType.DASHBOARD_SIGN_OUT, ({ }) => {
+            authUserBucket.clear()
+        })
+
+        // React to authUser changes
+        authUserBucket.valueStream.subscribe(({ authUser }) => {
+            if (authUser) {
+                signInUser(authUser)
+            } else {
+                signOut()
+            }
         })
 
         // Message directly from editor window
@@ -177,64 +188,76 @@ export class BackgroundEventHandlers {
             this.projectTabManager.toggleTab(tab)
         })
 
-        tabIdRequestStream.subscribe(([_, sender]) => {
-            forwardToActiveTab(sender.tab, sendTabIdResponse)
+        onMessage(MessageType.PUBLISH_PROJECT, async ({ data, sender }) => {
+            try {
+                const open = data as boolean
+                const tab = await chrome.tabs.get(sender.tabId)
+                const project = await this.projectTabManager.getTabProject(tab)
+                project.status = ProjectStatus.PUBLISHED
+                this.projectService.post(project)
+                projectsMapBucket.set({ [project.id]: project })
+                if (open)
+                    this.openOrCreateNewTab(`${baseUrl}${DashboardRoutes.PROJECTS}/${project.id}`)
+                trackMixpanelEvent('Publishing project from editor', { projectId: project.id, projectName: project.name, projectUrl: project.hostUrl })
+            } catch (error) {
+                console.error('Error publishing project', error)
+                return false
+            }
+            return true
         })
 
-        publishProjectStream.subscribe(([project]) => {
-            project.status = ProjectStatus.PUBLISHED
-            this.projectService.post(project)
-            projectsMapBucket.set({ [project.id]: project })
-            trackMixpanelEvent('Publishing project from editor', { projectId: project.id, projectName: project.name, projectUrl: project.hostUrl })
-        })
-
-        pageScreenshotRequestStream.subscribe(async ([{ signature, refresh }]) => {
-            // Send message back
+        onMessage(MessageType.GET_PAGE_SCREENSHOT, async ({ data }: any) => {
+            const { signature, refresh } = data as { signature: string, refresh: boolean }
             const image = await captureActiveTab(refresh)
-            forwardToActiveTab({ image, signature }, sendPageScreenshotResponse)
+            return { image, signature }
         })
 
-        // Start editing request (from dashboard -> content script -> background)
-        editProjectRequestStream.subscribe(async ([{ project, enable }]) => {
-            // Add trailing slash if not present
-            const hostUrl = project.hostUrl.endsWith('/') ? project.hostUrl : `${project.hostUrl}/`
-            const tab = await this.openOrCreateNewTab(hostUrl)
+        onMessage(MessageType.EDIT_PROJECT, async ({ data }: any) => {
+            const { project, enable } = data as { project: Project, enable: boolean }
+            const tab = await this.openOrCreateNewTab(project.hostUrl)
             if (!tab) {
                 console.error('Tab not found')
                 return
             }
             await this.projectTabManager.setTabProject(tab, project)
-            await this.projectTabManager.toggleTab(tab, enable)
+            await this.projectTabManager.toggleTab(tab, enable);
 
-            // Forward message after a delay to ensure content script is loaded
-            setTimeout(() => {
-                forwardToActiveTab({}, sendApplyProjectChanges)
-            }, 500)
+            // Send apply project change to editor tab
+            sendMessage(MessageType.APPLY_PROJECT_CHANGE, project as any, `window@${tab.id}`)
         })
 
-        // Auth user changes from content script
-        authUserBucket.valueStream.subscribe(({ authUser }) => {
-            if (authUser) {
-                signInUser(authUser)
-            } else {
-                signOut()
-            }
-        })
-
-        // Open url 
-        openUrlRequestStream.subscribe(([{ url, inject }, sender]) => {
-            this.openOrCreateNewTab(url, inject)
-        })
-
-        // Style change from (editor -> content script -> background)
-        editEventStream.subscribe(([editEvent, sender]) => {
-            const tab = sender.tab
+        onMessage(MessageType.EDIT_EVENT, async ({ data, sender }: any) => {
+            const tab = await chrome.tabs.get(sender.tabId)
+            const event = data as EditEvent
             if (!tab) {
                 console.error('Tab ID not found')
                 return
             }
-            this.editEventService.handleEditEvent(editEvent, tab)
-            trackMixpanelEvent('Edit event on editor', { type: editEvent.editType, source: editEvent.source })
+            this.editEventService.handleEditEvent(event, tab)
+            trackMixpanelEvent('Edit event on editor', { type: event.editType, source: event.source })
+        })
+
+        onMessage(MessageType.GET_PROJECT, async ({ sender }) => {
+            const tab = await chrome.tabs.get(sender.tabId)
+            const project = await this.projectTabManager.getTabProject(tab)
+            return project
+        })
+
+        onMessage(MessageType.GET_PROJECTS, async ({ sender }) => {
+            const tab = await chrome.tabs.get(sender.tabId)
+            let projects = []
+
+            if (tab.url) {
+                const currentHost = new URL(tab.url).hostname
+                const map = await projectsMapBucket.get()
+                projects = Object.values(map).filter((project: Project) => {
+                    if (!project || !project.hostUrl)
+                        return false
+                    // Filter for projects with the same URL host
+                    const projectHost = new URL(project.hostUrl).hostname
+                    return currentHost === projectHost
+                })
+            }
         })
     }
 }

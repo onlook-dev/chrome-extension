@@ -1,10 +1,14 @@
 // @ts-ignore - Module exists
-import { expect, test, describe, beforeEach, mock, beforeAll } from 'bun:test';
+import { beforeEach, describe, expect, mock, test } from 'bun:test';
 // @ts-ignore - Module exists
 import { EditType, type EditEvent } from '$shared/models';
 import { get } from 'svelte/store';
 // @ts-ignore - Module exists
-import { historyStore, redoStore, addToHistory, undoLastEvent, redoLastEvent } from '$lib/tools/edit/history';
+import { addToHistory, historyStore, redoLastEvent, redoStore, undoLastEvent } from '$lib/tools/edit/history';
+
+mock.module("webext-bridge/window", () => ({
+  sendMessage: () => { }
+}))
 
 describe('history functionality', () => {
   const mockEvent = {

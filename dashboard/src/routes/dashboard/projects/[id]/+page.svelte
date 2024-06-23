@@ -7,10 +7,11 @@
 	import { projectsMapStore, userStore, usersMapStore } from '$lib/utils/store';
 	import { DashboardRoutes, FirestoreCollections, LengthSettings } from '$shared/constants';
 	import { truncateString } from '$shared/helpers';
-	import { MessageService, MessageType } from '$shared/message';
+	import { MessageType } from '$shared/message';
 	import type { Activity, Project, User } from '$shared/models';
 	import { onDestroy, onMount } from 'svelte';
 	import { ArrowLeft, ExclamationTriangle, Pencil2, Reload, Shadow } from 'svelte-radix';
+	import { sendMessage } from 'webext-bridge/window';
 
 	import ProjectTour from '$lib/components/tour/ProjectTour.svelte';
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
@@ -23,7 +24,6 @@
 	import GithubModal from './github/GithubModal.svelte';
 
 	let project: Project | undefined;
-	let messageService: MessageService;
 	const projectService = new FirebaseService<Project>(FirestoreCollections.PROJECTS);
 	const userService = new FirebaseService<User>(FirestoreCollections.USERS);
 
@@ -41,7 +41,6 @@
 	}
 
 	onMount(async () => {
-		messageService = MessageService.getInstance();
 		auth.onAuthStateChanged((user) => {
 			if (!user) {
 				goto(DashboardRoutes.SIGNIN);
@@ -99,7 +98,7 @@
 	});
 
 	function requestEditProject() {
-		messageService.publish(MessageType.EDIT_PROJECT, project);
+		sendMessage(MessageType.EDIT_PROJECT, { project } as any);
 		trackMixpanelEvent('Edit project from dashboard', {
 			projectId: project?.id,
 			projectName: project?.name,

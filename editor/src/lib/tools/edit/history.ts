@@ -1,14 +1,14 @@
-import { MessageService, MessageType } from '$shared/message';
+import { MessageType } from '$shared/message';
 import { EditType, type ChildVal, type EditEvent, type TextVal } from '$shared/models';
 import { get, writable } from 'svelte/store';
 import { ApplyChangesService } from './applyChange';
 
 import { dragContainers } from '$lib/states/editor';
 import Sortable from 'sortablejs';
+import { sendMessage } from 'webext-bridge/window';
 
 export const historyStore = writable<EditEvent[]>([]);
 export const redoStore = writable<EditEvent[]>([]);
-const messageService = MessageService.getInstance();
 
 function compareKeys(a: Record<string, string>, b: Record<string, string>): boolean {
   if (!a || !b) return false;
@@ -203,7 +203,7 @@ export function applyEvent(event: EditEvent, emit: boolean = true) {
       break;
   }
   if (emit)
-    messageService.publish(MessageType.EDIT_EVENT, event);
+    sendMessage(MessageType.EDIT_EVENT, event);
 }
 
 export function toggleEventVisibility(event: EditEvent, visible: boolean) {

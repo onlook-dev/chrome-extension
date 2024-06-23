@@ -1,11 +1,11 @@
-import { forwardToActiveTab } from "$lib/utils/helpers";
 import { getActiveUser, getProjectById, projectsMapBucket } from "$lib/utils/localstorage";
-import { sendApplyProjectChanges, sendGetTabId, tabIdResponseStream } from "$lib/utils/messaging";
 import { LengthSettings } from "$shared/constants";
+import { MessageType } from "$shared/message";
 import type { HostData, Project } from "$shared/models";
 import { ProjectStatus } from "$shared/models";
 import { getBucket } from "@extend-chrome/storage";
 import { nanoid } from "nanoid";
+import { sendMessage } from "webext-bridge/background";
 
 const tabProjectIdBucket = getBucket<{ [tabId: string]: string }>('TABS_PROJECT_ID_MAP')
 const tabStateBucket = getBucket<{ [tabId: string]: TabState }>('TABS_STATE_MAP')
@@ -46,29 +46,6 @@ export class ProjectTabService {
             files: ['src/lib/editor/restore.js']
         })
         this.setTabState(tabId, TabState.injected)
-    }
-
-    getCurrentTab = async (): Promise<chrome.tabs.Tab> => {
-        return new Promise(async (resolve, reject) => {
-            if (chrome && chrome.tabs && chrome.tabs.query) {
-                // Background
-                const tabs = await chrome.tabs.query({ active: true, currentWindow: true })
-                if (!tabs[0].id) {
-                    reject("Tab id not found")
-                } else {
-                    resolve(tabs[0])
-                }
-            } else {
-                // Content script
-                sendGetTabId().then(() => {
-                    const subscription = tabIdResponseStream.subscribe(([data]) => {
-                        resolve(data)
-                        subscription.unsubscribe();
-                    });
-                    sendGetTabId();
-                })
-            }
-        })
     }
 
     toggleTab = async (tab: chrome.tabs.Tab, inject?: boolean) => {
@@ -175,16 +152,15 @@ export class ProjectTabService {
         tabStateBucket.set({ [tabId]: state })
     }
 
-    handleTabRefreshed = async (tabId: number, url: string | undefined) => {
-        const tabState = await this.getTabState(tabId)
+    handleTabRefreshed = async (tab: chrome.tabs.Tab) => {
+        const tabState = await this.getTabState(tab.id as number)
         if (tabState === TabState.injected) {
             // Re-inject
-            this.injectTab(tabId)
-            setTimeout(() => {
-                forwardToActiveTab({}, sendApplyProjectChanges)
-            }, 100)
+            this.injectTab(tab.id as number)
+            const project = await this.getTabProject(tab)
+            sendMessage(MessageType.APPLY_PROJECT_CHANGE, project as any, `window@${tab.id}`)
         } else {
-            this.setTabState(tabId, TabState.none)
+            this.setTabState(tab.id as number, TabState.none)
         }
     }
 
