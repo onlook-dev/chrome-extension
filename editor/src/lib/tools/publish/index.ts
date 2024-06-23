@@ -24,8 +24,8 @@ export class PublishTool implements Tool {
     onDoubleClick(el: MouseEvent): void { }
     onScreenResize(el: Event): void { }
 
-    public publish = (open = false) => {
-        return sendMessage(MessageType.PUBLISH_PROJECT, { open });
+    public publish = (open = true) => {
+        return sendMessage(MessageType.PUBLISH_PROJECT, open);
     };
 
     public merge = (project: Project) => {

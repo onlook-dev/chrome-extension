@@ -159,6 +159,15 @@ export class BackgroundEventHandlers {
             authUserBucket.clear()
         })
 
+        // React to authUser changes
+        authUserBucket.valueStream.subscribe(({ authUser }) => {
+            if (authUser) {
+                signInUser(authUser)
+            } else {
+                signOut()
+            }
+        })
+
         // Message directly from editor window
         onMessage(MessageType.SEND_CHAT_MESSAGE, async ({ data }) => {
             const startTime = Date.now()
@@ -179,17 +188,22 @@ export class BackgroundEventHandlers {
             this.projectTabManager.toggleTab(tab)
         })
 
-        onMessage(MessageType.GET_TAB_ID, async ({ sender }) => {
-            const tab = await chrome.tabs.get(sender.tabId)
-            return tab.id
-        })
-
-        onMessage(MessageType.PUBLISH_PROJECT, async ({ data }: any) => {
-            const { project } = data as { project: Project }
-            project.status = ProjectStatus.PUBLISHED
-            this.projectService.post(project)
-            projectsMapBucket.set({ [project.id]: project })
-            trackMixpanelEvent('Publishing project from editor', { projectId: project.id, projectName: project.name, projectUrl: project.hostUrl })
+        onMessage(MessageType.PUBLISH_PROJECT, async ({ data, sender }) => {
+            try {
+                const open = data as boolean
+                const tab = await chrome.tabs.get(sender.tabId)
+                const project = await this.projectTabManager.getTabProject(tab)
+                project.status = ProjectStatus.PUBLISHED
+                this.projectService.post(project)
+                projectsMapBucket.set({ [project.id]: project })
+                if (open)
+                    this.openOrCreateNewTab(`${baseUrl}${DashboardRoutes.PROJECTS}/${project.id}`)
+                trackMixpanelEvent('Publishing project from editor', { projectId: project.id, projectName: project.name, projectUrl: project.hostUrl })
+            } catch (error) {
+                console.error('Error publishing project', error)
+                return false
+            }
+            return true
         })
 
         onMessage(MessageType.GET_PAGE_SCREENSHOT, async ({ data }: any) => {
@@ -214,15 +228,6 @@ export class BackgroundEventHandlers {
             // }, 500)
         })
 
-        // Auth user changes from content script
-        authUserBucket.valueStream.subscribe(({ authUser }) => {
-            if (authUser) {
-                signInUser(authUser)
-            } else {
-                signOut()
-            }
-        })
-
         onMessage(MessageType.EDIT_EVENT, async ({ data, sender }: any) => {
             const tab = await chrome.tabs.get(sender.tabId)
             const event = data as EditEvent
@@ -232,12 +237,6 @@ export class BackgroundEventHandlers {
             }
             this.editEventService.handleEditEvent(event, tab)
             trackMixpanelEvent('Edit event on editor', { type: event.editType, source: event.source })
-        })
-
-        onMessage(MessageType.PUBLISH_PROJECT, async ({ data, sender }: any) => {
-            const currentTab = await chrome.tabs.get(sender.tabId)
-            const project = await this.projectTabManager.getTabProject(currentTab)
-            //    Handle publish
         })
 
         onMessage(MessageType.GET_PROJECT, async ({ sender }) => {
@@ -262,6 +261,5 @@ export class BackgroundEventHandlers {
                 })
             }
         })
-
     }
 }
