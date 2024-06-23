@@ -20,7 +20,7 @@ export function subscribeToFirebaseAuthChanges() {
 	auth.onAuthStateChanged((authUser) => {
 		if (authUser) {
 			// Send authUser to extension
-			sendMessage(MessageType.DASHBOARD_SIGN_IN, authUser as any);
+			sendMessage(MessageType.DASHBOARD_SIGN_IN, JSON.stringify(authUser) as any);
 
 			// Listen and update user from remote
 			(new FirebaseService<User>(FirestoreCollections.USERS)).subscribe(authUser.uid, (user) => {

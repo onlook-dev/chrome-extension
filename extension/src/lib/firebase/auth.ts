@@ -1,21 +1,21 @@
-import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, type User as AuthUser } from 'firebase/auth'
-import { auth } from './firebase'
-import { UserImpl as FirebaseUserImpl } from '@firebase/auth/internal'
+import { identifyUser } from '$lib/mixpanel'
+import { FirebaseService } from '$lib/storage'
 import {
 	authUserBucket,
 	projectsMapBucket,
 	teamsMapBucket,
 	userBucket,
 } from '$lib/utils/localstorage'
-import { FirebaseService } from '$lib/storage'
 import { FirestoreCollections } from '$shared/constants'
-import { identifyUser } from '$lib/mixpanel'
+import { UserImpl as FirebaseUserImpl } from '@firebase/auth/internal'
+import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, type User as AuthUser } from 'firebase/auth'
+import { auth } from './firebase'
 
 import type { User } from '$shared/models'
 
 // Use firebase user from dashboard
 export function signInUser(userData: any) {
-	const user: AuthUser = FirebaseUserImpl._fromJSON(auth as any, userData)
+	const user: AuthUser = FirebaseUserImpl._fromJSON(auth as any, JSON.parse(userData))
 	auth.updateCurrentUser(user).catch(err => {
 		alert(`Sign in failed: ${JSON.stringify(err)}`)
 	})

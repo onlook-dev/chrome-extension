@@ -1,12 +1,15 @@
 <script lang="ts">
-	import '../app.css';
-	import { onMount } from 'svelte';
-	import { subscribeToFirebaseAuthChanges } from '$lib/firebase/auth';
-	import { SvelteToast } from '@zerodevx/svelte-toast';
 	import { page } from '$app/stores';
+	import { subscribeToFirebaseAuthChanges } from '$lib/firebase/auth';
 	import { trackMixpanelEvent } from '$lib/mixpanel/client';
+	import { MESSAGING_NAMESPACE } from '$shared/message';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import { onMount } from 'svelte';
+	import { setNamespace } from 'webext-bridge/window';
+	import '../app.css';
 
 	onMount(() => {
+		setNamespace(MESSAGING_NAMESPACE);
 		subscribeToFirebaseAuthChanges();
 		trackMixpanelEvent('Page View', { page: $page.route.id });
 	});
