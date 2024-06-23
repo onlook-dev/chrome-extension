@@ -45,5 +45,4 @@ export class PublishTool implements Tool {
     prepare = () => {
         return sendMessage(MessageType.PREPARE_SAVE, {});
     }
-
 }

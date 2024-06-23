@@ -226,7 +226,6 @@ export class BackgroundEventHandlers {
         onMessage(MessageType.EDIT_EVENT, async ({ data, sender }: any) => {
             const tab = await chrome.tabs.get(sender.tabId)
             const event = data as EditEvent
-            console.log('Edit event received', event)
             if (!tab) {
                 console.error('Tab ID not found')
                 return

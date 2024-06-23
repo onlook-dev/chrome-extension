@@ -103,7 +103,6 @@ export function undebounceHandleEditEvent(param: HandleEditEventParams) {
   if (componentId) {
     event = updateEventIfStructureChange(param) || event;
   }
-  console.log("A")
   sendMessage(MessageType.EDIT_EVENT, event);
 }
 

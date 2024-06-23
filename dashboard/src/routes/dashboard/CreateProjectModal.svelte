@@ -30,7 +30,6 @@
 			}
 		}
 		errorText = '';
-		console.log('Creating project from URL:', inputUrl);
 		openUrl(inputUrl);
 	}
 
