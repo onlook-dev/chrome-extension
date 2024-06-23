@@ -17,7 +17,7 @@ import {
 import { DashboardRoutes, FirestoreCollections } from '$shared/constants'
 import { MessageType } from '$shared/message'
 import { ProjectStatus, type EditEvent, type Project, type Team, type User } from '$shared/models'
-import { onMessage } from 'webext-bridge/background'
+import { onMessage, sendMessage } from 'webext-bridge/background'
 import { EntitySubsciptionService } from './entities'
 import { captureActiveTab } from './screenshot'
 
@@ -137,7 +137,7 @@ export class BackgroundEventHandlers {
         chrome.tabs.onUpdated.addListener(
             async (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
                 if (changeInfo.status !== 'complete') return
-                this.projectTabManager.handleTabRefreshed(tabId, tab.url)
+                this.projectTabManager.handleTabRefreshed(tab)
             }
         )
 
@@ -220,12 +220,10 @@ export class BackgroundEventHandlers {
                 return
             }
             await this.projectTabManager.setTabProject(tab, project)
-            await this.projectTabManager.toggleTab(tab, enable)
+            await this.projectTabManager.toggleTab(tab, enable);
 
             // Send apply project change to editor tab
-            // setTimeout(() => {
-            //     forwardToActiveTab({}, sendApplyProjectChanges)
-            // }, 500)
+            sendMessage(MessageType.APPLY_PROJECT_CHANGE, project as any, `window@${tab.id}`)
         })
 
         onMessage(MessageType.EDIT_EVENT, async ({ data, sender }: any) => {

@@ -45,7 +45,7 @@ export class ProjectChangeService {
     }
 
 
-    async applyProjectChanges(project: Project, revert: boolean = false): Promise<boolean> {
+    async applyProjectChanges(project: Project, tab: chrome.tabs.Tab, revert: boolean = false): Promise<boolean> {
         if (!project) return false
 
         let shouldSaveProject = false
@@ -53,7 +53,7 @@ export class ProjectChangeService {
         const editEvents = this.getEditEventsFromProject(project)
         if (editEvents.length > 0) {
             const messageType = revert ? MessageType.REVERT_EDIT_EVENTS : MessageType.APPLY_EDIT_EVENTS
-            sendMessage(messageType, { editEvents, revert })
+            sendMessage(messageType, { editEvents, revert }, `window@${tab.id}`)
             shouldSaveProject = true
         }
 

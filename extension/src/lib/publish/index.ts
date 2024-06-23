@@ -55,7 +55,7 @@ export class PublishProjectService {
         if (activities.length === 0) return;
 
         // Revert activity
-        this.projectChangeService.applyProjectChanges(this.project, true);
+        // this.projectChangeService.applyProjectChanges(this.project, true);
 
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -73,7 +73,7 @@ export class PublishProjectService {
         this.project.hostData.beforeImage = beforeScreenshot;
 
         // Apply activity
-        this.projectChangeService.applyProjectChanges(this.project);
+        // this.projectChangeService.applyProjectChanges(this.project);
 
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -106,7 +106,7 @@ export class PublishProjectService {
         hideEditor();
 
         // Revert activity
-        this.projectChangeService.applyProjectChanges(this.project, true);
+        // this.projectChangeService.applyProjectChanges(this.project, true);
 
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -122,7 +122,7 @@ export class PublishProjectService {
         this.project.hostData.beforeImage = await this.altScreenshotService.takePageScreenshot(false);
 
         // Apply activity
-        this.projectChangeService.applyProjectChanges(this.project);
+        // this.projectChangeService.applyProjectChanges(this.project);
 
         // Wait for changes to apply
         await new Promise((resolve) => setTimeout(resolve, 100));
