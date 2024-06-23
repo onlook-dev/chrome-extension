@@ -53,7 +53,6 @@
     "@twind/preset-autoprefix": "^1.0.7",
     "@twind/preset-tailwind": "^1.1.4",
     "bits-ui": "^0.21.10",
-    "blingblingjs": "^2.3.0",
     "clsx": "^2.1.0",
     "cmdk-sv": "^0.0.13",
     "codemirror": "^6.0.1",

@@ -98,7 +98,7 @@
 	});
 
 	function requestEditProject() {
-		sendMessage(MessageType.EDIT_PROJECT, project as any);
+		sendMessage(MessageType.EDIT_PROJECT, { project } as any);
 		trackMixpanelEvent('Edit project from dashboard', {
 			projectId: project?.id,
 			projectName: project?.name,
