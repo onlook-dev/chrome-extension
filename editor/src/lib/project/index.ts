@@ -42,10 +42,9 @@ export class ProjectChangeService {
         };
     }
 
-    async applyProjectChanges(project: Project, revert: boolean = false): Promise<boolean> {
-        if (!project) return false
-
+    async applyProjectChanges(project: Project, revert: boolean = false): Promise<{ project: Project, shouldSaveProject: boolean }> {
         let shouldSaveProject = false
+        if (!project) return { project, shouldSaveProject }
 
         const editEvents = this.getEditEventsFromProject(project)
         if (editEvents.length > 0) {
@@ -74,7 +73,7 @@ export class ProjectChangeService {
             shouldSaveProject = true
         }
 
-        return shouldSaveProject
+        return { project, shouldSaveProject }
     }
 
     getEditEventsFromProject(project: Project): EditEvent[] {
