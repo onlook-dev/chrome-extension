@@ -16,7 +16,7 @@ import {
 } from '$lib/utils/localstorage'
 import { DashboardRoutes, FirestoreCollections } from '$shared/constants'
 import { MessageType } from '$shared/message'
-import { ProjectStatus, type Project, type Team, type User } from '$shared/models'
+import { ProjectStatus, type EditEvent, type Project, type Team, type User } from '$shared/models'
 import { onMessage } from 'webext-bridge/background'
 import { EntitySubsciptionService } from './entities'
 import { captureActiveTab } from './screenshot'
@@ -224,15 +224,15 @@ export class BackgroundEventHandlers {
         })
 
         onMessage(MessageType.EDIT_EVENT, async ({ data, sender }: any) => {
-            const { editEvent } = data as any
-            const tab = sender.tab
+            const tab = await chrome.tabs.get(sender.tabId)
+            const event = data as EditEvent
+            console.log('Edit event received', event)
             if (!tab) {
                 console.error('Tab ID not found')
                 return
             }
-            this.editEventService.handleEditEvent(editEvent, tab)
-            trackMixpanelEvent('Edit event on editor', { type: editEvent.editType, source: editEvent.source })
-
+            this.editEventService.handleEditEvent(event, tab)
+            trackMixpanelEvent('Edit event on editor', { type: event.editType, source: event.source })
         })
 
         onMessage(MessageType.PUBLISH_PROJECT, async ({ data, sender }: any) => {

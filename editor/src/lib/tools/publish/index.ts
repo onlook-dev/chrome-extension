@@ -32,13 +32,14 @@ export class PublishTool implements Tool {
         return sendMessage(MessageType.MERGE_PROJECT, project as any);
     }
 
-    getActiveProject = () => {
-        return sendMessage(MessageType.GET_PROJECT, {});
+    getActiveProject = async (): Promise<void> => {
+        const project: Project = await sendMessage(MessageType.GET_PROJECT, {}) as any;
+        this.currentProjectStore.set(project);
     }
 
-    getProjects = () => {
-        return sendMessage(MessageType.GET_PROJECTS, {});
-
+    getProjects = async (): Promise<void> => {
+        const projects: Project[] = await sendMessage(MessageType.GET_PROJECTS, {}) as any[];
+        this.projectsStore.set(projects);
     };
 
     prepare = () => {

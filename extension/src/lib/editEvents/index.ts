@@ -1,10 +1,10 @@
 import { getActiveUser, projectsMapBucket } from '$lib/utils/localstorage'
+import { ActivityStatus, EditType, ProjectStatus } from '$shared/models'
 import { nanoid } from 'nanoid'
 import { convertEditEventToChangeObject } from './convert'
-import { EditType, ActivityStatus, ProjectStatus } from '$shared/models'
 
-import type { Project, EditEvent, Activity, ChildVal, ChangeValues, } from '$shared/models'
 import type { ProjectTabService } from '$lib/projects'
+import type { Activity, ChangeValues, ChildVal, EditEvent, Project, } from '$shared/models'
 
 interface QueueItem {
   tab: chrome.tabs.Tab
