@@ -1,5 +1,5 @@
+import { applyEvent, createReverseEvent } from "$lib/tools/edit/history";
 import { convertChangeObjectToEditEvents, convertStructureChangeToEditEvents } from "$shared/helpers";
-import { MessageType } from "$shared/message";
 import { StyleFramework } from "$shared/models";
 
 import { EditType, type Activity, type EditEvent, type Project } from "$shared/models";
@@ -49,8 +49,9 @@ export class ProjectChangeService {
 
         const editEvents = this.getEditEventsFromProject(project)
         if (editEvents.length > 0) {
-            const messageType = revert ? MessageType.REVERT_EDIT_EVENTS : MessageType.APPLY_EDIT_EVENTS
-            // sendMessage(messageType, { editEvents, revert }, `window@${tab.id}`)
+            editEvents.forEach(event => {
+                revert ? applyEvent(createReverseEvent(event), false) : applyEvent(event, false)
+            })
             shouldSaveProject = true
         }
 

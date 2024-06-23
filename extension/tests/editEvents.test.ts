@@ -1,7 +1,7 @@
 // @ts-ignore - Bun test exists
-import { expect, test, describe } from 'bun:test';
-// @ts-ignore - Module exists
-import { convertEditEventToChangeObject, convertChangeObjectToEditEvents } from '$lib/editEvents/convert';
+import { convertChangeObjectToEditEvents, convertEditEventToChangeObject } from '$shared/helpers';
+// @ts-ignore - Bun test exists
+import { describe, expect, test } from 'bun:test';
 // @ts-ignore - Module exists
 import type { EditType } from '$shared/models';
 
