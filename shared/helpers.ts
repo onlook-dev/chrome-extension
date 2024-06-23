@@ -116,9 +116,6 @@ export function getCustomComponentContent(el: HTMLElement) {
   return content;
 }
 
-
-
-// Look in tests for example. 
 export function convertEditEventToChangeObject(editEvent: EditEvent, changeObject: Record<string, ChangeValues>) {
   /**
    * 1. Update changeObject with oldVal and newVal from editEvent

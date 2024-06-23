@@ -1,7 +1,6 @@
 import type { AltScreenshotService } from "$extension/content/altScreenshot";
 import type { ScreenshotService } from "$extension/content/screenshot";
 import { hideEditor, showEditor } from "$lib/editor/helpers";
-import type { ProjectChangeService } from "$lib/projects/changes";
 import { projectsMapBucket } from "$lib/utils/localstorage";
 import { ProjectStatus, type Project } from "$shared/models";
 
@@ -10,7 +9,6 @@ export class PublishProjectService {
         private project: Project,
         private screenshotService: ScreenshotService,
         private altScreenshotService: AltScreenshotService,
-        private projectChangeService: ProjectChangeService
     ) { }
 
     public async publish(open = true) {

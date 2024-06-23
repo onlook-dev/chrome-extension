@@ -7,41 +7,6 @@ import { EditType, type Activity, type EditEvent, type Project } from "$shared/m
 export class ProjectChangeService {
     constructor() { }
 
-    mergeProjects(currentProject: Project, targetProject: Project): Project {
-        const currentActivities = currentProject.activities || {};
-        const targetActivities = targetProject.activities || {};
-
-        const mergedActivities = { ...targetActivities };
-
-        Object.keys(currentActivities).forEach(activityKey => {
-            const currentActivity: Activity = currentActivities[activityKey];
-            const targetActivity: Activity = mergedActivities[activityKey];
-
-            // Merge style changes
-            const currentStyles = currentActivity.styleChanges || {};
-            const targetStyles = targetActivity.styleChanges || {};
-            targetActivity.styleChanges = { ...targetStyles, ...currentStyles };
-
-            // Merge text changes
-            const currentTexts = currentActivity.textChanges || {};
-            const targetTexts = targetActivity.textChanges || {};
-            targetActivity.textChanges = { ...targetTexts, ...currentTexts };
-
-            // Merge attribute changes
-            const currentAttributes = currentActivity.attributeChanges || {};
-            const targetAttributes = targetActivity.attributeChanges || {};
-            targetActivity.attributeChanges = { ...targetAttributes, ...currentAttributes };
-
-            mergedActivities[activityKey] = { ...currentActivity, ...targetActivity };
-        });
-
-        return {
-            ...targetProject,
-            updatedAt: currentProject.updatedAt,
-            activities: mergedActivities
-        };
-    }
-
     async applyProjectChanges(project: Project, revert: boolean = false): Promise<{ project: Project, shouldSaveProject: boolean }> {
         let shouldSaveProject = false
         if (!project) return { project, shouldSaveProject }
@@ -76,14 +41,6 @@ export class ProjectChangeService {
         return { project, shouldSaveProject }
     }
 
-    getEditEventsFromProject(project: Project): EditEvent[] {
-        const editEvents: EditEvent[] = []
-        for (const activity of Object.values(project.activities)) {
-            editEvents.push(...this.getEditEventsFromActivity(activity))
-        }
-        return editEvents
-    }
-
     updateActivityPath(activity: Activity): boolean {
         // Update path if possible
         const element = document.querySelector(activity.selector) as any
@@ -94,6 +51,14 @@ export class ProjectChangeService {
             }
         }
         return false
+    }
+
+    getEditEventsFromProject(project: Project): EditEvent[] {
+        const editEvents: EditEvent[] = []
+        for (const activity of Object.values(project.activities)) {
+            editEvents.push(...this.getEditEventsFromActivity(activity))
+        }
+        return editEvents
     }
 
     getEditEventsFromActivity(activity: Activity): EditEvent[] {
